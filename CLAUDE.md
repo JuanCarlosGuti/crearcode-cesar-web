@@ -98,10 +98,16 @@ Detalle completo, diagrama y ADRs en
 Detalle de issues por fase en
 [docs/05-backlog-issues.md](docs/05-backlog-issues.md).
 
+## Decisiones ya resueltas por el usuario
+
+- Correo corporativo temporal: `crearcodecesar@gmail.com` (se
+  reemplazará por un correo con dominio propio cuando se compre el
+  dominio — ver pendiente más abajo).
+- LinkedIn del fundador: https://www.linkedin.com/in/juan-carlos-gutierrez-huerfano369582/
+- Paleta oficial del sitio: **Opción C — "Minimal Corporativo"** (ver
+  [docs/07-guia-de-estilo.md](docs/07-guia-de-estilo.md)).
+
 ## Pendientes que requieren input del usuario
 
-- Correo corporativo (placeholder `[CORREO_CORPORATIVO_PENDIENTE]` en el contenido).
-- URL de LinkedIn del fundador (placeholder `[LINKEDIN_FUNDADOR_PENDIENTE]`).
-- Cuál de las 3 paletas propuestas en
-  [docs/07-guia-de-estilo.md](docs/07-guia-de-estilo.md) se adopta.
-- Dominio web definitivo (decisión al cierre de la fase F7).
+- Dominio web definitivo y correo corporativo final con ese dominio
+  (decisión al cierre de la fase F7).

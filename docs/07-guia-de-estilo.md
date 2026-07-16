@@ -74,13 +74,16 @@ completos en [[08-contenido]].
 
 ### Propuestas de paleta de color
 
-No existe identidad de marca previa (logo/colores) — se proponen tres
-opciones sobrias y profesionales para que el usuario elija una en la
-revisión de esta documentación. Las tres cumplen contraste WCAG AA para
-texto sobre fondo en sus combinaciones principales (a verificar de
-nuevo con los tonos finales exactos durante implementación).
+No existía identidad de marca previa (logo/colores), así que se
+propusieron tres opciones sobrias y profesionales. **Paleta elegida:
+Opción C — "Minimal Corporativo"** (ver detalle más abajo); las
+opciones A y B quedan documentadas como alternativas descartadas, por
+si se quiere revisar la decisión más adelante. Las tres cumplen
+contraste WCAG AA para texto sobre fondo en sus combinaciones
+principales (a verificar de nuevo con los tonos finales exactos durante
+implementación).
 
-#### Opción A — "Caribe Confiable" (recomendada)
+#### Opción A — "Caribe Confiable" (descartada)
 Azul profundo (confianza, tecnología) con un acento cálido que evoca el
 Caribe colombiano sin caer en lo turístico/informal.
 
@@ -96,7 +99,7 @@ Caribe colombiano sin caer en lo turístico/informal.
 | Alerta/nueva (admin) | Ámbar | `#D98E04` |
 | Error | Rojo | `#C4453A` |
 
-#### Opción B — "Tecnología Cercana"
+#### Opción B — "Tecnología Cercana" (descartada)
 Verde azulado (teal) más moderno, con acento dorado. Transmite
 innovación sin perder seriedad.
 
@@ -112,9 +115,10 @@ innovación sin perder seriedad.
 | Alerta/nueva (admin) | Ámbar | `#D98E04` |
 | Error | Rojo | `#C4453A` |
 
-#### Opción C — "Minimal Corporativo"
+#### Opción C — "Minimal Corporativo" (elegida)
 Monocromo grafito/azul marino con un único acento verde (crecimiento).
 La opción más austera, orientada al público de TI de empresa mediana.
+Esta es la paleta oficial del sitio a partir de ahora.
 
 | Uso | Color | Hex |
 |---|---|---|
@@ -128,8 +132,9 @@ La opción más austera, orientada al público de TI de empresa mediana.
 | Alerta/nueva (admin) | Ámbar | `#D98E04` |
 | Error | Rojo | `#C4453A` |
 
-> Pendiente de decisión del usuario: cuál de las tres opciones (o una
-> variación) se adopta antes de iniciar la fase F3 de la Etapa 2.
+> Decisión tomada por el usuario: se adopta la Opción C — "Minimal
+> Corporativo" como paleta oficial del sitio, a usar desde la fase F3
+> de la Etapa 2.
 
 ### Tipografía sugerida
 

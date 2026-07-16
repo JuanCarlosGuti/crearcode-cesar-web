@@ -232,7 +232,7 @@ marcados con `[...]` cuando el dato aún no existe.
 > las metas y las preocupaciones reales de quien dirige una empresa.
 >
 > *[Espacio para foto del fundador — placeholder]*
-> *[URL de LinkedIn del fundador — pendiente: `[LINKEDIN_FUNDADOR_PENDIENTE]`]*
+> LinkedIn: https://www.linkedin.com/in/juan-carlos-gutierrez-huerfano369582/
 
 **Forma de trabajar — documentar, probar, construir:**
 > No empezamos a escribir código el primer día. Primero documentamos
@@ -316,7 +316,7 @@ resumen (2-3 líneas) y fecha. Contenido en Markdown (ver
 **Datos de contacto (mostrados junto al formulario):**
 > Valledupar, Cesar, Colombia
 > WhatsApp: 323 988 5883
-> Correo: `[CORREO_CORPORATIVO_PENDIENTE]`
+> Correo: crearcodecesar@gmail.com
 
 ---
 
@@ -341,7 +341,7 @@ resumen (2-3 líneas) y fecha. Contenido en Markdown (ver
 > reglamentarios, tienes derecho a conocer, actualizar, rectificar y
 > solicitar la eliminación de tus datos personales, así como a revocar
 > tu autorización en cualquier momento, escribiendo a
-> `[CORREO_CORPORATIVO_PENDIENTE]`.
+> crearcodecesar@gmail.com.
 >
 > **Cómo protegemos tus datos**: aplicamos medidas técnicas y
 > organizativas razonables para proteger tu información contra acceso
@@ -374,7 +374,7 @@ resumen (2-3 líneas) y fecha. Contenido en Markdown (ver
 > ininterrumpida.
 >
 > **Contacto**: para cualquier consulta sobre estos términos, escribe a
-> `[CORREO_CORPORATIVO_PENDIENTE]` o por WhatsApp al 323 988 5883.
+> crearcodecesar@gmail.com o por WhatsApp al 323 988 5883.
 >
 > *Este texto es un borrador base para revisión y ajuste con asesoría
 > legal antes de publicarlo.*
@@ -383,10 +383,14 @@ resumen (2-3 líneas) y fecha. Contenido en Markdown (ver
 
 ## Placeholders pendientes en este documento
 
+Correo corporativo (`crearcodecesar@gmail.com`, temporal) y LinkedIn del
+fundador ya se resolvieron y quedaron insertados directamente en el
+texto de este documento — se mantienen como pendiente en
+[[01-vision-y-alcance]] §7 solo el correo definitivo con dominio propio
+(reemplazará al de Gmail cuando se compre el dominio).
+
 | Dato | Placeholder usado | Aparece en |
 |---|---|---|
-| Correo corporativo | `[CORREO_CORPORATIVO_PENDIENTE]` | Formulario de contacto, política de datos, términos |
-| URL de LinkedIn del fundador | `[LINKEDIN_FUNDADOR_PENDIENTE]` | Sobre nosotros |
 | Casos de éxito reales | `[Nombre de la empresa]`, `[Reto]`, `[Solución]`, `[Resultado]` | Casos/Portafolio |
 | Foto del fundador | Placeholder visual | Sobre nosotros |
 
