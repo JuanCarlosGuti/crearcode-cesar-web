@@ -1,0 +1,107 @@
+# CLAUDE.md — Crear Code Cesar S.A.S. · Sitio web corporativo
+
+Resumen operativo del proyecto. La fuente de verdad viva es la carpeta
+[`docs/`](docs/) — si una decisión no está documentada allí, no se
+asume: se pregunta al usuario y se actualiza el documento
+correspondiente antes de seguir.
+
+## Estado del proyecto
+
+**Etapa actual: Etapa 1 — Documentación (completa, pendiente de
+aprobación explícita del usuario).**
+
+No se debe escribir código de aplicación (`frontend/`, `backend/`) hasta
+que el usuario responda exactamente: **"APRUEBO LA DOCUMENTACIÓN,
+ARRANCA LA FASE 1"**. Antes de esa frase, cualquier trabajo se limita a
+ajustar la documentación en `docs/`.
+
+## Qué es este proyecto
+
+Sitio web corporativo de **Crear Code Cesar S.A.S.**, empresa
+colombiana de servicios de software (Valledupar, Cesar — operación
+nacional). Tres líneas de negocio: desarrollo de software a la medida,
+IA/automatización para pymes, y soluciones tecnológicas (cobro digital,
+integraciones, modernización). El sitio es tanto una herramienta de
+captación de leads como una vitrina de la forma de trabajar de la
+empresa (documentar → probar → construir).
+
+Ver el detalle completo en [docs/01-vision-y-alcance.md](docs/01-vision-y-alcance.md).
+
+## Stack
+
+- **Backend**: Java 25 (LTS) + Spring Boot 3 + Maven. Arquitectura
+  hexagonal en `com.crearcode.leads` con `dominio/` (sin Spring/JPA),
+  `aplicacion/` (casos de uso, `@Transactional`), `infraestructura/`
+  (REST, persistencia JPA, notificación). Dominio en español. Reglas de
+  dependencia verificadas con ArchUnit desde el primer commit. Virtual
+  threads para I/O concurrente.
+- **Base de datos**: PostgreSQL + Flyway, vía Docker Compose local.
+- **Frontend**: Angular 22, signals-first, **zoneless** (sin Zone.js),
+  componentes standalone, Signal Forms para el formulario de contacto,
+  Vitest como test runner, SSR/prerender habilitado. Contenido editorial
+  desacoplado de los componentes (archivos de datos/Markdown en
+  `contenido/`).
+- **Seguridad**: panel admin con Spring Security (usuario único en v1),
+  secretos solo por variables de entorno, sin datos personales en logs
+  ni URLs.
+
+Detalle completo, diagrama y ADRs en
+[docs/02-arquitectura.md](docs/02-arquitectura.md). Modelo de dominio en
+[docs/03-modelo-de-dominio.md](docs/03-modelo-de-dominio.md).
+
+## Cómo trabajar conmigo (el usuario)
+
+- **Responder siempre en español.**
+- **Plan antes de cambios grandes**: cualquier issue no trivial se
+  plantea primero (qué se va a hacer y por qué) antes de tocar código.
+- **Diffs siempre visibles**: el usuario revisa cada cambio antes de
+  darlo por bueno; no se agrupan múltiples issues en un solo cambio sin
+  avisar.
+- **Incrementos pequeños**: un issue del backlog ≈ una unidad de trabajo
+  con tests primero (TDD), implementación, verificación en verde y
+  commit descriptivo propio.
+- **TDD real**: test que falla → implementación mínima → refactor. No se
+  escribe implementación sin su test correspondiente ya escrito.
+- **Nunca avanzar de fase (F0→F7) sin**: tests en verde, ArchUnit en
+  verde, y el OK explícito del usuario.
+- **Decisiones no documentadas**: si algo no está en `docs/`, se
+  pregunta antes de asumir, y luego se actualiza el documento afectado
+  — la documentación es la fuente de verdad viva, no un artefacto
+  congelado en la Etapa 1.
+- Convenciones de commits, nombres y estilo de código en
+  [docs/07-guia-de-estilo.md](docs/07-guia-de-estilo.md).
+
+## Mapa de la documentación
+
+| Documento | Contenido |
+|---|---|
+| [01-vision-y-alcance.md](docs/01-vision-y-alcance.md) | Objetivo, públicos, mensajes clave, alcance v1 vs. v2, criterios de éxito, pendientes |
+| [02-arquitectura.md](docs/02-arquitectura.md) | Diagrama, estructura de carpetas, reglas hexagonales, ADRs |
+| [03-modelo-de-dominio.md](docs/03-modelo-de-dominio.md) | Entidades, VOs, máquina de estados, puertos, invariantes |
+| [04-historias-de-usuario.md](docs/04-historias-de-usuario.md) | Todas las HU por épica (E1-E5), formato Dado/Cuando/Entonces |
+| [05-backlog-issues.md](docs/05-backlog-issues.md) | Issues técnicos ISS-NNN por fase (F0-F7), con tests nombrados |
+| [06-plan-de-pruebas.md](docs/06-plan-de-pruebas.md) | Estrategia TDD, pirámide de pruebas, umbrales de cobertura, checklist de accesibilidad |
+| [07-guia-de-estilo.md](docs/07-guia-de-estilo.md) | Convenciones de código y guía visual (paleta, tipografía, componentes) |
+| [08-contenido.md](docs/08-contenido.md) | Todos los textos del sitio en borrador |
+
+## Checklist de fases (Etapa 2 — actualizar a medida que avance)
+
+- [ ] **F0** — Esqueleto monorepo (Spring Boot JDK 25 + Angular 22 CLI) + CI + ArchUnit + healthcheck
+- [ ] **F1** — Dominio `leads` con tests (TDD, sin Spring)
+- [ ] **F2** — API + persistencia (casos de uso, JPA, REST, seguridad, honeypot, rate limiting)
+- [ ] **F3** — Frontend: estructura y páginas con contenido
+- [ ] **F4** — Formulario end-to-end con Signal Forms + notificaciones
+- [ ] **F5** — Panel admin
+- [ ] **F6** — SEO, rendimiento y accesibilidad (Lighthouse ≥90)
+- [ ] **F7** — Despliegue (costos de hosting + dominio, decisión final con el usuario)
+
+Detalle de issues por fase en
+[docs/05-backlog-issues.md](docs/05-backlog-issues.md).
+
+## Pendientes que requieren input del usuario
+
+- Correo corporativo (placeholder `[CORREO_CORPORATIVO_PENDIENTE]` en el contenido).
+- URL de LinkedIn del fundador (placeholder `[LINKEDIN_FUNDADOR_PENDIENTE]`).
+- Cuál de las 3 paletas propuestas en
+  [docs/07-guia-de-estilo.md](docs/07-guia-de-estilo.md) se adopta.
+- Dominio web definitivo (decisión al cierre de la fase F7).
