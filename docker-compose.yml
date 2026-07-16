@@ -1,0 +1,25 @@
+services:
+  postgres:
+    image: postgres:18-alpine
+    container_name: crearcode-leads-postgres
+    environment:
+      POSTGRES_DB: leads
+      POSTGRES_USER: leads
+      POSTGRES_PASSWORD: leads
+    ports:
+      # 5433 en el host: el 5432 por defecto puede estar ocupado por otro
+      # proyecto local; el puerto interno del contenedor sigue siendo 5432.
+      - "5433:5432"
+    volumes:
+      # Desde la imagen oficial de Postgres 18, el punto de montaje
+      # correcto es /var/lib/postgresql (no .../data): la imagen gestiona
+      # internamente un subdirectorio versionado para soportar pg_upgrade.
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U leads -d leads"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
