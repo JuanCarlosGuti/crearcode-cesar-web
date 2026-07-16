@@ -1,0 +1,2 @@
+-- Baseline del esquema de la base de datos "leads".
+-- Las migraciones del contexto de dominio empiezan en V2 (fase F2).
