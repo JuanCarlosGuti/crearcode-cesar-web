@@ -16,7 +16,7 @@
                                         │ REST/JSON (fetch)
                                         ▼
                     ┌───────────────────────────────────────┐
-                    │   backend — Spring Boot 3 / Java 25    │
+                    │  backend — Spring Boot 4.1 / Java 25   │
                     │                                         │
                     │  infraestructura/rest  (controladores)  │
                     │            │                            │
@@ -60,7 +60,7 @@ web-empresa/
 │   │   ├── contenido/         # Datos/markdown centralizados (ver ADR-05)
 │   │   └── ...
 │   └── ...
-├── backend/                   # Spring Boot 3, Java 25, Maven
+├── backend/                   # Spring Boot 4.1, Java 25, Maven
 │   └── src/main/java/com/crearcode/leads/
 │       ├── dominio/           # Modelo + puertos — sin Spring ni JPA
 │       ├── aplicacion/        # Casos de uso — @Transactional aquí
@@ -169,10 +169,11 @@ en v2); empezar desacoplado evita una migración dolorosa después.
 se acepta ese costo a cambio de las dos razones anteriores.
 
 ### ADR-04 — Java 25 (LTS) + virtual threads
-**Decisión**: usar Java 25 con Spring Boot 3 sobre su versión más
-reciente compatible, aprovechando virtual threads para I/O concurrente
-(peticiones REST, envío de correo) y las mejoras de arranque/memoria del
-JDK pensando en contenedores pequeños de bajo costo.
+**Decisión**: usar Java 25 sobre la versión estable más reciente de
+Spring Boot compatible, aprovechando virtual threads para I/O
+concurrente (peticiones REST, envío de correo) y las mejoras de
+arranque/memoria del JDK pensando en contenedores pequeños de bajo
+costo.
 **Motivo**: es la LTS vigente más reciente al iniciar el proyecto; los
 virtual threads simplifican el modelo de concurrencia sin reescribir a
 reactivo, y un footprint de memoria menor reduce el costo de hosting en
@@ -181,6 +182,27 @@ la fase de despliegue (ver [[05-backlog-issues]] fase F7).
 compatibles con JDK 25 al generar el proyecto en la Etapa 2 (issue
 explícito en fase F0); versiones desactualizadas de estas librerías
 fallan en JDKs nuevos.
+
+### ADR-07 — Spring Boot 4.1.x en vez de Spring Boot 3
+**Decisión**: usar **Spring Boot 4.1.x** (versión estable actual) en
+vez de Spring Boot 3.x, que era la elección original documentada al
+cierre de la Etapa 1.
+**Motivo**: al iniciar la Etapa 2 (16 jul 2026) se verificó contra
+Maven Central y las notas oficiales de Spring que **3.5.16** —la
+última versión de la serie 3.x— fue también su última versión con
+soporte OSS: la generación 3.x llegó a fin de soporte comunitario el
+30 de junio de 2026, dos semanas antes de iniciar el desarrollo. Spring
+Boot 4.1.x es la serie con soporte activo, exige Java 17 como mínimo y
+tiene compatibilidad verificada con Java 25 (incluida compilación
+nativa). Decisión confirmada explícitamente por el usuario ante esta
+disyuntiva (no se asumió).
+**Consecuencia**: cualquier mención previa a "Spring Boot 3" en esta
+documentación se actualiza a Spring Boot 4.1.x. El impacto en la
+arquitectura hexagonal es mínimo: `dominio/` no depende de Spring en
+ningún caso (ver regla de dependencias, sección 3), así que el cambio
+de versión solo afecta a `infraestructura/` (namespaces, configuración,
+posibles APIs renombradas de Spring Framework 7) y no al modelo de
+dominio ya documentado en [[03-modelo-de-dominio]].
 
 ### ADR-05 — Contenido desacoplado de los componentes
 **Decisión**: todo texto editorial (no transaccional) vive en archivos

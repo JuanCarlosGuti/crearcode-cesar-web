@@ -16,7 +16,7 @@ Convención de estimación: **S** = medio día o menos, **M** = 1-2 días,
 
 | ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
 |---|---|---|---|---|---|---|
-| ISS-001 | Generar esqueleto backend Spring Boot 3 + Java 25 + Maven | HU-27 | Proyecto arranca con `mvn spring-boot:run`; se verifica y documenta compatibilidad de Lombok, ArchUnit y plugins Maven con JDK 25 | M | — | `ContextLoads` (smoke test de arranque) |
+| ISS-001 | Generar esqueleto backend Spring Boot 4.1.x + Java 25 + Maven | HU-27 | Proyecto arranca con `mvn spring-boot:run`; se verifica y documenta compatibilidad de Lombok, ArchUnit y plugins Maven con JDK 25 (ver ADR-07 en [[02-arquitectura]]) | M | — | `ContextLoads` (smoke test de arranque) |
 | ISS-002 | Docker Compose con PostgreSQL local | HU-27 | `docker compose up` deja PostgreSQL disponible con BD/usuario esperados | S | — | Verificación manual + healthcheck de contenedor |
 | ISS-003 | Flyway configurado + migración baseline | HU-27 | Backend aplica migraciones al arrancar contra el PostgreSQL de ISS-002 | S | ISS-001, ISS-002 | `FlywayMigrationIT` (Testcontainers) |
 | ISS-004 | Estructura de paquetes `com.crearcode.leads` (dominio/aplicacion/infraestructura) | — (soporte de HU-28) | Paquetes creados, vacíos salvo package-info; visibles en el árbol del proyecto | S | ISS-001 | — |

@@ -29,7 +29,7 @@ Ver el detalle completo en [docs/01-vision-y-alcance.md](docs/01-vision-y-alcanc
 
 ## Stack
 
-- **Backend**: Java 25 (LTS) + Spring Boot 3 + Maven. Arquitectura
+- **Backend**: Java 25 (LTS) + Spring Boot 4.1.x + Maven. Arquitectura
   hexagonal en `com.crearcode.leads` con `dominio/` (sin Spring/JPA),
   `aplicacion/` (casos de uso, `@Transactional`), `infraestructura/`
   (REST, persistencia JPA, notificación). Dominio en español. Reglas de
@@ -106,6 +106,9 @@ Detalle de issues por fase en
 - LinkedIn del fundador: https://www.linkedin.com/in/juan-carlos-gutierrez-huerfano369582/
 - Paleta oficial del sitio: **Opción C — "Minimal Corporativo"** (ver
   [docs/07-guia-de-estilo.md](docs/07-guia-de-estilo.md)).
+- Backend en **Spring Boot 4.1.x** (no 3.x): la última versión 3.x
+  (3.5.16) quedó sin soporte OSS el 30 jun 2026, justo antes de iniciar
+  la Etapa 2 (ver ADR-07 en [docs/02-arquitectura.md](docs/02-arquitectura.md)).
 
 ## Pendientes que requieren input del usuario
 
