@@ -1,5 +1,8 @@
 # Editores / IDE
-.vscode/
+# Con barra inicial: solo el .vscode/ de la raiz del monorepo. Cada
+# subproyecto (backend/, frontend/) trae su propio .gitignore, que ya
+# decide que archivos de .vscode/ le sirven versionados.
+/.vscode/
 .idea/
 *.iml
 
