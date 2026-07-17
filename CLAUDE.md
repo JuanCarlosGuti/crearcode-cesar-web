@@ -7,9 +7,9 @@ correspondiente antes de seguir.
 
 ## Estado del proyecto
 
-**Etapa actual: Etapa 2 — Desarrollo. Fases F0, F1, F2 y F3 completas
-(ISS-001 a ISS-046), pendiente de OK explícito del usuario para
-pasar a F4.**
+**Etapa actual: Etapa 2 — Desarrollo. Fases F0 a F4 completas
+(ISS-001 a ISS-052), pendiente de OK explícito del usuario para
+pasar a F5.**
 
 El usuario aprobó la documentación el 16 jul 2026 con la frase
 "APRUEBO LA DOCUMENTACIÓN, ARRANCA LA FASE 1". Regla dura: no se avanza
@@ -91,7 +91,7 @@ Detalle completo, diagrama y ADRs en
 - [x] **F1** — Dominio `leads` con tests (TDD, sin Spring)
 - [x] **F2** — API + persistencia (casos de uso, JPA, REST, seguridad, honeypot, rate limiting)
 - [x] **F3** — Frontend: estructura y páginas con contenido
-- [ ] **F4** — Formulario end-to-end con Signal Forms + notificaciones
+- [x] **F4** — Formulario end-to-end con Signal Forms + notificaciones
 - [ ] **F5** — Panel admin
 - [ ] **F6** — SEO, rendimiento y accesibilidad (Lighthouse ≥90)
 - [ ] **F7** — Despliegue (costos de hosting + dominio, decisión final con el usuario)
@@ -134,7 +134,19 @@ proyecto vía `npx`/scripts de `package.json`.
    ```
    Sirve en `http://localhost:4200` (usa `npm start -- --port <otro>`
    si ese puerto ya está ocupado). Pruebas con Vitest: `npm test`.
-   Build de producción con SSR/prerender: `npm run build`.
+   Build de producción con SSR/prerender: `npm run build`. Las
+   peticiones a `/api/*` del formulario de contacto se redirigen al
+   backend vía el proxy de desarrollo (`frontend/proxy.conf.json`,
+   apunta a `http://localhost:8080` por defecto — actualízalo si
+   corriste el backend en otro puerto). Test e2e del flujo de contacto
+   (requiere los tres servicios arriba corriendo): `npm run e2e`.
+
+   Nota de esta máquina de desarrollo: el puerto 8080 ya está ocupado
+   por Docker Desktop, así que aquí el backend hay que correrlo en el
+   8090 (ver arriba) y editar localmente el `target` de
+   `proxy.conf.json` a `http://localhost:8090` para poder probar el
+   formulario en el navegador (cambio solo local, no se comitea: el
+   archivo versionado sigue apuntando al 8080 por defecto).
 
 Verificado manualmente end-to-end (16 jul 2026): los tres servicios
 levantados a la vez, `GET /actuator/health` respondió
@@ -165,6 +177,23 @@ desacoplado de componentes en `frontend/src/contenido/` (ver ADR-05 en
 manual en navegador (Playwright, mobile 375px y desktop 1280px) sobre
 las 8 páginas: sin overflow horizontal, sin errores de consola,
 acordeón FAQ y render de Markdown del blog confirmados funcionando.
+
+## Formulario de contacto (tras la fase F4)
+
+Página `/contacto` con Signal Forms (`@angular/forms/signals`):
+validación reactiva que espeja exactamente las reglas de los VOs de
+dominio (mismo regex de correo, misma normalización de teléfono
+colombiano), honeypot invisible (`sitioWeb`), checkbox de consentimiento
+no premarcado con enlace a la política, e integración real con
+`POST /api/solicitudes`. Éxito muestra confirmación con alternativa de
+WhatsApp; fallo muestra error sin perder los datos ya escritos. El CTA
+de WhatsApp del header/footer usa el mensaje genérico en la mayoría de
+páginas y el mensaje propio del servicio cuando el visitante está en
+una página de servicio (`mensajeWhatsappParaRuta`). Verificado extremo
+a extremo contra el backend real: el POST persiste la solicitud y
+queda visible vía `GET /api/solicitudes` admin. Cubierto además por un
+e2e mínimo con Playwright (`frontend/e2e/contacto-e2e.spec.ts`,
+`npm run e2e`), con su propio job en CI.
 
 ## Decisiones ya resueltas por el usuario
 
