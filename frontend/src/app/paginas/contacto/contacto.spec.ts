@@ -121,4 +121,17 @@ describe('ContactoPage', () => {
     const el = fixture.nativeElement as HTMLElement;
     expect(el.querySelector('#empresa')?.getAttribute('required')).toBeFalsy();
   });
+
+  it('el campo honeypot esta oculto para personas pero no interfiere con el envio', async () => {
+    const fixture = TestBed.createComponent(ContactoPage);
+    await fixture.whenStable();
+
+    const el = fixture.nativeElement as HTMLElement;
+    const honeypot = el.querySelector('#sitioWeb') as HTMLInputElement;
+
+    expect(honeypot).not.toBeNull();
+    expect(honeypot.getAttribute('aria-hidden')).toBe('true');
+    expect(honeypot.getAttribute('tabindex')).toBe('-1');
+    expect(honeypot.getAttribute('autocomplete')).toBe('off');
+  });
 });

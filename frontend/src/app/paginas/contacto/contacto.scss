@@ -50,6 +50,14 @@ textarea[aria-invalid='true'] {
   border-color: var(--color-error);
 }
 
+.campo-honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
 .campo__error {
   margin: 0;
   color: var(--color-error);

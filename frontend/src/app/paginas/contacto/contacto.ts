@@ -8,6 +8,7 @@ interface DatosFormularioContacto {
   telefono: string;
   servicioDeInteres: string;
   mensaje: string;
+  sitioWeb: string;
 }
 
 const FORMATO_CORREO = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -71,6 +72,7 @@ export class ContactoPage {
     telefono: '',
     servicioDeInteres: '',
     mensaje: '',
+    sitioWeb: '',
   });
 
   protected readonly formulario = form(this.datos, ESQUEMA_CONTACTO);
