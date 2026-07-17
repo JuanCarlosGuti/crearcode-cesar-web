@@ -12,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 /**
  * API REST sin sesión: cada petición al panel admin se autentica por sí
@@ -25,7 +26,7 @@ import org.springframework.security.web.SecurityFilterChain;
 class SecurityConfig {
 
 	@Bean
-	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+	SecurityFilterChain filterChain(HttpSecurity http, RateLimitingFilter rateLimitingFilter) throws Exception {
 		http.csrf(csrf -> csrf.disable())
 				.sessionManagement(sesion -> sesion.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(autorizacion -> autorizacion
@@ -38,7 +39,8 @@ class SecurityConfig {
 						.requestMatchers(HttpMethod.POST, "/api/solicitudes").permitAll()
 						.anyRequest().authenticated())
 				.httpBasic(basic -> {
-				});
+				})
+				.addFilterBefore(rateLimitingFilter, BasicAuthenticationFilter.class);
 		return http.build();
 	}
 
