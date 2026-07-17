@@ -39,4 +39,29 @@ describe('SolicitudesApi', () => {
     expect(solicitud.request.body).toEqual(payload);
     solicitud.flush({ id: '11111111-1111-1111-1111-111111111111' });
   });
+
+  it('listar envia un GET a /api/solicitudes sin filtro por defecto', () => {
+    api.listar().subscribe();
+
+    const solicitud = httpMock.expectOne('/api/solicitudes');
+    expect(solicitud.request.method).toBe('GET');
+    solicitud.flush([]);
+  });
+
+  it('listar con estado agrega el query param estado', () => {
+    api.listar('NUEVA').subscribe();
+
+    const solicitud = httpMock.expectOne((req) => req.url === '/api/solicitudes' && req.params.get('estado') === 'NUEVA');
+    expect(solicitud.request.method).toBe('GET');
+    solicitud.flush([]);
+  });
+
+  it('cambiarEstado envia un PATCH con el nuevo estado', () => {
+    api.cambiarEstado('11111111-1111-1111-1111-111111111111', 'CONTACTADA').subscribe();
+
+    const solicitud = httpMock.expectOne('/api/solicitudes/11111111-1111-1111-1111-111111111111/estado');
+    expect(solicitud.request.method).toBe('PATCH');
+    expect(solicitud.request.body).toEqual({ nuevoEstado: 'CONTACTADA' });
+    solicitud.flush(null);
+  });
 });
