@@ -8,4 +8,4 @@
  */
 export const BASE_URL = 'https://crearcodecesar.example';
 
-export const IMAGEN_OG_DEFECTO = '/imagenes/og-defecto.png';
+export const IMAGEN_OG_DEFECTO = '/imagenes/og-defecto.jpg';

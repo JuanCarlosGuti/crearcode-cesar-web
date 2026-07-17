@@ -32,7 +32,7 @@ describe('establecerMetadatosDePagina', () => {
     expect(meta.getTag('property="og:title"')?.content).toBe('Título');
     expect(meta.getTag('property="og:description"')?.content).toBe('Descripción');
     expect(meta.getTag('property="og:url"')?.content).toBe('https://crearcodecesar.example/servicios/x');
-    expect(meta.getTag('property="og:image"')?.content).toBe('https://crearcodecesar.example/imagenes/og-defecto.png');
+    expect(meta.getTag('property="og:image"')?.content).toBe('https://crearcodecesar.example/imagenes/og-defecto.jpg');
   });
 
   it('usa la imagen propia de la pagina cuando se especifica', async () => {
