@@ -7,22 +7,31 @@ import {
 import express from 'express';
 import { join } from 'node:path';
 
+import { generarRobotsTxt } from './servidor/robots';
+import { generarSitemap } from './servidor/sitemap';
+
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
 const app = express();
 const angularApp = new AngularNodeAppEngine();
 
 /**
- * Example Express Rest API endpoints can be defined here.
- * Uncomment and define endpoints as necessary.
- *
- * Example:
- * ```ts
- * app.get('/api/{*splat}', (req, res) => {
- *   // Handle API request
- * });
- * ```
+ * sitemap.xml generado dinámicamente desde el mismo contenido usado para
+ * el prerender (ver `servidor/sitemap.ts`) — excluye siempre `/admin/**`
+ * (HU-23).
  */
+app.get('/sitemap.xml', (req, res) => {
+  res.type('application/xml').send(generarSitemap());
+});
+
+/**
+ * robots.txt generado dinámicamente (en vez de un archivo estático en
+ * `public/`) para que la URL base salga siempre de `contenido/sitio.ts`,
+ * nunca hardcodeada en dos lugares (ADR-06).
+ */
+app.get('/robots.txt', (req, res) => {
+  res.type('text/plain').send(generarRobotsTxt());
+});
 
 /**
  * Serve static files from /browser
