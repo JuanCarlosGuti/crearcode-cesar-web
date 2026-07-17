@@ -7,8 +7,9 @@ correspondiente antes de seguir.
 
 ## Estado del proyecto
 
-**Etapa actual: Etapa 2 — Desarrollo. Fase F0 completa (ISS-001 a
-ISS-010), pendiente de OK explícito del usuario para pasar a F1.**
+**Etapa actual: Etapa 2 — Desarrollo. Fases F0 y F1 completas
+(ISS-001 a ISS-020), pendiente de OK explícito del usuario para
+pasar a F2.**
 
 El usuario aprobó la documentación el 16 jul 2026 con la frase
 "APRUEBO LA DOCUMENTACIÓN, ARRANCA LA FASE 1". Regla dura: no se avanza
@@ -87,7 +88,7 @@ Detalle completo, diagrama y ADRs en
 ## Checklist de fases (Etapa 2 — actualizar a medida que avance)
 
 - [x] **F0** — Esqueleto monorepo (Spring Boot JDK 25 + Angular 22 CLI) + CI + ArchUnit + healthcheck
-- [ ] **F1** — Dominio `leads` con tests (TDD, sin Spring)
+- [x] **F1** — Dominio `leads` con tests (TDD, sin Spring)
 - [ ] **F2** — API + persistencia (casos de uso, JPA, REST, seguridad, honeypot, rate limiting)
 - [ ] **F3** — Frontend: estructura y páginas con contenido
 - [ ] **F4** — Formulario end-to-end con Signal Forms + notificaciones
