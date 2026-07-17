@@ -7,13 +7,13 @@ correspondiente antes de seguir.
 
 ## Estado del proyecto
 
-**Etapa actual: Etapa 1 — Documentación (completa, pendiente de
-aprobación explícita del usuario).**
+**Etapa actual: Etapa 2 — Desarrollo. Fase F0 completa (ISS-001 a
+ISS-010), pendiente de OK explícito del usuario para pasar a F1.**
 
-No se debe escribir código de aplicación (`frontend/`, `backend/`) hasta
-que el usuario responda exactamente: **"APRUEBO LA DOCUMENTACIÓN,
-ARRANCA LA FASE 1"**. Antes de esa frase, cualquier trabajo se limita a
-ajustar la documentación en `docs/`.
+El usuario aprobó la documentación el 16 jul 2026 con la frase
+"APRUEBO LA DOCUMENTACIÓN, ARRANCA LA FASE 1". Regla dura: no se avanza
+de una fase a la siguiente sin tests en verde, ArchUnit en verde y el
+OK explícito del usuario para esa fase concreta.
 
 ## Qué es este proyecto
 
@@ -86,7 +86,7 @@ Detalle completo, diagrama y ADRs en
 
 ## Checklist de fases (Etapa 2 — actualizar a medida que avance)
 
-- [ ] **F0** — Esqueleto monorepo (Spring Boot JDK 25 + Angular 22 CLI) + CI + ArchUnit + healthcheck
+- [x] **F0** — Esqueleto monorepo (Spring Boot JDK 25 + Angular 22 CLI) + CI + ArchUnit + healthcheck
 - [ ] **F1** — Dominio `leads` con tests (TDD, sin Spring)
 - [ ] **F2** — API + persistencia (casos de uso, JPA, REST, seguridad, honeypot, rate limiting)
 - [ ] **F3** — Frontend: estructura y páginas con contenido
@@ -97,6 +97,48 @@ Detalle completo, diagrama y ADRs en
 
 Detalle de issues por fase en
 [docs/05-backlog-issues.md](docs/05-backlog-issues.md).
+
+## Arranque local
+
+Requisitos: JDK 25, Docker (con Docker Compose), Node 22+ con npm. No
+se necesita Maven ni Angular CLI instalados globalmente: el backend
+trae Maven Wrapper (`./mvnw`) y el frontend usa el CLI local del
+proyecto vía `npx`/scripts de `package.json`.
+
+1. **Base de datos** (desde la raíz del repo):
+   ```
+   docker compose up -d
+   ```
+   Deja PostgreSQL en `localhost:5433`, base y usuario `leads`
+   (contraseña `leads`, solo para desarrollo local). Puerto 5433 en el
+   host — no 5432 — para no chocar con otro PostgreSQL local que ya
+   pudiera estar corriendo en esa máquina.
+
+2. **Backend** (desde `backend/`):
+   ```
+   ./mvnw spring-boot:run
+   ```
+   Arranca en `http://localhost:8080`, aplica las migraciones de
+   Flyway automáticamente y expone `GET /actuator/health` sin
+   autenticación. Si el puerto 8080 ya está en uso en tu máquina:
+   `./mvnw spring-boot:run -Dspring-boot.run.arguments=--server.port=8090`.
+   Para correr toda la suite de pruebas (unitarias + ArchUnit +
+   integración con Testcontainers, requiere Docker activo):
+   `./mvnw verify`.
+
+3. **Frontend** (desde `frontend/`):
+   ```
+   npm install
+   npm start
+   ```
+   Sirve en `http://localhost:4200` (usa `npm start -- --port <otro>`
+   si ese puerto ya está ocupado). Pruebas con Vitest: `npm test`.
+   Build de producción con SSR/prerender: `npm run build`.
+
+Verificado manualmente end-to-end (16 jul 2026): los tres servicios
+levantados a la vez, `GET /actuator/health` respondió
+`{"status":"UP"}` con la base de datos real conectada, y el frontend
+respondió 200 en su ruta raíz.
 
 ## Decisiones ya resueltas por el usuario
 
