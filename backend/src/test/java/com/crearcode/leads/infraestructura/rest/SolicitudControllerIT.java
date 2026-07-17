@@ -9,6 +9,7 @@ import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureTestRe
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +34,23 @@ class SolicitudControllerIT {
 	private SolicitudRequest solicitudValida() {
 		return new SolicitudRequest("Juan Pérez", "Empresa S.A.S.", "nombre@empresa.com", "3001234567",
 				ServicioDeInteres.IA_Y_AUTOMATIZACION, "Quiero automatizar mi negocio", true, null);
+	}
+
+	// Cacheado a nivel de clase: un admin real inicia sesion una vez y
+	// reusa el token durante toda su sesion, no vuelve a loguearse antes
+	// de cada llamada. Ademas de mas realista, evita chocar con el
+	// rate-limit propio y estricto del login (ISS-060) al llamarlo desde
+	// multiples metodos de test en la misma clase.
+	private static String tokenAdminCacheado;
+
+	private HttpEntity<Void> conBearerAdmin() {
+		if (tokenAdminCacheado == null) {
+			tokenAdminCacheado = restTemplate.postForEntity("/api/auth/login",
+					new LoginRequest(ADMIN_USUARIO, ADMIN_CONTRASENA), LoginResponse.class).getBody().token();
+		}
+		HttpHeaders headers = new HttpHeaders();
+		headers.setBearerAuth(tokenAdminCacheado);
+		return new HttpEntity<>(headers);
 	}
 
 	@Test
@@ -88,9 +106,8 @@ class SolicitudControllerIT {
 		assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 		assertThat(respuesta.getBody()).isNotNull();
 
-		ResponseEntity<SolicitudResponse[]> listado = restTemplate
-				.withBasicAuth(ADMIN_USUARIO, ADMIN_CONTRASENA)
-				.getForEntity("/api/solicitudes", SolicitudResponse[].class);
+		ResponseEntity<SolicitudResponse[]> listado = restTemplate.exchange(
+				"/api/solicitudes", HttpMethod.GET, conBearerAdmin(), SolicitudResponse[].class);
 		assertThat(listado.getBody()).noneSatisfy(
 				solicitud -> assertThat(solicitud.correo()).isEqualTo("bot@spam.com"));
 	}
@@ -99,9 +116,8 @@ class SolicitudControllerIT {
 	void listarDevuelveLaSolicitudRecienRegistradaConSusDatos() {
 		restTemplate.postForEntity("/api/solicitudes", solicitudValida(), SolicitudCreadaResponse.class);
 
-		ResponseEntity<SolicitudResponse[]> respuesta = restTemplate
-				.withBasicAuth(ADMIN_USUARIO, ADMIN_CONTRASENA)
-				.getForEntity("/api/solicitudes", SolicitudResponse[].class);
+		ResponseEntity<SolicitudResponse[]> respuesta = restTemplate.exchange(
+				"/api/solicitudes", HttpMethod.GET, conBearerAdmin(), SolicitudResponse[].class);
 
 		assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(respuesta.getBody()).isNotEmpty();
@@ -117,9 +133,8 @@ class SolicitudControllerIT {
 	void listarConFiltroPorEstadoDescartadaNoIncluyeSolicitudesNuevas() {
 		restTemplate.postForEntity("/api/solicitudes", solicitudValida(), SolicitudCreadaResponse.class);
 
-		ResponseEntity<SolicitudResponse[]> respuesta = restTemplate
-				.withBasicAuth(ADMIN_USUARIO, ADMIN_CONTRASENA)
-				.getForEntity("/api/solicitudes?estado=DESCARTADA", SolicitudResponse[].class);
+		ResponseEntity<SolicitudResponse[]> respuesta = restTemplate.exchange(
+				"/api/solicitudes?estado=DESCARTADA", HttpMethod.GET, conBearerAdmin(), SolicitudResponse[].class);
 
 		assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(respuesta.getBody()).allSatisfy(
@@ -132,25 +147,26 @@ class SolicitudControllerIT {
 				.id();
 	}
 
+	private HttpEntity<CambiarEstadoRequest> conBearerAdminYCuerpo(CambiarEstadoRequest cuerpo) {
+		HttpEntity<Void> autenticacion = conBearerAdmin();
+		return new HttpEntity<>(cuerpo, autenticacion.getHeaders());
+	}
+
 	@Test
 	void cambiarEstadoConTransicionValidaDevuelve204() {
 		UUID id = registrarYObtenerId();
 
-		ResponseEntity<Void> respuesta = restTemplate
-				.withBasicAuth(ADMIN_USUARIO, ADMIN_CONTRASENA)
-				.exchange("/api/solicitudes/{id}/estado", HttpMethod.PATCH,
-						new HttpEntity<>(new CambiarEstadoRequest(EstadoSolicitud.CONTACTADA)), Void.class, id);
+		ResponseEntity<Void> respuesta = restTemplate.exchange("/api/solicitudes/{id}/estado", HttpMethod.PATCH,
+				conBearerAdminYCuerpo(new CambiarEstadoRequest(EstadoSolicitud.CONTACTADA)), Void.class, id);
 
 		assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 	}
 
 	@Test
 	void cambiarEstadoConIdInexistenteDevuelve404() {
-		ResponseEntity<String> respuesta = restTemplate
-				.withBasicAuth(ADMIN_USUARIO, ADMIN_CONTRASENA)
-				.exchange("/api/solicitudes/{id}/estado", HttpMethod.PATCH,
-						new HttpEntity<>(new CambiarEstadoRequest(EstadoSolicitud.CONTACTADA)), String.class,
-						UUID.randomUUID());
+		ResponseEntity<String> respuesta = restTemplate.exchange("/api/solicitudes/{id}/estado", HttpMethod.PATCH,
+				conBearerAdminYCuerpo(new CambiarEstadoRequest(EstadoSolicitud.CONTACTADA)), String.class,
+				UUID.randomUUID());
 
 		assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 	}
@@ -159,10 +175,8 @@ class SolicitudControllerIT {
 	void cambiarEstadoConTransicionInvalidaDevuelve409() {
 		UUID id = registrarYObtenerId();
 
-		ResponseEntity<String> respuesta = restTemplate
-				.withBasicAuth(ADMIN_USUARIO, ADMIN_CONTRASENA)
-				.exchange("/api/solicitudes/{id}/estado", HttpMethod.PATCH,
-						new HttpEntity<>(new CambiarEstadoRequest(EstadoSolicitud.CONVERTIDA)), String.class, id);
+		ResponseEntity<String> respuesta = restTemplate.exchange("/api/solicitudes/{id}/estado", HttpMethod.PATCH,
+				conBearerAdminYCuerpo(new CambiarEstadoRequest(EstadoSolicitud.CONVERTIDA)), String.class, id);
 
 		assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
 	}

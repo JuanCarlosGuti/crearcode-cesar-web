@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.crearcode.leads.aplicacion.CredencialesInvalidasException;
 import com.crearcode.leads.aplicacion.SolicitudNoEncontradaException;
 import com.crearcode.leads.dominio.ConsentimientoRequeridoException;
 import com.crearcode.leads.dominio.DatosDeContactoInvalidosException;
@@ -56,6 +57,11 @@ class GlobalExceptionHandler {
 	@ExceptionHandler(SolicitudNoEncontradaException.class)
 	ResponseEntity<ErrorResponse> solicitudNoEncontrada(SolicitudNoEncontradaException excepcion) {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(excepcion.getMessage()));
+	}
+
+	@ExceptionHandler(CredencialesInvalidasException.class)
+	ResponseEntity<ErrorResponse> credencialesInvalidas(CredencialesInvalidasException excepcion) {
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(excepcion.getMessage()));
 	}
 
 }

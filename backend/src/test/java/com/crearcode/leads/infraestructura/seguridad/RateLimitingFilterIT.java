@@ -2,6 +2,7 @@ package com.crearcode.leads.infraestructura.seguridad;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,11 +38,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 class RateLimitingFilterIT {
 
 	private static final int MAX_SOLICITUDES_EN_ESTE_TEST = 3;
+	private static final int MAX_INTENTOS_LOGIN_EN_ESTE_TEST = 3;
 
 	@DynamicPropertySource
 	static void umbralDePrueba(DynamicPropertyRegistry registry) {
 		registry.add("app.rate-limit.max-solicitudes", () -> MAX_SOLICITUDES_EN_ESTE_TEST);
 		registry.add("app.rate-limit.ventana-minutos", () -> 10);
+		registry.add("app.rate-limit.login.max-intentos", () -> MAX_INTENTOS_LOGIN_EN_ESTE_TEST);
+		registry.add("app.rate-limit.login.ventana-minutos", () -> 15);
 	}
 
 	@Autowired
@@ -55,6 +59,19 @@ class RateLimitingFilterIT {
 		List<HttpStatusCode> estados = new ArrayList<>();
 		for (int i = 0; i < MAX_SOLICITUDES_EN_ESTE_TEST + 3; i++) {
 			estados.add(restTemplate.postForEntity("/api/solicitudes", solicitud, String.class).getStatusCode());
+		}
+
+		assertThat(estados).contains(HttpStatus.TOO_MANY_REQUESTS);
+	}
+
+	@Test
+	void limitaLosIntentosDeLoginRepetidosDesdeLaMismaIp() {
+		Map<String, String> loginInvalido = Map.of("correo", "quien-sea@crearcode-cesar.local",
+				"contrasena", "clave-incorrecta");
+
+		List<HttpStatusCode> estados = new ArrayList<>();
+		for (int i = 0; i < MAX_INTENTOS_LOGIN_EN_ESTE_TEST + 3; i++) {
+			estados.add(restTemplate.postForEntity("/api/auth/login", loginInvalido, String.class).getStatusCode());
 		}
 
 		assertThat(estados).contains(HttpStatus.TOO_MANY_REQUESTS);

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -18,56 +19,76 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 /**
- * Limita cuántas veces la misma IP puede llamar a
- * {@code POST /api/solicitudes} en una ventana de tiempo, para frenar
- * envíos masivos automatizados (HU-16). Contador en memoria: suficiente
- * para el volumen esperado de un sitio de pyme en v1, sin necesitar
- * infraestructura distribuida. Umbral configurable (ver
- * application.properties) para poder ajustarlo sin recompilar y para
- * que las pruebas de este propio mecanismo no dependan del valor de
- * producción.
+ * Limita cuántas veces la misma IP puede llamar a un conjunto de rutas
+ * sensibles en una ventana de tiempo (HU-16 para
+ * {@code POST /api/solicitudes}; fuerza bruta de login para
+ * {@code POST /api/auth/login}, con su propio umbral más estricto).
+ * Contador en memoria: suficiente para el volumen esperado de un sitio
+ * de pyme en v1, sin necesitar infraestructura distribuida. Cada regla
+ * lleva su propio umbral configurable (ver application.properties) para
+ * poder ajustarlo sin recompilar y para que las pruebas de este propio
+ * mecanismo no dependan del valor de producción.
  */
 @Component
 class RateLimitingFilter extends OncePerRequestFilter {
 
 	private final Clock reloj;
-	private final int maxSolicitudesPorVentana;
-	private final Duration duracionVentana;
-	private final Map<String, VentanaDeSolicitudes> ventanasPorIp = new ConcurrentHashMap<>();
+	private final List<Regla> reglas;
 
 	RateLimitingFilter(Clock reloj,
-			@Value("${app.rate-limit.max-solicitudes}") int maxSolicitudesPorVentana,
-			@Value("${app.rate-limit.ventana-minutos}") long ventanaMinutos) {
+			@Value("${app.rate-limit.max-solicitudes}") int maxSolicitudesContacto,
+			@Value("${app.rate-limit.ventana-minutos}") long ventanaContactoMinutos,
+			@Value("${app.rate-limit.login.max-intentos}") int maxIntentosLogin,
+			@Value("${app.rate-limit.login.ventana-minutos}") long ventanaLoginMinutos) {
 		this.reloj = reloj;
-		this.maxSolicitudesPorVentana = maxSolicitudesPorVentana;
-		this.duracionVentana = Duration.ofMinutes(ventanaMinutos);
+		this.reglas = List.of(
+				new Regla("POST", "/api/solicitudes", maxSolicitudesContacto, Duration.ofMinutes(ventanaContactoMinutos)),
+				new Regla("POST", "/api/auth/login", maxIntentosLogin, Duration.ofMinutes(ventanaLoginMinutos)));
 	}
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 			FilterChain filterChain) throws ServletException, IOException {
-		if (esRutaLimitada(request) && superoElLimite(request.getRemoteAddr())) {
-			response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
-			return;
+		for (Regla regla : reglas) {
+			if (regla.aplicaA(request) && regla.superoElLimite(request.getRemoteAddr(), reloj)) {
+				response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
+				return;
+			}
 		}
 		filterChain.doFilter(request, response);
 	}
 
-	private boolean esRutaLimitada(HttpServletRequest request) {
-		return "POST".equalsIgnoreCase(request.getMethod()) && "/api/solicitudes".equals(request.getRequestURI());
-	}
+	private static final class Regla {
 
-	private boolean superoElLimite(String ip) {
-		Instant ahora = Instant.now(reloj);
-		VentanaDeSolicitudes ventana = ventanasPorIp.computeIfAbsent(ip, clave -> new VentanaDeSolicitudes(ahora));
+		private final String metodo;
+		private final String ruta;
+		private final int maxSolicitudesPorVentana;
+		private final Duration duracionVentana;
+		private final Map<String, VentanaDeSolicitudes> ventanasPorIp = new ConcurrentHashMap<>();
 
-		synchronized (ventana) {
-			if (Duration.between(ventana.inicio, ahora).compareTo(duracionVentana) > 0) {
-				ventana.inicio = ahora;
-				ventana.contador = 0;
+		private Regla(String metodo, String ruta, int maxSolicitudesPorVentana, Duration duracionVentana) {
+			this.metodo = metodo;
+			this.ruta = ruta;
+			this.maxSolicitudesPorVentana = maxSolicitudesPorVentana;
+			this.duracionVentana = duracionVentana;
+		}
+
+		private boolean aplicaA(HttpServletRequest request) {
+			return metodo.equalsIgnoreCase(request.getMethod()) && ruta.equals(request.getRequestURI());
+		}
+
+		private boolean superoElLimite(String ip, Clock reloj) {
+			Instant ahora = Instant.now(reloj);
+			VentanaDeSolicitudes ventana = ventanasPorIp.computeIfAbsent(ip, clave -> new VentanaDeSolicitudes(ahora));
+
+			synchronized (ventana) {
+				if (Duration.between(ventana.inicio, ahora).compareTo(duracionVentana) > 0) {
+					ventana.inicio = ahora;
+					ventana.contador = 0;
+				}
+				ventana.contador++;
+				return ventana.contador > maxSolicitudesPorVentana;
 			}
-			ventana.contador++;
-			return ventana.contador > maxSolicitudesPorVentana;
 		}
 	}
 

@@ -1,32 +1,33 @@
 package com.crearcode.leads.infraestructura.seguridad;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 /**
  * API REST sin sesión: cada petición al panel admin se autentica por sí
- * misma con HTTP Basic contra un único usuario (credenciales por
- * variable de entorno, sin registro ni recuperación de contraseña en
- * v1). Sin CSRF ni sesiones HTTP, que solo tienen sentido con
- * autenticación basada en cookies. El healthcheck y el registro público
- * de solicitudes (POST) no exigen autenticación; todo lo demás sí.
+ * misma con un JWT Bearer autoemitido (ver ADR-08 en
+ * docs/02-arquitectura.md — reemplaza el HTTP Basic de la fase F2). Sin
+ * CSRF ni sesiones HTTP, que solo tienen sentido con autenticación
+ * basada en cookies. El healthcheck, el registro público de solicitudes
+ * (POST) y el login (POST) no exigen autenticación; todo lo demás sí.
  */
 @Configuration
 class SecurityConfig {
 
 	@Bean
-	SecurityFilterChain filterChain(HttpSecurity http, RateLimitingFilter rateLimitingFilter) throws Exception {
+	SecurityFilterChain filterChain(HttpSecurity http, RateLimitingFilter rateLimitingFilter,
+			JwtDecoder jwtDecoder, JwtAuthenticationConverter jwtAuthenticationConverter,
+			ManejadorDeErroresDeSeguridad manejadorDeErrores) throws Exception {
 		http.csrf(csrf -> csrf.disable())
 				.sessionManagement(sesion -> sesion.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(autorizacion -> autorizacion
@@ -37,10 +38,14 @@ class SecurityConfig {
 						// en vez del status real.
 						.requestMatchers("/error").permitAll()
 						.requestMatchers(HttpMethod.POST, "/api/solicitudes").permitAll()
+						.requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
 						.anyRequest().authenticated())
-				.httpBasic(basic -> {
-				})
-				.addFilterBefore(rateLimitingFilter, BasicAuthenticationFilter.class);
+				.oauth2ResourceServer(oauth2 -> oauth2
+						.jwt(jwt -> jwt.decoder(jwtDecoder).jwtAuthenticationConverter(jwtAuthenticationConverter)))
+				.exceptionHandling(manejo -> manejo
+						.authenticationEntryPoint(manejadorDeErrores)
+						.accessDeniedHandler(manejadorDeErrores))
+				.addFilterBefore(rateLimitingFilter, BearerTokenAuthenticationFilter.class);
 		return http.build();
 	}
 
@@ -50,13 +55,14 @@ class SecurityConfig {
 	}
 
 	@Bean
-	InMemoryUserDetailsManager userDetailsService(PasswordEncoder passwordEncoder,
-			@Value("${app.admin.username}") String usuario, @Value("${app.admin.password}") String contrasena) {
-		UserDetails admin = User.withUsername(usuario)
-				.password(passwordEncoder.encode(contrasena))
-				.roles("ADMIN")
-				.build();
-		return new InMemoryUserDetailsManager(admin);
+	JwtAuthenticationConverter jwtAuthenticationConverter() {
+		JwtGrantedAuthoritiesConverter authoritiesConverter = new JwtGrantedAuthoritiesConverter();
+		authoritiesConverter.setAuthoritiesClaimName("rol");
+		authoritiesConverter.setAuthorityPrefix("ROLE_");
+
+		JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+		converter.setJwtGrantedAuthoritiesConverter(authoritiesConverter);
+		return converter;
 	}
 
 }
