@@ -170,3 +170,35 @@ Esta es la paleta oficial del sitio a partir de ahora.
   depender solo del color (icono o texto, por accesibilidad).
 - **Sección FAQ**: acordeón simple, un ítem expandido a la vez o varios
   simultáneos (decisión de implementación libre, no de negocio).
+
+### Imágenes (convención para cuando existan imágenes de contenido)
+
+Al cierre de la fase F6 el sitio no tiene ninguna imagen de contenido
+todavía (`<img>`/`NgOptimizedImage`) — el único archivo de imagen es
+`public/imagenes/og-defecto.jpg`, referenciado solo como metadato
+`og:image`, no renderizado en ninguna página. No tiene sentido optimizar
+imágenes que no existen (ISS-076 se cierra como convención documentada,
+no como trabajo sobre assets reales), pero la convención queda fijada
+para cuando se agreguen imágenes reales (casos de éxito, blog, equipo):
+
+- **Componente**: usar siempre `NgOptimizedImage` (`ngSrc`, no `src`) —
+  aplica lazy loading automático fuera del viewport inicial, exige
+  `width`/`height` explícitos (evita *layout shift*, relevante para
+  Lighthouse Performance/CLS) y con `priority` solo en la imagen más
+  above-the-fold de cada página (ej. la del hero de Home, si llega a
+  tener una).
+- **Formato**: WebP como formato de entrega (fallback automático de
+  `NgOptimizedImage`/el navegador no es necesario en 2026, soporte ya
+  es universal); AVIF opcional si el ahorro de peso es significativo
+  para una imagen concreta.
+- **Tamaño**: exportar al tamaño máximo real de renderizado (no subir
+  un original de cámara/diseño sin redimensionar); usar `srcset`/
+  `ngSrcset` cuando la misma imagen se muestra en tamaños distintos
+  según viewport (ej. tarjeta vs. detalle).
+- **Peso**: igual criterio que se usó para `og-defecto.jpg` en ISS-075
+  (JPEG/WebP calidad ~85, cada imagen revisada individualmente antes de
+  commitear — sin subir binarios de varios MB sin comprimir).
+- **Alt text**: siempre descriptivo y en español, nunca vacío salvo que
+  la imagen sea puramente decorativa (`alt=""` explícito en ese caso,
+  no la omisión del atributo) — requisito también del checklist de
+  accesibilidad (ISS-078).
