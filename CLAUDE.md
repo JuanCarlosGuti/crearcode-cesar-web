@@ -7,9 +7,9 @@ correspondiente antes de seguir.
 
 ## Estado del proyecto
 
-**Etapa actual: Etapa 2 — Desarrollo. Fases F0 a F4 completas
-(ISS-001 a ISS-052), pendiente de OK explícito del usuario para
-pasar a F5.**
+**Etapa actual: Etapa 2 — Desarrollo. Fases F0 a F5 completas
+(ISS-001 a ISS-071), pendiente de OK explícito del usuario para
+pasar a F6.**
 
 El usuario aprobó la documentación el 16 jul 2026 con la frase
 "APRUEBO LA DOCUMENTACIÓN, ARRANCA LA FASE 1". Regla dura: no se avanza
@@ -92,7 +92,7 @@ Detalle completo, diagrama y ADRs en
 - [x] **F2** — API + persistencia (casos de uso, JPA, REST, seguridad, honeypot, rate limiting)
 - [x] **F3** — Frontend: estructura y páginas con contenido
 - [x] **F4** — Formulario end-to-end con Signal Forms + notificaciones
-- [ ] **F5** — Panel admin
+- [x] **F5** — Panel admin (autenticación JWT, no HTTP Basic — ver ADR-08)
 - [ ] **F6** — SEO, rendimiento y accesibilidad (Lighthouse ≥90)
 - [ ] **F7** — Despliegue (costos de hosting + dominio, decisión final con el usuario)
 
@@ -153,19 +153,23 @@ levantados a la vez, `GET /actuator/health` respondió
 `{"status":"UP"}` con la base de datos real conectada, y el frontend
 respondió 200 en su ruta raíz.
 
-## API del backend (tras la fase F2)
+## API del backend (tras la fase F5)
 
 | Endpoint | Auth | Qué hace |
 |---|---|---|
 | `GET /actuator/health` | Pública | Healthcheck, agrega el estado de la BD |
 | `POST /api/solicitudes` | Pública | Registra un lead; honeypot (`sitioWeb`) y rate limiting (20/10 min por IP, configurable) |
-| `GET /api/solicitudes?estado=` | Admin (HTTP Basic) | Lista solicitudes, filtro opcional por `EstadoSolicitud` |
-| `PATCH /api/solicitudes/{id}/estado` | Admin (HTTP Basic) | Cambia el estado; 404 si no existe, 409 en transición inválida |
+| `POST /api/auth/login` | Pública | Login del panel admin; devuelve `{ token, expiraEn }` (JWT HS256, 8h por defecto); rate limiting propio y más estricto (5/15 min por IP) |
+| `GET /api/solicitudes?estado=` | Admin (`Bearer <token>`) | Lista solicitudes, filtro opcional por `EstadoSolicitud` |
+| `PATCH /api/solicitudes/{id}/estado` | Admin (`Bearer <token>`) | Cambia el estado; 404 si no existe, 409 en transición inválida |
 
-Usuario admin por defecto en local: `admin` / `cambiar-en-produccion`
-(variables `ADMIN_USERNAME`/`ADMIN_PASSWORD` en cualquier otro
-entorno). La API es stateless (sin CSRF ni sesión): cada petición al
-panel admin lleva sus credenciales.
+Usuario admin por defecto en local: `admin@crearcode-cesar.local` /
+`cambiar-en-produccion` (variables `ADMIN_USERNAME`/`ADMIN_PASSWORD` en
+cualquier otro entorno — `ADMIN_USERNAME` ahora **debe** ser un correo
+válido, ver ADR-08). Se crea automáticamente al arrancar la app si la
+tabla `usuarios` está vacía (`SembradorDeUsuarioAdmin`). La API sigue
+siendo stateless (sin CSRF ni sesión de servidor): cada petición al
+panel admin lleva su propio token.
 
 ## Frontend (tras la fase F3)
 
@@ -194,6 +198,22 @@ a extremo contra el backend real: el POST persiste la solicitud y
 queda visible vía `GET /api/solicitudes` admin. Cubierto además por un
 e2e mínimo con Playwright (`frontend/e2e/contacto-e2e.spec.ts`,
 `npm run e2e`), con su propio job en CI.
+
+## Panel admin (tras la fase F5)
+
+Autenticación con JWT autoemitido (no HTTP Basic — ver ADR-08 en
+[docs/02-arquitectura.md](docs/02-arquitectura.md), decisión pedida
+explícitamente por el usuario pensando en crecimiento multi-empleado
+con roles). `/admin/login` (pública), `/admin` (listado + filtro por
+estado) y `/admin/solicitudes/:id` (detalle + cambio de estado con
+confirmación, solo transiciones válidas) protegidas por `adminGuard`.
+`SesionService` guarda el token en `sessionStorage` (se pierde al
+cerrar la pestaña; sin revocación antes de esa expiración — trade-off
+consciente de v1, ver ADR-08). El panel no lleva el header/footer del
+sitio público (es una sección interna distinta, no contenido) y queda
+fuera de SSR/prerender (`admin/**` con `RenderMode.Client`). Verificado
+extremo a extremo en navegador real: login correcto/incorrecto, listado
+con datos reales, cambio de estado reflejado de inmediato, logout.
 
 ## Decisiones ya resueltas por el usuario
 
