@@ -101,4 +101,24 @@ class SolicitudDeContactoTest {
 				.isInstanceOf(TransicionDeEstadoInvalidaException.class);
 	}
 
+	@Test
+	void reconstruirRecreaExactamenteElEstadoPersistido() {
+		SolicitudId id = SolicitudId.nuevo();
+		Instant creacion = Instant.parse("2026-01-01T00:00:00Z");
+		Instant actualizacion = Instant.parse("2026-01-02T00:00:00Z");
+
+		SolicitudDeContacto solicitud = SolicitudDeContacto.reconstruir(id, DATOS,
+				ServicioDeInteres.SOLUCIONES_TECNOLOGICAS, "mensaje", EstadoSolicitud.CONTACTADA,
+				CONSENTIMIENTO_ACEPTADO, creacion, actualizacion);
+
+		assertThat(solicitud.id()).isEqualTo(id);
+		assertThat(solicitud.datosDeContacto()).isEqualTo(DATOS);
+		assertThat(solicitud.servicioDeInteres()).isEqualTo(ServicioDeInteres.SOLUCIONES_TECNOLOGICAS);
+		assertThat(solicitud.mensaje()).isEqualTo("mensaje");
+		assertThat(solicitud.estado()).isEqualTo(EstadoSolicitud.CONTACTADA);
+		assertThat(solicitud.consentimiento()).isEqualTo(CONSENTIMIENTO_ACEPTADO);
+		assertThat(solicitud.fechaCreacion()).isEqualTo(creacion);
+		assertThat(solicitud.fechaUltimaActualizacion()).isEqualTo(actualizacion);
+	}
+
 }

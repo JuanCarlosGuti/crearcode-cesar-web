@@ -48,6 +48,19 @@ public final class SolicitudDeContacto {
 				mensaje, EstadoSolicitud.NUEVA, consentimiento, ahora, ahora);
 	}
 
+	/**
+	 * Reconstituye una solicitud ya existente (por ejemplo, al leerla desde
+	 * persistencia) sin volver a aplicar las invariantes de creación de
+	 * {@link #registrar}: ya se validaron cuando la solicitud se creó por
+	 * primera vez, y el estado puede ser cualquiera, no solo NUEVA.
+	 */
+	public static SolicitudDeContacto reconstruir(SolicitudId id, DatosDeContacto datosDeContacto,
+			ServicioDeInteres servicioDeInteres, String mensaje, EstadoSolicitud estado,
+			ConsentimientoDatos consentimiento, Instant fechaCreacion, Instant fechaUltimaActualizacion) {
+		return new SolicitudDeContacto(id, datosDeContacto, servicioDeInteres, mensaje, estado,
+				consentimiento, fechaCreacion, fechaUltimaActualizacion);
+	}
+
 	public void cambiarEstado(EstadoSolicitud nuevoEstado, Instant ahora) {
 		if (!estado.puedeTransicionarA(nuevoEstado)) {
 			throw new TransicionDeEstadoInvalidaException(
