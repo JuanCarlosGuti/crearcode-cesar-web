@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @AutoConfigureTestRestTemplate
 class SolicitudControllerIT {
 
-	private static final String ADMIN_USUARIO = "admin";
+	private static final String ADMIN_USUARIO = "admin@crearcode-cesar.local";
 	private static final String ADMIN_CONTRASENA = "cambiar-en-produccion";
 
 	@Autowired
