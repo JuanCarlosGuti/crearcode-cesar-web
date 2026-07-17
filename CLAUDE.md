@@ -7,9 +7,9 @@ correspondiente antes de seguir.
 
 ## Estado del proyecto
 
-**Etapa actual: Etapa 2 — Desarrollo. Fases F0, F1 y F2 completas
-(ISS-001 a ISS-036), pendiente de OK explícito del usuario para
-pasar a F3.**
+**Etapa actual: Etapa 2 — Desarrollo. Fases F0, F1, F2 y F3 completas
+(ISS-001 a ISS-046), pendiente de OK explícito del usuario para
+pasar a F4.**
 
 El usuario aprobó la documentación el 16 jul 2026 con la frase
 "APRUEBO LA DOCUMENTACIÓN, ARRANCA LA FASE 1". Regla dura: no se avanza
@@ -90,7 +90,7 @@ Detalle completo, diagrama y ADRs en
 - [x] **F0** — Esqueleto monorepo (Spring Boot JDK 25 + Angular 22 CLI) + CI + ArchUnit + healthcheck
 - [x] **F1** — Dominio `leads` con tests (TDD, sin Spring)
 - [x] **F2** — API + persistencia (casos de uso, JPA, REST, seguridad, honeypot, rate limiting)
-- [ ] **F3** — Frontend: estructura y páginas con contenido
+- [x] **F3** — Frontend: estructura y páginas con contenido
 - [ ] **F4** — Formulario end-to-end con Signal Forms + notificaciones
 - [ ] **F5** — Panel admin
 - [ ] **F6** — SEO, rendimiento y accesibilidad (Lighthouse ≥90)
@@ -154,6 +154,17 @@ Usuario admin por defecto en local: `admin` / `cambiar-en-produccion`
 (variables `ADMIN_USERNAME`/`ADMIN_PASSWORD` en cualquier otro
 entorno). La API es stateless (sin CSRF ni sesión): cada petición al
 panel admin lleva sus credenciales.
+
+## Frontend (tras la fase F3)
+
+8 páginas públicas (home, 3 de servicio, casos listado/detalle, sobre
+nosotros, blog listado/artículo, 2 legales), 14 rutas en total,
+prerenderizadas con SSR (`npx ng build`). Contenido editorial 100%
+desacoplado de componentes en `frontend/src/contenido/` (ver ADR-05 en
+[docs/02-arquitectura.md](docs/02-arquitectura.md)). Verificación
+manual en navegador (Playwright, mobile 375px y desktop 1280px) sobre
+las 8 páginas: sin overflow horizontal, sin errores de consola,
+acordeón FAQ y render de Markdown del blog confirmados funcionando.
 
 ## Decisiones ya resueltas por el usuario
 
