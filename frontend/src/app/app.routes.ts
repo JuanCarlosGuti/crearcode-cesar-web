@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
 
+import { POLITICA_DE_DATOS, TERMINOS_DE_USO } from '../contenido/legales';
+
 export const routes: Routes = [
   {
     path: '',
@@ -35,5 +37,17 @@ export const routes: Routes = [
     path: 'blog/:slug',
     loadComponent: () => import('./paginas/blog-articulo/blog-articulo').then((m) => m.BlogArticuloPage),
     title: 'Blog — Crear Code Cesar',
+  },
+  {
+    path: 'legales/politica-de-datos',
+    loadComponent: () => import('./paginas/legal/legal').then((m) => m.LegalPage),
+    data: { documento: POLITICA_DE_DATOS },
+    title: 'Política de tratamiento de datos — Crear Code Cesar',
+  },
+  {
+    path: 'legales/terminos',
+    loadComponent: () => import('./paginas/legal/legal').then((m) => m.LegalPage),
+    data: { documento: TERMINOS_DE_USO },
+    title: 'Términos de uso — Crear Code Cesar',
   },
 ];

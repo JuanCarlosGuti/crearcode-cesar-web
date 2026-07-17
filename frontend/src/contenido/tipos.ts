@@ -52,3 +52,9 @@ export interface ValorEmpresa {
   readonly titulo: string;
   readonly descripcion: string;
 }
+
+export interface DocumentoLegal {
+  readonly titulo: string;
+  readonly parrafos: readonly string[];
+  readonly notaBorrador: string;
+}

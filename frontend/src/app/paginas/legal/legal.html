@@ -1,0 +1,9 @@
+<article class="contenedor pagina-legal">
+  <h1>{{ documento().titulo }}</h1>
+
+  @for (parrafo of documento().parrafos; track parrafo) {
+    <p>{{ parrafo }}</p>
+  }
+
+  <p class="pagina-legal__nota">{{ documento().notaBorrador }}</p>
+</article>

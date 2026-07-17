@@ -1,0 +1,12 @@
+.pagina-legal {
+  padding-block: var(--espacio-5);
+  max-width: 42rem;
+}
+
+.pagina-legal__nota {
+  margin-top: var(--espacio-4);
+  padding: var(--espacio-2) var(--espacio-3);
+  background-color: color-mix(in srgb, var(--color-alerta) 12%, white);
+  border-left: 4px solid var(--color-alerta);
+  font-size: 0.9rem;
+}
