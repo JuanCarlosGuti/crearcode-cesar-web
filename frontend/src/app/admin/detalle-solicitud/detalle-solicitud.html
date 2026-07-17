@@ -1,0 +1,59 @@
+@if (cargando()) {
+  <section class="contenedor pagina-detalle">
+    <p>Cargando…</p>
+  </section>
+} @else if (solicitud(); as s) {
+  <section class="contenedor pagina-detalle">
+    <a routerLink="/admin" class="pagina-detalle__volver">← Volver al listado</a>
+
+    <h1>{{ s.nombre }}</h1>
+    <span class="badge" [class]="'badge-' + s.estado.toLowerCase()">{{ s.estado }}</span>
+
+    <dl class="pagina-detalle__datos">
+      <dt>Empresa</dt>
+      <dd>{{ s.empresa || '—' }}</dd>
+      <dt>Correo</dt>
+      <dd>{{ s.correo }}</dd>
+      <dt>Teléfono</dt>
+      <dd>{{ s.telefono }}</dd>
+      <dt>Servicio de interés</dt>
+      <dd>{{ s.servicioDeInteres }}</dd>
+      <dt>Fecha</dt>
+      <dd><time [attr.datetime]="s.fechaCreacion">{{ formatearFecha(s.fechaCreacion) }}</time></dd>
+    </dl>
+
+    <h2>Mensaje</h2>
+    <p class="pagina-detalle__mensaje">{{ s.mensaje }}</p>
+
+    @if (error()) {
+      <p class="pagina-detalle__error" role="alert">No se pudo actualizar el estado. Inténtalo de nuevo.</p>
+    }
+
+    @if (transicionesDisponibles().length > 0) {
+      <div class="pagina-detalle__acciones">
+        @for (estado of transicionesDisponibles(); track estado) {
+          <button type="button" class="boton boton-secundario" (click)="pedirConfirmacion(estado)">
+            {{ etiquetaTransicion(estado) }}
+          </button>
+        }
+      </div>
+    }
+
+    @if (confirmando(); as estadoAConfirmar) {
+      <div class="pagina-detalle__confirmacion" role="alertdialog">
+        <p>¿Confirmas que quieres marcar esta solicitud como {{ estadoAConfirmar.toLowerCase() }}?</p>
+        <button type="button" class="boton boton-primario" [disabled]="cambiando()" (click)="confirmarCambio()">
+          Sí, confirmar
+        </button>
+        <button type="button" class="boton boton-secundario" [disabled]="cambiando()" (click)="cancelarConfirmacion()">
+          Cancelar
+        </button>
+      </div>
+    }
+  </section>
+} @else {
+  <section class="contenedor pagina-detalle">
+    <h1>Solicitud no encontrada</h1>
+    <a routerLink="/admin">Volver al listado</a>
+  </section>
+}
