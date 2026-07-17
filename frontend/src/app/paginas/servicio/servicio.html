@@ -1,0 +1,59 @@
+@if (servicio(); as s) {
+  <section class="contenedor pagina-servicio">
+    <h1>{{ s.nombre }}</h1>
+
+    <section class="pagina-servicio__bloque" aria-labelledby="titulo-problema">
+      <h2 id="titulo-problema">El problema que resolvemos</h2>
+      <p>{{ s.problema }}</p>
+    </section>
+
+    <section class="pagina-servicio__bloque" aria-labelledby="titulo-incluye">
+      <h2 id="titulo-incluye">Qué incluye</h2>
+      <ul>
+        @for (item of s.incluye; track item) {
+          <li>{{ item }}</li>
+        }
+      </ul>
+    </section>
+
+    <section class="pagina-servicio__bloque" aria-labelledby="titulo-proceso">
+      <h2 id="titulo-proceso">Nuestro proceso</h2>
+      <ol class="pagina-servicio__proceso">
+        @for (paso of s.proceso; track paso.titulo; let numero = $index) {
+          <li>
+            <span class="pagina-servicio__paso-numero" aria-hidden="true">{{ numero + 1 }}</span>
+            <div>
+              <h3>{{ paso.titulo }}</h3>
+              <p>{{ paso.descripcion }}</p>
+            </div>
+          </li>
+        }
+      </ol>
+    </section>
+
+    <section class="pagina-servicio__bloque" aria-labelledby="titulo-entregables">
+      <h2 id="titulo-entregables">Qué te entregamos</h2>
+      <ul>
+        @for (item of s.entregables; track item) {
+          <li>{{ item }}</li>
+        }
+      </ul>
+    </section>
+
+    <section class="pagina-servicio__bloque" aria-labelledby="titulo-faq">
+      <h2 id="titulo-faq">Preguntas frecuentes</h2>
+      <app-faq [preguntas]="s.faq" />
+    </section>
+
+    <section class="pagina-servicio__cta cta-doble">
+      <a routerLink="/contacto" class="boton boton-primario">Agenda tu consulta gratuita</a>
+      <app-whatsapp-cta [mensaje]="s.mensajeWhatsapp" etiqueta="Escríbenos por WhatsApp" />
+    </section>
+  </section>
+} @else {
+  <section class="contenedor pagina-servicio">
+    <h1>Servicio no encontrado</h1>
+    <p>No encontramos el servicio que buscas.</p>
+    <a routerLink="/">Volver al inicio</a>
+  </section>
+}

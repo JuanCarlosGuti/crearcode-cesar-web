@@ -1,0 +1,21 @@
+<div class="faq">
+  @for (pregunta of preguntas(); track pregunta.pregunta; let indice = $index) {
+    <div class="faq__item">
+      <h3 class="faq__pregunta-titulo">
+        <button
+          type="button"
+          class="faq__pregunta"
+          (click)="alternar(indice)"
+          [attr.aria-expanded]="indiceAbierto() === indice"
+          [attr.aria-controls]="'faq-respuesta-' + indice"
+        >
+          <span>{{ pregunta.pregunta }}</span>
+          <span aria-hidden="true">{{ indiceAbierto() === indice ? '−' : '+' }}</span>
+        </button>
+      </h3>
+      @if (indiceAbierto() === indice) {
+        <p class="faq__respuesta" [id]="'faq-respuesta-' + indice">{{ pregunta.respuesta }}</p>
+      }
+    </div>
+  }
+</div>

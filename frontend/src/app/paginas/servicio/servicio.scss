@@ -1,0 +1,46 @@
+.pagina-servicio {
+  padding-block: var(--espacio-5);
+  max-width: 48rem;
+}
+
+.pagina-servicio__bloque {
+  margin-bottom: var(--espacio-5);
+}
+
+.pagina-servicio__proceso {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+}
+
+.pagina-servicio__proceso li {
+  display: flex;
+  gap: var(--espacio-2);
+  align-items: flex-start;
+}
+
+.pagina-servicio__paso-numero {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background-color: var(--color-acento);
+  color: var(--color-blanco);
+  font-weight: 700;
+}
+
+.pagina-servicio__proceso h3 {
+  margin-bottom: 0.25rem;
+  font-size: 1.05rem;
+}
+
+.pagina-servicio__cta {
+  padding-top: var(--espacio-3);
+  border-top: 1px solid color-mix(in srgb, var(--color-primario) 12%, white);
+}
