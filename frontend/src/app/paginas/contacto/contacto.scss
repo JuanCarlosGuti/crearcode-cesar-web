@@ -1,0 +1,61 @@
+.pagina-contacto {
+  padding-block: var(--espacio-5);
+  max-width: 36rem;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+  margin-top: var(--espacio-4);
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-1);
+}
+
+.campo__opcional {
+  font-weight: 400;
+  color: var(--color-texto-secundario);
+}
+
+label {
+  font-weight: 600;
+  color: var(--color-primario);
+}
+
+input,
+select,
+textarea {
+  font: inherit;
+  padding: 0.65rem 0.85rem;
+  border: 2px solid color-mix(in srgb, var(--color-primario) 20%, white);
+  border-radius: var(--radio-borde);
+  background-color: var(--color-blanco);
+  color: var(--color-texto);
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--color-acento);
+  outline-offset: 1px;
+}
+
+input[aria-invalid='true'],
+select[aria-invalid='true'],
+textarea[aria-invalid='true'] {
+  border-color: var(--color-error);
+}
+
+.campo__error {
+  margin: 0;
+  color: var(--color-error);
+  font-size: 0.9rem;
+}
+
+button[type='submit'] {
+  align-self: flex-start;
+}

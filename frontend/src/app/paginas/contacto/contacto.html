@@ -1,0 +1,91 @@
+<section class="contenedor pagina-contacto">
+  <h1>Hablemos de tu negocio</h1>
+  <p>Cuéntanos qué necesitas. Te respondemos pronto y sin compromiso.</p>
+
+  <form (submit)="enviar($event)" novalidate>
+    <div class="campo">
+      <label for="nombre">Nombre completo</label>
+      <input
+        id="nombre"
+        type="text"
+        [formField]="formulario.nombre"
+        [attr.aria-invalid]="formulario.nombre().touched() && formulario.nombre().invalid() ? 'true' : null"
+        [attr.aria-describedby]="formulario.nombre().touched() && formulario.nombre().invalid() ? 'nombre-error' : null"
+      />
+      @if (formulario.nombre().touched() && formulario.nombre().invalid()) {
+        <p class="campo__error" id="nombre-error">{{ formulario.nombre().errors()[0]?.message }}</p>
+      }
+    </div>
+
+    <div class="campo">
+      <label for="empresa">Empresa <span class="campo__opcional">(opcional)</span></label>
+      <input id="empresa" type="text" [formField]="formulario.empresa" />
+    </div>
+
+    <div class="campo">
+      <label for="correo">Correo electrónico</label>
+      <input
+        id="correo"
+        type="email"
+        [formField]="formulario.correo"
+        [attr.aria-invalid]="formulario.correo().touched() && formulario.correo().invalid() ? 'true' : null"
+        [attr.aria-describedby]="formulario.correo().touched() && formulario.correo().invalid() ? 'correo-error' : null"
+      />
+      @if (formulario.correo().touched() && formulario.correo().invalid()) {
+        <p class="campo__error" id="correo-error">{{ formulario.correo().errors()[0]?.message }}</p>
+      }
+    </div>
+
+    <div class="campo">
+      <label for="telefono">Teléfono / WhatsApp</label>
+      <input
+        id="telefono"
+        type="tel"
+        [formField]="formulario.telefono"
+        [attr.aria-invalid]="formulario.telefono().touched() && formulario.telefono().invalid() ? 'true' : null"
+        [attr.aria-describedby]="formulario.telefono().touched() && formulario.telefono().invalid() ? 'telefono-error' : null"
+      />
+      @if (formulario.telefono().touched() && formulario.telefono().invalid()) {
+        <p class="campo__error" id="telefono-error">{{ formulario.telefono().errors()[0]?.message }}</p>
+      }
+    </div>
+
+    <div class="campo">
+      <label for="servicioDeInteres">¿Qué servicio te interesa?</label>
+      <select
+        id="servicioDeInteres"
+        [formField]="formulario.servicioDeInteres"
+        [attr.aria-invalid]="formulario.servicioDeInteres().touched() && formulario.servicioDeInteres().invalid() ? 'true' : null"
+        [attr.aria-describedby]="
+          formulario.servicioDeInteres().touched() && formulario.servicioDeInteres().invalid()
+            ? 'servicio-error'
+            : null
+        "
+      >
+        <option value="">Selecciona una opción</option>
+        @for (opcion of opcionesServicio; track opcion.valor) {
+          <option [value]="opcion.valor">{{ opcion.etiqueta }}</option>
+        }
+      </select>
+      @if (formulario.servicioDeInteres().touched() && formulario.servicioDeInteres().invalid()) {
+        <p class="campo__error" id="servicio-error">{{ formulario.servicioDeInteres().errors()[0]?.message }}</p>
+      }
+    </div>
+
+    <div class="campo">
+      <label for="mensaje">Cuéntanos brevemente qué necesitas</label>
+      <textarea
+        id="mensaje"
+        rows="4"
+        [formField]="formulario.mensaje"
+        [attr.aria-invalid]="formulario.mensaje().touched() && formulario.mensaje().invalid() ? 'true' : null"
+        [attr.aria-describedby]="formulario.mensaje().touched() && formulario.mensaje().invalid() ? 'mensaje-error' : null"
+      ></textarea>
+      @if (formulario.mensaje().touched() && formulario.mensaje().invalid()) {
+        <p class="campo__error" id="mensaje-error">{{ formulario.mensaje().errors()[0]?.message }}</p>
+      }
+    </div>
+
+    <button type="submit" class="boton boton-primario">Enviar mensaje</button>
+  </form>
+</section>
