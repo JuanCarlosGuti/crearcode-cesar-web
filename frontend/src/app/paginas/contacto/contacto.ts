@@ -1,4 +1,5 @@
 import { Component, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { FormField, required, pattern, schema, form, validate } from '@angular/forms/signals';
 
 interface DatosFormularioContacto {
@@ -8,6 +9,7 @@ interface DatosFormularioContacto {
   telefono: string;
   servicioDeInteres: string;
   mensaje: string;
+  aceptaConsentimiento: boolean;
   sitioWeb: string;
 }
 
@@ -27,6 +29,7 @@ export const MENSAJE_ERROR_CORREO = 'Escribe un correo válido, ej. nombre@empre
 export const MENSAJE_ERROR_TELEFONO = 'Escribe un número de celular colombiano válido, ej. 300 123 4567.';
 export const MENSAJE_ERROR_SERVICIO = 'Selecciona el servicio que te interesa.';
 export const MENSAJE_ERROR_MENSAJE = 'Cuéntanos brevemente qué necesitas, así podemos ayudarte mejor.';
+export const MENSAJE_ERROR_CONSENTIMIENTO = 'Necesitamos que aceptes el tratamiento de datos para poder contactarte.';
 
 const ESQUEMA_CONTACTO = schema<DatosFormularioContacto>((campo) => {
   required(campo.nombre, { message: MENSAJE_ERROR_NOMBRE });
@@ -47,6 +50,7 @@ const ESQUEMA_CONTACTO = schema<DatosFormularioContacto>((campo) => {
 
   required(campo.servicioDeInteres, { message: MENSAJE_ERROR_SERVICIO });
   required(campo.mensaje, { message: MENSAJE_ERROR_MENSAJE });
+  required(campo.aceptaConsentimiento, { message: MENSAJE_ERROR_CONSENTIMIENTO });
 });
 
 export const OPCIONES_SERVICIO = [
@@ -60,7 +64,7 @@ export const OPCIONES_SERVICIO = [
   selector: 'app-pagina-contacto',
   templateUrl: './contacto.html',
   styleUrl: './contacto.scss',
-  imports: [FormField],
+  imports: [FormField, RouterLink],
 })
 export class ContactoPage {
   protected readonly opcionesServicio = OPCIONES_SERVICIO;
@@ -72,6 +76,7 @@ export class ContactoPage {
     telefono: '',
     servicioDeInteres: '',
     mensaje: '',
+    aceptaConsentimiento: false,
     sitioWeb: '',
   });
 
@@ -81,6 +86,9 @@ export class ContactoPage {
     evento.preventDefault();
     this.formulario().markAsTouched();
     if (!this.formulario().valid()) {
+      if (this.formulario.aceptaConsentimiento().invalid()) {
+        this.formulario.aceptaConsentimiento().focusBoundControl();
+      }
       return;
     }
     // ISS-050: integración con POST /api/solicitudes

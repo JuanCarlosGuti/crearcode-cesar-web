@@ -50,6 +50,28 @@ textarea[aria-invalid='true'] {
   border-color: var(--color-error);
 }
 
+.campo--checkbox {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: var(--espacio-2);
+
+  input {
+    width: 1.15rem;
+    height: 1.15rem;
+    margin-top: 0.2rem;
+    flex-shrink: 0;
+  }
+
+  label {
+    font-weight: 400;
+    color: var(--color-texto);
+  }
+
+  .campo__error {
+    flex-basis: 100%;
+  }
+}
+
 .campo-honeypot {
   position: absolute;
   left: -9999px;

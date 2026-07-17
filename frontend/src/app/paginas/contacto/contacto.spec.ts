@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { ContactoPage } from './contacto';
 
@@ -12,6 +13,10 @@ function difuminar(elemento: HTMLElement): void {
 }
 
 describe('ContactoPage', () => {
+  beforeEach(() => {
+    TestBed.configureTestingModule({ providers: [provideRouter([])] });
+  });
+
   it('muestra todos los campos obligatorios con su label asociado', async () => {
     const fixture = TestBed.createComponent(ContactoPage);
     await fixture.whenStable();
@@ -120,6 +125,38 @@ describe('ContactoPage', () => {
 
     const el = fixture.nativeElement as HTMLElement;
     expect(el.querySelector('#empresa')?.getAttribute('required')).toBeFalsy();
+  });
+
+  it('el checkbox de consentimiento no viene marcado por defecto y enlaza a la politica', async () => {
+    const fixture = TestBed.createComponent(ContactoPage);
+    await fixture.whenStable();
+
+    const el = fixture.nativeElement as HTMLElement;
+    const checkbox = el.querySelector('#aceptaConsentimiento') as HTMLInputElement;
+
+    expect(checkbox.checked).toBe(false);
+    const enlace = el.querySelector('label[for="aceptaConsentimiento"] a') as HTMLAnchorElement;
+    expect(enlace).not.toBeNull();
+    expect(enlace.getAttribute('href')).toContain('/legales/politica-de-datos');
+  });
+
+  it('bloquea el envio y mueve el foco al checkbox si no se acepta el consentimiento', async () => {
+    const fixture = TestBed.createComponent(ContactoPage);
+    await fixture.whenStable();
+
+    const el = fixture.nativeElement as HTMLElement;
+    escribir(el.querySelector('#nombre') as HTMLInputElement, 'Ana Pérez');
+    escribir(el.querySelector('#correo') as HTMLInputElement, 'ana@empresa.com');
+    escribir(el.querySelector('#telefono') as HTMLInputElement, '3001234567');
+    escribir(el.querySelector('#servicioDeInteres') as HTMLSelectElement, 'OTRO');
+    escribir(el.querySelector('#mensaje') as HTMLTextAreaElement, 'Necesito ayuda con mi negocio.');
+    await fixture.whenStable();
+
+    (el.querySelector('form') as HTMLFormElement).requestSubmit();
+    await fixture.whenStable();
+
+    expect(el.textContent).toContain('Necesitamos que aceptes el tratamiento de datos para poder contactarte.');
+    expect(document.activeElement?.id).toBe('aceptaConsentimiento');
   });
 
   it('el campo honeypot esta oculto para personas pero no interfiere con el envio', async () => {

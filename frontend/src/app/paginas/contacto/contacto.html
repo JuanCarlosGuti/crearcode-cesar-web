@@ -86,6 +86,32 @@
       }
     </div>
 
+    <div class="campo campo--checkbox">
+      <input
+        id="aceptaConsentimiento"
+        type="checkbox"
+        [formField]="formulario.aceptaConsentimiento"
+        [attr.aria-invalid]="
+          formulario.aceptaConsentimiento().touched() && formulario.aceptaConsentimiento().invalid()
+            ? 'true'
+            : null
+        "
+        [attr.aria-describedby]="
+          formulario.aceptaConsentimiento().touched() && formulario.aceptaConsentimiento().invalid()
+            ? 'consentimiento-error'
+            : null
+        "
+      />
+      <label for="aceptaConsentimiento">
+        He leído y acepto la <a routerLink="/legales/politica-de-datos">Política de tratamiento de datos</a>
+      </label>
+      @if (formulario.aceptaConsentimiento().touched() && formulario.aceptaConsentimiento().invalid()) {
+        <p class="campo__error" id="consentimiento-error">
+          {{ formulario.aceptaConsentimiento().errors()[0]?.message }}
+        </p>
+      }
+    </div>
+
     <div class="campo-honeypot" aria-hidden="true">
       <label for="sitioWeb">Sitio web</label>
       <input
