@@ -1,0 +1,46 @@
+<section class="contenedor pagina-login">
+  <h1>Panel de Crear Code Cesar</h1>
+  <p>Inicia sesión para gestionar las solicitudes que llegan del sitio.</p>
+
+  @if (error()) {
+    <p class="pagina-login__error" role="alert">Correo o contraseña incorrectos.</p>
+  }
+
+  <form (submit)="enviar($event)" novalidate>
+    <div class="campo">
+      <label for="correo">Correo</label>
+      <input
+        id="correo"
+        type="email"
+        autocomplete="username"
+        [formField]="formulario.correo"
+        [attr.aria-invalid]="formulario.correo().touched() && formulario.correo().invalid() ? 'true' : null"
+        [attr.aria-describedby]="formulario.correo().touched() && formulario.correo().invalid() ? 'correo-error' : null"
+      />
+      @if (formulario.correo().touched() && formulario.correo().invalid()) {
+        <p class="campo__error" id="correo-error">{{ formulario.correo().errors()[0]?.message }}</p>
+      }
+    </div>
+
+    <div class="campo">
+      <label for="contrasena">Contraseña</label>
+      <input
+        id="contrasena"
+        type="password"
+        autocomplete="current-password"
+        [formField]="formulario.contrasena"
+        [attr.aria-invalid]="formulario.contrasena().touched() && formulario.contrasena().invalid() ? 'true' : null"
+        [attr.aria-describedby]="
+          formulario.contrasena().touched() && formulario.contrasena().invalid() ? 'contrasena-error' : null
+        "
+      />
+      @if (formulario.contrasena().touched() && formulario.contrasena().invalid()) {
+        <p class="campo__error" id="contrasena-error">{{ formulario.contrasena().errors()[0]?.message }}</p>
+      }
+    </div>
+
+    <button type="submit" class="boton boton-primario" [disabled]="enviando()">
+      {{ enviando() ? 'Ingresando…' : 'Iniciar sesión' }}
+    </button>
+  </form>
+</section>
