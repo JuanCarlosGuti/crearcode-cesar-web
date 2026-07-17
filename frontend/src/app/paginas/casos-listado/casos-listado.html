@@ -1,0 +1,16 @@
+<section class="contenedor pagina-casos">
+  <h1>Casos de éxito</h1>
+  <p class="pagina-casos__intro">
+    Los siguientes casos son ejemplos de referencia y se irán reemplazando por casos reales.
+  </p>
+
+  <div class="pagina-casos__rejilla">
+    @for (caso of casos; track caso.slug) {
+      <a [routerLink]="['/casos', caso.slug]" class="tarjeta-caso">
+        <h2>{{ caso.titulo }}</h2>
+        <p>{{ caso.reto }}</p>
+        <span class="tarjeta-caso__enlace" aria-hidden="true">Ver caso completo →</span>
+      </a>
+    }
+  </div>
+</section>

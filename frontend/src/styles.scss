@@ -140,6 +140,16 @@ img {
   background-color: color-mix(in srgb, var(--color-whatsapp) 85%, black);
 }
 
+.boton-secundario {
+  background-color: transparent;
+  color: var(--color-primario);
+  border-color: var(--color-primario);
+}
+
+.boton-secundario:hover {
+  background-color: color-mix(in srgb, var(--color-primario) 8%, transparent);
+}
+
 .cta-doble {
   display: flex;
   flex-direction: column;

@@ -1,0 +1,30 @@
+@if (caso(); as c) {
+  <article class="contenedor caso-detalle">
+    <h1>{{ c.titulo }}</h1>
+
+    <section>
+      <h2>El reto</h2>
+      <p>{{ c.reto }}</p>
+    </section>
+
+    <section>
+      <h2>La solución</h2>
+      <p>{{ c.solucion }}</p>
+    </section>
+
+    <section>
+      <h2>El resultado</h2>
+      <p>{{ c.resultado }}</p>
+    </section>
+
+    <div class="cta-doble">
+      <a routerLink="/contacto" class="boton boton-primario">Agenda tu consulta gratuita</a>
+      <a routerLink="/casos" class="boton boton-secundario">Ver más casos</a>
+    </div>
+  </article>
+} @else {
+  <section class="contenedor caso-detalle">
+    <h1>Caso no encontrado</h1>
+    <a routerLink="/casos">Volver al portafolio</a>
+  </section>
+}

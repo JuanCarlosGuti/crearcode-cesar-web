@@ -11,4 +11,14 @@ export const routes: Routes = [
     loadComponent: () => import('./paginas/servicio/servicio').then((m) => m.ServicioPage),
     title: 'Servicios — Crear Code Cesar',
   },
+  {
+    path: 'casos',
+    loadComponent: () => import('./paginas/casos-listado/casos-listado').then((m) => m.CasosListadoPage),
+    title: 'Casos de éxito — Crear Code Cesar',
+  },
+  {
+    path: 'casos/:slug',
+    loadComponent: () => import('./paginas/caso-detalle/caso-detalle').then((m) => m.CasoDetallePage),
+    title: 'Caso de éxito — Crear Code Cesar',
+  },
 ];

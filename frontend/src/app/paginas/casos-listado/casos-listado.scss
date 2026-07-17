@@ -1,0 +1,48 @@
+.pagina-casos {
+  padding-block: var(--espacio-5);
+}
+
+.pagina-casos__intro {
+  max-width: 40rem;
+}
+
+.pagina-casos__rejilla {
+  display: grid;
+  gap: var(--espacio-3);
+  grid-template-columns: 1fr;
+  margin-top: var(--espacio-4);
+}
+
+.tarjeta-caso {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-2);
+  padding: var(--espacio-3);
+  background-color: var(--color-blanco);
+  border: 1px solid color-mix(in srgb, var(--color-primario) 12%, white);
+  border-radius: var(--radio-borde);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.2s ease;
+}
+
+.tarjeta-caso:hover,
+.tarjeta-caso:focus-visible {
+  border-color: var(--color-acento);
+}
+
+.tarjeta-caso:focus-visible {
+  outline: 3px solid var(--color-acento);
+  outline-offset: 2px;
+}
+
+.tarjeta-caso__enlace {
+  color: var(--color-acento);
+  font-weight: 600;
+}
+
+@media (min-width: 48rem) {
+  .pagina-casos__rejilla {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
