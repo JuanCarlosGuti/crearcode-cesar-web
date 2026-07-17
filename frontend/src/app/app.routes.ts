@@ -21,4 +21,9 @@ export const routes: Routes = [
     loadComponent: () => import('./paginas/caso-detalle/caso-detalle').then((m) => m.CasoDetallePage),
     title: 'Caso de éxito — Crear Code Cesar',
   },
+  {
+    path: 'sobre-nosotros',
+    loadComponent: () => import('./paginas/sobre-nosotros/sobre-nosotros').then((m) => m.SobreNosotrosPage),
+    title: 'Sobre nosotros — Crear Code Cesar',
+  },
 ];
