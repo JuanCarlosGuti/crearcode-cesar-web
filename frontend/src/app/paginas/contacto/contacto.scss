@@ -72,6 +72,30 @@ textarea[aria-invalid='true'] {
   }
 }
 
+.pagina-contacto__confirmacion,
+.pagina-contacto__error {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--espacio-2);
+  margin-top: var(--espacio-4);
+  padding: var(--espacio-3);
+  border-radius: var(--radio-borde);
+}
+
+.pagina-contacto__confirmacion {
+  background-color: color-mix(in srgb, var(--color-exito) 12%, white);
+}
+
+.pagina-contacto__error {
+  background-color: color-mix(in srgb, var(--color-error) 10%, white);
+}
+
+button[type='submit']:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 .campo-honeypot {
   position: absolute;
   left: -9999px;

@@ -1,5 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { ContactoPage } from './contacto';
 
@@ -12,9 +14,25 @@ function difuminar(elemento: HTMLElement): void {
   elemento.dispatchEvent(new Event('blur'));
 }
 
+function llenarFormularioValido(el: HTMLElement): void {
+  escribir(el.querySelector('#nombre') as HTMLInputElement, 'Ana Pérez');
+  escribir(el.querySelector('#correo') as HTMLInputElement, 'ana@empresa.com');
+  escribir(el.querySelector('#telefono') as HTMLInputElement, '3001234567');
+  escribir(el.querySelector('#servicioDeInteres') as HTMLSelectElement, 'OTRO');
+  escribir(el.querySelector('#mensaje') as HTMLTextAreaElement, 'Necesito ayuda con mi negocio.');
+  const consentimiento = el.querySelector('#aceptaConsentimiento') as HTMLInputElement;
+  consentimiento.checked = true;
+  consentimiento.dispatchEvent(new Event('input'));
+}
+
 describe('ContactoPage', () => {
+  let httpMock: HttpTestingController;
+
   beforeEach(() => {
-    TestBed.configureTestingModule({ providers: [provideRouter([])] });
+    TestBed.configureTestingModule({
+      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
+    });
+    httpMock = TestBed.inject(HttpTestingController);
   });
 
   it('muestra todos los campos obligatorios con su label asociado', async () => {
@@ -170,5 +188,66 @@ describe('ContactoPage', () => {
     expect(honeypot.getAttribute('aria-hidden')).toBe('true');
     expect(honeypot.getAttribute('tabindex')).toBe('-1');
     expect(honeypot.getAttribute('autocomplete')).toBe('off');
+  });
+
+  it('envia un POST a /api/solicitudes con los datos del formulario al enviar', async () => {
+    const fixture = TestBed.createComponent(ContactoPage);
+    await fixture.whenStable();
+
+    const el = fixture.nativeElement as HTMLElement;
+    llenarFormularioValido(el);
+    await fixture.whenStable();
+
+    (el.querySelector('form') as HTMLFormElement).requestSubmit();
+    await fixture.whenStable();
+
+    const solicitud = httpMock.expectOne('/api/solicitudes');
+    expect(solicitud.request.method).toBe('POST');
+    expect(solicitud.request.body).toEqual({
+      nombre: 'Ana Pérez',
+      empresa: '',
+      correo: 'ana@empresa.com',
+      telefono: '3001234567',
+      servicioDeInteres: 'OTRO',
+      mensaje: 'Necesito ayuda con mi negocio.',
+      aceptaConsentimiento: true,
+      sitioWeb: '',
+    });
+    solicitud.flush({ id: '11111111-1111-1111-1111-111111111111' });
+  });
+
+  it('muestra el mensaje de confirmacion cuando la solicitud se registra con exito', async () => {
+    const fixture = TestBed.createComponent(ContactoPage);
+    await fixture.whenStable();
+
+    const el = fixture.nativeElement as HTMLElement;
+    llenarFormularioValido(el);
+    await fixture.whenStable();
+    (el.querySelector('form') as HTMLFormElement).requestSubmit();
+    await fixture.whenStable();
+
+    httpMock.expectOne('/api/solicitudes').flush({ id: '11111111-1111-1111-1111-111111111111' });
+    await fixture.whenStable();
+
+    expect(el.textContent).toContain('¡Listo! Ya recibimos tu mensaje.');
+    expect(el.querySelector('form')).toBeNull();
+  });
+
+  it('muestra un mensaje de error y conserva los datos si falla el envio', async () => {
+    const fixture = TestBed.createComponent(ContactoPage);
+    await fixture.whenStable();
+
+    const el = fixture.nativeElement as HTMLElement;
+    llenarFormularioValido(el);
+    await fixture.whenStable();
+    (el.querySelector('form') as HTMLFormElement).requestSubmit();
+    await fixture.whenStable();
+
+    httpMock.expectOne('/api/solicitudes').flush('Error', { status: 500, statusText: 'Internal Server Error' });
+    await fixture.whenStable();
+
+    expect(el.textContent).toContain('Algo salió mal al enviar tu mensaje. Tus datos no se perdieron');
+    expect((el.querySelector('#nombre') as HTMLInputElement).value).toBe('Ana Pérez');
+    expect(el.querySelector('form')).not.toBeNull();
   });
 });

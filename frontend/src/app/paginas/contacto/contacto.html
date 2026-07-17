@@ -1,8 +1,28 @@
 <section class="contenedor pagina-contacto">
   <h1>Hablemos de tu negocio</h1>
-  <p>Cuéntanos qué necesitas. Te respondemos pronto y sin compromiso.</p>
 
-  <form (submit)="enviar($event)" novalidate>
+  @if (enviado()) {
+    <div class="pagina-contacto__confirmacion" role="status">
+      <p>
+        ¡Listo! Ya recibimos tu mensaje. Te contactamos muy pronto — mientras tanto, si prefieres hablar ya,
+        escríbenos por WhatsApp.
+      </p>
+      <app-whatsapp-cta [mensaje]="mensajeWhatsapp" />
+    </div>
+  } @else {
+    <p>Cuéntanos qué necesitas. Te respondemos pronto y sin compromiso.</p>
+
+    @if (errorEnvio()) {
+      <div class="pagina-contacto__error" role="alert">
+        <p>
+          Algo salió mal al enviar tu mensaje. Tus datos no se perdieron: inténtalo de nuevo, o escríbenos directo
+          por WhatsApp.
+        </p>
+        <app-whatsapp-cta [mensaje]="mensajeWhatsapp" />
+      </div>
+    }
+
+    <form (submit)="enviar($event)" novalidate>
     <div class="campo">
       <label for="nombre">Nombre completo</label>
       <input
@@ -124,6 +144,9 @@
       />
     </div>
 
-    <button type="submit" class="boton boton-primario">Enviar mensaje</button>
-  </form>
+      <button type="submit" class="boton boton-primario" [disabled]="enviando()">
+        {{ enviando() ? 'Enviando…' : 'Enviar mensaje' }}
+      </button>
+    </form>
+  }
 </section>

@@ -1,6 +1,10 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormField, required, pattern, schema, form, validate } from '@angular/forms/signals';
+
+import { SolicitudesApi } from '../../api/solicitudes-api';
+import { WhatsappCta } from '../../componentes/whatsapp-cta/whatsapp-cta';
+import { HOME } from '../../../contenido/home';
 
 interface DatosFormularioContacto {
   nombre: string;
@@ -64,10 +68,16 @@ export const OPCIONES_SERVICIO = [
   selector: 'app-pagina-contacto',
   templateUrl: './contacto.html',
   styleUrl: './contacto.scss',
-  imports: [FormField, RouterLink],
+  imports: [FormField, RouterLink, WhatsappCta],
 })
 export class ContactoPage {
+  private readonly solicitudesApi = inject(SolicitudesApi);
+
   protected readonly opcionesServicio = OPCIONES_SERVICIO;
+  protected readonly enviando = signal(false);
+  protected readonly enviado = signal(false);
+  protected readonly errorEnvio = signal(false);
+  protected readonly mensajeWhatsapp = HOME.mensajeWhatsapp;
 
   private readonly datos = signal<DatosFormularioContacto>({
     nombre: '',
@@ -91,6 +101,18 @@ export class ContactoPage {
       }
       return;
     }
-    // ISS-050: integración con POST /api/solicitudes
+
+    this.enviando.set(true);
+    this.errorEnvio.set(false);
+    this.solicitudesApi.registrar(this.datos()).subscribe({
+      next: () => {
+        this.enviando.set(false);
+        this.enviado.set(true);
+      },
+      error: () => {
+        this.enviando.set(false);
+        this.errorEnvio.set(true);
+      },
+    });
   }
 }
