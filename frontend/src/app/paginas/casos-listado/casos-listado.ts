@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { CASOS } from '../../../contenido/casos';
+import { METADATOS_CASOS_LISTADO } from '../../../contenido/metadatos-paginas';
+import { establecerMetadatosDePagina } from '../../nucleo/metadatos-pagina';
 
 @Component({
   selector: 'app-pagina-casos-listado',
@@ -11,4 +13,8 @@ import { CASOS } from '../../../contenido/casos';
 })
 export class CasosListadoPage {
   protected readonly casos = CASOS;
+
+  constructor() {
+    establecerMetadatosDePagina(() => ({ ...METADATOS_CASOS_LISTADO, ruta: '/casos' }));
+  }
 }

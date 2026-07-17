@@ -11,6 +11,7 @@ export const CASOS: readonly Caso[] = [
     reto: '[Descripción breve del problema que tenía el cliente antes de trabajar con Crear Code Cesar].',
     solucion: '[Qué se construyó o implementó].',
     resultado: '[Resultado concreto, con cifra si es posible — ej. "redujo el tiempo de respuesta a clientes de X a Y"].',
+    metaDescripcion: 'Caso de éxito de un cliente de Crear Code Cesar — contenido en preparación.',
   },
   {
     slug: 'caso-placeholder-2',
@@ -18,6 +19,7 @@ export const CASOS: readonly Caso[] = [
     reto: '[Descripción breve].',
     solucion: '[Qué se construyó o implementó].',
     resultado: '[Resultado concreto].',
+    metaDescripcion: 'Caso de éxito de un cliente de Crear Code Cesar — contenido en preparación.',
   },
   {
     slug: 'caso-placeholder-3',
@@ -25,5 +27,6 @@ export const CASOS: readonly Caso[] = [
     reto: '[Descripción breve].',
     solucion: '[Qué se construyó o implementó].',
     resultado: '[Resultado concreto].',
+    metaDescripcion: 'Caso de éxito de un cliente de Crear Code Cesar — contenido en preparación.',
   },
 ];

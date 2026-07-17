@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { marked } from 'marked';
 
 import { ARTICULOS } from '../../../contenido/blog';
+import { establecerMetadatosDePagina } from '../../nucleo/metadatos-pagina';
 
 @Component({
   selector: 'app-pagina-blog-articulo',
@@ -18,4 +19,13 @@ export class BlogArticuloPage {
     const articulo = this.articulo();
     return articulo ? (marked.parse(articulo.cuerpoMarkdown, { async: false }) as string) : '';
   });
+
+  constructor() {
+    establecerMetadatosDePagina(() => {
+      const a = this.articulo();
+      return a
+        ? { titulo: `${a.titulo} — Crear Code Cesar`, descripcion: a.resumen, ruta: `/blog/${a.slug}` }
+        : undefined;
+    });
+  }
 }

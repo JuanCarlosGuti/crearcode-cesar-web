@@ -47,13 +47,13 @@ export const routes: Routes = [
   {
     path: 'legales/politica-de-datos',
     loadComponent: () => import('./paginas/legal/legal').then((m) => m.LegalPage),
-    data: { documento: POLITICA_DE_DATOS },
+    data: { documento: POLITICA_DE_DATOS, ruta: '/legales/politica-de-datos' },
     title: 'Política de tratamiento de datos — Crear Code Cesar',
   },
   {
     path: 'legales/terminos',
     loadComponent: () => import('./paginas/legal/legal').then((m) => m.LegalPage),
-    data: { documento: TERMINOS_DE_USO },
+    data: { documento: TERMINOS_DE_USO, ruta: '/legales/terminos' },
     title: 'Términos de uso — Crear Code Cesar',
   },
   {

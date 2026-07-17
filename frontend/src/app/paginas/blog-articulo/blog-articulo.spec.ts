@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { Meta, Title } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 
 import { ARTICULOS } from '../../../contenido/blog';
@@ -27,5 +28,15 @@ describe('BlogArticuloPage', () => {
     await fixture.whenStable();
 
     expect(fixture.nativeElement.textContent).toContain('Artículo no encontrado');
+  });
+
+  it('establece el title y la meta description propios del articulo, no genericos del blog', async () => {
+    const articulo = ARTICULOS[0];
+    const fixture = TestBed.createComponent(BlogArticuloPage);
+    fixture.componentRef.setInput('slug', articulo.slug);
+    await fixture.whenStable();
+
+    expect(TestBed.inject(Title).getTitle()).toBe(`${articulo.titulo} — Crear Code Cesar`);
+    expect(TestBed.inject(Meta).getTag('name="description"')?.content).toBe(articulo.resumen);
   });
 });

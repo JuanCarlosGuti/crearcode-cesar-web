@@ -1,7 +1,9 @@
 import { TestBed } from '@angular/core/testing';
+import { Title } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 
 import { HOME } from '../../../contenido/home';
+import { METADATOS_HOME } from '../../../contenido/metadatos-paginas';
 import { SERVICIOS } from '../../../contenido/servicios';
 import { HomePage } from './home';
 
@@ -32,5 +34,12 @@ describe('HomePage', () => {
 
     expect(fixture.nativeElement.querySelector('a[href="/contacto"]')).toBeTruthy();
     expect(fixture.nativeElement.querySelector('a[href^="https://wa.me/"]')).toBeTruthy();
+  });
+
+  it('establece el title de la Home', async () => {
+    const fixture = TestBed.createComponent(HomePage);
+    await fixture.whenStable();
+
+    expect(TestBed.inject(Title).getTitle()).toBe(METADATOS_HOME.titulo);
   });
 });

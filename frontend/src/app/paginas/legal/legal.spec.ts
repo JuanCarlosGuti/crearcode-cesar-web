@@ -7,6 +7,7 @@ describe('LegalPage', () => {
   it('muestra el titulo y todos los parrafos del documento recibido', async () => {
     const fixture = TestBed.createComponent(LegalPage);
     fixture.componentRef.setInput('documento', POLITICA_DE_DATOS);
+    fixture.componentRef.setInput('ruta', '/legales/politica-de-datos');
     await fixture.whenStable();
 
     expect(fixture.nativeElement.querySelector('h1')?.textContent).toBe(POLITICA_DE_DATOS.titulo);
@@ -17,6 +18,7 @@ describe('LegalPage', () => {
   it('funciona igual para el documento de terminos de uso', async () => {
     const fixture = TestBed.createComponent(LegalPage);
     fixture.componentRef.setInput('documento', TERMINOS_DE_USO);
+    fixture.componentRef.setInput('ruta', '/legales/terminos');
     await fixture.whenStable();
 
     expect(fixture.nativeElement.querySelector('h1')?.textContent).toBe(TERMINOS_DE_USO.titulo);

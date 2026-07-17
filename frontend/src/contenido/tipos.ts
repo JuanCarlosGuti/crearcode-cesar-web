@@ -38,6 +38,7 @@ export interface Caso {
   readonly reto: string;
   readonly solucion: string;
   readonly resultado: string;
+  readonly metaDescripcion: string;
 }
 
 export interface ArticuloBlog {
@@ -55,6 +56,7 @@ export interface ValorEmpresa {
 
 export interface DocumentoLegal {
   readonly titulo: string;
+  readonly metaDescripcion: string;
   readonly parrafos: readonly string[];
   readonly notaBorrador: string;
 }

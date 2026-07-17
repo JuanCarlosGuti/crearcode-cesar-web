@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { Title } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 
 import { CASOS } from '../../../contenido/casos';
@@ -28,5 +29,14 @@ describe('CasoDetallePage', () => {
     await fixture.whenStable();
 
     expect(fixture.nativeElement.textContent).toContain('Caso no encontrado');
+  });
+
+  it('establece el title propio del caso', async () => {
+    const caso = CASOS[0];
+    const fixture = TestBed.createComponent(CasoDetallePage);
+    fixture.componentRef.setInput('slug', caso.slug);
+    await fixture.whenStable();
+
+    expect(TestBed.inject(Title).getTitle()).toBe(`${caso.titulo} — Crear Code Cesar`);
   });
 });

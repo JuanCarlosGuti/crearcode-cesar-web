@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { Meta, Title } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 
 import { SERVICIOS } from '../../../contenido/servicios';
@@ -40,5 +41,16 @@ describe('ServicioPage', () => {
 
     const enlaceWhatsapp = fixture.nativeElement.querySelector('a[href^="https://wa.me/"]') as HTMLAnchorElement;
     expect(enlaceWhatsapp.href).toContain(encodeURIComponent(servicio.mensajeWhatsapp));
+  });
+
+  it('establece el title, la meta description y og:title propios del servicio (no genericos)', async () => {
+    const servicio = SERVICIOS[1];
+    const fixture = TestBed.createComponent(ServicioPage);
+    fixture.componentRef.setInput('slug', servicio.slug);
+    await fixture.whenStable();
+
+    expect(TestBed.inject(Title).getTitle()).toBe(`${servicio.nombre} — Crear Code Cesar`);
+    expect(TestBed.inject(Meta).getTag('name="description"')?.content).toBe(servicio.resumenCorto);
+    expect(TestBed.inject(Meta).getTag('property="og:url"')?.content).toContain(`/servicios/${servicio.slug}`);
   });
 });

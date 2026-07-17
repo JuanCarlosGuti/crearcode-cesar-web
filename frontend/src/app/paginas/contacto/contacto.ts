@@ -5,6 +5,8 @@ import { FormField, required, pattern, schema, form, validate } from '@angular/f
 import { SolicitudesApi } from '../../api/solicitudes-api';
 import { WhatsappCta } from '../../componentes/whatsapp-cta/whatsapp-cta';
 import { HOME } from '../../../contenido/home';
+import { METADATOS_CONTACTO } from '../../../contenido/metadatos-paginas';
+import { establecerMetadatosDePagina } from '../../nucleo/metadatos-pagina';
 
 interface DatosFormularioContacto {
   nombre: string;
@@ -91,6 +93,10 @@ export class ContactoPage {
   });
 
   protected readonly formulario = form(this.datos, ESQUEMA_CONTACTO);
+
+  constructor() {
+    establecerMetadatosDePagina(() => ({ ...METADATOS_CONTACTO, ruta: '/contacto' }));
+  }
 
   protected enviar(evento: Event): void {
     evento.preventDefault();

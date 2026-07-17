@@ -4,6 +4,8 @@ export const WHATSAPP_NUMERO_INTERNACIONAL = '573239885883';
 
 export const POLITICA_DE_DATOS = {
   titulo: 'Política de tratamiento de datos personales',
+  metaDescripcion:
+    'Política de tratamiento de datos personales de Crear Code Cesar S.A.S., conforme a la Ley 1581 de 2012.',
   version: 'v1',
   parrafos: [
     'Responsable del tratamiento: Crear Code Cesar S.A.S., con domicilio en Valledupar, Cesar, Colombia.',
@@ -19,6 +21,7 @@ export const POLITICA_DE_DATOS = {
 
 export const TERMINOS_DE_USO = {
   titulo: 'Términos de uso',
+  metaDescripcion: 'Términos de uso del sitio web de Crear Code Cesar S.A.S.',
   parrafos: [
     'Sobre este sitio: este sitio web es operado por Crear Code Cesar S.A.S. (Valledupar, Cesar, Colombia) con fines informativos y de contacto comercial. El uso del formulario de contacto no genera, por sí solo, ninguna relación contractual entre el visitante y Crear Code Cesar S.A.S.',
     'Uso permitido: el contenido de este sitio (textos, casos, artículos) puede consultarse libremente; su reproducción total o parcial con fines comerciales requiere autorización previa de Crear Code Cesar S.A.S.',
