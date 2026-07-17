@@ -32,7 +32,7 @@ class SolicitudControllerIT {
 
 	private SolicitudRequest solicitudValida() {
 		return new SolicitudRequest("Juan Pérez", "Empresa S.A.S.", "nombre@empresa.com", "3001234567",
-				ServicioDeInteres.IA_Y_AUTOMATIZACION, "Quiero automatizar mi negocio", true);
+				ServicioDeInteres.IA_Y_AUTOMATIZACION, "Quiero automatizar mi negocio", true, null);
 	}
 
 	@Test
@@ -48,7 +48,7 @@ class SolicitudControllerIT {
 	@Test
 	void registrarConNombreVacioDevuelve400() {
 		SolicitudRequest invalida = new SolicitudRequest("", "Empresa S.A.S.", "nombre@empresa.com",
-				"3001234567", ServicioDeInteres.OTRO, "mensaje", true);
+				"3001234567", ServicioDeInteres.OTRO, "mensaje", true, null);
 
 		ResponseEntity<String> respuesta = restTemplate.postForEntity("/api/solicitudes", invalida, String.class);
 
@@ -58,7 +58,7 @@ class SolicitudControllerIT {
 	@Test
 	void registrarConCorreoConFormatoInvalidoDevuelve400() {
 		SolicitudRequest invalida = new SolicitudRequest("Juan Pérez", null, "esto-no-es-un-correo",
-				"3001234567", ServicioDeInteres.OTRO, "mensaje", true);
+				"3001234567", ServicioDeInteres.OTRO, "mensaje", true, null);
 
 		ResponseEntity<String> respuesta = restTemplate.postForEntity("/api/solicitudes", invalida, String.class);
 
@@ -70,11 +70,29 @@ class SolicitudControllerIT {
 		// Si no fuera publico, un payload invalido devolveria 401/403 en vez
 		// de 400: confirma que la ruta esta permitAll para POST.
 		SolicitudRequest invalida = new SolicitudRequest("", null, "x", "x",
-				ServicioDeInteres.OTRO, "", false);
+				ServicioDeInteres.OTRO, "", false, null);
 
 		ResponseEntity<String> respuesta = restTemplate.postForEntity("/api/solicitudes", invalida, String.class);
 
 		assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+	}
+
+	@Test
+	void registrarConHoneypotRellenoRespondeExitosoPeroNoRegistraNiNotifica() {
+		SolicitudRequest conHoneypot = new SolicitudRequest("Bot Spam", null, "bot@spam.com", "3009999999",
+				ServicioDeInteres.OTRO, "mensaje de spam", true, "http://sitio-de-spam.com");
+
+		ResponseEntity<SolicitudCreadaResponse> respuesta = restTemplate.postForEntity(
+				"/api/solicitudes", conHoneypot, SolicitudCreadaResponse.class);
+
+		assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+		assertThat(respuesta.getBody()).isNotNull();
+
+		ResponseEntity<SolicitudResponse[]> listado = restTemplate
+				.withBasicAuth(ADMIN_USUARIO, ADMIN_CONTRASENA)
+				.getForEntity("/api/solicitudes", SolicitudResponse[].class);
+		assertThat(listado.getBody()).noneSatisfy(
+				solicitud -> assertThat(solicitud.correo()).isEqualTo("bot@spam.com"));
 	}
 
 	@Test

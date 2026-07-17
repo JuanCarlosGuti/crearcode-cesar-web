@@ -53,6 +53,12 @@ class SolicitudController {
 
 	@PostMapping
 	ResponseEntity<SolicitudCreadaResponse> registrar(@Valid @RequestBody SolicitudRequest request) {
+		if (request.pareceSpam()) {
+			// Honeypot: se responde como si hubiera funcionado, sin tocar
+			// el caso de uso, para no revelar el mecanismo al bot.
+			return ResponseEntity.status(HttpStatus.CREATED).body(new SolicitudCreadaResponse(UUID.randomUUID()));
+		}
+
 		DatosDeContacto datos = new DatosDeContacto(request.nombre(), request.empresa(),
 				new Correo(request.correo()), new Telefono(request.telefono()));
 		ConsentimientoDatos consentimiento = new ConsentimientoDatos(
