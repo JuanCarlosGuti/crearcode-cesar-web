@@ -7,9 +7,9 @@ correspondiente antes de seguir.
 
 ## Estado del proyecto
 
-**Etapa actual: Etapa 2 — Desarrollo. Fases F0 y F1 completas
-(ISS-001 a ISS-020), pendiente de OK explícito del usuario para
-pasar a F2.**
+**Etapa actual: Etapa 2 — Desarrollo. Fases F0, F1 y F2 completas
+(ISS-001 a ISS-036), pendiente de OK explícito del usuario para
+pasar a F3.**
 
 El usuario aprobó la documentación el 16 jul 2026 con la frase
 "APRUEBO LA DOCUMENTACIÓN, ARRANCA LA FASE 1". Regla dura: no se avanza
@@ -89,7 +89,7 @@ Detalle completo, diagrama y ADRs en
 
 - [x] **F0** — Esqueleto monorepo (Spring Boot JDK 25 + Angular 22 CLI) + CI + ArchUnit + healthcheck
 - [x] **F1** — Dominio `leads` con tests (TDD, sin Spring)
-- [ ] **F2** — API + persistencia (casos de uso, JPA, REST, seguridad, honeypot, rate limiting)
+- [x] **F2** — API + persistencia (casos de uso, JPA, REST, seguridad, honeypot, rate limiting)
 - [ ] **F3** — Frontend: estructura y páginas con contenido
 - [ ] **F4** — Formulario end-to-end con Signal Forms + notificaciones
 - [ ] **F5** — Panel admin
@@ -140,6 +140,20 @@ Verificado manualmente end-to-end (16 jul 2026): los tres servicios
 levantados a la vez, `GET /actuator/health` respondió
 `{"status":"UP"}` con la base de datos real conectada, y el frontend
 respondió 200 en su ruta raíz.
+
+## API del backend (tras la fase F2)
+
+| Endpoint | Auth | Qué hace |
+|---|---|---|
+| `GET /actuator/health` | Pública | Healthcheck, agrega el estado de la BD |
+| `POST /api/solicitudes` | Pública | Registra un lead; honeypot (`sitioWeb`) y rate limiting (20/10 min por IP, configurable) |
+| `GET /api/solicitudes?estado=` | Admin (HTTP Basic) | Lista solicitudes, filtro opcional por `EstadoSolicitud` |
+| `PATCH /api/solicitudes/{id}/estado` | Admin (HTTP Basic) | Cambia el estado; 404 si no existe, 409 en transición inválida |
+
+Usuario admin por defecto en local: `admin` / `cambiar-en-produccion`
+(variables `ADMIN_USERNAME`/`ADMIN_PASSWORD` en cualquier otro
+entorno). La API es stateless (sin CSRF ni sesión): cada petición al
+panel admin lleva sus credenciales.
 
 ## Decisiones ya resueltas por el usuario
 
