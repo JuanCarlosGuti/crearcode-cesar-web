@@ -1,0 +1,53 @@
+.pie {
+  background-color: var(--color-primario);
+  color: var(--color-blanco);
+  margin-top: var(--espacio-6);
+  padding-block: var(--espacio-5) var(--espacio-3);
+}
+
+.pie__contenido {
+  display: grid;
+  gap: var(--espacio-4);
+  grid-template-columns: 1fr;
+}
+
+.pie__titulo {
+  color: var(--color-blanco);
+  font-size: 1.1rem;
+}
+
+.pie__columna p {
+  color: color-mix(in srgb, var(--color-blanco) 80%, transparent);
+  margin: 0 0 0.35rem;
+}
+
+.pie__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.pie__nav a,
+.pie__columna a.boton-whatsapp,
+.pie__columna a {
+  color: color-mix(in srgb, var(--color-blanco) 90%, transparent);
+}
+
+.pie__cta p {
+  color: var(--color-blanco);
+}
+
+.pie__copyright {
+  text-align: center;
+  margin: var(--espacio-4) 0 0;
+  padding-top: var(--espacio-3);
+  border-top: 1px solid color-mix(in srgb, var(--color-blanco) 20%, transparent);
+  color: color-mix(in srgb, var(--color-blanco) 70%, transparent);
+  font-size: 0.85rem;
+}
+
+@media (min-width: 48rem) {
+  .pie__contenido {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

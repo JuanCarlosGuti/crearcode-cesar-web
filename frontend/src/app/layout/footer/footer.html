@@ -1,0 +1,29 @@
+<footer class="pie">
+  <div class="contenedor pie__contenido">
+    <div class="pie__columna">
+      <h2 class="pie__titulo">{{ empresa.razonSocial }}</h2>
+      <p>{{ empresa.ciudad }}</p>
+      <p>WhatsApp: {{ empresa.whatsappNumero }}</p>
+      <p>Correo: {{ empresa.correo }}</p>
+    </div>
+
+    <nav class="pie__columna pie__nav" aria-label="Enlaces del pie de página">
+      <a routerLink="/casos">Casos</a>
+      <a routerLink="/sobre-nosotros">Sobre nosotros</a>
+      <a routerLink="/blog">Blog</a>
+      <a routerLink="/contacto">Contacto</a>
+      <a routerLink="/legales/politica-de-datos">Política de tratamiento de datos</a>
+      <a routerLink="/legales/terminos">Términos de uso</a>
+    </nav>
+
+    <div class="pie__columna pie__cta">
+      <p>Hablemos de tu negocio.</p>
+      <div class="cta-doble">
+        <a routerLink="/contacto" class="boton boton-primario">Agenda tu consulta</a>
+        <app-whatsapp-cta [mensaje]="mensajeWhatsapp" etiqueta="WhatsApp" />
+      </div>
+    </div>
+  </div>
+
+  <p class="pie__copyright">© {{ anioActual }} {{ empresa.razonSocial }}</p>
+</footer>

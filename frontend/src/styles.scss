@@ -1,1 +1,181 @@
-/* You can add global styles to this file, and also import other style files */
+// Paleta "Minimal Corporativo" (Opción C elegida — ver docs/07-guia-de-estilo.md)
+:root {
+  --color-primario: #22303f;
+  --color-primario-claro: #4c5f73;
+  --color-acento: #3c9d6e;
+  --color-fondo: #f7f8fa;
+  --color-blanco: #ffffff;
+  --color-texto: #171b1f;
+  --color-texto-secundario: #5a6472;
+  --color-exito: #3c9d6e;
+  --color-alerta: #d98e04;
+  --color-error: #c4453a;
+  --color-whatsapp: #25d366;
+
+  --fuente-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+  --espacio-1: 0.5rem;
+  --espacio-2: 1rem;
+  --espacio-3: 1.5rem;
+  --espacio-4: 2rem;
+  --espacio-5: 3rem;
+  --espacio-6: 4rem;
+
+  --ancho-contenido: 72rem;
+  --radio-borde: 0.5rem;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--fuente-base);
+  color: var(--color-texto);
+  background-color: var(--color-fondo);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: var(--color-primario);
+  line-height: 1.2;
+  font-weight: 600;
+  margin: 0 0 var(--espacio-2);
+}
+
+h1 {
+  font-size: clamp(1.9rem, 1.5rem + 1.8vw, 3rem);
+}
+
+h2 {
+  font-size: clamp(1.5rem, 1.3rem + 0.9vw, 2.1rem);
+}
+
+h3 {
+  font-size: clamp(1.2rem, 1.1rem + 0.4vw, 1.5rem);
+}
+
+p {
+  margin: 0 0 var(--espacio-2);
+  color: var(--color-texto-secundario);
+}
+
+a {
+  color: var(--color-primario-claro);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.contenedor {
+  width: 100%;
+  max-width: var(--ancho-contenido);
+  margin-inline: auto;
+  padding-inline: var(--espacio-3);
+}
+
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espacio-1);
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radio-borde);
+  font-weight: 600;
+  text-decoration: none;
+  border: 2px solid transparent;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.boton:focus-visible {
+  outline: 3px solid var(--color-acento);
+  outline-offset: 2px;
+}
+
+.boton-primario {
+  background-color: var(--color-primario);
+  color: var(--color-blanco);
+}
+
+.boton-primario:hover {
+  background-color: var(--color-primario-claro);
+}
+
+.boton-whatsapp {
+  background-color: var(--color-whatsapp);
+  color: var(--color-blanco);
+}
+
+.boton-whatsapp:hover {
+  background-color: color-mix(in srgb, var(--color-whatsapp) 85%, black);
+}
+
+.cta-doble {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-2);
+}
+
+@media (min-width: 40rem) {
+  .cta-doble {
+    flex-direction: row;
+  }
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.badge-nueva {
+  background-color: color-mix(in srgb, var(--color-alerta) 15%, white);
+  color: var(--color-alerta);
+}
+
+.badge-contactada {
+  background-color: color-mix(in srgb, var(--color-primario-claro) 15%, white);
+  color: var(--color-primario-claro);
+}
+
+.badge-convertida {
+  background-color: color-mix(in srgb, var(--color-exito) 15%, white);
+  color: var(--color-exito);
+}
+
+.badge-descartada {
+  background-color: color-mix(in srgb, var(--color-texto-secundario) 15%, white);
+  color: var(--color-texto-secundario);
+}

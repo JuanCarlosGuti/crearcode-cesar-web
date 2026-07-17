@@ -1,0 +1,36 @@
+<header class="cabecera">
+  <div class="contenedor cabecera__barra">
+    <a routerLink="/" class="cabecera__marca" (click)="cerrarMenu()">{{ nombreEmpresa }}</a>
+
+    <button
+      type="button"
+      class="cabecera__boton-menu"
+      (click)="alternarMenu()"
+      [attr.aria-expanded]="menuAbierto()"
+      aria-controls="menu-principal"
+    >
+      <span class="sr-only">Abrir menú</span>
+      <span aria-hidden="true">☰</span>
+    </button>
+
+    <nav id="menu-principal" class="cabecera__nav" [class.cabecera__nav--abierto]="menuAbierto()">
+      <a routerLink="/" routerLinkActive="activo" [routerLinkActiveOptions]="{ exact: true }" (click)="cerrarMenu()"
+        >Inicio</a
+      >
+      @for (servicio of servicios; track servicio.slug) {
+        <a [routerLink]="['/servicios', servicio.slug]" routerLinkActive="activo" (click)="cerrarMenu()">{{
+          servicio.nombre
+        }}</a>
+      }
+      <a routerLink="/casos" routerLinkActive="activo" (click)="cerrarMenu()">Casos</a>
+      <a routerLink="/sobre-nosotros" routerLinkActive="activo" (click)="cerrarMenu()">Sobre nosotros</a>
+      <a routerLink="/blog" routerLinkActive="activo" (click)="cerrarMenu()">Blog</a>
+      <a routerLink="/contacto" routerLinkActive="activo" (click)="cerrarMenu()">Contacto</a>
+
+      <div class="cabecera__cta cta-doble">
+        <a routerLink="/contacto" class="boton boton-primario" (click)="cerrarMenu()">Agenda tu consulta</a>
+        <app-whatsapp-cta [mensaje]="mensajeWhatsapp" etiqueta="WhatsApp" />
+      </div>
+    </nav>
+  </div>
+</header>
