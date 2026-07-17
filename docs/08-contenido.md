@@ -320,6 +320,76 @@ resumen (2-3 líneas) y fecha. Contenido en Markdown (ver
 
 ---
 
+## Panel admin
+
+Uso interno (el fundador, y en el futuro el equipo que vaya sumándose);
+no necesita el mismo tono comercial que el resto del sitio, pero sigue
+siendo claro y sin jerga técnica innecesaria.
+
+### Login
+
+**Título:**
+> Panel de Crear Code Cesar
+
+**Texto introductorio:**
+> Inicia sesión para gestionar las solicitudes que llegan del sitio.
+
+**Labels de campos:**
+- Correo
+- Contraseña
+
+**Botón:**
+> Iniciar sesión
+
+**Mensaje de error (credenciales incorrectas, HU-19 — genérico a
+propósito, nunca indica si el correo existe):**
+> Correo o contraseña incorrectos.
+
+### Listado de solicitudes
+
+**Título de la sección:**
+> Solicitudes
+
+**Columnas:** Nombre, Servicio de interés, Estado, Fecha (más reciente
+primero).
+
+**Filtro:**
+> Filtrar por estado
+
+**Estado vacío (sin ninguna solicitud todavía):**
+> Todavía no ha llegado ninguna solicitud. En cuanto alguien escriba
+> desde el formulario de contacto, aparecerá acá.
+
+**Estado vacío de un filtro (hay solicitudes, pero ninguna en el
+estado elegido — mensaje distinto al de arriba a propósito, HU-22):**
+> No hay solicitudes en este estado por ahora.
+
+### Detalle de solicitud y cambio de estado
+
+**Botones de transición (solo se muestra el que aplica al estado
+actual, ver [[03-modelo-de-dominio]] Parte 1 §3):**
+- Marcar como contactada
+- Marcar como convertida
+- Descartar
+
+**Confirmación antes de aplicar el cambio (HU-21 — evita cambios
+accidentales de un clic):**
+> ¿Confirmas que quieres marcar esta solicitud como {estado}?
+
+**Enlace de vuelta:**
+> Volver al listado
+
+### Sesión
+
+**Botón de cerrar sesión:**
+> Cerrar sesión
+
+**Mensaje cuando no hay sesión válida (HU-19, ISS-065/ISS-070 — se ve
+justo antes de volver a pedir login):**
+> Tu sesión terminó. Vuelve a iniciar sesión para continuar.
+
+---
+
 ## Legales
 
 ### Política de tratamiento de datos personales (borrador — Ley 1581 de 2012)

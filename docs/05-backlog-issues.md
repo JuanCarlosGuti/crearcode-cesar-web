@@ -99,16 +99,39 @@ Convención de estimación: **S** = medio día o menos, **M** = 1-2 días,
 
 ---
 
-## Fase F5 — Panel admin
+## Fase F5 — Autenticación robusta + Panel admin
+
+**Nota de esta fase (actualizado tras iniciar F5)**: el backlog original
+asumía que el frontend reutilizaría el HTTP Basic *stateless* de
+ISS-035 (F2). Al arrancar F5 el usuario pidió explícitamente un sistema
+de autenticación robusto pensando en crecimiento multi-empleado/roles
+(ver ADR-08 en [[02-arquitectura]] y el contexto `usuarios` en
+[[03-modelo-de-dominio]]), lo que reabre esa pieza de F2: el mecanismo
+de ISS-035 queda superado por `AuthController`/JWT (ISS-058 a ISS-061
+abajo), aunque su fila se deja tal cual en la Fase F2 como registro
+histórico de lo que efectivamente se construyó en ese momento.
 
 | ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
 |---|---|---|---|---|---|---|
-| ISS-053 | Pantalla de login admin | HU-19 | Formulario de login que consume el endpoint de autenticación del backend | M | ISS-035 | `login-admin.component.spec.ts` |
-| ISS-054 | Guard de ruta protegida en frontend | HU-19 | Rutas `/admin/*` redirigen a login si no hay sesión válida | S | ISS-053 | `admin.guard.spec.ts` |
-| ISS-055 | Listado de solicitudes en panel admin | HU-20 | Consume `GET /api/solicitudes`; muestra estado vacío si no hay datos | M | ISS-028, ISS-054 | `listado-solicitudes.component.spec.ts` |
-| ISS-056 | Filtro por estado en listado | HU-22 | Filtro client-side o vía query param; estado vacío específico por filtro | S | ISS-055 | `listado-solicitudes.component.spec.ts` (caso filtro sin resultados) |
-| ISS-057 | Detalle de solicitud + cambio de estado | HU-21 | Solo ofrece transiciones válidas según estado actual; confirma antes de aplicar | M | ISS-029, ISS-055 | `detalle-solicitud.component.spec.ts` (incl. estado terminal sin opciones) |
-| ISS-058 | Manejo de expiración de sesión / logout | HU-19 | Sesión expirada redirige a login sin perder datos no guardados de forma confusa | S | ISS-053 | `sesion-admin.spec.ts` |
+| ISS-053 | Dependencia JWT + propiedades de configuración | HU-19 | `spring-boot-starter-oauth2-resource-server` agregado; `app.jwt.secreto`/`app.jwt.expiracion-minutos` configurables por variable de entorno (secreto ≥32 bytes) | S | ISS-001 | Verificación de build |
+| ISS-054 | Dominio `usuarios`: `Usuario`, `Rol`, `UsuarioId` + puertos | HU-19 | Entidad y VOs sin Spring/JPA; puertos `UsuarioRepositorio`, `CifradorDeContrasenas`, `GeneradorDeToken`, `AutenticarUsuarioUseCase`, `CrearUsuarioUseCase` definidos en `dominio/` | M | ISS-004 | `UsuarioTest` (verificado además por ArchUnit) |
+| ISS-055 | Caso de uso `AutenticarUsuarioUseCase` | HU-19 | Mismo mensaje genérico si el correo no existe o la contraseña no coincide (`CredencialesInvalidasException` en `aplicacion/`, no en `dominio/`) | M | ISS-054 | `AutenticarUsuarioUseCaseTest` (con fakes, incl. ambos casos tristes) |
+| ISS-056 | Caso de uso `CrearUsuarioUseCase` | HU-19 | Usado por el *seed* del admin único (ISS-062); rechaza correo duplicado | S | ISS-054 | `CrearUsuarioUseCaseTest` (con fake) |
+| ISS-057 | Migración Flyway `usuarios` + adaptador JPA | HU-19 | Tabla `usuarios` (correo único); `UsuarioRepositorioJpaAdapter` con búsqueda case-insensitive | M | ISS-054 | `UsuarioRepositorioIT` (Testcontainers) |
+| ISS-058 | Adaptadores de cifrado y token | HU-19 | `BCryptCifradorDeContrasenas` (hash real); `JwtGeneradorDeToken` (HS256, claims `rol` y `jti`) | M | ISS-053, ISS-054 | `BCryptCifradorDeContrasenasTest`, `JwtGeneradorDeTokenTest` |
+| ISS-059 | `SecurityConfig`: HTTP Basic → JWT Bearer | HU-19 | `POST /api/auth/login` público; resto de `/api/solicitudes*` exige `Bearer <token>` válido; `AuthenticationEntryPoint`/`AccessDeniedHandler` propios devuelven el mismo `ErrorResponse` que el resto de la API | L | ISS-058 | Reescritura de `SeguridadAdminIT` (Bearer en vez de Basic) |
+| ISS-060 | Rate limiting en el login | HU-19 (endurecido) | `RateLimitingFilter` generalizado a múltiples reglas (ruta+método+umbral); `POST /api/auth/login` con umbral propio, más estricto que el del formulario de contacto | M | ISS-059 | `RateLimitingFilterIT` (regla de login) |
+| ISS-061 | Controlador `POST /api/auth/login` | HU-19 | Devuelve token + expiración en éxito; 401 genérico en fallo, sin distinguir causa | M | ISS-055, ISS-059 | `AuthControllerIT` (login correcto, incorrecto, rate-limit) |
+| ISS-062 | *Seed* del admin único al arrancar | HU-19 | Si `usuarios` está vacía, crea el admin desde `ADMIN_USERNAME` (pasa a exigir formato de correo)/`ADMIN_PASSWORD`; tolera arranque concurrente (idempotente) | S | ISS-056, ISS-057 | `SembradorDeUsuarioAdminIT` |
+| ISS-063 | `AuthApi` (cliente HTTP de login) en frontend | HU-19 | `POST /api/auth/login` tipado | S | ISS-061 | `auth-api.spec.ts` |
+| ISS-064 | `SesionService` (estado de sesión) | HU-19 | Signal con el token, persistido en `sessionStorage`; no accede a `sessionStorage` durante SSR (`isPlatformBrowser`) | M | ISS-063 | `sesion.spec.ts` |
+| ISS-065 | Interceptor de autenticación | HU-19 | Adjunta `Authorization: Bearer` cuando hay token; cualquier 401 (salvo la propia petición de login) limpia la sesión y navega a `/admin/login` | M | ISS-064 | `token.interceptor.spec.ts` |
+| ISS-066 | Guard de ruta protegida (`adminGuard`) | HU-19 | Rutas `/admin/*` (salvo `/admin/login`) redirigen a login si no hay sesión | S | ISS-064 | `admin.guard.spec.ts` |
+| ISS-067 | Página de login admin | HU-19 | Formulario con Signal Forms (correo + contraseña); error genérico visible sin redirigir | M | ISS-063, ISS-065, ISS-066 | `login.spec.ts` |
+| ISS-068 | Listado de solicitudes en panel admin + filtro por estado | HU-20, HU-22 | Consume `GET /api/solicitudes`; estado vacío general y estado vacío específico por filtro; ordenado más reciente primero | M | ISS-066 | `listado-solicitudes.spec.ts` (incl. caso filtro sin resultados) |
+| ISS-069 | Detalle de solicitud + cambio de estado | HU-21 | Solo ofrece transiciones válidas según estado actual (máquina de estados de [[03-modelo-de-dominio]] Parte 1 §3); confirma antes de aplicar | M | ISS-068 | `detalle-solicitud.spec.ts` (incl. estado terminal sin opciones) |
+| ISS-070 | Logout | HU-19 | Botón visible en el panel; limpia la sesión y navega a login | S | ISS-065 | `logout.spec.ts` (o cubierto en `sesion.spec.ts`) |
+| ISS-071 | Rutas admin fuera de SSR/prerender | HU-19 (transversal) | `admin/**` con `RenderMode.Client`; el build no las prerrenderiza | S | ISS-067 | Verificación de build |
 
 ---
 
@@ -116,13 +139,13 @@ Convención de estimación: **S** = medio día o menos, **M** = 1-2 días,
 
 | ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
 |---|---|---|---|---|---|---|
-| ISS-059 | Metadatos por página (title, description) | HU-23 | Cada ruta de contenido setea metadatos propios vía Angular `Meta`/`Title`, alimentados desde `contenido/` | M | ISS-045 | `meta-por-pagina.spec.ts` |
-| ISS-060 | `sitemap.xml` generado desde rutas de contenido | HU-23 | Incluye todas las páginas públicas, excluye `/admin` | S | ISS-045 | Verificación de build + `SitemapTest` |
-| ISS-061 | `robots.txt` | HU-23 | Permite rastreo público, deshabilita explícitamente `/admin` | S | — | Verificación manual |
-| ISS-062 | Open Graph por página + imagen por defecto | HU-24 | Cada página define OG:title/description/image; fallback a imagen por defecto | M | ISS-059 | `open-graph.spec.ts` |
-| ISS-063 | Optimización de imágenes | HU-25 | Formatos modernos (ej. WebP/AVIF), tamaños adecuados, carga diferida donde aplica | M | ISS-038 a ISS-044 | Auditoría Lighthouse (ISS-064) |
-| ISS-064 | Auditoría Lighthouse ≥90 (Performance/SEO/Accesibilidad) + ajustes | HU-25, HU-26 | Home, un servicio y Contacto alcanzan ≥90 en modo móvil; ajustes documentados | L | ISS-045, ISS-059 a ISS-063 | Reporte Lighthouse adjunto como evidencia |
-| ISS-065 | Checklist de accesibilidad aplicado | HU-26 | Foco visible, alt text, contraste AA, errores de formulario anunciados y asociados a su campo | M | ISS-047, ISS-064 | Checklist de [[06-plan-de-pruebas]] + revisión con lector de pantalla |
+| ISS-072 | Metadatos por página (title, description) | HU-23 | Cada ruta de contenido setea metadatos propios vía Angular `Meta`/`Title`, alimentados desde `contenido/` | M | ISS-045 | `meta-por-pagina.spec.ts` |
+| ISS-073 | `sitemap.xml` generado desde rutas de contenido | HU-23 | Incluye todas las páginas públicas, excluye `/admin` | S | ISS-045 | Verificación de build + `SitemapTest` |
+| ISS-074 | `robots.txt` | HU-23 | Permite rastreo público, deshabilita explícitamente `/admin` | S | — | Verificación manual |
+| ISS-075 | Open Graph por página + imagen por defecto | HU-24 | Cada página define OG:title/description/image; fallback a imagen por defecto | M | ISS-072 | `open-graph.spec.ts` |
+| ISS-076 | Optimización de imágenes | HU-25 | Formatos modernos (ej. WebP/AVIF), tamaños adecuados, carga diferida donde aplica | M | ISS-038 a ISS-044 | Auditoría Lighthouse (ISS-077) |
+| ISS-077 | Auditoría Lighthouse ≥90 (Performance/SEO/Accesibilidad) + ajustes | HU-25, HU-26 | Home, un servicio y Contacto alcanzan ≥90 en modo móvil; ajustes documentados | L | ISS-045, ISS-072 a ISS-076 | Reporte Lighthouse adjunto como evidencia |
+| ISS-078 | Checklist de accesibilidad aplicado | HU-26 | Foco visible, alt text, contraste AA, errores de formulario anunciados y asociados a su campo | M | ISS-047, ISS-077 | Checklist de [[06-plan-de-pruebas]] + revisión con lector de pantalla |
 
 ---
 
@@ -130,10 +153,10 @@ Convención de estimación: **S** = medio día o menos, **M** = 1-2 días,
 
 | ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
 |---|---|---|---|---|---|---|
-| ISS-066 | Documentar opciones de hosting económico + costos (incl. dominio) | HU-29 | Al menos 2 opciones comparadas (frontend y backend), con costo estimado mensual/anual y el dominio (~$60.000-80.000 COP/año) | M | — | No aplica (documento) |
-| ISS-067 | Parametrizar configuración agnóstica al dominio | HU-29 | `baseUrl`, CORS y `OG:url` se leen de variables de entorno, sin valores hardcodeados | S | ISS-062 | `ConfiguracionAgnosticaDominioTest` |
-| ISS-068 | Pipeline de build de producción | HU-29 | Genera build SSR de frontend y artefacto/imagen de backend listos para desplegar | M | ISS-009, ISS-045 | Verificación de build en CI |
-| ISS-069 | Checkpoint de decisión de publicación con el usuario | HU-29 | El usuario aprueba explícitamente publicar, con costos ya documentados en ISS-066 | S | ISS-066, ISS-068 | No aplica (decisión humana, no técnica) |
+| ISS-079 | Documentar opciones de hosting económico + costos (incl. dominio) | HU-29 | Al menos 2 opciones comparadas (frontend y backend), con costo estimado mensual/anual y el dominio (~$60.000-80.000 COP/año) | M | — | No aplica (documento) |
+| ISS-080 | Parametrizar configuración agnóstica al dominio | HU-29 | `baseUrl`, CORS y `OG:url` se leen de variables de entorno, sin valores hardcodeados | S | ISS-075 | `ConfiguracionAgnosticaDominioTest` |
+| ISS-081 | Pipeline de build de producción | HU-29 | Genera build SSR de frontend y artefacto/imagen de backend listos para desplegar | M | ISS-009, ISS-045 | Verificación de build en CI |
+| ISS-082 | Checkpoint de decisión de publicación con el usuario | HU-29 | El usuario aprueba explícitamente publicar, con costos ya documentados en ISS-079 | S | ISS-079, ISS-081 | No aplica (decisión humana, no técnica) |
 
 ---
 

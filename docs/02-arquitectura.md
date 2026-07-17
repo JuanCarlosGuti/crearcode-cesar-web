@@ -56,7 +56,8 @@ web-empresa/
 │   │   │   ├── paginas/       # Componentes de página (standalone)
 │   │   │   ├── componentes/   # UI reutilizable (cards, CTA, formulario)
 │   │   │   ├── admin/         # Panel admin (rutas protegidas)
-│   │   │   └── nucleo/        # Servicios, guards, interceptores
+│   │   │   ├── api/           # Clientes HTTP tipados por recurso (SolicitudesApi, AuthApi)
+│   │   │   └── nucleo/        # Sesión, guards, interceptores (ver ADR-08)
 │   │   ├── contenido/         # Datos/markdown centralizados (ver ADR-05)
 │   │   └── ...
 │   └── ...
@@ -224,12 +225,50 @@ y la decisión de despliegue se toma en la fase F7 de la Etapa 2 (ver
 **Consecuencia**: cualquier valor que dependa del dominio final
 (`baseUrl`, sitemap, OG:url) se lee de configuración, nunca hardcodeado.
 
+### ADR-08 — Autenticación del panel admin con JWT autoemitido (no HTTP Basic desde el frontend)
+
+**Decisión**: el backend deja de exponer HTTP Basic hacia el panel
+admin. Pasa a tener un endpoint `POST /api/auth/login` que valida
+credenciales contra un `Usuario` persistido y emite un JWT (HS256,
+autoemitido y autovalidado con `spring-boot-starter-oauth2-resource-server`
+— sin Authorization Server externo, sin librería JWT de terceros). El
+resto de endpoints protegidos pasan de `.httpBasic(...)` a
+`.oauth2ResourceServer().jwt(...)`, verificando el `Bearer <token>` en
+cada petición. El token lleva un claim `rol` (hoy solo `ADMIN`) y un
+claim `jti`, pensado para una futura revocación por denylist que **no**
+se construye todavía (ver [[03-modelo-de-dominio]] §7 y
+[[05-backlog-issues]] fase F5).
+**Motivo**: el diseño original (F2) usaba HTTP Basic *stateless* porque
+había un único usuario hardcodeado sin necesidad real de sesión. Al
+iniciar F5 el usuario explicitó que la aplicación va a evolucionar
+hacia una herramienta de gestión multi-empleado con roles (y,
+eventualmente, facturación/contabilidad), y pidió explícitamente un
+sistema de autenticación robusto desde el principio — aunque hoy siga
+habiendo un solo usuario. Guardar usuario+contraseña en el navegador
+(la alternativa más simple, reusar HTTP Basic desde el frontend) no es
+compatible con esa dirección: no hay expiración real, no hay noción de
+"sesión", y no escala a roles/permisos por usuario. Decisión tomada
+explícitamente por el usuario ante esta disyuntiva (ver
+[[05-backlog-issues]] fase F5), no asumida.
+**Consecuencia**: se reabre parte del diseño de seguridad cerrado en
+F2 — nuevo agregado `Usuario`/`Rol` en `dominio/` (mismo patrón de
+puertos/adaptadores que `SolicitudDeContacto`), nueva tabla `usuarios`
+vía Flyway, y `ADMIN_USERNAME` pasa de ser un usuario cualquiera a
+tener que ser un correo válido (se reusa el VO `Correo`). Sin refresh
+tokens ni denylist de revocación en v1: el logout es responsabilidad
+del cliente (borra el token) y el token sigue siendo técnicamente
+válido hasta su expiración (configurable, default 8h) — trade-off
+consciente para no sobreconstruir con un solo usuario real hoy.
+
 ## 6. Seguridad (resumen, detalle en épica E3)
 
-- Panel admin protegido con Spring Security, usuario único por ahora
-  (sin gestión de roles ni registro de usuarios en v1).
+- Panel admin protegido con Spring Security vía JWT (ver ADR-08):
+  login emite el token, el resto de endpoints protegidos lo validan.
+  Usuario único en v1, pero persistido (no hardcodeado) y con un campo
+  de rol pensado para cuando existan más usuarios/responsabilidades.
 - Secretos (credenciales de correo, credenciales de BD, credenciales de
-  admin) solo por variables de entorno — nunca en el repositorio.
+  admin, secreto de firma JWT) solo por variables de entorno — nunca en
+  el repositorio.
 - Sin datos personales (nombre, correo, teléfono de leads) en logs ni en
   URLs — los identificadores de solicitud en rutas son el `SolicitudId`
   (UUID), no el correo ni el nombre.

@@ -129,7 +129,7 @@ explícito del usuario (ver `CLAUDE.md`).
 ## 5. Checklist de accesibilidad
 
 A aplicar sobre Home, una página de servicio, Contacto y el panel admin
-antes de cerrar la fase F6 ([[05-backlog-issues]] ISS-065):
+antes de cerrar la fase F6 ([[05-backlog-issues]] ISS-078):
 
 - [ ] Toda la navegación es posible solo con teclado (Tab/Shift+Tab/
       Enter/Espacio), sin trampas de foco.
