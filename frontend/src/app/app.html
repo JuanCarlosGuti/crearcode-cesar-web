@@ -1,7 +1,11 @@
-<app-header />
+@if (!esRutaAdmin()) {
+  <app-header />
+}
 
 <main>
   <router-outlet />
 </main>
 
-<app-footer />
+@if (!esRutaAdmin()) {
+  <app-footer />
+}
