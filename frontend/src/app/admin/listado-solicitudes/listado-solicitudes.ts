@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { EstadoSolicitud, Solicitud, SolicitudesApi } from '../../api/solicitudes-api';
+import { CerrarSesionButton } from '../cerrar-sesion/cerrar-sesion';
 
 const ESTADOS: readonly EstadoSolicitud[] = ['NUEVA', 'CONTACTADA', 'CONVERTIDA', 'DESCARTADA'];
 
@@ -9,7 +10,7 @@ const ESTADOS: readonly EstadoSolicitud[] = ['NUEVA', 'CONTACTADA', 'CONVERTIDA'
   selector: 'app-pagina-listado-solicitudes',
   templateUrl: './listado-solicitudes.html',
   styleUrl: './listado-solicitudes.scss',
-  imports: [RouterLink],
+  imports: [RouterLink, CerrarSesionButton],
 })
 export class ListadoSolicitudesPage implements OnInit {
   private readonly solicitudesApi = inject(SolicitudesApi);

@@ -4,7 +4,10 @@
   </section>
 } @else if (solicitud(); as s) {
   <section class="contenedor pagina-detalle">
-    <a routerLink="/admin" class="pagina-detalle__volver">← Volver al listado</a>
+    <div class="pagina-detalle__cabecera">
+      <a routerLink="/admin" class="pagina-detalle__volver">← Volver al listado</a>
+      <app-cerrar-sesion />
+    </div>
 
     <h1>{{ s.nombre }}</h1>
     <span class="badge" [class]="'badge-' + s.estado.toLowerCase()">{{ s.estado }}</span>

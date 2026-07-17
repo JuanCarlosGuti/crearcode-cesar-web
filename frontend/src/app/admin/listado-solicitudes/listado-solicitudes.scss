@@ -2,6 +2,18 @@
   padding-block: var(--espacio-5);
 }
 
+.pagina-listado__cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-2);
+
+  h1 {
+    margin: 0;
+  }
+}
+
 .pagina-listado__filtro {
   display: flex;
   align-items: center;

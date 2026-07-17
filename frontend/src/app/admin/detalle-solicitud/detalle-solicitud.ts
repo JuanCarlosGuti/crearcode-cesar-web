@@ -2,6 +2,7 @@ import { Component, OnInit, computed, inject, input, signal } from '@angular/cor
 import { RouterLink } from '@angular/router';
 
 import { EstadoSolicitud, Solicitud, SolicitudesApi } from '../../api/solicitudes-api';
+import { CerrarSesionButton } from '../cerrar-sesion/cerrar-sesion';
 
 const TRANSICIONES_VALIDAS: Record<EstadoSolicitud, readonly EstadoSolicitud[]> = {
   NUEVA: ['CONTACTADA', 'DESCARTADA'],
@@ -21,7 +22,7 @@ const ETIQUETAS_TRANSICION: Record<EstadoSolicitud, string> = {
   selector: 'app-pagina-detalle-solicitud',
   templateUrl: './detalle-solicitud.html',
   styleUrl: './detalle-solicitud.scss',
-  imports: [RouterLink],
+  imports: [RouterLink, CerrarSesionButton],
 })
 export class DetalleSolicitudPage implements OnInit {
   private readonly solicitudesApi = inject(SolicitudesApi);

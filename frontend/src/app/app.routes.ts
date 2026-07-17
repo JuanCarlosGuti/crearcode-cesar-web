@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { POLITICA_DE_DATOS, TERMINOS_DE_USO } from '../contenido/legales';
+import { adminGuard } from './nucleo/admin.guard';
 
 export const routes: Routes = [
   {
@@ -54,5 +55,23 @@ export const routes: Routes = [
     loadComponent: () => import('./paginas/legal/legal').then((m) => m.LegalPage),
     data: { documento: TERMINOS_DE_USO },
     title: 'Términos de uso — Crear Code Cesar',
+  },
+  {
+    path: 'admin/login',
+    loadComponent: () => import('./admin/login/login').then((m) => m.LoginPage),
+    title: 'Ingresar — Panel Crear Code Cesar',
+  },
+  {
+    path: 'admin',
+    loadComponent: () =>
+      import('./admin/listado-solicitudes/listado-solicitudes').then((m) => m.ListadoSolicitudesPage),
+    canActivate: [adminGuard],
+    title: 'Solicitudes — Panel Crear Code Cesar',
+  },
+  {
+    path: 'admin/solicitudes/:id',
+    loadComponent: () => import('./admin/detalle-solicitud/detalle-solicitud').then((m) => m.DetalleSolicitudPage),
+    canActivate: [adminGuard],
+    title: 'Solicitud — Panel Crear Code Cesar',
   },
 ];

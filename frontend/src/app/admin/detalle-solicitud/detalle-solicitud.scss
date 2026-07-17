@@ -3,9 +3,16 @@
   max-width: 40rem;
 }
 
-.pagina-detalle__volver {
-  display: block;
+.pagina-detalle__cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-2);
   margin-bottom: var(--espacio-2);
+}
+
+.pagina-detalle__volver {
   color: var(--color-texto-secundario);
   text-decoration: none;
 }

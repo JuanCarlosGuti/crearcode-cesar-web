@@ -27,6 +27,13 @@ export const serverRoutes: ServerRoute[] = [
     },
   },
   {
+    // Panel admin: sin SSR/prerender. No aporta SEO, esta detras de
+    // login, y no hay token disponible en build (ver ADR-08 en
+    // docs/02-arquitectura.md).
+    path: 'admin/**',
+    renderMode: RenderMode.Client,
+  },
+  {
     path: '**',
     renderMode: RenderMode.Prerender,
   },
