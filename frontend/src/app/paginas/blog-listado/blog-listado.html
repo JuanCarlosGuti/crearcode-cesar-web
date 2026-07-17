@@ -1,0 +1,19 @@
+<section class="contenedor pagina-blog">
+  <h1>Blog y recursos</h1>
+
+  @if (articulos.length === 0) {
+    <p>Todavía no hay artículos publicados. Vuelve pronto.</p>
+  } @else {
+    <ul class="pagina-blog__lista">
+      @for (articulo of articulos; track articulo.slug) {
+        <li>
+          <a [routerLink]="['/blog', articulo.slug]" class="tarjeta-articulo">
+            <time [attr.datetime]="articulo.fecha">{{ articulo.fecha }}</time>
+            <h2>{{ articulo.titulo }}</h2>
+            <p>{{ articulo.resumen }}</p>
+          </a>
+        </li>
+      }
+    </ul>
+  }
+</section>

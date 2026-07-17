@@ -1,5 +1,6 @@
 import { RenderMode, ServerRoute } from '@angular/ssr';
 
+import { ARTICULOS } from '../contenido/blog';
 import { CASOS } from '../contenido/casos';
 import { SERVICIOS } from '../contenido/servicios';
 
@@ -16,6 +17,13 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Prerender,
     async getPrerenderParams() {
       return CASOS.map((caso) => ({ slug: caso.slug }));
+    },
+  },
+  {
+    path: 'blog/:slug',
+    renderMode: RenderMode.Prerender,
+    async getPrerenderParams() {
+      return ARTICULOS.map((articulo) => ({ slug: articulo.slug }));
     },
   },
   {

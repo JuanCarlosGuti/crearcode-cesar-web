@@ -26,4 +26,14 @@ export const routes: Routes = [
     loadComponent: () => import('./paginas/sobre-nosotros/sobre-nosotros').then((m) => m.SobreNosotrosPage),
     title: 'Sobre nosotros — Crear Code Cesar',
   },
+  {
+    path: 'blog',
+    loadComponent: () => import('./paginas/blog-listado/blog-listado').then((m) => m.BlogListadoPage),
+    title: 'Blog y recursos — Crear Code Cesar',
+  },
+  {
+    path: 'blog/:slug',
+    loadComponent: () => import('./paginas/blog-articulo/blog-articulo').then((m) => m.BlogArticuloPage),
+    title: 'Blog — Crear Code Cesar',
+  },
 ];

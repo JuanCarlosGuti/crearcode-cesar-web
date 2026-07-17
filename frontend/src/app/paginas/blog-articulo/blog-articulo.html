@@ -1,0 +1,17 @@
+@if (articulo(); as a) {
+  <article class="contenedor pagina-articulo">
+    <a routerLink="/blog" class="pagina-articulo__volver">← Volver al blog</a>
+    <time [attr.datetime]="a.fecha">{{ a.fecha }}</time>
+    <h1>{{ a.titulo }}</h1>
+    <div class="pagina-articulo__cuerpo" [innerHTML]="cuerpoHtml()"></div>
+
+    <div class="cta-doble">
+      <a routerLink="/contacto" class="boton boton-primario">Agenda tu consulta gratuita</a>
+    </div>
+  </article>
+} @else {
+  <section class="contenedor pagina-articulo">
+    <h1>Artículo no encontrado</h1>
+    <a routerLink="/blog">Volver al blog</a>
+  </section>
+}

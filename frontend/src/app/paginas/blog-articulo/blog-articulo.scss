@@ -1,0 +1,29 @@
+.pagina-articulo {
+  padding-block: var(--espacio-5);
+  max-width: 42rem;
+}
+
+.pagina-articulo__volver {
+  display: inline-block;
+  margin-bottom: var(--espacio-2);
+  color: var(--color-texto-secundario);
+  text-decoration: none;
+}
+
+.pagina-articulo time {
+  font-size: 0.9rem;
+  color: var(--color-texto-secundario);
+}
+
+.pagina-articulo__cuerpo {
+  margin-block: var(--espacio-4);
+  line-height: 1.7;
+}
+
+.pagina-articulo__cuerpo h2 {
+  margin-top: var(--espacio-4);
+}
+
+.pagina-articulo__cuerpo a {
+  color: var(--color-acento);
+}
