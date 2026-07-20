@@ -47,6 +47,18 @@ jobs:
         working-directory: frontend
         run: npm run build
 
+  docker-build:
+    name: Docker (verifica que ambas imagenes construyan)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: docker build backend
+        run: docker build backend/
+
+      - name: docker build frontend
+        run: docker build frontend/
+
   e2e:
     name: E2E (Playwright, flujo de contacto + accesibilidad axe-core)
     runs-on: ubuntu-latest
