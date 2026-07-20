@@ -84,6 +84,7 @@ Detalle completo, diagrama y ADRs en
 | [06-plan-de-pruebas.md](docs/06-plan-de-pruebas.md) | Estrategia TDD, pirámide de pruebas, umbrales de cobertura, checklist de accesibilidad |
 | [07-guia-de-estilo.md](docs/07-guia-de-estilo.md) | Convenciones de código y guía visual (paleta, tipografía, componentes) |
 | [08-contenido.md](docs/08-contenido.md) | Todos los textos del sitio en borrador |
+| [09-despliegue.md](docs/09-despliegue.md) | Opciones de hosting y dominio comparadas con costos, recomendación, checklist técnico pendiente (fase F7) |
 
 ## Checklist de fases (Etapa 2 — actualizar a medida que avance)
 
