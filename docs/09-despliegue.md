@@ -17,30 +17,20 @@ Tres piezas, ninguna con Dockerfile todavía (ISS-081 las crea):
 - **Dominio**: pendiente de compra, ~$60.000-80.000 COP/año estimado en
   la propia HU-29.
 
-## 2. Decisión de arquitectura pendiente: un dominio o dos
+## 2. Arquitectura: un origen público, sin CORS (ADR-09)
 
-Hoy, en local, el navegador nunca llama directamente al backend: el
-proxy de desarrollo de Angular (`proxy.conf.json`) redirige `/api/*`
-al backend, así que todo vive bajo el mismo origen y no hace falta
-CORS. **El backend no tiene configuración CORS todavía** (no existía
-la necesidad hasta ahora).
-
-En producción hay dos caminos:
-
-- **A. Un solo dominio** (ej. `crearcodecesar.co`): un reverse proxy
-  (Caddy o nginx) enruta `/api/*` al backend y todo lo demás al
-  frontend, bajo el mismo origen. **No hace falta CORS.** Es el camino
-  más simple y es el que naturalmente encaja con la Opción de
-  hosting "todo en un VPS" (§3).
-- **B. Dos subdominios** (ej. `crearcodecesar.co` para el frontend,
-  `api.crearcodecesar.co` para el backend): más simple de desplegar en
-  plataformas PaaS (cada servicio con su propia URL, sin reverse proxy
-  propio), pero **exige agregar configuración CORS** en el backend
-  (`Access-Control-Allow-Origin` apuntando al dominio del frontend, vía
-  variable de entorno — no hardcodeado, según ADR-06).
-
-Esta decisión se toma junto con la de hosting (§3), porque el camino A
-encaja mejor con la Opción 1 y el camino B con las Opciones 2 y 3.
+Backend y frontend van a vivir en dos servicios/URLs distintas de
+Render (Opción 4, §3) — en un primer análisis esto parecía obligar a
+CORS ("dos subdominios"). Al implementar ISS-080 apareció una opción
+mejor: el propio servidor SSR del frontend (`frontend/src/server.ts`)
+reenvía todo `/api/**` al backend real (`http-proxy-middleware`, target
+configurado vía la variable de entorno `BACKEND_URL`). El navegador
+solo ve **un origen** (el del frontend) — nunca llama al backend
+directo, así que **no hace falta CORS en absoluto**, y
+`SolicitudesApi`/`AuthApi` no cambiaron una línea (siguen usando rutas
+relativas `/api/...`, igual que ya hacían contra el proxy de
+`ng serve` en desarrollo). Detalle completo y motivo en **ADR-09**
+([[02-arquitectura]]).
 
 ## 3. Opciones de hosting comparadas
 
@@ -74,8 +64,7 @@ Let's Encrypt) resolviendo el camino A de arquitectura (§2).
 ### Opción 2 — Fly.io (backend + frontend) + Neon (Postgres gestionado, free tier)
 
 Dos "apps" en Fly.io (una por servicio, cada una con su Dockerfile),
-base de datos en Neon (Postgres serverless, capa gratis). Encaja con
-el camino B de arquitectura (dos subdominios, CORS).
+base de datos en Neon (Postgres serverless, capa gratis).
 
 - **Costo**: Fly.io cobra por uso, sin plan fijo. Un frontend Node
   (256 MB RAM) ronda **$2 USD/mes**; un backend Java necesita más
@@ -130,8 +119,6 @@ con latencia extra en la primera consulta tras inactividad).
   15 min sin tráfico (30-60s de arranque en frío en la siguiente
   visita) — aceptado como trade-off consciente dado el costo cero; a
   revisar si en la práctica resulta molesto para visitantes reales.
-  Implica el **camino B de arquitectura** (§2): backend y frontend en
-  URLs/dominios distintos → hace falta configurar CORS (ISS-080).
 
 ### Resumen
 
@@ -166,27 +153,39 @@ gratis)**, decidido por el usuario tras revisar esta comparación. Se
 prefirió sobre la Opción 1 (VPS único) porque evita la administración
 de servidor a cambio de aceptar el *sleep* de los servicios gratis de
 Render — trade-off consciente, costo cero de cómputo hasta que el
-tráfico lo justifique. Implica el camino B de arquitectura (§2):
-backend y frontend en orígenes distintos, hace falta CORS.
+tráfico lo justifique. Arquitectura: proxy servidor-a-servidor sin
+CORS (§2, ADR-09).
 
 Registrador de dominio: pendiente, ver arriba.
 
 ## 6. Qué falta en el código antes de desplegar (ISS-080, ISS-081)
 
-Camino elegido: Opción 4 (Render + Neon), camino B de arquitectura.
+Camino elegido: Opción 4 (Render + Neon), proxy sin CORS (ADR-09).
 
-- [ ] `Dockerfile` del backend (imagen JVM + JAR).
-- [ ] `Dockerfile` del frontend (imagen Node + `dist/frontend/server`).
-- [ ] Configuración CORS en el backend: origen del frontend permitido
-      vía variable de entorno (nunca hardcodeado, ADR-06).
-- [ ] `BASE_URL` del frontend (`contenido/sitio.ts`, hoy una constante
-      con el placeholder `.example`) pasa a leerse de una variable de
-      entorno en build time.
-- [ ] `NG_ALLOWED_HOSTS` (ver CLAUDE.md, descubierto en F6) con el
-      dominio real de Render, no solo `localhost`.
-- [ ] Pipeline de CI que construya ambas imágenes Docker (backend y
-      frontend) al mergear a `main` — Render puede desplegar desde un
-      registry o construir directo desde el `Dockerfile` del repo.
+- [x] `Dockerfile` del backend (imagen JVM + JAR) — `backend/Dockerfile`.
+- [x] `Dockerfile` del frontend (imagen Node + `dist/frontend/server`)
+      — `frontend/Dockerfile`.
+- [x] Proxy `/api/**` en `frontend/src/server.ts` hacia `BACKEND_URL`
+      (ver ADR-09) — reemplaza la necesidad de CORS.
+- [x] `server.port=${PORT:8080}` en `application.properties` — Render
+      inyecta el puerto real en runtime.
+- [x] Pipeline de CI (`docker-build` en `.github/workflows/ci.yml`)
+      que verifica que ambas imágenes construyan al mergear a `main`
+      — sin publicar a ningún registry: Render construye la imagen él
+      mismo desde el `Dockerfile` del repo.
+- [x] Verificado extremo a extremo: ambas imágenes corridas juntas en
+      una red Docker (backend real + Postgres real) confirman que el
+      proxy reenvía correctamente (`POST /api/solicitudes`,
+      `POST /api/auth/login`); la suite e2e completa
+      (`contacto-e2e.spec.ts`, `accesibilidad-e2e.spec.ts`) pasa
+      completa contra el build de producción con el proxy activo, sin
+      modificar ningún test existente.
+- [ ] `contenido/sitio.ts` (`BASE_URL`): sin cambios de mecanismo —
+      ya cumple ADR-06 con un solo valor a editar el día que se compre
+      el dominio (pendiente, no bloquea nada de lo anterior).
+- [ ] `NG_ALLOWED_HOSTS`: variable de entorno a configurar en Render
+      con el dominio real el día del despliegue (sin cambio de código,
+      Angular ya la lee nativamente, ver CLAUDE.md).
 - [ ] Backups de PostgreSQL: Neon los incluye en su capa gratis, no
       hace falta configurar nada manual.
 

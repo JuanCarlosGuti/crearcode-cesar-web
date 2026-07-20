@@ -154,7 +154,7 @@ histórico de lo que efectivamente se construyó en ese momento.
 | ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
 |---|---|---|---|---|---|---|
 | ISS-079 | Documentar opciones de hosting económico + costos (incl. dominio) | HU-29 | Al menos 2 opciones comparadas (frontend y backend), con costo estimado mensual/anual y el dominio (~$60.000-80.000 COP/año) | M | — | No aplica (documento) |
-| ISS-080 | Parametrizar configuración agnóstica al dominio | HU-29 | `baseUrl`, CORS y `OG:url` se leen de variables de entorno, sin valores hardcodeados | S | ISS-075 | `ConfiguracionAgnosticaDominioTest` |
+| ISS-080 | Configuración agnóstica al dominio: proxy `/api` en vez de CORS (ADR-09) | HU-29 | El navegador solo llama al frontend; `server.ts` reenvía `/api/**` al backend real vía `BACKEND_URL`. `server.port` del backend lee `PORT` | S | ISS-075 | e2e completo (`contacto-e2e`, `accesibilidad-e2e`) contra el build de producción con el proxy activo |
 | ISS-081 | Pipeline de build de producción | HU-29 | Genera build SSR de frontend y artefacto/imagen de backend listos para desplegar | M | ISS-009, ISS-045 | Verificación de build en CI |
 | ISS-082 | Checkpoint de decisión de publicación con el usuario | HU-29 | El usuario aprueba explícitamente publicar, con costos ya documentados en ISS-079 | S | ISS-079, ISS-081 | No aplica (decisión humana, no técnica) |
 

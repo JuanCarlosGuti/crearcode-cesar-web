@@ -216,9 +216,9 @@ contenido (servicio, caso, artículo) antes de escribir los componentes
 que lo consumen — este esquema se detalla como issue temprano en fase F3.
 
 ### ADR-06 — Diseño agnóstico al dominio web
-**Decisión**: nada en la arquitectura (URLs absolutas, configuración de
-CORS, metadatos Open Graph) asume un dominio específico; todo se
-parametriza vía variables de entorno/configuración.
+**Decisión**: nada en la arquitectura (URLs absolutas, metadatos Open
+Graph) asume un dominio específico; todo se parametriza vía variables
+de entorno/configuración. (No hace falta CORS: ver ADR-09.)
 **Motivo**: el dominio aún no está comprado; el desarrollo es 100% local
 y la decisión de despliegue se toma en la fase F7 de la Etapa 2 (ver
 [[01-vision-y-alcance]] pendientes).
@@ -259,6 +259,30 @@ tokens ni denylist de revocación en v1: el logout es responsabilidad
 del cliente (borra el token) y el token sigue siendo técnicamente
 válido hasta su expiración (configurable, default 8h) — trade-off
 consciente para no sobreconstruir con un solo usuario real hoy.
+
+### ADR-09 — Proxy servidor-a-servidor en el frontend en vez de CORS
+
+**Decisión**: el servidor SSR del frontend (`frontend/src/server.ts`)
+reenvía todo lo que llega a `/api/**` hacia el backend real (variable
+de entorno `BACKEND_URL`), vía `http-proxy-middleware`. El navegador
+nunca llama al backend directamente — solo al frontend, que hace de
+intermediario. El backend no tiene ninguna configuración CORS.
+**Motivo**: en la fase F7 ([[09-despliegue]], ISS-079/080) el usuario
+eligió desplegar en Render (capa gratis) + Neon, lo que pone al
+backend y al frontend en dos orígenes distintos. La alternativa directa
+(CORS en el backend + `SolicitudesApi`/`AuthApi` armando URLs absolutas
+al backend) exigía dos cosas nuevas: configuración CORS desde cero
+(hoy inexistente) y alguna forma de inyectar la URL del backend en el
+bundle del navegador en build time — con el riesgo de mezclar
+`process.env` en código que se empaqueta para el browser. El proxy
+evita ambas cosas: `SolicitudesApi`/`AuthApi` siguen usando rutas
+relativas (`/api/...`) sin cambios, exactamente como ya lo hacían
+contra el proxy de `ng serve` en desarrollo local, y `BACKEND_URL` se
+lee en `server.ts`, que corre en Node real (sin trucos de bundling).
+**Consecuencia**: toda petición a la API pasa por un salto de red
+adicional (navegador → frontend → backend) — aceptable para el
+volumen de tráfico esperado de un sitio de captación de leads. El
+frontend queda como único punto de entrada público de la API.
 
 ## 6. Seguridad (resumen, detalle en épica E3)
 

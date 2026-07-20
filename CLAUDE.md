@@ -265,6 +265,45 @@ con datos reales, cambio de estado reflejado de inmediato, logout.
   optimizar algo que no existe (ver
   [docs/07-guia-de-estilo.md](docs/07-guia-de-estilo.md) §Imágenes).
 
+## Despliegue (tras ISS-079 a ISS-081 de la fase F7 — ISS-082 pendiente)
+
+Hosting elegido por el usuario tras comparar costos en
+[docs/09-despliegue.md](docs/09-despliegue.md): **Render (backend +
+frontend, capa gratis) + Neon (PostgreSQL, capa gratis)** — $0/mes de
+cómputo, único costo fijo el dominio (aún no comprado).
+
+- **`backend/Dockerfile`** y **`frontend/Dockerfile`** (multi-stage,
+  nuevos en F7): Render los construye directo desde el repo, sin
+  necesidad de un registry propio. CI (`docker-build` en
+  `.github/workflows/ci.yml`) verifica que ambos construyan en cada
+  push/PR.
+- **Sin CORS** (ver ADR-09 en
+  [docs/02-arquitectura.md](docs/02-arquitectura.md)): el servidor SSR
+  del frontend (`frontend/src/server.ts`) reenvía todo `/api/**` al
+  backend real vía `http-proxy-middleware` — el navegador solo ve un
+  origen. `SolicitudesApi`/`AuthApi` no cambiaron (siguen con rutas
+  relativas `/api/...`).
+- **Variables de entorno nuevas para producción**:
+  - `BACKEND_URL` (frontend): URL pública del backend en Render. Sin
+    setearla, el proxy local apunta a `http://localhost:8080`.
+  - `PORT` (ambos): ya estándar — Render la inyecta sola; el backend
+    la lee vía `server.port=${PORT:8080}`, el frontend ya la leía
+    desde antes de F7.
+  - `NG_ALLOWED_HOSTS` (frontend, descubierta en F6): debe incluir el
+    dominio real de Render el día del despliegue — sin esto, Angular
+    devuelve 400 a cualquier petición (protección SSRF nativa).
+- **Verificado extremo a extremo** (no solo `docker build`): ambas
+  imágenes corridas juntas en una red Docker con Postgres real
+  confirmaron que el proxy reenvía correctamente login y registro de
+  solicitudes; la suite e2e completa
+  (`contacto-e2e.spec.ts`, `accesibilidad-e2e.spec.ts`) corrida contra
+  el build de producción con el proxy activo pasa sin modificar ningún
+  test existente.
+- **Pendiente (ISS-082)**: comprar el dominio, decidir registrador
+  (ver [docs/09-despliegue.md](docs/09-despliegue.md) §4, sin
+  decisión todavía), y el visto bueno explícito del usuario para
+  publicar de verdad.
+
 ## Decisiones ya resueltas por el usuario
 
 - Correo corporativo temporal: `crearcodecesar@gmail.com` (se
