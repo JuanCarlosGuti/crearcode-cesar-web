@@ -45,6 +45,9 @@ __screenshots__/
 /blob-report
 /playwright/.cache
 
+# Lighthouse (auditoria manual, ISS-077) - resultado en docs/06-plan-de-pruebas.md
+/lighthouse-reports
+
 # System files
 .DS_Store
 Thumbs.db

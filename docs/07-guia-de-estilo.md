@@ -124,17 +124,25 @@ Esta es la paleta oficial del sitio a partir de ahora.
 |---|---|---|
 | Primario | Grafito azulado | `#22303F` |
 | Primario claro | Gris azulado medio | `#4C5F73` |
-| Acento / CTA | Verde crecimiento | `#3C9D6E` |
+| Acento / CTA | Verde crecimiento | `#2E7D53` |
 | Fondo | Blanco frío | `#F7F8FA` |
 | Texto principal | Casi negro | `#171B1F` |
 | Texto secundario | Gris medio | `#5A6472` |
-| Éxito (admin) | Verde (= acento) | `#3C9D6E` |
+| Éxito (admin) | Verde (= acento) | `#2E7D53` |
 | Alerta/nueva (admin) | Ámbar | `#D98E04` |
 | Error | Rojo | `#C4453A` |
 
 > Decisión tomada por el usuario: se adopta la Opción C — "Minimal
 > Corporativo" como paleta oficial del sitio, a usar desde la fase F3
 > de la Etapa 2.
+>
+> **Ajuste F6 (ISS-077)**: el verde de acento se oscureció de `#3C9D6E`
+> a `#2E7D53` — el original medía 3.36:1 de contraste como texto sobre
+> blanco (o blanco sobre el color como fondo), por debajo del mínimo AA
+> de 4.5:1 exigido por el checklist de accesibilidad
+> ([[06-plan-de-pruebas]] §5). El nuevo valor da ~5:1. Mismo criterio
+> aplicado al verde de WhatsApp (`#25D366` → `#158542` solo para el
+> fondo de los botones, el ícono oficial no se toca).
 
 ### Tipografía sugerida
 

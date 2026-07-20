@@ -4,6 +4,7 @@ import {
   isMainModule,
   writeResponseToNodeResponse,
 } from '@angular/ssr/node';
+import compression from 'compression';
 import express from 'express';
 import { join } from 'node:path';
 
@@ -14,6 +15,13 @@ const browserDistFolder = join(import.meta.dirname, '../browser');
 
 const app = express();
 const angularApp = new AngularNodeAppEngine();
+
+/**
+ * Compresión gzip/brotli de todas las respuestas — sin esto los bundles
+ * de Angular (JS/CSS) y el HTML de SSR viajan sin comprimir, lo que
+ * penaliza FCP/LCP en Lighthouse (ISS-077) y en redes móviles reales.
+ */
+app.use(compression());
 
 /**
  * sitemap.xml generado dinámicamente desde el mismo contenido usado para
