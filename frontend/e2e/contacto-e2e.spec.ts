@@ -12,7 +12,7 @@ import { expect, test } from '@playwright/test';
  */
 
 const API_BASE_URL = process.env['E2E_API_BASE_URL'] ?? 'http://localhost:8080';
-const ADMIN_USERNAME = process.env['E2E_ADMIN_USERNAME'] ?? 'admin';
+const ADMIN_USERNAME = process.env['E2E_ADMIN_USERNAME'] ?? 'admin@crearcode-cesar.local';
 const ADMIN_PASSWORD = process.env['E2E_ADMIN_PASSWORD'] ?? 'cambiar-en-produccion';
 
 test('un visitante llena el formulario de contacto y la solicitud queda registrada', async ({ page, request }) => {
@@ -31,9 +31,14 @@ test('un visitante llena el formulario de contacto y la solicitud queda registra
 
   await expect(page.getByText('¡Listo! Ya recibimos tu mensaje.')).toBeVisible();
 
-  const credenciales = Buffer.from(`${ADMIN_USERNAME}:${ADMIN_PASSWORD}`).toString('base64');
+  const loginResponse = await request.post(`${API_BASE_URL}/api/auth/login`, {
+    data: { correo: ADMIN_USERNAME, contrasena: ADMIN_PASSWORD },
+  });
+  expect(loginResponse.ok()).toBe(true);
+  const { token } = await loginResponse.json();
+
   const respuesta = await request.get(`${API_BASE_URL}/api/solicitudes`, {
-    headers: { Authorization: `Basic ${credenciales}` },
+    headers: { Authorization: `Bearer ${token}` },
   });
   expect(respuesta.ok()).toBe(true);
 
