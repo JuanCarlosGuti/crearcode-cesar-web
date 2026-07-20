@@ -163,6 +163,32 @@ levantados a la vez, `GET /actuator/health` respondió
 `{"status":"UP"}` con la base de datos real conectada, y el frontend
 respondió 200 en su ruta raíz.
 
+### Alternativa: todo containerizado (perfil `full` de Docker Compose)
+
+Desde F7, `docker-compose.yml` también define `backend` y `frontend`,
+construidos desde sus `Dockerfile` de producción (ISS-081) — pero
+quedan en el perfil `full`, así que **no afectan** el flujo normal de
+arriba (`docker compose up -d` sin perfil sigue levantando solo
+Postgres). Útil para probar el stack tal como corre en Render (mismas
+imágenes, proxy `/api` real) sin tener Java/Node instalados:
+
+```
+docker compose --profile full up --build
+```
+
+Levanta Postgres + backend (`http://localhost:8080`) + frontend
+(`http://localhost:4300`, con el proxy `/api` ya apuntando al backend
+por su nombre de servicio en la red de Compose — no hace falta
+`BACKEND_URL` a mano). `docker compose --profile full down` los baja
+a los tres.
+
+Nota de esta máquina: el puerto 8080 del host ya está ocupado (ver
+arriba), así que acá hace falta `BACKEND_PORT=8090` — se dejó en un
+`.env` local en la raíz del repo (gitignored, no se comitea).
+Verificado extremo a extremo (jul 2026): los tres contenedores arriba
+a la vez, POST `/api/solicitudes` y `/api/auth/login` a través del
+proxy del frontend responden igual que en el flujo nativo.
+
 ## API del backend (tras la fase F5)
 
 | Endpoint | Auth | Qué hace |

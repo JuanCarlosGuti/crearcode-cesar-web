@@ -6,6 +6,10 @@
 .idea/
 *.iml
 
+# Overrides locales de docker-compose (ej. BACKEND_PORT en maquinas donde
+# el 8080 del host ya esta ocupado) -- ver CLAUDE.md.
+/.env
+
 # Sistema operativo
 .DS_Store
 Thumbs.db

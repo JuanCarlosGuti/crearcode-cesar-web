@@ -21,5 +21,46 @@ services:
       timeout: 5s
       retries: 5
 
+  # Backend y frontend quedan en el perfil "full": `docker compose up -d`
+  # (sin perfil) sigue levantando solo Postgres, como hasta ahora, para no
+  # romper el flujo de desarrollo normal (mvnw spring-boot:run + npm start,
+  # con hot-reload). `docker compose --profile full up --build` levanta el
+  # stack completo containerizado, usando los mismos Dockerfile de
+  # produccion (ISS-081) -- util para probar el proxy/imagenes tal como
+  # correrian en Render, sin depender de Java/Node instalados en el host.
+  backend:
+    build:
+      context: ./backend
+    container_name: crearcode-leads-backend
+    profiles: ["full"]
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: leads
+      DB_USER: leads
+      DB_PASSWORD: leads
+    ports:
+      # 8080 en el host puede estar ocupado (ej. por Docker Desktop en esta
+      # maquina) -- sobreescribir con BACKEND_PORT=8090 (ver CLAUDE.md).
+      - "${BACKEND_PORT:-8080}:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: crearcode-leads-frontend
+    profiles: ["full"]
+    environment:
+      # "backend", el nombre del servicio de arriba: Docker Compose lo
+      # resuelve via DNS interno, sin depender de puertos publicados al host.
+      BACKEND_URL: http://backend:8080
+      NG_ALLOWED_HOSTS: localhost
+    ports:
+      - "${FRONTEND_PORT:-4300}:4000"
+    depends_on:
+      - backend
+
 volumes:
   postgres_data:
