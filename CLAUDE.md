@@ -7,9 +7,9 @@ correspondiente antes de seguir.
 
 ## Estado del proyecto
 
-**Etapa actual: Etapa 2 — Desarrollo. Fases F0 a F5 completas
-(ISS-001 a ISS-071), pendiente de OK explícito del usuario para
-pasar a F6.**
+**Etapa actual: Etapa 2 — Desarrollo. Fases F0 a F6 completas
+(ISS-001 a ISS-078), pendiente de OK explícito del usuario para
+pasar a F7.**
 
 El usuario aprobó la documentación el 16 jul 2026 con la frase
 "APRUEBO LA DOCUMENTACIÓN, ARRANCA LA FASE 1". Regla dura: no se avanza
@@ -93,7 +93,7 @@ Detalle completo, diagrama y ADRs en
 - [x] **F3** — Frontend: estructura y páginas con contenido
 - [x] **F4** — Formulario end-to-end con Signal Forms + notificaciones
 - [x] **F5** — Panel admin (autenticación JWT, no HTTP Basic — ver ADR-08)
-- [ ] **F6** — SEO, rendimiento y accesibilidad (Lighthouse ≥90)
+- [x] **F6** — SEO, rendimiento y accesibilidad (Lighthouse 98-99 Performance, 100 Accesibilidad/Buenas Prácticas/SEO)
 - [ ] **F7** — Despliegue (costos de hosting + dominio, decisión final con el usuario)
 
 Detalle de issues por fase en
@@ -147,6 +147,15 @@ proyecto vía `npx`/scripts de `package.json`.
    `proxy.conf.json` a `http://localhost:8090` para poder probar el
    formulario en el navegador (cambio solo local, no se comitea: el
    archivo versionado sigue apuntando al 8080 por defecto).
+
+   Para probar el build de producción SSR localmente
+   (`node dist/frontend/server/server.mjs`, no `npm start`): Angular 22
+   valida el header `Host` contra una allowlist (protección SSRF, ver
+   [angular.dev/best-practices/security](https://angular.dev/best-practices/security#preventing-server-side-request-forgery-ssrf)) —
+   sin configurarla, cualquier petición responde 400. Se resuelve con
+   la variable de entorno `NG_ALLOWED_HOSTS` (lista separada por comas,
+   **sin puerto**, ej. `NG_ALLOWED_HOSTS=localhost`). En producción esa
+   variable deberá incluir el dominio real (pendiente de F7).
 
 Verificado manualmente end-to-end (16 jul 2026): los tres servicios
 levantados a la vez, `GET /actuator/health` respondió
@@ -214,6 +223,46 @@ sitio público (es una sección interna distinta, no contenido) y queda
 fuera de SSR/prerender (`admin/**` con `RenderMode.Client`). Verificado
 extremo a extremo en navegador real: login correcto/incorrecto, listado
 con datos reales, cambio de estado reflejado de inmediato, logout.
+
+## SEO, rendimiento y accesibilidad (tras la fase F6)
+
+- **Metadatos por página** (`title`, `meta description`, Open Graph):
+  cada página pública setea los suyos vía `Meta`/`Title` de Angular
+  (`frontend/src/app/nucleo/metadatos-pagina.ts`), alimentados desde
+  `contenido/`. Imagen OG por defecto en
+  `frontend/public/imagenes/og-defecto.jpg`.
+- **`sitemap.xml` y `robots.txt`**: generados dinámicamente desde el
+  servidor SSR (`frontend/src/server.ts` + `frontend/src/servidor/`),
+  no como archivos estáticos — así la URL base sale siempre de
+  `contenido/sitio.ts` (ADR-06), sin duplicar el dominio. `/admin`
+  queda excluido de ambos (HU-23).
+- **Compresión**: el servidor Express comprime todas las respuestas
+  (`compression`, gzip/brotli) — sin esto los bundles de Angular viajan
+  sin comprimir y penalizan Performance en Lighthouse y en redes
+  móviles reales.
+- **Paleta**: tres colores se oscurecieron por contraste insuficiente
+  como texto (mínimo AA 4.5:1) — acento/éxito, verde de WhatsApp y
+  ámbar de alerta. Detalle y valores nuevos en
+  [docs/07-guia-de-estilo.md](docs/07-guia-de-estilo.md).
+- **Auditoría Lighthouse** (`npm run lighthouse`, script propio en
+  `frontend/scripts/lighthouse-audit.mjs` — Playwright + lighthouse
+  programático vía CDP, sin depender de un Chrome del sistema; corre
+  contra el build de producción real, no el dev server): Home, un
+  servicio y Contacto en modo móvil dan Performance 98-99,
+  Accesibilidad 100, Buenas Prácticas 100, SEO 100.
+- **Checklist de accesibilidad**: los 10 puntos de
+  [docs/06-plan-de-pruebas.md](docs/06-plan-de-pruebas.md) §5
+  verificados con axe-core vía Playwright
+  (`frontend/e2e/accesibilidad-e2e.spec.ts`) sobre Home, un servicio,
+  Contacto y el panel admin completo (login, listado y detalle
+  autenticados) — cero violaciones. Encontró y permitió corregir dos
+  bugs reales de layout/contraste que ningún test previo había
+  atrapado (detalle en el mismo documento).
+- **Convención de imágenes**: el sitio no tiene todavía ninguna imagen
+  de contenido — queda documentada la convención (`NgOptimizedImage`,
+  WebP, alt text) para cuando se agreguen imágenes reales, en vez de
+  optimizar algo que no existe (ver
+  [docs/07-guia-de-estilo.md](docs/07-guia-de-estilo.md) §Imágenes).
 
 ## Decisiones ya resueltas por el usuario
 
