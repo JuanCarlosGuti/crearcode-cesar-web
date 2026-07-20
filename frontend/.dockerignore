@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.angular/
+e2e/
+lighthouse-reports/
+test-results/
+playwright-report/
