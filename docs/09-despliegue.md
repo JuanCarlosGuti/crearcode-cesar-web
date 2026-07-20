@@ -95,7 +95,7 @@ el camino B de arquitectura (dos subdominios, CORS).
   inactividad, con latencia extra en la primera consulta — no crítico
   para un panel admin de uso interno, sí a vigilar si molesta).
 
-### Opción 3 — Render (referencia, PaaS "todo incluido")
+### Opción 3 — Render con Postgres de pago (referencia, PaaS "todo incluido")
 
 Mencionada porque es la alternativa más simple de las tres, aunque más
 cara — sirve como techo de comparación, no como recomendación
@@ -103,14 +103,35 @@ principal dado el criterio de "hosting económico" de HU-29.
 
 - **Costo**: Web service Starter $7 USD/mes × 2 (backend + frontend) +
   Postgres desde $6-15 USD/mes ≈ **$20-29 USD/mes ≈
-  $80.000-116.000 COP/mes ≈ $960.000-1.390.000 COP/año.** El free
-  tier existe pero los servicios "duermen" tras 15 min de inactividad
-  (30-60s de arranque en frío) — mala experiencia para un visitante
-  que llega desde una campaña o WhatsApp.
+  $80.000-116.000 COP/mes ≈ $960.000-1.390.000 COP/año.**
 - **Ventajas**: el más simple de configurar (deploy por git push, sin
-  Dockerfile obligatorio), buena documentación.
+  Dockerfile obligatorio), buena documentación, Postgres con backups
+  automáticos y sin límite de 30 días.
 - **Desventajas**: 4-6× más caro que las otras dos opciones para el
   mismo resultado.
+
+### Opción 4 — Render (capa gratis) + Neon (Postgres, capa gratis) — **elegida**
+
+Backend y frontend como *web services* gratis de Render; base de datos
+en Neon en vez de en el Postgres gratis de Render, porque **el
+Postgres gratis de Render se borra a los 30 días** (hallado al
+presentar esta comparación al usuario) — un riesgo real de pérdida de
+datos para una base que va a tener leads reales, no solo un
+inconveniente de latencia. Neon en su capa gratis no se borra, solo
+entra en *scale-to-zero* (conserva los datos, se "duerme" y despierta
+con latencia extra en la primera consulta tras inactividad).
+
+- **Costo**: **$0/mes de cómputo.** Único costo fijo: el dominio
+  (§4, ~$60.000-80.000 COP/año).
+- **Ventajas**: sin costo de infraestructura mientras el tráfico sea
+  bajo; nada que administrar a nivel de sistema operativo; deploy
+  simple (git push o imagen Docker); Postgres con datos persistentes.
+- **Desventajas**: los *web services* gratis de Render "duermen" tras
+  15 min sin tráfico (30-60s de arranque en frío en la siguiente
+  visita) — aceptado como trade-off consciente dado el costo cero; a
+  revisar si en la práctica resulta molesto para visitantes reales.
+  Implica el **camino B de arquitectura** (§2): backend y frontend en
+  URLs/dominios distintos → hace falta configurar CORS (ISS-080).
 
 ### Resumen
 
@@ -118,7 +139,8 @@ principal dado el criterio de "hosting económico" de HU-29.
 |---|---|---|---|
 | 1. VPS único (Hetzner) | ~$18.500 COP | ~$222.000 COP | Alto (self-managed) |
 | 2. Fly.io + Neon | ~$24.000-40.000 COP | ~$290.000-480.000 COP | Medio |
-| 3. Render | ~$80.000-116.000 COP | ~$960.000-1.390.000 COP | Bajo |
+| 3. Render (Postgres de pago) | ~$80.000-116.000 COP | ~$960.000-1.390.000 COP | Bajo |
+| **4. Render gratis + Neon — elegida** | **$0** | **$0** (+ dominio) | Bajo, con sleep aceptado |
 
 ## 4. Opciones de dominio comparadas
 
@@ -134,45 +156,39 @@ principal dado el criterio de "hosting económico" de HU-29.
 
 **Recomendación**: registrador colombiano, por simplicidad de pago (COP,
 sin tarjeta internacional) y porque ya cumple el estimado de HU-29.
+**Pendiente de decidir** — no bloquea ISS-080/081, se define al
+momento de comprar el dominio (ISS-082).
 
-## 5. Recomendación
+## 5. Decisión
 
-Para un sitio de captación de leads recién publicado, sin tráfico alto
-esperado al inicio, y con el criterio explícito de "hosting económico"
-de HU-29: **Opción 1 (VPS único en Hetzner)**. Es la más barata con
-margen amplio, evita la complejidad de CORS/dos-dominios, y reutiliza
-una herramienta que el proyecto ya usa en local (Docker Compose) — la
-curva de aprendizaje adicional es administrar el servidor en sí
-(SO, backups, reverse proxy), no la orquestación de contenedores.
+**Hosting: Opción 4 — Render (capa gratis) + Neon (Postgres, capa
+gratis)**, decidido por el usuario tras revisar esta comparación. Se
+prefirió sobre la Opción 1 (VPS único) porque evita la administración
+de servidor a cambio de aceptar el *sleep* de los servicios gratis de
+Render — trade-off consciente, costo cero de cómputo hasta que el
+tráfico lo justifique. Implica el camino B de arquitectura (§2):
+backend y frontend en orígenes distintos, hace falta CORS.
 
-Si la preferencia es minimizar el tiempo de administración aunque
-cueste un poco más, **Opción 2 (Fly.io + Neon)** es el punto medio
-razonable.
-
-**Esta es una recomendación, no una decisión tomada** — ISS-082 exige
-el visto bueno explícito del usuario antes de publicar, con estos
-números ya sobre la mesa.
+Registrador de dominio: pendiente, ver arriba.
 
 ## 6. Qué falta en el código antes de desplegar (ISS-080, ISS-081)
 
-Pendiente de implementar una vez el usuario elija opción de hosting
-(algunos ítems dependen de esa elección):
+Camino elegido: Opción 4 (Render + Neon), camino B de arquitectura.
 
 - [ ] `Dockerfile` del backend (imagen JVM + JAR).
 - [ ] `Dockerfile` del frontend (imagen Node + `dist/frontend/server`).
-- [ ] Si se elige el camino B (§2): agregar configuración CORS al
-      backend, dominio del frontend permitido vía variable de entorno
-      (nunca hardcodeado, ADR-06).
+- [ ] Configuración CORS en el backend: origen del frontend permitido
+      vía variable de entorno (nunca hardcodeado, ADR-06).
 - [ ] `BASE_URL` del frontend (`contenido/sitio.ts`, hoy una constante
       con el placeholder `.example`) pasa a leerse de una variable de
       entorno en build time.
 - [ ] `NG_ALLOWED_HOSTS` (ver CLAUDE.md, descubierto en F6) con el
-      dominio real, no solo `localhost`.
-- [ ] Pipeline de CI que construya y publique ambas imágenes
-      (`docker build` + push a un registry) al mergear a `main`.
-- [ ] Backups de PostgreSQL: automáticos si se elige Neon/Render;
-      a configurar manualmente (cron + `pg_dump`) si se elige el VPS
-      único.
+      dominio real de Render, no solo `localhost`.
+- [ ] Pipeline de CI que construya ambas imágenes Docker (backend y
+      frontend) al mergear a `main` — Render puede desplegar desde un
+      registry o construir directo desde el `Dockerfile` del repo.
+- [ ] Backups de PostgreSQL: Neon los incluye en su capa gratis, no
+      hace falta configurar nada manual.
 
 ## Fuentes consultadas (jul 2026)
 
