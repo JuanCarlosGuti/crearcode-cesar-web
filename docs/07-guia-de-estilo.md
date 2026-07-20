@@ -129,20 +129,20 @@ Esta es la paleta oficial del sitio a partir de ahora.
 | Texto principal | Casi negro | `#171B1F` |
 | Texto secundario | Gris medio | `#5A6472` |
 | Éxito (admin) | Verde (= acento) | `#2E7D53` |
-| Alerta/nueva (admin) | Ámbar | `#D98E04` |
+| Alerta/nueva (admin) | Ámbar | `#8F5C08` |
 | Error | Rojo | `#C4453A` |
 
 > Decisión tomada por el usuario: se adopta la Opción C — "Minimal
 > Corporativo" como paleta oficial del sitio, a usar desde la fase F3
 > de la Etapa 2.
 >
-> **Ajuste F6 (ISS-077)**: el verde de acento se oscureció de `#3C9D6E`
-> a `#2E7D53` — el original medía 3.36:1 de contraste como texto sobre
-> blanco (o blanco sobre el color como fondo), por debajo del mínimo AA
-> de 4.5:1 exigido por el checklist de accesibilidad
-> ([[06-plan-de-pruebas]] §5). El nuevo valor da ~5:1. Mismo criterio
-> aplicado al verde de WhatsApp (`#25D366` → `#158542` solo para el
-> fondo de los botones, el ícono oficial no se toca).
+> **Ajuste F6 (ISS-077/ISS-078)**: tres colores se oscurecieron por
+> contraste insuficiente como texto (mínimo AA 4.5:1,
+> [[06-plan-de-pruebas]] §5): acento/éxito `#3C9D6E` → `#2E7D53`
+> (3.36:1 → ~5:1), verde de WhatsApp `#25D366` → `#158542` solo en el
+> fondo de los botones — el ícono oficial no se toca — (1.98:1 → ~4.7:1),
+> y el ámbar de alerta `#D98E04` → `#8F5C08` (2.33:1 en el badge
+> "NUEVA" del panel admin → ~5:1).
 
 ### Tipografía sugerida
 

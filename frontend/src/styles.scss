@@ -9,7 +9,8 @@
   --color-texto: #171b1f;
   --color-texto-secundario: #5a6472;
   --color-exito: #2e7d53;
-  --color-alerta: #d98e04;
+  // Ámbar oscurecido frente al original (#D98E04, contraste 2.33:1 como texto del badge "NUEVA"): necesita el mínimo AA (4.5:1).
+  --color-alerta: #8f5c08;
   --color-error: #c4453a;
   // Verde WhatsApp oficial (#25d366) oscurecido: con texto blanco encima daba 1.98:1, bajo el mínimo AA (4.5:1).
   --color-whatsapp: #158542;
@@ -169,6 +170,7 @@ img {
 .cta-doble {
   display: flex;
   flex-direction: column;
+  flex-wrap: wrap;
   gap: var(--espacio-2);
 }
 

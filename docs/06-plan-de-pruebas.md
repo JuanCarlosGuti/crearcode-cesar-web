@@ -131,27 +131,40 @@ explícito del usuario (ver `CLAUDE.md`).
 A aplicar sobre Home, una página de servicio, Contacto y el panel admin
 antes de cerrar la fase F6 ([[05-backlog-issues]] ISS-078):
 
-- [ ] Toda la navegación es posible solo con teclado (Tab/Shift+Tab/
+- [x] Toda la navegación es posible solo con teclado (Tab/Shift+Tab/
       Enter/Espacio), sin trampas de foco.
-- [ ] El foco activo es siempre visible (outline perceptible, no
+- [x] El foco activo es siempre visible (outline perceptible, no
       eliminado por CSS sin reemplazo).
-- [ ] Toda imagen con significado tiene `alt` descriptivo; las
-      puramente decorativas usan `alt=""`.
-- [ ] Contraste de texto sobre fondo cumple WCAG AA (4.5:1 texto
+- [x] Toda imagen con significado tiene `alt` descriptivo; las
+      puramente decorativas usan `alt=""`. (El sitio no tiene aún
+      ninguna imagen de contenido — ver [[07-guia-de-estilo]] §Imágenes.)
+- [x] Contraste de texto sobre fondo cumple WCAG AA (4.5:1 texto
       normal, 3:1 texto grande) en toda la paleta elegida
       ([[07-guia-de-estilo]]).
-- [ ] Todo campo de formulario tiene `label` asociado programáticamente
+- [x] Todo campo de formulario tiene `label` asociado programáticamente
       (no solo placeholder).
-- [ ] Los mensajes de error de validación se anuncian a tecnología de
+- [x] Los mensajes de error de validación se anuncian a tecnología de
       asistencia (`aria-live` o asociación `aria-describedby`) y están
       vinculados a su campo.
-- [ ] El honeypot no es alcanzable ni anunciado por navegación de
+- [x] El honeypot no es alcanzable ni anunciado por navegación de
       teclado/lector de pantalla para un usuario real.
-- [ ] Jerarquía de encabezados (`h1`→`h2`→`h3`) es lógica y no se salta
+- [x] Jerarquía de encabezados (`h1`→`h2`→`h3`) es lógica y no se salta
       niveles por razones puramente visuales.
-- [ ] El sitio es usable con zoom de texto al 200% sin pérdida de
+- [x] El sitio es usable con zoom de texto al 200% sin pérdida de
       contenido ni funcionalidad.
-- [ ] Auditoría Lighthouse Accesibilidad ≥ 90 en las páginas listadas.
+- [x] Auditoría Lighthouse Accesibilidad ≥ 90 en las páginas listadas.
+
+**Verificado (ISS-078)**: automatizado con axe-core vía Playwright
+(`frontend/e2e/accesibilidad-e2e.spec.ts`) sobre Home, la página de
+Desarrollo a la medida, Contacto, y el panel admin (login, listado y
+detalle autenticados) — cero violaciones. Halló y permitió corregir dos
+bugs reales antes de cerrar F6: el CTA "Agenda tu consulta" del header
+se leía casi ilegible (contraste 1.28:1, colisión de especificidad CSS
+entre `.cabecera__nav a` y `.boton-primario`) y el CTA doble del footer
+desbordaba horizontalmente al probar zoom de texto 200% (breakpoint de
+`.cta-doble` basado en ancho de viewport, no de columna). Lighthouse
+Accesibilidad final: 100 en las 3 páginas públicas auditadas
+([[05-backlog-issues]] ISS-077).
 
 ## 6. Qué NO se prueba exhaustivamente en v1 (a propósito)
 

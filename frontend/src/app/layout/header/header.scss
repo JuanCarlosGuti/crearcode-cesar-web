@@ -44,14 +44,18 @@
   display: flex;
 }
 
-.cabecera__nav a {
+// Combinador de hijo directo (no descendiente): el CTA dentro de
+// .cabecera__cta tambien es un <a> descendiente de .cabecera__nav (mismo
+// <nav> del menu movil), y con "a" a secas ganaba por especificidad sobre
+// el color blanco de .boton-primario (contraste 1.28:1, hallado por axe).
+.cabecera__nav > a {
   color: var(--color-texto);
   text-decoration: none;
   font-weight: 500;
   padding: 0.35rem 0;
 }
 
-.cabecera__nav a.activo {
+.cabecera__nav > a.activo {
   color: var(--color-acento);
 }
 
