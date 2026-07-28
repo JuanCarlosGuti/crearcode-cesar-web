@@ -88,6 +88,13 @@ como olvido. Cualquier HU o issue que las toque debe rechazarse o
 redirigirse a un futuro documento de v2 hasta que el usuario lo apruebe
 explícitamente.
 
+> **Actualización (20 jul 2026)**: el usuario pidió explícitamente la
+> v2 — chat con IA, portal/registro de clientes, demo de diseño con IA
+> y gestión interna con facturación. El documento de v2 ya existe:
+> [[10-vision-v2]] (Etapa 3, fases F8-F11). Sigue vigente que nada de
+> v2 se construye antes de publicar la v1 (fase F7) y sin la
+> aprobación explícita de ese documento.
+
 ## 6. Criterios de éxito
 
 ### Técnicos (verificables en cada entrega)

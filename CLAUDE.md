@@ -85,6 +85,7 @@ Detalle completo, diagrama y ADRs en
 | [07-guia-de-estilo.md](docs/07-guia-de-estilo.md) | Convenciones de código y guía visual (paleta, tipografía, componentes) |
 | [08-contenido.md](docs/08-contenido.md) | Todos los textos del sitio en borrador |
 | [09-despliegue.md](docs/09-despliegue.md) | Opciones de hosting y dominio comparadas con costos, recomendación, checklist técnico pendiente (fase F7) |
+| [10-vision-v2.md](docs/10-vision-v2.md) | Visión v2 / Etapa 3 (fases F8-F11): cuentas de cliente, asistente IA (Groq), demo de diseño, gestión interna — pendiente de aprobación explícita |
 
 ## Checklist de fases (Etapa 2 — actualizar a medida que avance)
 
@@ -99,6 +100,15 @@ Detalle completo, diagrama y ADRs en
 
 Detalle de issues por fase en
 [docs/05-backlog-issues.md](docs/05-backlog-issues.md).
+
+**Etapa 3 (v2, fases F8-F11)** — planificada en
+[docs/10-vision-v2.md](docs/10-vision-v2.md) a pedido del usuario
+(20 jul 2026): F8 cuentas de cliente → F9 asistente IA (Groq) → F10
+demo de diseño con IA → F11 gestión interna (cotizaciones/cuentas de
+cobro, sin DIAN al inicio). No se construye nada de la Etapa 3 antes
+de publicar la v1 (F7) y sin aprobación explícita de ese documento.
+La `GROQ_API_KEY` vive solo en el `.env` local (gitignored) y como
+variable de entorno en Render el día que se use — nunca en el repo.
 
 ## Arranque local
 
@@ -346,3 +356,5 @@ cómputo, único costo fijo el dominio (aún no comprado).
 
 - Dominio web definitivo y correo corporativo final con ese dominio
   (decisión al cierre de la fase F7).
+- Aprobación explícita de [docs/10-vision-v2.md](docs/10-vision-v2.md)
+  para arrancar la Etapa 3 (después de publicar la v1).

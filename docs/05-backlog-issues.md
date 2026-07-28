@@ -160,6 +160,17 @@ histórico de lo que efectivamente se construyó en ese momento.
 
 ---
 
+## Etapa 3 — Plataforma v2 (fases F8-F11, aún sin descomponer)
+
+La visión, el orden y las decisiones ya tomadas de la v2 (cuentas de
+cliente, asistente IA, demo de diseño, gestión interna) están en
+[[10-vision-v2]]. La descomposición en issues (ISS-083 en adelante) se
+hace **al arrancar cada fase**, no por adelantado — las decisiones
+abiertas de cada fase se cierran en ese momento, con las historias de
+usuario nuevas que hagan falta.
+
+---
+
 ## Resumen de cobertura
 
 Las 29 HU de [[04-historias-de-usuario]] quedan cubiertas por al menos un
