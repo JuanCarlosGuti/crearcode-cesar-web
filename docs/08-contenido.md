@@ -553,6 +553,9 @@ mantenido a mano desde este documento — ADR-10).
   > Alcanzaste tus consultas gratis de hoy. Crea tu cuenta (gratis,
   > toma un minuto) y obtén más consultas por día.
   (CTA: "Crear mi cuenta" → `/registro`)
+- **Límite de registrado alcanzado**:
+  > Alcanzaste tus consultas de hoy. Vuelve mañana o escríbenos por
+  > WhatsApp y seguimos la conversación en persona.
 - **Nota al pie del panel**: Respuestas generadas con IA a partir del
   contenido de este sitio. Pueden contener errores — para decisiones
   importantes, confírmalo con nuestro equipo.
