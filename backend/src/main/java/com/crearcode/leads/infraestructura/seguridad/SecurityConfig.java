@@ -38,6 +38,11 @@ class SecurityConfig {
 						// en vez del status real.
 						.requestMatchers("/error").permitAll()
 						.requestMatchers(HttpMethod.POST, "/api/solicitudes").permitAll()
+						// Despues del POST publico (el orden importa): el
+						// resto del recurso solicitudes es el panel admin, y
+						// desde F8 existen tokens de CLIENTE que no deben
+						// poder leerlo (ISS-094).
+						.requestMatchers("/api/solicitudes/**").hasRole("ADMIN")
 						// Endpoints de cuenta uno a uno, sin comodín
 						// /api/auth/**: un endpoint nuevo bajo /api/auth
 						// no queda público por accidente.

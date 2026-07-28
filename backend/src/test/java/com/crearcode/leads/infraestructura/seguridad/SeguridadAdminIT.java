@@ -17,6 +17,10 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
 import com.crearcode.leads.TestcontainersConfiguration;
+import com.crearcode.leads.dominio.CifradorDeContrasenas;
+import com.crearcode.leads.dominio.Correo;
+import com.crearcode.leads.dominio.Usuario;
+import com.crearcode.leads.dominio.UsuarioRepositorio;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -90,6 +94,36 @@ class SeguridadAdminIT {
 		ResponseEntity<String> respuesta = restTemplate.postForEntity("/api/solicitudes", null, String.class);
 
 		assertThat(respuesta.getStatusCode()).isNotEqualTo(HttpStatus.UNAUTHORIZED);
+	}
+
+	@Autowired
+	private UsuarioRepositorio usuarios;
+
+	@Autowired
+	private CifradorDeContrasenas cifrador;
+
+	/**
+	 * El panel admin exige el rol ADMIN, no basta con estar autenticado:
+	 * desde la fase F8 existen tokens de CLIENTE y un cliente registrado
+	 * no debe poder leer ni tocar las solicitudes de otros (ISS-094).
+	 */
+	@Test
+	void unTokenDeClienteRecibe403EnElPanelAdmin() {
+		String correoCliente = "cliente-seguridad@correo-de-prueba.com";
+		String contrasena = "clave-de-cliente";
+		usuarios.guardar(Usuario.registrarCliente(new Correo(correoCliente), cifrador.hash(contrasena)).verificar());
+		ResponseEntity<TokenResponse> login = restTemplate.postForEntity(
+				"/api/auth/login", Map.of("correo", correoCliente, "contrasena", contrasena), TokenResponse.class);
+		String tokenCliente = login.getBody().token();
+
+		ResponseEntity<String> listado = restTemplate.exchange(
+				"/api/solicitudes", HttpMethod.GET, conBearer(tokenCliente), String.class);
+		ResponseEntity<String> cambioDeEstado = restTemplate.exchange(
+				"/api/solicitudes/00000000-0000-0000-0000-000000000000/estado", HttpMethod.PATCH,
+				new HttpEntity<>(Map.of("estado", "EN_REVISION"), conBearer(tokenCliente).getHeaders()), String.class);
+
+		assertThat(listado.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+		assertThat(cambioDeEstado.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
 	}
 
 }

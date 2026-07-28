@@ -39,11 +39,30 @@ class RateLimitingFilter extends OncePerRequestFilter {
 			@Value("${app.rate-limit.max-solicitudes}") int maxSolicitudesContacto,
 			@Value("${app.rate-limit.ventana-minutos}") long ventanaContactoMinutos,
 			@Value("${app.rate-limit.login.max-intentos}") int maxIntentosLogin,
-			@Value("${app.rate-limit.login.ventana-minutos}") long ventanaLoginMinutos) {
+			@Value("${app.rate-limit.login.ventana-minutos}") long ventanaLoginMinutos,
+			@Value("${app.rate-limit.registro.max-intentos}") int maxRegistros,
+			@Value("${app.rate-limit.registro.ventana-minutos}") long ventanaRegistroMinutos,
+			@Value("${app.rate-limit.verificacion.max-intentos}") int maxVerificaciones,
+			@Value("${app.rate-limit.verificacion.ventana-minutos}") long ventanaVerificacionMinutos,
+			@Value("${app.rate-limit.reenvio-verificacion.max-intentos}") int maxReenvios,
+			@Value("${app.rate-limit.reenvio-verificacion.ventana-minutos}") long ventanaReenvioMinutos,
+			@Value("${app.rate-limit.recuperacion.max-intentos}") int maxRecuperaciones,
+			@Value("${app.rate-limit.recuperacion.ventana-minutos}") long ventanaRecuperacionMinutos,
+			@Value("${app.rate-limit.restablecimiento.max-intentos}") int maxRestablecimientos,
+			@Value("${app.rate-limit.restablecimiento.ventana-minutos}") long ventanaRestablecimientoMinutos) {
 		this.reloj = reloj;
 		this.reglas = List.of(
 				new Regla("POST", "/api/solicitudes", maxSolicitudesContacto, Duration.ofMinutes(ventanaContactoMinutos)),
-				new Regla("POST", "/api/auth/login", maxIntentosLogin, Duration.ofMinutes(ventanaLoginMinutos)));
+				new Regla("POST", "/api/auth/login", maxIntentosLogin, Duration.ofMinutes(ventanaLoginMinutos)),
+				new Regla("POST", "/api/auth/registro", maxRegistros, Duration.ofMinutes(ventanaRegistroMinutos)),
+				new Regla("POST", "/api/auth/verificacion", maxVerificaciones,
+						Duration.ofMinutes(ventanaVerificacionMinutos)),
+				new Regla("POST", "/api/auth/reenvio-verificacion", maxReenvios,
+						Duration.ofMinutes(ventanaReenvioMinutos)),
+				new Regla("POST", "/api/auth/recuperacion", maxRecuperaciones,
+						Duration.ofMinutes(ventanaRecuperacionMinutos)),
+				new Regla("POST", "/api/auth/restablecimiento", maxRestablecimientos,
+						Duration.ofMinutes(ventanaRestablecimientoMinutos)));
 	}
 
 	@Override

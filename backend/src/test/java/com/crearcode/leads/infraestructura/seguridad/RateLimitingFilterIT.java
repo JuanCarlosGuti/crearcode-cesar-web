@@ -39,6 +39,7 @@ class RateLimitingFilterIT {
 
 	private static final int MAX_SOLICITUDES_EN_ESTE_TEST = 3;
 	private static final int MAX_INTENTOS_LOGIN_EN_ESTE_TEST = 3;
+	private static final int MAX_CUENTAS_EN_ESTE_TEST = 3;
 
 	@DynamicPropertySource
 	static void umbralDePrueba(DynamicPropertyRegistry registry) {
@@ -46,6 +47,16 @@ class RateLimitingFilterIT {
 		registry.add("app.rate-limit.ventana-minutos", () -> 10);
 		registry.add("app.rate-limit.login.max-intentos", () -> MAX_INTENTOS_LOGIN_EN_ESTE_TEST);
 		registry.add("app.rate-limit.login.ventana-minutos", () -> 15);
+		registry.add("app.rate-limit.registro.max-intentos", () -> MAX_CUENTAS_EN_ESTE_TEST);
+		registry.add("app.rate-limit.registro.ventana-minutos", () -> 60);
+		registry.add("app.rate-limit.verificacion.max-intentos", () -> MAX_CUENTAS_EN_ESTE_TEST);
+		registry.add("app.rate-limit.verificacion.ventana-minutos", () -> 15);
+		registry.add("app.rate-limit.reenvio-verificacion.max-intentos", () -> MAX_CUENTAS_EN_ESTE_TEST);
+		registry.add("app.rate-limit.reenvio-verificacion.ventana-minutos", () -> 15);
+		registry.add("app.rate-limit.recuperacion.max-intentos", () -> MAX_CUENTAS_EN_ESTE_TEST);
+		registry.add("app.rate-limit.recuperacion.ventana-minutos", () -> 15);
+		registry.add("app.rate-limit.restablecimiento.max-intentos", () -> MAX_CUENTAS_EN_ESTE_TEST);
+		registry.add("app.rate-limit.restablecimiento.ventana-minutos", () -> 15);
 	}
 
 	@Autowired
@@ -75,6 +86,48 @@ class RateLimitingFilterIT {
 		}
 
 		assertThat(estados).contains(HttpStatus.TOO_MANY_REQUESTS);
+	}
+
+	@Test
+	void limitaLosRegistrosDeCuentaRepetidosDesdeLaMismaIp() {
+		assertThat(estadosTrasRepetir("/api/auth/registro",
+				Map.of("correo", "rate-limit-registro@correo-de-prueba.com", "contrasena", "contrasena-larga")))
+				.contains(HttpStatus.TOO_MANY_REQUESTS);
+	}
+
+	@Test
+	void limitaLasVerificacionesRepetidasDesdeLaMismaIp() {
+		assertThat(estadosTrasRepetir("/api/auth/verificacion", Map.of("token", "token-cualquiera")))
+				.contains(HttpStatus.TOO_MANY_REQUESTS);
+	}
+
+	@Test
+	void limitaLosReenviosDeVerificacionRepetidosDesdeLaMismaIp() {
+		assertThat(estadosTrasRepetir("/api/auth/reenvio-verificacion",
+				Map.of("correo", "rate-limit-reenvio@correo-de-prueba.com")))
+				.contains(HttpStatus.TOO_MANY_REQUESTS);
+	}
+
+	@Test
+	void limitaLasRecuperacionesRepetidasDesdeLaMismaIp() {
+		assertThat(estadosTrasRepetir("/api/auth/recuperacion",
+				Map.of("correo", "rate-limit-recuperacion@correo-de-prueba.com")))
+				.contains(HttpStatus.TOO_MANY_REQUESTS);
+	}
+
+	@Test
+	void limitaLosRestablecimientosRepetidosDesdeLaMismaIp() {
+		assertThat(estadosTrasRepetir("/api/auth/restablecimiento",
+				Map.of("token", "token-cualquiera", "contrasena", "contrasena-larga")))
+				.contains(HttpStatus.TOO_MANY_REQUESTS);
+	}
+
+	private List<HttpStatusCode> estadosTrasRepetir(String ruta, Map<String, String> cuerpo) {
+		List<HttpStatusCode> estados = new ArrayList<>();
+		for (int i = 0; i < MAX_CUENTAS_EN_ESTE_TEST + 3; i++) {
+			estados.add(restTemplate.postForEntity(ruta, cuerpo, String.class).getStatusCode());
+		}
+		return estados;
 	}
 
 }

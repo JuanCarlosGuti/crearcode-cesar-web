@@ -35,14 +35,19 @@ class AuthControllerIT {
 	private static final String CONTRASENA_VALIDA = "contrasena-segura";
 
 	/**
-	 * Esta clase ejercita el login a propósito muchas veces (flujos de
-	 * verificación y restablecimiento incluidos), así que relaja el límite
-	 * estricto de producción (5/15 min por IP). El límite real tiene su
-	 * propio IT dedicado ({@code RateLimitingFilterIT}).
+	 * Esta clase ejercita login y registro a propósito muchas veces
+	 * (flujos de verificación y restablecimiento incluidos), así que
+	 * relaja los límites estrictos de producción por IP. Los límites
+	 * reales tienen su propio IT dedicado ({@code RateLimitingFilterIT}).
 	 */
 	@DynamicPropertySource
-	static void relajarRateLimitDeLogin(DynamicPropertyRegistry registry) {
+	static void relajarRateLimits(DynamicPropertyRegistry registry) {
 		registry.add("app.rate-limit.login.max-intentos", () -> 1000);
+		registry.add("app.rate-limit.registro.max-intentos", () -> 1000);
+		registry.add("app.rate-limit.verificacion.max-intentos", () -> 1000);
+		registry.add("app.rate-limit.reenvio-verificacion.max-intentos", () -> 1000);
+		registry.add("app.rate-limit.recuperacion.max-intentos", () -> 1000);
+		registry.add("app.rate-limit.restablecimiento.max-intentos", () -> 1000);
 	}
 
 	@Autowired
