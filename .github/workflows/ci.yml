@@ -60,7 +60,7 @@ jobs:
         run: docker build frontend/
 
   e2e:
-    name: E2E (Playwright, contacto + cuentas + accesibilidad axe-core)
+    name: E2E (Playwright, contacto + cuentas + asistente + accesibilidad axe-core)
     runs-on: ubuntu-latest
     needs: [backend, frontend]
     services:
@@ -100,8 +100,16 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
+      - name: Iniciar stub de Groq (asistente IA, sin red externa)
+        run: nohup node frontend/e2e/stub-groq.mjs > /tmp/stub-groq.log 2>&1 &
+
       - name: Empaquetar e iniciar backend
         working-directory: backend
+        env:
+          # El asistente apunta al stub local; limite anonimo bajo para
+          # que el e2e de HU-38 sea verificable en pocos mensajes.
+          GROQ_API_URL: http://localhost:9099/openai/v1
+          ASISTENTE_LIMITE_ANONIMO: "3"
         run: |
           ./mvnw --batch-mode -DskipTests package
           nohup java -jar target/*.jar --server.port=8080 > /tmp/backend.log 2>&1 &

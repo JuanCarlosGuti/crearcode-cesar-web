@@ -17,7 +17,9 @@
     [attr.aria-label]="textos.titulo"
     (keydown.escape)="cerrarPanel()"
   >
-    <header class="chat-panel__encabezado">
+    <!-- div y no <header>: un segundo landmark banner en la página
+         dispara landmark-no-duplicate-banner en axe -->
+    <div class="chat-panel__encabezado">
       <div>
         <h2>{{ textos.titulo }}</h2>
         <p>{{ textos.subtitulo }}</p>
@@ -26,7 +28,7 @@
         <span class="sr-only">{{ textos.cerrar }}</span>
         <span aria-hidden="true">✕</span>
       </button>
-    </header>
+    </div>
 
     <div class="chat-mensajes" aria-live="polite">
       @for (mensaje of conversacion.mensajes(); track $index) {
