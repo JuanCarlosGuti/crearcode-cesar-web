@@ -1,0 +1,62 @@
+<section class="contenedor pagina-cuenta">
+  <h1>{{ textos.titulo }}</h1>
+
+  @if (exito()) {
+    <p class="pagina-cuenta__exito" role="status">
+      {{ textos.exito }} <a routerLink="/ingreso">{{ textos.enlaceIniciarSesion }}</a>
+      {{ textos.exitoDespuesDelEnlace }}
+    </p>
+  } @else {
+    @if (errorEnlace()) {
+      <p class="pagina-cuenta__error" role="alert">{{ textos.errorEnlace }}</p>
+    }
+
+    <form (submit)="enviar($event)" novalidate>
+      <div class="campo">
+        <label for="contrasena">{{ textos.labelContrasena }}</label>
+        <input
+          id="contrasena"
+          type="password"
+          autocomplete="new-password"
+          [formField]="formulario.contrasena"
+          [attr.aria-invalid]="
+            formulario.contrasena().touched() && formulario.contrasena().invalid() ? 'true' : null
+          "
+          [attr.aria-describedby]="
+            formulario.contrasena().touched() && formulario.contrasena().invalid() ? 'contrasena-error' : null
+          "
+        />
+        @if (formulario.contrasena().touched() && formulario.contrasena().invalid()) {
+          <p class="campo__error" id="contrasena-error">{{ formulario.contrasena().errors()[0]?.message }}</p>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="confirmacion">{{ textos.labelConfirmacion }}</label>
+        <input
+          id="confirmacion"
+          type="password"
+          autocomplete="new-password"
+          [formField]="formulario.confirmacion"
+          [attr.aria-invalid]="
+            formulario.confirmacion().touched() && formulario.confirmacion().invalid() ? 'true' : null
+          "
+          [attr.aria-describedby]="
+            formulario.confirmacion().touched() && formulario.confirmacion().invalid()
+              ? 'confirmacion-error'
+              : null
+          "
+        />
+        @if (formulario.confirmacion().touched() && formulario.confirmacion().invalid()) {
+          <p class="campo__error" id="confirmacion-error">
+            {{ formulario.confirmacion().errors()[0]?.message }}
+          </p>
+        }
+      </div>
+
+      <button type="submit" class="boton boton-primario" [disabled]="enviando()">
+        {{ enviando() ? textos.botonEnviando : textos.boton }}
+      </button>
+    </form>
+  }
+</section>

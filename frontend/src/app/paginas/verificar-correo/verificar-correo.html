@@ -1,0 +1,41 @@
+<section class="contenedor pagina-cuenta">
+  <h1>Verificación de correo</h1>
+
+  @if (estado() === 'verificando') {
+    <p role="status">{{ textos.verificando }}</p>
+  } @else if (estado() === 'exito') {
+    <p class="pagina-cuenta__exito" role="status">
+      {{ textos.exito }} <a routerLink="/ingreso">{{ textos.enlaceIniciarSesion }}</a
+      >.
+    </p>
+  } @else {
+    <p class="pagina-cuenta__error" role="alert">{{ textos.error }}</p>
+
+    @if (reenvioEnviado()) {
+      <p class="pagina-cuenta__exito" role="status">{{ textos.reenvioConfirmado }}</p>
+    } @else {
+      <form (submit)="reenviar($event)" novalidate>
+        <div class="campo">
+          <label for="correo">{{ textos.labelCorreo }}</label>
+          <input
+            id="correo"
+            type="email"
+            autocomplete="email"
+            [formField]="formulario.correo"
+            [attr.aria-invalid]="formulario.correo().touched() && formulario.correo().invalid() ? 'true' : null"
+            [attr.aria-describedby]="
+              formulario.correo().touched() && formulario.correo().invalid() ? 'correo-error' : null
+            "
+          />
+          @if (formulario.correo().touched() && formulario.correo().invalid()) {
+            <p class="campo__error" id="correo-error">{{ formulario.correo().errors()[0]?.message }}</p>
+          }
+        </div>
+
+        <button type="submit" class="boton boton-primario" [disabled]="reenviando()">
+          {{ textos.botonReenviar }}
+        </button>
+      </form>
+    }
+  }
+</section>

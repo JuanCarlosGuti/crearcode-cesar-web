@@ -1,0 +1,38 @@
+<section class="contenedor pagina-cuenta">
+  <h1>{{ textos.titulo }}</h1>
+
+  @if (enviado()) {
+    <p class="pagina-cuenta__exito" role="status">{{ textos.exito }}</p>
+  } @else {
+    <p>{{ textos.intro }}</p>
+
+    @if (errorEnvio()) {
+      <p class="pagina-cuenta__error" role="alert">
+        No pudimos enviar el enlace en este momento. Inténtalo de nuevo en unos minutos.
+      </p>
+    }
+
+    <form (submit)="enviar($event)" novalidate>
+      <div class="campo">
+        <label for="correo">{{ textos.labelCorreo }}</label>
+        <input
+          id="correo"
+          type="email"
+          autocomplete="email"
+          [formField]="formulario.correo"
+          [attr.aria-invalid]="formulario.correo().touched() && formulario.correo().invalid() ? 'true' : null"
+          [attr.aria-describedby]="
+            formulario.correo().touched() && formulario.correo().invalid() ? 'correo-error' : null
+          "
+        />
+        @if (formulario.correo().touched() && formulario.correo().invalid()) {
+          <p class="campo__error" id="correo-error">{{ formulario.correo().errors()[0]?.message }}</p>
+        }
+      </div>
+
+      <button type="submit" class="boton boton-primario" [disabled]="enviando()">
+        {{ enviando() ? textos.botonEnviando : textos.boton }}
+      </button>
+    </form>
+  }
+</section>
