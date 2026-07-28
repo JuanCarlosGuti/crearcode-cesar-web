@@ -201,6 +201,47 @@ Camino elegido: Opción 4 (Render + Neon), proxy sin CORS (ADR-09).
 - [ ] Backups de PostgreSQL: Neon los incluye en su capa gratis, no
       hace falta configurar nada manual.
 
+## 7. Correo de cuentas de cliente en producción (fase F8 — Gmail con App Password)
+
+Los correos de verificación y recuperación (fase F8) se envían por SMTP.
+En local los recibe Mailpit (`docker compose up -d`, bandeja en
+http://localhost:8025) sin configurar nada. En producción se usa
+**Gmail con App Password** sobre `crearcodecesar@gmail.com` (decisión
+del usuario, 28 jul 2026; ~500 correos/día de tope, de sobra para
+empezar). **Brevo queda como la migración futura** cuando haya dominio
+propio y más volumen — gracias al puerto `EnviadorDeCorreosDeCuenta` y
+a que toda la configuración es por variables de entorno, ese cambio
+será solo de configuración SMTP, sin tocar código.
+
+### Guía: crear la App Password (una sola vez, ~3 minutos)
+
+1. Entrar a https://myaccount.google.com con `crearcodecesar@gmail.com`.
+2. **Seguridad** → activar la **verificación en dos pasos** si no está
+   activa (requisito de Google para las App Passwords).
+3. Ir a https://myaccount.google.com/apppasswords (o buscar "Contraseñas
+   de aplicaciones" en el buscador de la cuenta).
+4. Nombre de la app: `render-crearcodecesar` → **Crear**.
+5. Google muestra una contraseña de 16 letras **una única vez** —
+   cópiala (sin los espacios). Esa es `MAIL_PASSWORD`; **nunca** es la
+   contraseña real de la cuenta, y se puede revocar sola desde esa misma
+   página si se filtra.
+
+### Variables en Render (backend, ya declaradas en `render.yaml`)
+
+| Variable | Valor | Cómo llega |
+|---|---|---|
+| `MAIL_HOST` | `smtp.gmail.com` | fija en `render.yaml` |
+| `MAIL_PORT` | `587` | fija en `render.yaml` |
+| `MAIL_SMTP_AUTH` / `MAIL_SMTP_STARTTLS` | `true` / `true` | fijas en `render.yaml` |
+| `MAIL_USERNAME` | `crearcodecesar@gmail.com` | `sync: false` — se escribe en el dashboard |
+| `MAIL_PASSWORD` | la App Password de 16 letras | `sync: false` — se escribe en el dashboard |
+| `FRONTEND_URL` | URL pública del frontend | automática (`fromService`) — base de los enlaces de los correos |
+
+Nota operativa: los rate limits de los endpoints de cuenta son
+configurables por variables `RATE_LIMIT_*` (ver
+`application.properties`) — útiles para relajarlos al correr la suite
+e2e varias veces seguidas en local, nunca en producción.
+
 ## Fuentes consultadas (jul 2026)
 
 - [Render Pricing](https://render.com/pricing)

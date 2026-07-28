@@ -7,10 +7,14 @@ correspondiente antes de seguir.
 
 ## Estado del proyecto
 
-**Etapa actual: Etapa 3 — Plataforma v2, fase F8 (cuentas de
-cliente). La v1 está PUBLICADA en producción desde el 27 jul 2026:
-Render (capa gratis) + Neon, flujo de contacto y panel admin
-verificados extremo a extremo. De la Etapa 2 solo queda abierta la
+**Etapa actual: Etapa 3 — Plataforma v2. La fase F8 (cuentas de
+cliente) está CONSTRUIDA y verificada en local (ISS-083 a ISS-100:
+suites backend/frontend/e2e en verde + verificación manual en
+navegador); pendiente el OK explícito del usuario para cerrarla, la
+App Password de Gmail (guía en
+[docs/09-despliegue.md](docs/09-despliegue.md) §7) y el redeploy en
+Render. La v1 está PUBLICADA en producción desde el 27 jul 2026:
+Render (capa gratis) + Neon. De la Etapa 2 solo queda abierta la
 compra del dominio propio (no bloquea). El usuario aprobó
 [docs/10-vision-v2.md](docs/10-vision-v2.md) el 27 jul 2026.**
 
@@ -113,10 +117,17 @@ Detalle de issues por fase en
 [docs/10-vision-v2.md](docs/10-vision-v2.md) a pedido del usuario
 (20 jul 2026): F8 cuentas de cliente → F9 asistente IA (Groq) → F10
 demo de diseño con IA → F11 gestión interna (cotizaciones/cuentas de
-cobro, sin DIAN al inicio). No se construye nada de la Etapa 3 antes
-de publicar la v1 (F7) y sin aprobación explícita de ese documento.
+cobro, sin DIAN al inicio). La v1 se publicó el 27 jul 2026 y el
+usuario aprobó el documento ese mismo día.
 La `GROQ_API_KEY` vive solo en el `.env` local (gitignored) y como
 variable de entorno en Render el día que se use — nunca en el repo.
+
+- [x] **F8** — Cuentas de cliente (ISS-083 a ISS-100): construida y
+  verificada en local; pendiente OK del usuario + App Password de
+  Gmail + redeploy en Render para estar viva en producción.
+- [ ] **F9** — Asistente IA (Groq) — no arranca sin OK explícito.
+- [ ] **F10** — Demo de diseño con IA.
+- [ ] **F11** — Gestión interna.
 
 ## Arranque local
 
@@ -125,14 +136,18 @@ se necesita Maven ni Angular CLI instalados globalmente: el backend
 trae Maven Wrapper (`./mvnw`) y el frontend usa el CLI local del
 proyecto vía `npx`/scripts de `package.json`.
 
-1. **Base de datos** (desde la raíz del repo):
+1. **Base de datos y correo local** (desde la raíz del repo):
    ```
    docker compose up -d
    ```
    Deja PostgreSQL en `localhost:5433`, base y usuario `leads`
    (contraseña `leads`, solo para desarrollo local). Puerto 5433 en el
    host — no 5432 — para no chocar con otro PostgreSQL local que ya
-   pudiera estar corriendo en esa máquina.
+   pudiera estar corriendo en esa máquina. Desde F8 también levanta
+   **Mailpit** (SMTP en `localhost:1025`, que es el default del
+   backend): todos los correos que la app envía en local (verificación
+   de cuenta, recuperación, notificación de solicitudes) caen en su
+   bandeja en http://localhost:8025 — nada sale a internet.
 
 2. **Backend** (desde `backend/`):
    ```
@@ -213,9 +228,20 @@ proxy del frontend responden igual que en el flujo nativo.
 |---|---|---|
 | `GET /actuator/health` | Pública | Healthcheck, agrega el estado de la BD |
 | `POST /api/solicitudes` | Pública | Registra un lead; honeypot (`sitioWeb`) y rate limiting (20/10 min por IP, configurable) |
-| `POST /api/auth/login` | Pública | Login del panel admin; devuelve `{ token, expiraEn }` (JWT HS256, 8h por defecto); rate limiting propio y más estricto (5/15 min por IP) |
-| `GET /api/solicitudes?estado=` | Admin (`Bearer <token>`) | Lista solicitudes, filtro opcional por `EstadoSolicitud` |
-| `PATCH /api/solicitudes/{id}/estado` | Admin (`Bearer <token>`) | Cambia el estado; 404 si no existe, 409 en transición inválida |
+| `POST /api/auth/login` | Pública | Login (admin y clientes); devuelve `{ token, expiraEn, rol, correo }` (JWT HS256, 8h por defecto); 403 si la cuenta no está verificada (solo tras contraseña correcta); rate limiting propio (5/15 min por IP) |
+| `POST /api/auth/registro` | Pública | Crea una cuenta CLIENTE sin verificar (F8); 201, 409 si el correo ya existe, 400 si la contraseña <10 caracteres; envía el correo de verificación (best-effort) |
+| `POST /api/auth/verificacion` | Pública | Consume el token del enlace del correo; 204, 400 único "enlace inválido o vencido" |
+| `POST /api/auth/reenvio-verificacion` | Pública | Reenvía el enlace; 202 incondicional (nunca revela si el correo existe); throttle por correo 3/15 min en la capa de aplicación |
+| `POST /api/auth/recuperacion` | Pública | Envía enlace de recuperación; 202 incondicional; mismo throttle por correo |
+| `POST /api/auth/restablecimiento` | Pública | Cambia la contraseña con el token del correo; 204, deja la cuenta verificada; 400 único |
+| `GET /api/solicitudes?estado=` | **Rol ADMIN** (`Bearer <token>`) | Lista solicitudes; un token CLIENTE recibe 403 (hueco cerrado en ISS-094) |
+| `PATCH /api/solicitudes/{id}/estado` | **Rol ADMIN** (`Bearer <token>`) | Cambia el estado; 404 si no existe, 409 en transición inválida |
+
+Los cinco endpoints de cuenta tienen rate limiting por IP propio
+(variables `RATE_LIMIT_*`, ver `application.properties`) como respaldo
+grueso: la protección real contra bombardeo de correos es el límite por
+correo en la capa de aplicación, porque en producción todas las
+peticiones llegan vía el proxy SSR y comparten IP aparente.
 
 Usuario admin por defecto en local: `admin@crearcode-cesar.local` /
 `cambiar-en-produccion` (variables `ADMIN_USERNAME`/`ADMIN_PASSWORD` en
@@ -268,6 +294,36 @@ sitio público (es una sección interna distinta, no contenido) y queda
 fuera de SSR/prerender (`admin/**` con `RenderMode.Client`). Verificado
 extremo a extremo en navegador real: login correcto/incorrecto, listado
 con datos reales, cambio de estado reflejado de inmediato, logout.
+
+## Cuentas de cliente (tras la fase F8)
+
+Registro público de clientes extendiendo el contexto `usuarios` de F5:
+`Usuario` ganó `verificado` y rol `CLIENTE` (rol único por usuario,
+multi-rol se evalúa en F11), VO `ContrasenaPlana` (mínimo 10
+caracteres, solo registro/restablecimiento), entidad `TokenDeUsuario`
+(SecureRandom + SHA-256, un solo uso, 24h verificación / 1h
+recuperación, se invalidan los previos al reenviar). Correos por SMTP
+(`EnviadorDeCorreosDeCuentaAdapter`, enlaces construidos con
+`FRONTEND_URL`); en local van a Mailpit. El login exige cuenta
+verificada (403 solo tras contraseña correcta — no revela estado de
+cuentas ajenas; las respuestas de reenvío/recuperación son siempre
+genéricas por la misma razón). Restablecer NO revoca JWTs vivos
+(trade-off aceptado, ADR-08).
+
+Frontend: páginas `/registro`, `/ingreso` (redirige por rol),
+`/recuperar-contrasena`, `/verificar-correo` y
+`/restablecer-contrasena` (consumen `?token=`, RenderMode.Client) y
+`/mi-cuenta` (clienteGuard, mínima: correo + cerrar sesión).
+`SesionService` guarda `{token, rol, correo}` (clave `crearcode-sesion`,
+sessionStorage); `adminGuard` exige rol ADMIN; el interceptor excluye
+todo `/api/auth/*` y decide el destino del 401 según la página actual.
+El header muestra Ingresar/Mi cuenta solo tras hidratar
+(`afterNextRender`) para no romper la hidratación del prerender. En
+sitemap solo entra `/registro`; robots.txt excluye `/mi-cuenta` y las
+páginas de token. E2e `cuentas-e2e.spec.ts`: flujo completo con el
+enlace real del correo leído de la API REST de Mailpit + axe (que
+encontró y permitió corregir un contraste AA insuficiente en los
+banners de error, también en el login del admin).
 
 ## SEO, rendimiento y accesibilidad (tras la fase F6)
 

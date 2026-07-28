@@ -36,6 +36,30 @@ services:
       # bytes que exige la firma HS256 del JWT).
       - key: JWT_SECRET
         generateValue: true
+      # URL publica del frontend: base de los enlaces de los correos de
+      # verificacion/recuperacion (fase F8) — se toma automaticamente
+      # del servicio frontend de abajo.
+      - key: FRONTEND_URL
+        fromService:
+          name: crearcodecesar-frontend
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
+      # SMTP para los correos de cuenta (fase F8): Gmail con App
+      # Password (ver guia en docs/09-despliegue.md). MAIL_USERNAME es
+      # el Gmail completo; MAIL_PASSWORD es la App Password de 16
+      # caracteres — nunca la contrasena real de la cuenta.
+      - key: MAIL_HOST
+        value: smtp.gmail.com
+      - key: MAIL_PORT
+        value: "587"
+      - key: MAIL_SMTP_AUTH
+        value: "true"
+      - key: MAIL_SMTP_STARTTLS
+        value: "true"
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
 
   - type: web
     name: crearcodecesar-frontend
