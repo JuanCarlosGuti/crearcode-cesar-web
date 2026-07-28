@@ -17,9 +17,11 @@ Render (App Password de Gmail, guía en
 del usuario). La fase F8.5 — rediseño visual y valor de la cuenta
 (ISS-101 a ISS-107) — está TERMINADA y APROBADA (28 jul 2026;
 Lighthouse 97-98/100/100/100, 21/21 e2e con axe, verificación manual).
-Sigue la fase F9 — asistente IA con Groq — en planificación
-(documentación primero); la implementación no arranca sin OK explícito
-del usuario al plan.
+La fase F9 — asistente IA con Groq (ISS-108 a ISS-118) — está
+CONSTRUIDA y verificada en local, incluida la prueba real contra Groq
+(respuestas ancladas, sin inventar precios, escalamiento funcionando);
+**pendiente el OK explícito del usuario para publicarla** (push →
+Render) y la variable `GROQ_API_KEY` en el dashboard de Render.
 La v1 está PUBLICADA en producción desde el 27 jul
 2026: Render (capa gratis) + Neon. De la Etapa 2 solo queda abierta la
 compra del dominio propio (no bloquea).**
@@ -133,7 +135,9 @@ variable de entorno en Render el día que se use — nunca en el repo.
   Render (pausado a pedido del usuario).
 - [x] **F8.5** — Rediseño visual y valor de la cuenta (ISS-101 a
   ISS-107): terminada y aprobada (28 jul 2026).
-- [ ] **F9** — Asistente IA (Groq) — no arranca sin OK explícito.
+- [x] **F9** — Asistente IA (Groq, ISS-108 a ISS-118): construida y
+  verificada (incluida la prueba real con Groq); pendiente OK del
+  usuario para publicar + `GROQ_API_KEY` en Render.
 - [ ] **F10** — Demo de diseño con IA.
 - [ ] **F11** — Gestión interna.
 
@@ -332,6 +336,29 @@ páginas de token. E2e `cuentas-e2e.spec.ts`: flujo completo con el
 enlace real del correo leído de la API REST de Mailpit + axe (que
 encontró y permitió corregir un contraste AA insuficiente en los
 banners de error, también en el login del admin).
+
+## Asistente IA (tras la fase F9)
+
+Contexto `asistente` hexagonal (ADR-10): puerto `GeneradorDeRespuestas`
+implementado por `GroqGeneradorDeRespuestasAdapter`
+(chat/completions, modelo `llama-3.3-70b-versatile`, `GROQ_API_KEY`
+solo por entorno — flujo navegador → proxy `/api` → backend → Groq).
+Prompt de sistema anclado a
+`backend/src/main/resources/asistente-contexto.md` (mantenido a mano
+desde docs/08): nunca inventa precios, escala al humano con el
+marcador `[ESCALAR]` (el adaptador lo convierte en bandera).
+`POST /api/asistente/mensajes` público con Bearer opcional; límites en
+la capa de aplicación ANTES de llamar al proveedor (global diario 800,
+registrado 50, anónimo 10 — variables `ASISTENTE_*`), errores con
+código estable (`limite-anonimo`/`limite-registrado` 429,
+`no-disponible` 503) y rate limit por IP de respaldo. Frontend: widget
+flotante (`chat-asistente`) en el shell público, estado en
+`ConversacionService` (signals, id de sesión anónima en
+sessionStorage), sugerencias iniciales, escalamiento con WhatsApp
+contextual, límite anónimo con CTA a `/registro`, nota de
+transparencia. Tests sin gastar cuota: ITs contra un stub HTTP del JDK
+y e2e contra `frontend/e2e/stub-groq.mjs` (CI lo arranca con
+`GROQ_API_URL` y `ASISTENTE_LIMITE_ANONIMO=3`).
 
 ## Rediseño visual (tras la fase F8.5)
 
