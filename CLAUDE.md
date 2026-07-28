@@ -15,9 +15,11 @@ solo las variables `MAIL_USERNAME`/`MAIL_PASSWORD` en el dashboard de
 Render (App Password de Gmail, guía en
 [docs/09-despliegue.md](docs/09-despliegue.md) §7 — pausado a pedido
 del usuario). La fase F8.5 — rediseño visual y valor de la cuenta
-(ISS-101 a ISS-107) — está CONSTRUIDA y verificada (Lighthouse
-97-98/100/100/100, 21/21 e2e con axe, verificación manual);
-**pendiente el OK explícito del usuario para cerrarla y arrancar F9**.
+(ISS-101 a ISS-107) — está TERMINADA y APROBADA (28 jul 2026;
+Lighthouse 97-98/100/100/100, 21/21 e2e con axe, verificación manual).
+Sigue la fase F9 — asistente IA con Groq — en planificación
+(documentación primero); la implementación no arranca sin OK explícito
+del usuario al plan.
 La v1 está PUBLICADA en producción desde el 27 jul
 2026: Render (capa gratis) + Neon. De la Etapa 2 solo queda abierta la
 compra del dominio propio (no bloquea).**
@@ -130,8 +132,7 @@ variable de entorno en Render el día que se use — nunca en el repo.
   aprobada y en producción; su correo espera las variables `MAIL_*` en
   Render (pausado a pedido del usuario).
 - [x] **F8.5** — Rediseño visual y valor de la cuenta (ISS-101 a
-  ISS-107): construida y verificada; pendiente el OK del usuario para
-  cerrarla.
+  ISS-107): terminada y aprobada (28 jul 2026).
 - [ ] **F9** — Asistente IA (Groq) — no arranca sin OK explícito.
 - [ ] **F10** — Demo de diseño con IA.
 - [ ] **F11** — Gestión interna.

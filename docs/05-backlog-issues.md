@@ -220,7 +220,34 @@ desactiva toda animación.
 | ISS-106 | Página `/registro` con panel de beneficios junto al formulario + scroll-reveal en el resto de páginas públicas | HU-34, HU-35 | El formulario no pierde nada de HU-30; responsive | M | ISS-103, ISS-105 | `registro.spec` ampliado |
 | ISS-107 | Verificación integral y cierre: Lighthouse ≥ umbrales, axe cero violaciones, e2e verdes, verificación manual en navegador (375/1280), CLAUDE.md al día | HU-34, HU-35 | Puntajes F6 mantenidos; OK del usuario para F9 | M | ISS-104..106 | `npm run lighthouse`, suites e2e, checklist manual |
 
-**Fases F9-F11**: siguen sin descomponer — se descomponen al arrancar
+---
+
+## Fase F9 — Asistente IA (Etapa 3)
+
+Historias: HU-36 a HU-38 (épica E8 en [[04-historias-de-usuario]]).
+Arquitectura y decisiones en ADR-10 ([[02-arquitectura]]): puerto
+`GeneradorDeRespuestas`, adaptador Groq, prompt anclado a
+`asistente-contexto.md`, límites en la capa de aplicación (el de IP es
+respaldo). La `GROQ_API_KEY` vive en el `.env` local (gitignored) y en
+el dashboard de Render — nunca en el repo. Los tests de integración y
+el e2e usan un **stub HTTP del proveedor** (la URL base del adaptador
+es configurable): deterministas, sin gastar cuota ni exponer la key.
+
+| ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
+|---|---|---|---|---|---|---|
+| ISS-108 | Documentación de F9 (HUs E8, ADR-10, modelo, backlog, copy del chat + prompt de sistema en docs/08) | HU-36..38 | Docs 02/03/04/05/08 y CLAUDE.md antes del código | S | — | No aplica (documento) |
+| ISS-109 | Dominio `asistente`: VOs `MensajeDeChat` (rol usuario/asistente, texto con longitud máx), `ConversacionDeAsistente` (historial acotado), puerto `GeneradorDeRespuestas`, excepciones propias | HU-36 | Invariantes con tests puros; ArchUnit en verde | M | ISS-108 | `MensajeDeChatTest`, `ConversacionDeAsistenteTest` |
+| ISS-110 | Aplicación: `ResponderAlVisitanteUseCase` — arma el prompt anclado, aplica límites (global diario, por usuario, por sesión anónima) y traduce fallos del proveedor a la respuesta de indisponibilidad | HU-36, HU-38 | Nunca propaga errores técnicos; límites configurables por properties | L | ISS-109 | `ResponderAlVisitanteUseCaseTest` (fakes) |
+| ISS-111 | Infraestructura: `GroqGeneradorDeRespuestasAdapter` (chat completions, timeout corto, `GROQ_API_KEY`/`GROQ_API_URL`/`GROQ_MODELO` por properties) + recurso `asistente-contexto.md` | HU-36 | IT contra stub HTTP local (sin red externa); key jamás logueada | M | ISS-109 | `GroqGeneradorDeRespuestasAdapterIT` (stub) |
+| ISS-112 | REST: `POST /api/asistente/mensajes` (público, Bearer opcional para límite mayor) + regla de rate limit por IP de respaldo + handlers | HU-36, HU-38 | permitAll explícito; 429 con mensaje amable; validación de tamaño | M | ISS-110, ISS-111 | `AsistenteControllerIT` |
+| ISS-113 | Frontend: `AsistenteApi` + `ConversacionService` (signals: mensajes, estado enviando, límite restante, id de sesión anónima en sessionStorage) | HU-36, HU-38 | Specs en verde; rutas relativas `/api` (ADR-09) | M | ISS-112 | `asistente-api.spec`, `conversacion.spec` |
+| ISS-114 | Widget de chat: burbuja flotante + panel (mensajes, entrada, sugerencias iniciales, `aria-live` para respuestas, foco accesible, cierre con Esc) | HU-36 | Accesible (axe); no bloquea SSR/prerender; móvil 375px sin overflow | L | ISS-113 | `chat-widget.spec` |
+| ISS-115 | Escalamiento a humano: detección de la señal de escalamiento + CTA de WhatsApp contextual (`mensajeWhatsappParaRuta`) y enlace a /contacto dentro del chat | HU-37 | El mensaje de WhatsApp es el de la página actual | M | ISS-114 | `chat-widget.spec` ampliado |
+| ISS-116 | Límites en la UX: aviso de límite alcanzado con CTA a /registro (anónimos) y mensaje de indisponibilidad global | HU-38 | Texto según docs/08; sin errores técnicos visibles | S | ISS-114 | `chat-widget.spec` ampliado |
+| ISS-117 | e2e `asistente-e2e.spec.ts` contra stub de Groq (conversación, escalamiento, límite) + axe del widget abierto + stub para CI | HU-36..38 | Job e2e de CI en verde con el stub como service/proceso | M | ISS-114..116 | `asistente-e2e.spec.ts` |
+| ISS-118 | Verificación manual (navegador real, prueba con Groq real en local) + `render.yaml` con `GROQ_*` + CLAUDE.md + cierre de fase | HU-36..38 | Prueba real end-to-end con la key local; OK del usuario para F10 | M | ISS-117 | Checklist manual |
+
+**Fases F10-F11**: siguen sin descomponer — se descomponen al arrancar
 cada una, según [[10-vision-v2]].
 
 ---

@@ -816,3 +816,71 @@ usuario, ver [[10-vision-v2]] §5); los valores nuevos (gradientes,
 sombras, transiciones) quedan documentados en [[07-guia-de-estilo]]
 §Evolución visual.
 **Prioridad**: Must (para F8.5).
+
+## Épica E8 — Asistente IA (Etapa 3, fase F9)
+
+El chat del sitio público ([[10-vision-v2]] §F9, ADR-10 en
+[[02-arquitectura]]): responde las preguntas comunes ancladas al
+contenido real y escala a un humano cuando corresponde. Es lo que
+enciende los "Muy pronto" publicados en F8.5.
+
+### HU-36 — Visitante conversa con el asistente
+Como **visitante** quiero **preguntarle al asistente sobre los
+servicios, la forma de trabajar o los tiempos** para **resolver mis
+dudas al instante sin esperar una respuesta humana**.
+
+- Dado que estoy en cualquier página pública, cuando abro el widget de
+  chat y escribo una pregunta, entonces recibo una respuesta clara en
+  español basada en el contenido real del sitio.
+- Dado que el asistente no sabe algo o la pregunta sale del contenido
+  del sitio, cuando pregunto eso, entonces me lo dice honestamente y
+  me ofrece hablar con un humano (WhatsApp o formulario) — nunca
+  inventa datos.
+- Dado que pregunto por precios o cotizaciones, cuando envío la
+  pregunta, entonces el asistente NUNCA da cifras: explica que cada
+  proyecto se cotiza a la medida y me redirige al contacto humano.
+- Dado que el proveedor de IA falla o está saturado, cuando envío un
+  mensaje, entonces veo un mensaje amable de indisponibilidad con la
+  alternativa de WhatsApp — nunca un error técnico.
+
+**Reglas de negocio**: prompt de sistema anclado al recurso
+`asistente-contexto.md` (ADR-10); la conversación no se persiste ni se
+recuerda entre sesiones (v1); mensajes con longitud máxima e historial
+acotado por petición.
+**Prioridad**: Must (para F9).
+
+### HU-37 — El asistente escala a un humano
+Como **visitante con una necesidad concreta** quiero **que el asistente
+me pase con una persona cuando el tema lo amerite** para **no quedar
+atrapado en un bot**.
+
+- Dado que pido hablar con alguien (o pregunto precio/cotización),
+  cuando el asistente responde, entonces incluye el CTA de WhatsApp
+  con el mensaje contextual de la página (`mensajeWhatsappParaRuta`) o
+  el enlace al formulario de contacto.
+- Dado que estoy en una página de servicio, cuando escalo a WhatsApp,
+  entonces el mensaje prellenado es el propio de ese servicio.
+
+**Prioridad**: Must (para F9).
+
+### HU-38 — Límites de uso justos y visibles
+Como **dueño del sitio** quiero **limitar el uso del asistente por
+visitante y globalmente** para **que la capa gratis de Groq alcance y
+registrarse tenga un beneficio real**.
+
+- Dado que soy un visitante anónimo, cuando agoto mi límite de
+  mensajes del día, entonces el asistente me lo dice con amabilidad y
+  me invita a registrarme para obtener más consultas (HU-34).
+- Dado que tengo sesión de cliente iniciada, cuando uso el asistente,
+  entonces mi límite diario es mayor que el de un anónimo.
+- Dado que el límite global diario del sitio se agota (techo de la
+  capa gratis del proveedor), cuando cualquiera pregunta, entonces ve
+  el mensaje de indisponibilidad con la alternativa humana.
+- Dado que soy un bot haciendo peticiones masivas, cuando supero el
+  límite por IP de respaldo, entonces recibo 429.
+
+**Reglas de negocio**: límites en la capa de aplicación (por usuario
+registrado, por sesión anónima y global diario — el de IP es respaldo
+grueso, ver ADR-10); los valores exactos son configurables por
+variables de entorno.
+**Prioridad**: Must (para F9).

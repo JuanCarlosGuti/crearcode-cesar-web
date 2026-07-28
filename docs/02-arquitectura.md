@@ -293,6 +293,37 @@ adicional (navegador → frontend → backend) — aceptable para el
 volumen de tráfico esperado de un sitio de captación de leads. El
 frontend queda como único punto de entrada público de la API.
 
+### ADR-10 — Asistente IA detrás de un puerto de dominio, proveedor Groq (fase F9)
+
+**Decisión**: el asistente de la fase F9 sigue la misma arquitectura
+hexagonal del resto del backend: el dominio define el puerto
+`GeneradorDeRespuestas` (y los VOs de la conversación); la
+infraestructura implementa el adaptador de Groq (API compatible con
+OpenAI, modelo `llama-3.3-70b-versatile`), con la URL base y la key
+por variables de entorno (`GROQ_API_KEY`, nunca en el repo ni en el
+navegador — el flujo es navegador → proxy `/api` del frontend (ADR-09)
+→ backend → Groq). El **prompt de sistema se ancla al contenido real
+del sitio**: vive como recurso del backend
+(`asistente-contexto.md`, mantenido a mano desde [[08-contenido]]) con
+la regla dura de **nunca inventar precios ni promesas** — en la prueba
+real del 20 jul 2026 el modelo se inventó "paquetes desde $500.000
+COP"; sin anclaje eso pasaría en producción. Cuando la pregunta sale
+del contexto (o pide precio/cotización), el asistente escala al
+humano: CTA de WhatsApp o formulario de contacto.
+**Motivo**: cambiar de proveedor de IA (Groq hoy por su capa gratis;
+mañana cualquier otro) debe ser escribir otro adaptador, con cero
+cambios en dominio/aplicación — igual que con el correo o la
+persistencia. La duplicación controlada del contenido en el backend
+(en vez de leer `contenido/` del frontend) evita acoplar el backend al
+código TypeScript; follow-up documentado: generar ese recurso en build.
+**Consecuencia**: los límites de uso son parte del diseño (la capa
+gratis de Groq es ~1.000 peticiones/día): límite global diario en la
+capa de aplicación (el techo real), límite por usuario registrado, y
+límite blando por sesión anónima — el límite por IP no sirve de
+protección fina porque en producción todas las peticiones comparten la
+IP del proxy (lección de F8). Sin memoria entre sesiones ni
+function-calling en v1.
+
 ## 6. Seguridad (resumen, detalle en épica E3)
 
 - Panel admin protegido con Spring Security vía JWT (ver ADR-08):

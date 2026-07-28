@@ -291,3 +291,42 @@ de `java.base` — el dominio sigue sin Spring/JPA, ArchUnit intacto).
   F11.
 - **Limpieza de tokens vencidos**: la tabla crece sin poda en F8 —
   follow-up documentado en [[05-backlog-issues]].
+
+
+# Parte 3 — Contexto `asistente` (fase F9)
+
+Contexto nuevo del asistente IA (ADR-10 en [[02-arquitectura]]). Sin
+persistencia en v1: la conversación vive en la petición (y en la
+memoria del navegador durante la sesión de página); no hay entidades
+con identidad, solo objetos de valor y un puerto de salida.
+
+## Objetos de valor
+
+- **`MensajeDeChat`**: `rol` (`USUARIO` | `ASISTENTE`) + `texto`.
+  Invariantes: texto no vacío, longitud máxima (configurable, del
+  orden de 1.000 caracteres) — protege el costo por tokens y evita
+  abusos.
+- **`ConversacionDeAsistente`**: lista ordenada de `MensajeDeChat`.
+  Invariantes: historial acotado (máximo N mensajes por petición, del
+  orden de 20); el último mensaje debe ser del USUARIO.
+
+## Puertos (interfaces del dominio)
+
+- **`GeneradorDeRespuestas`**: `RespuestaDelAsistente responder(ConversacionDeAsistente conversacion)`
+  — la infraestructura lo implementa con Groq (adaptador HTTP,
+  compatible con OpenAI). `RespuestaDelAsistente` lleva el texto y si
+  el asistente sugirió escalar a un humano.
+
+## Invariantes del contexto
+
+1. El prompt de sistema se ancla al contenido real del sitio
+   (`asistente-contexto.md`) — el asistente nunca inventa precios ni
+   promesas; ante preguntas fuera de contexto escala al humano.
+2. Los límites de uso se aplican ANTES de llamar al proveedor: global
+   diario (techo de la capa gratis), por usuario registrado, por
+   sesión anónima; el de IP es respaldo grueso en el filtro.
+3. Un fallo del proveedor (timeout, 429, 5xx) nunca llega al visitante
+   como error técnico: se traduce a la respuesta de indisponibilidad
+   con la alternativa humana.
+4. La `GROQ_API_KEY` jamás aparece en logs, respuestas ni en el
+   navegador.
