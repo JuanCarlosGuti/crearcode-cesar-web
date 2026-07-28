@@ -55,4 +55,26 @@ class UsuarioRepositorioIT {
 		assertThat(repositorio.buscarPorCorreo(new Correo("no-existe@crearcode-cesar-test.local"))).isEmpty();
 	}
 
+	@Test
+	void buscarPorIdDevuelveElUsuarioConSuEstadoDeVerificacion() {
+		Usuario cliente = Usuario.registrarCliente(new Correo(CORREO_DE_PRUEBA), "hash");
+		repositorio.guardar(cliente);
+
+		Usuario encontrado = repositorio.buscarPorId(cliente.id()).orElseThrow();
+
+		assertThat(encontrado.id()).isEqualTo(cliente.id());
+		assertThat(encontrado.rol()).isEqualTo(Rol.CLIENTE);
+		assertThat(encontrado.verificado()).isFalse();
+	}
+
+	@Test
+	void guardarUnaCopiaVerificadaActualizaElUsuarioExistente() {
+		Usuario cliente = Usuario.registrarCliente(new Correo(CORREO_DE_PRUEBA), "hash");
+		repositorio.guardar(cliente);
+
+		repositorio.guardar(cliente.verificar());
+
+		assertThat(repositorio.buscarPorId(cliente.id()).orElseThrow().verificado()).isTrue();
+	}
+
 }
