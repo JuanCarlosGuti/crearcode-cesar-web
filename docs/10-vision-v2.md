@@ -48,6 +48,33 @@ en F9/F10.
 - **No incluye**: login social (Google/etc.), 2FA, roles internos
   adicionales (van en F11).
 
+### F8.5 — Rediseño visual y valor de la cuenta (intercalada el 28 jul 2026)
+
+Fase corta intercalada a pedido del usuario tras cerrar F8: el sitio
+es correcto pero visualmente plano, y el registro no comunica ningún
+beneficio — el usuario quiere que la gente **quiera** registrarse
+(registro opcional y atractivo), no que le toque. Decisiones del
+usuario (28 jul 2026): **evolucionar la paleta actual** (no rediseño
+radical — se mantiene la identidad "Minimal Corporativo" de
+[[07-guia-de-estilo]] y lo ganado en F6) y **diseño primero, F9
+después** (el sitio se ve atractivo cuanto antes; F9 llena el
+beneficio real con el chat IA).
+
+- **Sistema visual evolucionado**: gradientes de marca, sombras de
+  elevación, transiciones y micro-animaciones (hover, scroll-reveal)
+  — respetando `prefers-reduced-motion`, el contraste AA y los
+  puntajes Lighthouse de F6 (detalle en [[07-guia-de-estilo]]
+  §Evolución visual).
+- **Hero de la Home renovado** y jerarquía de CTAs más atractiva.
+- **Sección "Tu cuenta te da más"** en la Home: tarjetas de beneficios
+  del registro con CTA a `/registro`. Honesta: el asistente IA (F9) y
+  el demo de diseño (F10) se anuncian como "muy pronto" — acceso
+  anticipado para registrados; nunca se promete lo que aún no existe.
+- **Página `/registro` con beneficios visibles** junto al formulario.
+- **No incluye**: cambiar paleta/tipografía base, imágenes de
+  contenido (la convención de [[07-guia-de-estilo]] sigue pendiente de
+  fotos reales), ni nada del chat IA (eso es F9).
+
 ### F9 — Asistente de IA (chatbot de preguntas frecuentes)
 
 Widget de chat en el sitio público que responde las preguntas comunes
@@ -180,6 +207,17 @@ arrancar sin fricción, no una restricción permanente.
    detrás de puerto intercambiable.
 3. **Facturación**: cotizaciones y cuentas de cobro propias (PDF);
    DIAN vía proveedor autorizado queda para después, documentado.
+
+Registradas el 28 jul 2026 (al cerrar F8):
+
+4. **F8.5 intercalada** entre F8 y F9: rediseño visual + comunicar el
+   valor de la cuenta. El registro es **opcional y atractivo** — la
+   gente debe querer registrarse por lo que obtiene, no sentirse
+   obligada.
+5. **Alcance visual**: evolucionar la paleta actual (no rediseño
+   radical) — se conserva la identidad "Minimal Corporativo" y los
+   resultados de F6.
+6. **Orden**: diseño primero (F8.5), F9 después.
 
 ## Aprobación
 

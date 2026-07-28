@@ -499,6 +499,32 @@ de los correos transaccionales. Mismo tono cercano del resto del sitio.
 >
 > — Crear Code Cesar S.A.S. · Valledupar, Colombia
 
+### Sección "Tu cuenta te da más" (Home y /registro — fase F8.5, HU-34)
+
+Regla de honestidad: lo que aún no existe (asistente IA de F9, demo de
+diseño de F10) se anuncia siempre con la etiqueta **"Muy pronto"** —
+el registro hoy es acceso anticipado, no promesa incumplida.
+
+- **Título**: Tu cuenta te da más
+- **Intro**: Crear tu cuenta es gratis, toma un minuto y no es
+  obligatoria para nada del sitio. Pero quienes la tienen van a
+  estrenar primero lo que viene:
+- **Tarjeta 1 — Asistente con IA** *(badge: Muy pronto)*:
+  > Pregúntale a nuestro asistente lo que necesites sobre software,
+  > automatización o costos, y recibe respuesta al instante. Los
+  > usuarios registrados tendrán más consultas por día.
+- **Tarjeta 2 — Demo de diseño con IA** *(badge: Muy pronto)*:
+  > Describe tu negocio y mira un primer boceto de tu solución,
+  > generado con inteligencia artificial. Exclusivo para usuarios
+  > registrados.
+- **Tarjeta 3 — Acceso anticipado**:
+  > Cada herramienta nueva del sitio la estrenan primero las personas
+  > registradas — sin costo y sin compromiso.
+- **CTA principal**: Crear mi cuenta gratis
+- **CTA secundario**: Ya tengo cuenta → `/ingreso`
+- En `/registro`, las mismas tres tarjetas acompañan al formulario
+  (versión compacta), con la misma regla de honestidad.
+
 ---
 
 ## Legales

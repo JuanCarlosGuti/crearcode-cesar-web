@@ -179,6 +179,41 @@ Esta es la paleta oficial del sitio a partir de ahora.
 - **Sección FAQ**: acordeón simple, un ítem expandido a la vez o varios
   simultáneos (decisión de implementación libre, no de negocio).
 
+### Evolución visual (fase F8.5, 28 jul 2026)
+
+Decisión del usuario al cerrar F8: el sitio es correcto pero plano —
+se **evoluciona** la paleta oficial (Opción C se mantiene como
+identidad) añadiendo profundidad y movimiento, sin sacrificar nada de
+lo ganado en F6 (AA, Lighthouse 98-100). Valores nuevos:
+
+- **Gradiente de marca** (fondos de hero y secciones destacadas):
+  de primario `#22303F` a un azul petróleo profundo `#14424D`
+  (dirección ~135°). Solo como fondo decorativo: el texto encima va
+  en blanco `#FFFFFF` o el gris claro de fondo `#F7F8FA`, y cada
+  combinación texto/zona del gradiente debe verificar AA 4.5:1.
+- **Acento luminoso** (solo detalles decorativos — subrayados,
+  íconos, bordes de tarjeta en hover — **nunca texto**): verde claro
+  `#4CC38A`. Para texto sigue valiendo únicamente el acento oficial
+  `#2E7D53`.
+- **Elevación (sombras)**, tres niveles sobre fondo claro:
+  `--sombra-1: 0 1px 3px rgb(23 27 31 / 8%)` (reposo),
+  `--sombra-2: 0 4px 12px rgb(23 27 31 / 10%)` (tarjetas),
+  `--sombra-3: 0 12px 32px rgb(23 27 31 / 14%)` (hover/destacados).
+- **Transiciones estándar**: 180ms `ease-out` para hover/focus;
+  entrada de secciones (scroll-reveal) 400ms con desplazamiento
+  máximo de 16px, **una sola vez** por elemento.
+- **`prefers-reduced-motion: reduce` apaga todo movimiento** (las
+  utilidades de animación son no-op y el contenido aparece de
+  inmediato). El contenido nunca depende de JS para ser visible
+  (progressive enhancement: sin JS no hay animación, pero se ve todo).
+- **Radios**: tarjetas y bloques destacados pueden usar un radio mayor
+  (`--radio-borde-grande: 16px`) que el radio base de los controles.
+
+Los componentes nuevos de esta fase (tarjetas de beneficios de la
+cuenta, hero con gradiente) usan estos tokens; los valores exactos
+viven como custom properties en `styles.scss` — este documento es la
+fuente de verdad de sus valores.
+
 ### Imágenes (convención para cuando existan imágenes de contenido)
 
 Al cierre de la fase F6 el sitio no tiene ninguna imagen de contenido

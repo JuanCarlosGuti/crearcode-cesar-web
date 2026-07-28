@@ -10,14 +10,17 @@ correspondiente antes de seguir.
 **Etapa actual: Etapa 3 — Plataforma v2. La fase F8 (cuentas de
 cliente) está TERMINADA y APROBADA por el usuario (28 jul 2026;
 ISS-083 a ISS-100, suites backend/frontend/e2e en verde + verificación
-manual en navegador). Para que quede viva en producción faltan solo
-las variables `MAIL_USERNAME`/`MAIL_PASSWORD` en el dashboard de
+manual en navegador). Para que su correo funcione en producción faltan
+solo las variables `MAIL_USERNAME`/`MAIL_PASSWORD` en el dashboard de
 Render (App Password de Gmail, guía en
-[docs/09-despliegue.md](docs/09-despliegue.md) §7). La v1 está
-PUBLICADA en producción desde el 27 jul 2026: Render (capa gratis) +
-Neon. De la Etapa 2 solo queda abierta la compra del dominio propio
-(no bloquea). La fase F9 (asistente IA con Groq) no arranca sin OK
-explícito del usuario.**
+[docs/09-despliegue.md](docs/09-despliegue.md) §7 — pausado a pedido
+del usuario). Sigue la fase F8.5 — rediseño visual y valor de la
+cuenta (ISS-101 a ISS-107, documentada el 28 jul 2026 a pedido del
+usuario: evolucionar la paleta actual, diseño antes que F9) —
+**pendiente del OK explícito del usuario para arrancar la
+implementación**. La v1 está PUBLICADA en producción desde el 27 jul
+2026: Render (capa gratis) + Neon. De la Etapa 2 solo queda abierta la
+compra del dominio propio (no bloquea).**
 
 URLs de producción:
 - Frontend: https://crearcodecesar-frontend.onrender.com
@@ -123,9 +126,11 @@ usuario aprobó el documento ese mismo día.
 La `GROQ_API_KEY` vive solo en el `.env` local (gitignored) y como
 variable de entorno en Render el día que se use — nunca en el repo.
 
-- [x] **F8** — Cuentas de cliente (ISS-083 a ISS-100): construida y
-  verificada en local; pendiente OK del usuario + App Password de
-  Gmail + redeploy en Render para estar viva en producción.
+- [x] **F8** — Cuentas de cliente (ISS-083 a ISS-100): terminada,
+  aprobada y en producción; su correo espera las variables `MAIL_*` en
+  Render (pausado a pedido del usuario).
+- [ ] **F8.5** — Rediseño visual y valor de la cuenta (ISS-101 a
+  ISS-107): documentada; la implementación no arranca sin OK explícito.
 - [ ] **F9** — Asistente IA (Groq) — no arranca sin OK explícito.
 - [ ] **F10** — Demo de diseño con IA.
 - [ ] **F11** — Gestión interna.

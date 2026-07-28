@@ -759,3 +759,60 @@ sin cambio de contraseña autenticado — se cubre con la recuperación
 (HU-32). El header del sitio muestra "Ingresar" o "Mi cuenta" según
 la sesión.
 **Prioridad**: Must (para F8).
+
+## Épica E7 — Experiencia visual y conversión al registro (fase F8.5)
+
+Épica intercalada a pedido del usuario (28 jul 2026, ver
+[[10-vision-v2]] §F8.5): el sitio debe ser visualmente atractivo y el
+registro debe **venderse solo** — opcional, pero deseable por lo que
+ofrece. Evoluciona la identidad visual existente sin sacrificar lo
+ganado en F6 (accesibilidad AA, Lighthouse 98-100).
+
+### HU-34 — Visitante entiende qué gana creando una cuenta
+Como **visitante interesado** quiero **ver de forma clara y atractiva
+qué obtengo si me registro** para **decidir crear mi cuenta por
+voluntad propia**.
+
+- Dado que estoy en la Home, cuando llego a la sección de beneficios
+  de la cuenta, entonces veo tarjetas con los beneficios (asistente
+  IA y demo de diseño como "muy pronto" — acceso anticipado para
+  registrados) y un CTA claro para crear la cuenta gratis.
+- Dado que estoy en la página de registro, cuando la abro, entonces
+  veo los beneficios junto al formulario, no solo campos.
+- Dado que ninguna funcionalidad del sitio me obliga a registrarme,
+  cuando navego o envío el formulario de contacto, entonces nunca se
+  me exige tener cuenta (el registro es opcional).
+- Dado que un beneficio todavía no está disponible (F9/F10), cuando lo
+  veo anunciado, entonces está marcado como "muy pronto" — el sitio no
+  promete nada que aún no exista.
+
+**Reglas de negocio**: los textos viven en `contenido/` (ADR-05) y su
+borrador en [[08-contenido]]; el CTA lleva a `/registro`.
+**Prioridad**: Must (para F8.5).
+
+### HU-35 — Visitante navega un sitio visualmente atractivo
+Como **visitante** quiero **un sitio con vida visual (profundidad,
+movimiento sutil, jerarquía clara)** para **confiar en que esta empresa
+sabe construir productos de calidad**.
+
+- Dado que abro la Home, cuando cargo la página, entonces el hero
+  tiene presencia visual (gradiente de marca, jerarquía de CTAs) y no
+  es un bloque plano de texto.
+- Dado que hago scroll, cuando las secciones entran al viewport,
+  entonces aparecen con una transición sutil (una sola vez, sin
+  parpadeos ni saltos de layout).
+- Dado que paso el mouse o el foco de teclado por una tarjeta o botón,
+  entonces responde con una transición perceptible pero discreta.
+- Dado que tengo activada la preferencia de reducir movimiento
+  (`prefers-reduced-motion`), cuando navego el sitio, entonces no hay
+  ninguna animación — todo aparece de inmediato.
+- Dado que se audita el sitio tras el rediseño, cuando corren
+  Lighthouse y axe, entonces los puntajes de F6 se mantienen
+  (Performance ≥ 95, Accesibilidad/Buenas Prácticas/SEO 100, cero
+  violaciones axe) y todos los contrastes siguen cumpliendo AA.
+
+**Reglas de negocio**: se evoluciona la paleta actual (decisión del
+usuario, ver [[10-vision-v2]] §5); los valores nuevos (gradientes,
+sombras, transiciones) quedan documentados en [[07-guia-de-estilo]]
+§Evolución visual.
+**Prioridad**: Must (para F8.5).

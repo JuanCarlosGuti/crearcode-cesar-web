@@ -199,6 +199,27 @@ Follow-ups registrados (no en F8): limpieza periódica de
 `tokens_de_usuario` vencidos; evaluar red interna de Render para que el
 rate limit por IP vea la IP real del cliente.
 
+---
+
+## Fase F8.5 — Rediseño visual y valor de la cuenta (Etapa 3)
+
+Fase corta intercalada a pedido del usuario (28 jul 2026, decisiones
+en [[10-vision-v2]] §F8.5 y §5). Historias: HU-34 y HU-35 (épica E7 en
+[[04-historias-de-usuario]]). Regla de la fase: **cada cambio visual
+se verifica contra lo ganado en F6** — AA, cero violaciones axe y
+Lighthouse Performance ≥ 95 / resto 100; `prefers-reduced-motion`
+desactiva toda animación.
+
+| ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
+|---|---|---|---|---|---|---|
+| ISS-101 | Documentación de F8.5 (HUs E7, visión, backlog, guía de estilo §Evolución visual, copy de la sección de beneficios) | HU-34, HU-35 | Docs 04/05/07/08/10 y CLAUDE.md actualizados antes del código | S | — | No aplica (documento) |
+| ISS-102 | Sistema visual: tokens nuevos en `styles.scss` (gradiente de marca, elevaciones/sombras, transiciones estándar) + utilidades de animación con `prefers-reduced-motion` | HU-35 | Valores documentados en [[07-guia-de-estilo]]; contrastes AA verificados; sin regresión axe | M | ISS-101 | e2e `accesibilidad-e2e` sigue en verde |
+| ISS-103 | Directiva `aparecerAlVer` (scroll-reveal con IntersectionObserver, una sola vez, zoneless-safe, no-op en SSR y con reduced-motion) | HU-35 | Sin layout shift; contenido visible sin JS (progressive enhancement) | M | ISS-102 | `aparecer-al-ver.spec` |
+| ISS-104 | Hero de la Home renovado (gradiente, jerarquía de CTAs, elemento gráfico SVG sutil) + hover/focus en tarjetas de servicios y CTAs | HU-35 | Mobile 375px sin overflow; foco visible se conserva | M | ISS-102 | `home.spec` ajustado; e2e a11y |
+| ISS-105 | Sección "Tu cuenta te da más" en la Home (tarjetas de beneficios + CTA a `/registro`, copy de [[08-contenido]], "muy pronto" en IA/demo) | HU-34 | Contenido en `contenido/` (ADR-05); enlaces correctos | M | ISS-102 | `home.spec` ampliado |
+| ISS-106 | Página `/registro` con panel de beneficios junto al formulario + scroll-reveal en el resto de páginas públicas | HU-34, HU-35 | El formulario no pierde nada de HU-30; responsive | M | ISS-103, ISS-105 | `registro.spec` ampliado |
+| ISS-107 | Verificación integral y cierre: Lighthouse ≥ umbrales, axe cero violaciones, e2e verdes, verificación manual en navegador (375/1280), CLAUDE.md al día | HU-34, HU-35 | Puntajes F6 mantenidos; OK del usuario para F9 | M | ISS-104..106 | `npm run lighthouse`, suites e2e, checklist manual |
+
 **Fases F9-F11**: siguen sin descomponer — se descomponen al arrancar
 cada una, según [[10-vision-v2]].
 
@@ -206,7 +227,8 @@ cada una, según [[10-vision-v2]].
 
 ## Resumen de cobertura
 
-Las 29 HU de [[04-historias-de-usuario]] quedan cubiertas por al menos un
-issue de este backlog; ninguna HU queda sin issue asociado. El orden de
-fases F0→F7 coincide con el propuesto para la Etapa 2 en el brief
-original y se retoma en `CLAUDE.md`.
+Todas las HU de [[04-historias-de-usuario]] (29 de la Etapa 2, HU-30 a
+HU-33 de la fase F8 y HU-34/HU-35 de la fase F8.5) quedan cubiertas por
+al menos un issue de este backlog; ninguna HU queda sin issue asociado.
+El orden de fases F0→F7 coincide con el propuesto para la Etapa 2 en el
+brief original y se retoma en `CLAUDE.md`.
