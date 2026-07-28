@@ -65,7 +65,9 @@ input[aria-invalid='true'] {
   padding: var(--espacio-2) var(--espacio-3);
   border-radius: var(--radio-borde);
   background-color: color-mix(in srgb, var(--color-error) 10%, white);
-  color: var(--color-error);
+  /* Oscurecido sobre el fondo rosado: el rojo puro da 4.27:1, bajo el
+     minimo AA de 4.5:1 (lo encontro axe en ISS-099). */
+  color: color-mix(in srgb, var(--color-error) 80%, black);
 }
 
 .pagina-cuenta__error a {

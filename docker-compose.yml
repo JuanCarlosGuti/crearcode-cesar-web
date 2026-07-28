@@ -21,6 +21,18 @@ services:
       timeout: 5s
       retries: 5
 
+  # SMTP local de desarrollo (fase F8): el backend envia los correos de
+  # verificacion/recuperacion aqui (localhost:1025, el default de
+  # MAIL_HOST/MAIL_PORT) y la bandeja se consulta en http://localhost:8025
+  # (UI y API REST -- el e2e de cuentas lee el enlace del correo por esa
+  # API). En el perfil por defecto, junto a Postgres.
+  mailpit:
+    image: axllent/mailpit
+    container_name: crearcode-leads-mailpit
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
   # Backend y frontend quedan en el perfil "full": `docker compose up -d`
   # (sin perfil) sigue levantando solo Postgres, como hasta ahora, para no
   # romper el flujo de desarrollo normal (mvnw spring-boot:run + npm start,
@@ -39,6 +51,7 @@ services:
       DB_NAME: leads
       DB_USER: leads
       DB_PASSWORD: leads
+      MAIL_HOST: mailpit
     ports:
       # 8080 en el host puede estar ocupado (ej. por Docker Desktop en esta
       # maquina) -- sobreescribir con BACKEND_PORT=8090 (ver CLAUDE.md).

@@ -60,7 +60,7 @@ jobs:
         run: docker build frontend/
 
   e2e:
-    name: E2E (Playwright, flujo de contacto + accesibilidad axe-core)
+    name: E2E (Playwright, contacto + cuentas + accesibilidad axe-core)
     runs-on: ubuntu-latest
     needs: [backend, frontend]
     services:
@@ -77,6 +77,14 @@ jobs:
           --health-interval 5s
           --health-timeout 5s
           --health-retries 10
+      # SMTP de prueba para el e2e de cuentas (fase F8): el backend envia
+      # a localhost:1025 (sus defaults) y el test lee el enlace del correo
+      # via la API REST de Mailpit en el puerto 8025.
+      mailpit:
+        image: axllent/mailpit
+        ports:
+          - 1025:1025
+          - 8025:8025
     steps:
       - uses: actions/checkout@v4
 

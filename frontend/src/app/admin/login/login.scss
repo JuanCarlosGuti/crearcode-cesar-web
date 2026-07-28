@@ -50,7 +50,9 @@ input[aria-invalid='true'] {
   padding: var(--espacio-2) var(--espacio-3);
   border-radius: var(--radio-borde);
   background-color: color-mix(in srgb, var(--color-error) 10%, white);
-  color: var(--color-error);
+  /* Mismo ajuste de contraste AA que .pagina-cuenta__error (ISS-099):
+     el rojo puro sobre este fondo da 4.27:1, bajo el minimo de 4.5:1. */
+  color: color-mix(in srgb, var(--color-error) 80%, black);
 }
 
 button[type='submit']:disabled {

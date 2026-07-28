@@ -17,6 +17,14 @@ const PAGINAS_PUBLICAS = [
   { nombre: 'Home', ruta: '/' },
   { nombre: 'Servicio (Desarrollo a la medida)', ruta: '/servicios/desarrollo-a-la-medida' },
   { nombre: 'Contacto', ruta: '/contacto' },
+  // Paginas de cuenta de cliente (fase F8). /verificar-correo sin token
+  // muestra el estado de error con el formulario de reenvio — tambien
+  // debe ser accesible. /mi-cuenta (autenticada) se cubre en
+  // cuentas-e2e.spec.ts aprovechando la sesion real.
+  { nombre: 'Registro', ruta: '/registro' },
+  { nombre: 'Ingreso', ruta: '/ingreso' },
+  { nombre: 'Recuperar contraseña', ruta: '/recuperar-contrasena' },
+  { nombre: 'Verificar correo (sin token)', ruta: '/verificar-correo' },
 ];
 
 for (const { nombre, ruta } of PAGINAS_PUBLICAS) {
