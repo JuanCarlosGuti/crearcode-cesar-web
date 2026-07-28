@@ -260,6 +260,15 @@ del cliente (borra el token) y el token sigue siendo técnicamente
 válido hasta su expiración (configurable, default 8h) — trade-off
 consciente para no sobreconstruir con un solo usuario real hoy.
 
+> **Actualización F8 (Etapa 3, cuentas de cliente)**: la apuesta de
+> este ADR se materializa — `Rol` gana `CLIENTE`, el claim `rol` del
+> JWT pasa a usarse en autorización real (`hasRole("ADMIN")` en los
+> endpoints del panel: un token CLIENTE recibe 403) y el login exige
+> cuenta verificada por correo. Sigue sin denylist: consecuencia
+> nueva, aceptada y documentada, es que restablecer la contraseña no
+> revoca los JWT ya emitidos (hasta 8 h de vida restante). Detalle del
+> modelo en [[03-modelo-de-dominio]] Parte 2.
+
 ### ADR-09 — Proxy servidor-a-servidor en el frontend en vez de CORS
 
 **Decisión**: el servidor SSR del frontend (`frontend/src/server.ts`)

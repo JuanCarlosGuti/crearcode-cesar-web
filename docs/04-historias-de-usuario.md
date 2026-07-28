@@ -647,3 +647,115 @@ costos claros (ver fase F7 en [[05-backlog-issues]]).
 **Notas de UX**: no aplica.
 **Prioridad**: Should (para v1 completo; no bloquea el resto del
 desarrollo).
+
+---
+
+## Épica E6 — Cuentas de cliente (Etapa 3, fase F8)
+
+Épica nueva de la v2 (ver [[10-vision-v2]]): los visitantes pueden
+crear una cuenta para acceder a mejores servicios (en F9/F10: límites
+mayores del asistente IA y el demo de diseño). Rol nuevo: **cliente**
+(persona registrada, sin acceso al panel admin).
+
+### HU-30 — Visitante crea una cuenta de cliente
+Como **visitante** quiero **registrarme con mi correo y una contraseña**
+para **acceder a los servicios para clientes del sitio**.
+
+- Dado que estoy en la página de registro, cuando ingreso un correo
+  válido, una contraseña de al menos 10 caracteres (confirmada dos
+  veces) y acepto la política de datos, entonces mi cuenta se crea y
+  veo un mensaje claro de que debo verificar mi correo.
+- Dado que ingreso un correo con formato inválido o una contraseña
+  menor a 10 caracteres, cuando intento registrarme, entonces veo el
+  error específico junto al campo y no se crea ninguna cuenta.
+- Dado que ya existe una cuenta con mi correo, cuando intento
+  registrarme de nuevo, entonces veo un mensaje claro que me ofrece
+  ir a iniciar sesión o recuperar mi contraseña.
+- Dado que soy un bot haciendo registros masivos, cuando supero el
+  límite de intentos, entonces recibo un rechazo (429) sin que el
+  sistema envíe más correos.
+
+**Reglas de negocio**: rol `CLIENTE`; la cuenta nace sin verificar y
+no puede iniciar sesión hasta verificar el correo (HU-31); correo
+único (mismo invariante del contexto `usuarios`, ver
+[[03-modelo-de-dominio]] Parte 2); registrar un correo existente
+responde 409 explícito — trade-off de usabilidad sobre
+anti-enumeración, documentado.
+**Notas de UX**: formulario con los mismos patrones del formulario de
+contacto (labels visibles, errores asociados al campo); checkbox de
+consentimiento no premarcado con enlace a la política.
+**Prioridad**: Must (para F8).
+
+### HU-31 — Cliente verifica su correo
+Como **cliente recién registrado** quiero **verificar mi correo desde
+un enlace que me llega** para **activar mi cuenta y poder ingresar**.
+
+- Dado que me registré, cuando abro el enlace del correo de
+  verificación antes de 24 horas, entonces mi cuenta queda verificada
+  y puedo iniciar sesión.
+- Dado que mi enlace venció o ya fue usado, cuando lo abro, entonces
+  veo un mensaje único de "enlace inválido o vencido" (sin distinguir
+  la causa) con la opción de reenviar el correo.
+- Dado que no me llegó el correo, cuando pido reenviarlo, entonces
+  llega un enlace nuevo (que invalida los anteriores) — con un límite
+  de reenvíos por correo para evitar abuso.
+- Dado que intento iniciar sesión sin verificar, cuando ingreso
+  credenciales correctas, entonces veo un mensaje claro de que debo
+  verificar primero, con la opción de reenviar el correo.
+
+**Reglas de negocio**: token de un solo uso, vigencia 24 h, se guarda
+solo su hash (nunca el valor en claro); máximo 3 reenvíos por correo
+cada 15 minutos (control en la capa de aplicación, por correo — el
+límite por IP es solo respaldo).
+**Notas de UX**: la página de verificación actúa sola al abrirla (sin
+botones extra en el caso feliz).
+**Prioridad**: Must (para F8).
+
+### HU-32 — Cliente recupera su contraseña
+Como **cliente** quiero **restablecer mi contraseña si la olvidé**
+para **volver a acceder a mi cuenta sin intervención manual**.
+
+- Dado que olvidé mi contraseña, cuando ingreso mi correo en la página
+  de recuperación, entonces veo siempre el mismo mensaje genérico ("si
+  el correo existe, te llegará un enlace") — exista o no la cuenta.
+- Dado que recibí el enlace, cuando lo abro antes de 1 hora y escribo
+  una contraseña nueva válida (mínimo 10 caracteres, confirmada),
+  entonces mi contraseña cambia y puedo iniciar sesión con ella.
+- Dado que el enlace venció o ya fue usado, cuando intento usarlo,
+  entonces veo "enlace inválido o vencido" y puedo pedir uno nuevo.
+
+**Reglas de negocio**: token de un solo uso, vigencia 1 h, solo hash
+persistido; restablecer la contraseña también marca la cuenta como
+verificada (probó ser dueño del correo); los JWT ya emitidos siguen
+vigentes hasta su expiración natural (sin denylist, coherente con
+ADR-08 — riesgo aceptado y documentado); mismo límite de 3 solicitudes
+por correo cada 15 minutos.
+**Notas de UX**: nunca revelar si el correo existe; la pantalla de
+éxito invita a revisar también la carpeta de spam.
+**Prioridad**: Must (para F8).
+
+### HU-33 — Cliente ingresa y ve su cuenta
+Como **cliente verificado** quiero **iniciar sesión y ver mi área de
+cuenta** para **confirmar mi identidad y acceder a lo que es mío**.
+
+- Dado que estoy verificado, cuando ingreso credenciales correctas en
+  la página de ingreso, entonces entro a "Mi cuenta" y veo mi correo.
+- Dado que ingreso credenciales incorrectas, cuando envío el
+  formulario, entonces veo el mismo mensaje genérico de siempre
+  ("correo o contraseña incorrectos") sin revelar cuál falló.
+- Dado que soy el fundador (rol ADMIN), cuando ingreso por la página
+  de clientes, entonces se me redirige al panel admin.
+- Dado que intento abrir "Mi cuenta" sin sesión, cuando navego a esa
+  ruta, entonces se me redirige a la página de ingreso.
+- Dado que cierro sesión, cuando vuelvo a "Mi cuenta", entonces se me
+  pide ingresar de nuevo.
+
+**Reglas de negocio**: mismo endpoint de login y mismo JWT de ADR-08
+(el token ya lleva el claim `rol`); un token de rol CLIENTE recibe 403
+en los endpoints del panel admin; la sesión vive en `sessionStorage`
+(se pierde al cerrar la pestaña, trade-off de ADR-08).
+**Notas de UX**: "Mi cuenta" mínima en F8 (correo + cerrar sesión);
+sin cambio de contraseña autenticado — se cubre con la recuperación
+(HU-32). El header del sitio muestra "Ingresar" o "Mi cuenta" según
+la sesión.
+**Prioridad**: Must (para F8).

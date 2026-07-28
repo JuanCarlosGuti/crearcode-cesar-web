@@ -390,6 +390,117 @@ justo antes de volver a pedir login):**
 
 ---
 
+## Cuentas de cliente (fase F8 — HU-30 a HU-33)
+
+Textos de las páginas de registro/ingreso/verificación/recuperación y
+de los correos transaccionales. Mismo tono cercano del resto del sitio.
+
+### Página `/registro`
+
+- **Título**: Crea tu cuenta
+- **Intro**: Regístrate para acceder a los servicios para clientes de
+  Crear Code Cesar. Es gratis y toma un minuto.
+- **Labels**: Correo electrónico · Contraseña (mínimo 10 caracteres) ·
+  Confirma tu contraseña · He leído y acepto la [Política de
+  tratamiento de datos]
+- **Botón**: Crear cuenta (enviando: "Creando cuenta…")
+- **Éxito**:
+  > ¡Ya casi! Te enviamos un correo a **{correo}** con un enlace para
+  > verificar tu cuenta. Revisa también la carpeta de spam.
+- **Error correo ya registrado (409)**:
+  > Ya existe una cuenta con este correo. ¿Quieres [iniciar sesión] o
+  > [recuperar tu contraseña]?
+- **Errores de campo**: "Escribe un correo válido, ej.
+  nombre@empresa.com." · "La contraseña debe tener al menos 10
+  caracteres." · "Las contraseñas no coinciden." · "Debes aceptar la
+  política de datos para crear tu cuenta."
+
+### Página `/ingreso`
+
+- **Título**: Inicia sesión
+- **Intro**: Entra a tu cuenta de Crear Code Cesar.
+- **Labels**: Correo electrónico · Contraseña
+- **Botón**: Iniciar sesión (enviando: "Ingresando…")
+- **Enlaces**: ¿Olvidaste tu contraseña? · ¿No tienes cuenta? Regístrate
+- **Error credenciales (401)**: Correo o contraseña incorrectos.
+- **Error cuenta sin verificar (403)**:
+  > Tu cuenta aún no está verificada. Revisa el correo que te enviamos
+  > o [reenvíalo aquí].
+
+### Página `/verificar-correo`
+
+- **Verificando** (al abrir): Estamos verificando tu correo…
+- **Éxito**:
+  > ¡Listo! Tu cuenta quedó verificada. Ya puedes [iniciar sesión].
+- **Error (único, sin distinguir causa)**:
+  > Este enlace es inválido o ya venció. Escribe tu correo y te
+  > enviamos uno nuevo.
+  (campo de correo + botón "Reenviar verificación" → siempre responde:
+  "Si tu correo está registrado y pendiente de verificar, te llegará
+  un enlace nuevo.")
+
+### Página `/recuperar-contrasena`
+
+- **Título**: Recupera tu contraseña
+- **Intro**: Escribe el correo con el que te registraste y te enviamos
+  un enlace para crear una contraseña nueva.
+- **Éxito (siempre el mismo, exista o no la cuenta)**:
+  > Si tu correo está registrado, te llegará un enlace en unos
+  > minutos. Revisa también la carpeta de spam.
+
+### Página `/restablecer-contrasena`
+
+- **Título**: Crea tu nueva contraseña
+- **Labels**: Nueva contraseña (mínimo 10 caracteres) · Confírmala
+- **Botón**: Guardar contraseña nueva
+- **Éxito**:
+  > Tu contraseña quedó actualizada. Ya puedes [iniciar sesión] con
+  > ella.
+- **Error de enlace**: mismo texto único de "/verificar-correo".
+
+### Página `/mi-cuenta` (mínima en F8)
+
+- **Título**: Mi cuenta
+- **Contenido**: Sesión iniciada como **{correo}**. · Botón "Cerrar
+  sesión". · Nota: "¿Quieres cambiar tu contraseña? Usa [recuperar
+  contraseña] — te llegará un enlace al correo."
+
+### Header del sitio
+
+- Sin sesión: enlace **Ingresar**. Con sesión: enlace **Mi cuenta**
+  (los admins ven además su panel en /admin como hasta ahora).
+
+### Correos transaccionales (texto plano)
+
+**Verificación — asunto**: Verifica tu cuenta en Crear Code Cesar
+
+> Hola,
+>
+> Gracias por registrarte en Crear Code Cesar. Para activar tu cuenta,
+> abre este enlace (vence en 24 horas):
+>
+> {enlace}
+>
+> Si no creaste esta cuenta, ignora este correo.
+>
+> — Crear Code Cesar S.A.S. · Valledupar, Colombia
+
+**Recuperación — asunto**: Restablece tu contraseña en Crear Code Cesar
+
+> Hola,
+>
+> Recibimos una solicitud para restablecer tu contraseña. Abre este
+> enlace para crear una nueva (vence en 1 hora):
+>
+> {enlace}
+>
+> Si no fuiste tú, ignora este correo: tu contraseña actual sigue
+> siendo válida.
+>
+> — Crear Code Cesar S.A.S. · Valledupar, Colombia
+
+---
+
 ## Legales
 
 ### Política de tratamiento de datos personales (borrador — Ley 1581 de 2012)

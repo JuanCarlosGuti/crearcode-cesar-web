@@ -160,14 +160,47 @@ histórico de lo que efectivamente se construyó en ese momento.
 
 ---
 
-## Etapa 3 — Plataforma v2 (fases F8-F11, aún sin descomponer)
+## Fase F8 — Cuentas de cliente (Etapa 3)
 
-La visión, el orden y las decisiones ya tomadas de la v2 (cuentas de
-cliente, asistente IA, demo de diseño, gestión interna) están en
-[[10-vision-v2]]. La descomposición en issues (ISS-083 en adelante) se
-hace **al arrancar cada fase**, no por adelantado — las decisiones
-abiertas de cada fase se cierran en ese momento, con las historias de
-usuario nuevas que hagan falta.
+Primera fase de la v2 ([[10-vision-v2]], aprobada el 27 jul 2026).
+Historias: HU-30 a HU-33 (épica E6 en [[04-historias-de-usuario]]).
+Decisiones cerradas al arrancar (registradas en
+[[03-modelo-de-dominio]] Parte 2 y en el plan de fase): rol único por
+usuario (no `Set<Rol>`, se revisa en F11); correo de producción con
+Gmail + App Password (Brevo documentado como migración futura);
+registro duplicado → 409 explícito; error de token único ("enlace
+inválido o vencido"); restablecer contraseña no revoca JWTs vivos
+(ADR-08); throttle de correos **por correo** en la capa de aplicación
+(el límite por IP es respaldo — en producción la IP visible es la del
+proxy del frontend).
+
+| ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
+|---|---|---|---|---|---|---|
+| ISS-083 | Documentación de F8 (HUs E6, modelo de dominio, backlog, copy, nota ADR-08) | HU-30..33 | Docs 02/03/04/05/08 actualizados antes del código | S | — | No aplica (documento) |
+| ISS-084 | Dominio: `Rol.CLIENTE`, `Usuario.verificado` + factorías/`verificar()`/`conContrasena()`, VO `ContrasenaPlana` | HU-30 | Invariantes con tests puros; sembrador/login no usan `ContrasenaPlana` | S | ISS-083 | `UsuarioTest`, `ContrasenaPlanaTest` |
+| ISS-085 | Dominio: `TokenDeUsuario` (+`generar` con SecureRandom/SHA-256), puertos `TokenDeUsuarioRepositorio` y `EnviadorDeCorreosDeCuenta`, `SesionAutenticada`+rol+correo, `UsuarioRepositorio.buscarPorId` | HU-31, HU-32 | Vigencia/un-solo-uso como invariantes; ArchUnit en verde | M | ISS-084 | `TokenDeUsuarioTest` |
+| ISS-086 | Aplicación: `RegistrarClienteUseCase` | HU-30 | Crea no verificado + token 24h + correo best-effort; 409 si existe | M | ISS-085 | `RegistrarClienteUseCaseTest` (con fakes) |
+| ISS-087 | Aplicación: `VerificarCorreoUseCase` + `ReenviarVerificacionUseCase` | HU-31 | Un solo uso, invalida previos, throttle 3/15min por correo, silencioso si no existe | M | ISS-086 | `VerificarCorreoUseCaseTest`, `ReenviarVerificacionUseCaseTest` |
+| ISS-088 | Aplicación: `SolicitarRecuperacionUseCase` + `RestablecerContrasenaUseCase` | HU-32 | Respuesta genérica siempre; restablecer marca verificado | M | ISS-087 | `SolicitarRecuperacionUseCaseTest`, `RestablecerContrasenaUseCaseTest` |
+| ISS-089 | Aplicación: gate de cuenta no verificada en el login | HU-31 | `CuentaNoVerificadaException` solo tras validar contraseña | S | ISS-084 | `AutenticarUsuarioUseCaseTest` ampliado |
+| ISS-090 | Persistencia: migración `V4__cuentas_de_cliente.sql` + entidad/mapper/adapter de tokens + columna `verificado` | HU-30..32 | Backfill admin verificado; FK, UNIQUE hash, NOT NULLs | M | ISS-085 | `TokenDeUsuarioRepositorioIT`, `UsuarioRepositorioIT` ampliado |
+| ISS-091 | Correo: `EnviadorDeCorreosDeCuentaAdapter` + `FRONTEND_URL` + props SMTP auth/starttls (default off) | HU-31, HU-32 | Enlaces armados en el adaptador; GreenMail sigue en verde | M | ISS-085 | `EnviadorDeCorreosDeCuentaAdapterIT` (GreenMail) |
+| ISS-092 | REST: `POST /api/auth/registro`, `/verificacion`, `/reenvio-verificacion` + handlers 409/403/400 | HU-30, HU-31 | Bean Validation en el borde; respuestas consistentes | M | ISS-086, ISS-087, ISS-090 | `AuthControllerIT` ampliado |
+| ISS-093 | REST: `POST /api/auth/recuperacion`, `/restablecimiento` | HU-32 | Respuesta genérica; token inválido → 400 único | S | ISS-088, ISS-090 | `AuthControllerIT` ampliado |
+| ISS-094 | Seguridad: `hasRole("ADMIN")` en `/api/solicitudes/**` (cierra hueco), permitAll explícitos de auth, reglas de rate limit nuevas | HU-33 | Token CLIENTE → 403 en admin; orden de matchers correcto | M | ISS-092 | `SeguridadAdminIT` ampliado (caso CLIENTE→403), `RateLimitingFilterIT` |
+| ISS-095 | Frontend núcleo: `AuthApi` ampliada, `SesionService` con rol+correo (clave `crearcode-sesion`), `clienteGuard`, `adminGuard` con rol, interceptor con destino por `router.url` | HU-33 | Specs de guard/interceptor/sesión en verde | M | ISS-092 | `sesion.spec`, `admin.guard.spec`, `cliente.guard.spec`, `token.interceptor.spec` |
+| ISS-096 | Frontend: páginas `/registro` e `/ingreso` (Signal Forms, confirmación con `valueOf`, copy en `contenido/cuenta.ts`) | HU-30, HU-33 | Validación espejo del dominio (correo, 10 chars); ADMIN → `/admin` | M | ISS-095 | `registro.spec`, `ingreso.spec` |
+| ISS-097 | Frontend: `/verificar-correo`, `/recuperar-contrasena`, `/restablecer-contrasena` | HU-31, HU-32 | Verificación auto al abrir; éxito genérico en recuperación | M | ISS-095 | `verificar-correo.spec`, `recuperar.spec`, `restablecer.spec` |
+| ISS-098 | Frontend: `/mi-cuenta` + header con sesión (señal post-hidratación) + rutas server/sitemap/robots | HU-33 | Sin mismatch de hidratación; robots Disallow rutas con token | M | ISS-095 | `mi-cuenta.spec`, `header.spec`, `sitemap/robots.spec` |
+| ISS-099 | Mailpit en compose (perfil default) y CI + e2e `cuentas-e2e.spec.ts` (flujo completo con enlace real) | HU-30..33 | e2e lee el enlace vía API de Mailpit; overrides `RATE_LIMIT_*` documentados; axe en páginas nuevas | M | ISS-096..098 | `cuentas-e2e.spec.ts` |
+| ISS-100 | Verificación manual en navegador + guía App Password de Gmail + variables en Render + cierre de fase | HU-30..33 | Flujo real probado en producción con correo real; CLAUDE.md al día; OK del usuario para F9 | M | ISS-099 | Checklist manual |
+
+Follow-ups registrados (no en F8): limpieza periódica de
+`tokens_de_usuario` vencidos; evaluar red interna de Render para que el
+rate limit por IP vea la IP real del cliente.
+
+**Fases F9-F11**: siguen sin descomponer — se descomponen al arrancar
+cada una, según [[10-vision-v2]].
 
 ---
 

@@ -161,11 +161,10 @@ orquestan desde `aplicacion/` — nunca desde `dominio/`.
 
 # Parte 2 — Contexto `usuarios`
 
-Identidad de quienes acceden al panel admin. En v1 hay un único usuario
-(el fundador), pero el modelo ya contempla un campo de rol pensado para
-cuando existan más personas con responsabilidades distintas (ver
-ADR-08 en [[02-arquitectura]]) — sin construir todavía gestión de
-usuarios, registro ni permisos granulares por rol: eso es v2.
+Identidad de quienes acceden a áreas autenticadas. Nació en F5 con un
+único usuario (el fundador, panel admin); desde la fase **F8** (Etapa
+3, ver [[10-vision-v2]]) también cubre a los **clientes registrados**:
+registro público, verificación de correo y recuperación de contraseña.
 
 ## 1. Entidad: `Usuario`
 
@@ -176,64 +175,119 @@ Agregado raíz del contexto `usuarios`. Identidad propia (`UsuarioId`).
 | `id` | `UsuarioId` (VO sobre UUID) | Se asigna al crear |
 | `correo` | `Correo` (VO, mismo tipo que en el contexto `leads`) | Identificador de login; único |
 | `contrasenaHash` | `String` | Nunca la contraseña en claro; el hash se calcula en `infraestructura/` (ver `CifradorDeContrasenas` abajo) |
-| `rol` | `Rol` (enum) | Hoy solo `ADMIN` |
+| `rol` | `Rol` (enum) | `ADMIN` o `CLIENTE` |
+| `verificado` | `boolean` | Desde F8. Un cliente nace sin verificar y no puede iniciar sesión hasta abrir el enlace del correo. El admin sembrado nace verificado |
+
+Factorías: `crearAdmin(correo, hash)` (ADMIN, verificado) y
+`registrarCliente(correo, hash)` (CLIENTE, no verificado). El record es
+inmutable: `verificar()` y `conContrasena(nuevoHash)` devuelven copias.
 
 ## 2. Enum: `Rol`
 
-Un único valor en v1: `ADMIN`. Existe como enum (no como `boolean
-esAdmin`) para que agregar un segundo rol el día que haga falta sea
-extender el enum y los puntos de autorización que lo consultan, no
-rediseñar el modelo.
+`ADMIN` y `CLIENTE` (desde F8). **Decisión registrada al arrancar F8**
+(la pedía [[10-vision-v2]]): se mantiene **un solo rol por usuario** —
+no `Set<Rol>` — porque ningún caso real de hoy necesita más de uno; la
+migración a multi-rol se evalúa en F11 cuando existan los roles
+internos (FACTURACION, DISENO, DESARROLLO).
 
-## 3. Puertos
+## 3. Value Object: `ContrasenaPlana` (desde F8)
+
+Envuelve una contraseña en claro **solo en tránsito** (nunca se
+persiste). Invariante: mínimo 10 caracteres — lanza
+`ContrasenaInvalidaException`. Su `toString()` está enmascarado para
+que jamás caiga a un log. Aplica únicamente a los flujos nuevos
+(registro y restablecimiento); el login y el *seed* del admin no la
+usan, para no romper credenciales existentes.
+
+## 4. Entidad: `TokenDeUsuario` (desde F8)
+
+Token de un solo uso enviado por correo, para dos propósitos
+(`VERIFICACION`, vigencia 24 h; `RECUPERACION`, vigencia 1 h).
+
+| Atributo | Tipo | Notas |
+|---|---|---|
+| `id` | UUID | |
+| `usuarioId` | `UsuarioId` | Dueño del token |
+| `valorHash` | `String` | SHA-256 del valor en claro — el valor real solo viaja en el enlace del correo, nunca se persiste |
+| `proposito` | enum | `VERIFICACION` \| `RECUPERACION` |
+| `creadoEn` / `expiraEn` | `Instant` | Vigencia según propósito |
+| `usadoEn` | `Instant?` | Un solo uso |
+
+`TokenDeUsuario.generar(usuarioId, proposito, ahora, duracion)` produce
+la entidad **y** el valor en claro (con `SecureRandom` + `MessageDigest`
+de `java.base` — el dominio sigue sin Spring/JPA, ArchUnit intacto).
+
+## 5. Puertos
 
 ### Puertos de entrada (driving ports)
-- `AutenticarUsuarioUseCase` — recibe correo y contraseña en claro;
-  devuelve una sesión autenticada (token) si son válidos; lanza
-  `CredencialesInvalidasException` si no (ver invariante 1 abajo).
-- `CrearUsuarioUseCase` — crea un `Usuario` nuevo. En v1 solo lo usa el
-  *seed* del único admin al arrancar la aplicación (ver
-  [[02-arquitectura]] ADR-08); no hay pantalla de alta de usuarios
-  todavía.
+- `AutenticarUsuarioUseCase` — correo + contraseña en claro → sesión
+  autenticada (token JWT + rol + correo); `CredencialesInvalidasException`
+  genérica si fallan; `CuentaNoVerificadaException` si las credenciales
+  son correctas pero la cuenta no está verificada (desde F8).
+- `CrearUsuarioUseCase` — alta directa (solo la usa el *seed* del admin).
+- `RegistrarClienteUseCase` (F8) — registro público: crea el cliente sin
+  verificar, genera token de verificación y envía el correo
+  (*best-effort*); 409 si el correo ya existe.
+- `VerificarCorreoUseCase` (F8) — consume un token de verificación
+  vigente y marca la cuenta verificada.
+- `ReenviarVerificacionUseCase` (F8) — silencioso si el correo no
+  existe o ya está verificado; invalida tokens previos.
+- `SolicitarRecuperacionUseCase` (F8) — respuesta siempre genérica;
+  genera token de recuperación y envía el correo.
+- `RestablecerContrasenaUseCase` (F8) — consume token de recuperación,
+  cambia el hash y marca la cuenta verificada (probó ser dueño del
+  correo).
 
 ### Puertos de salida (driven ports)
-- `UsuarioRepositorio` — `guardar(Usuario)`,
-  `buscarPorCorreo(Correo)` (búsqueda case-insensitive: el adaptador,
-  no el dominio, normaliza mayúsculas/minúsculas).
+- `UsuarioRepositorio` — `guardar(Usuario)`, `buscarPorCorreo(Correo)`
+  (case-insensitive en el adaptador), `buscarPorId(UsuarioId)` (F8).
+- `TokenDeUsuarioRepositorio` (F8) — `guardar`, `buscarPorValorHash`,
+  `invalidarActivos(usuarioId, proposito)`,
+  `contarRecientes(usuarioId, proposito, desde)` (para el límite por
+  correo, ver invariante 6).
 - `CifradorDeContrasenas` — `hash(contrasenaEnClaro)`,
-  `verificar(contrasenaEnClaro, hash)`. Existe como puerto porque el
-  algoritmo real (BCrypt) es una dependencia de Spring Security que el
-  dominio no puede tocar (ver regla de dependencias en
-  [[02-arquitectura]]).
-- `GeneradorDeToken` — `generar(Usuario)` → token de sesión (JWT en la
-  implementación real). El dominio conoce que existe un token, no cómo
-  se firma ni valida.
+  `verificar(contrasenaEnClaro, hash)` (BCrypt vive en infraestructura).
+- `GeneradorDeToken` — `generar(Usuario)` → sesión JWT.
+- `EnviadorDeCorreosDeCuenta` (F8) —
+  `enviarVerificacion(correo, tokenEnClaro)`,
+  `enviarRecuperacion(correo, tokenEnClaro)`. El **adaptador** arma el
+  enlace completo (URL del frontend + ruta) — la aplicación no conoce
+  rutas del frontend.
 
-## 4. Invariantes de negocio
+## 6. Invariantes de negocio
 
 1. `AutenticarUsuarioUseCase` nunca revela si la causa del fallo fue
    "el correo no existe" o "la contraseña no coincide" — mismo mensaje
-   genérico en ambos casos (evita que alguien pueda enumerar correos
-   válidos probando el login).
-2. `correo` es único por usuario; el intento de crear dos usuarios con
-   el mismo correo se rechaza.
+   genérico en ambos casos.
+2. `correo` es único por usuario. El registro público con un correo
+   existente responde 409 explícito — trade-off consciente de
+   usabilidad sobre anti-enumeración (documentado en HU-30).
 3. La contraseña en claro nunca se persiste ni se registra en logs —
-   solo su hash.
+   solo su hash. `ContrasenaPlana` refuerza esto con `toString()`
+   enmascarado.
+4. Un cliente no verificado no puede iniciar sesión (solo se le informa
+   después de validar la contraseña — no filtra existencia de cuentas).
+5. Los tokens de correo son de un solo uso, con vigencia por propósito
+   (24 h verificación, 1 h recuperación) y solo se persiste su hash.
+   El error hacia el usuario es único: "enlace inválido o vencido",
+   sin distinguir la causa.
+6. Máximo 3 envíos de correo por usuario y propósito cada 15 minutos —
+   control **por correo** en la capa de aplicación (el rate limiting
+   por IP es solo respaldo: en producción todas las peticiones llegan
+   con la IP del proxy del frontend, ver [[10-vision-v2]] y ADR-09).
+7. La recuperación de contraseña responde siempre lo mismo, exista o
+   no la cuenta.
 
-## 5. Fuera de este contexto, a propósito (v1)
+## 7. Fuera de este contexto, a propósito
 
-- **Registro público de usuarios**: no existe. El único usuario se crea
-  por *seed* automático al arrancar la aplicación, desde variables de
-  entorno (mismo mecanismo de "secretos solo por variable de entorno"
-  que ya rige credenciales de correo y de base de datos).
-- **Recuperación de contraseña**: no existe en v1 (usuario único,
-  gestionado manualmente si hace falta).
-- **Revocación de sesión antes de su expiración natural** (denylist de
-  tokens): decisión consciente de no construirla todavía — ver ADR-08
-  en [[02-arquitectura]]. El *logout* de v1 es responsabilidad del
-  cliente (descarta el token); el token en sí sigue siendo válido hasta
-  expirar.
-- **Permisos granulares por rol**: `Rol` existe como enum extensible,
-  pero en v1 no hay ninguna decisión de autorización que dependa de su
-  valor más allá de "está autenticado" — es terreno preparado para v2,
-  no una funcionalidad de v1.
+- **Revocación de sesión antes de su expiración natural** (denylist):
+  sigue sin construirse (ADR-08). Consecuencia nueva de F8, aceptada y
+  documentada: restablecer la contraseña **no** invalida los JWT ya
+  emitidos (hasta 8 h de vida restante).
+- **Cambio de contraseña autenticado**: no existe en F8 — lo cubre el
+  flujo de recuperación (HU-32).
+- **Login social (Google/…), 2FA, roles internos** (FACTURACION,
+  DISENO, DESARROLLO): explícitamente fuera; los roles internos son de
+  F11.
+- **Limpieza de tokens vencidos**: la tabla crece sin poda en F8 —
+  follow-up documentado en [[05-backlog-issues]].
