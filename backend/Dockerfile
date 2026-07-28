@@ -4,7 +4,9 @@ WORKDIR /app
 
 COPY .mvn/ .mvn/
 COPY mvnw pom.xml ./
-RUN ./mvnw -B dependency:go-offline
+# chmod explicito: si mvnw llegara sin bit de ejecucion (checkout desde
+# Windows), el build fallaria con "Permission denied" solo en Linux.
+RUN chmod +x mvnw && ./mvnw -B dependency:go-offline
 
 COPY src/ src/
 RUN ./mvnw -B -DskipTests package
