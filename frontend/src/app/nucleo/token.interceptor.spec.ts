@@ -40,7 +40,7 @@ describe('tokenInterceptor', () => {
   });
 
   it('adjunta el token como Bearer cuando hay sesion', () => {
-    sesion.iniciarSesion('token-de-prueba');
+    iniciarSesionAdmin();
 
     http.get('/api/solicitudes').subscribe();
 
@@ -50,7 +50,7 @@ describe('tokenInterceptor', () => {
   });
 
   it('no adjunta el token a la peticion de login aunque haya sesion', () => {
-    sesion.iniciarSesion('token-de-prueba');
+    iniciarSesionAdmin();
 
     http.post('/api/auth/login', { correo: 'a@b.com', contrasena: 'x' }).subscribe({ error: () => {} });
 
@@ -59,8 +59,19 @@ describe('tokenInterceptor', () => {
     solicitud.flush('error', { status: 401, statusText: 'Unauthorized' });
   });
 
-  it('un 401 fuera del login limpia la sesion y navega a /admin/login', async () => {
-    sesion.iniciarSesion('token-expirado');
+  it('no adjunta el token a ningun endpoint de /api/auth/ (registro, recuperacion, etc.)', () => {
+    iniciarSesionAdmin();
+
+    http.post('/api/auth/registro', { correo: 'a@b.com', contrasena: 'x' }).subscribe();
+
+    const solicitud = httpMock.expectOne('/api/auth/registro');
+    expect(solicitud.request.headers.has('Authorization')).toBe(false);
+    solicitud.flush(null, { status: 201, statusText: 'Created' });
+  });
+
+  it('un 401 estando en el panel admin limpia la sesion y navega a /admin/login', () => {
+    iniciarSesionAdmin();
+    vi.spyOn(router, 'url', 'get').mockReturnValue('/admin/solicitudes/123');
     const navigateSpy = vi.spyOn(router, 'navigateByUrl');
 
     http.get('/api/solicitudes').subscribe({ error: () => {} });
@@ -69,6 +80,32 @@ describe('tokenInterceptor', () => {
 
     expect(sesion.estaAutenticado()).toBe(false);
     expect(navigateSpy).toHaveBeenCalledWith('/admin/login');
+  });
+
+  it('un 401 estando en /mi-cuenta limpia la sesion y navega a /ingreso', () => {
+    iniciarSesionCliente();
+    vi.spyOn(router, 'url', 'get').mockReturnValue('/mi-cuenta');
+    const navigateSpy = vi.spyOn(router, 'navigateByUrl');
+
+    http.get('/api/solicitudes').subscribe({ error: () => {} });
+
+    httpMock.expectOne('/api/solicitudes').flush('No autenticado', { status: 401, statusText: 'Unauthorized' });
+
+    expect(sesion.estaAutenticado()).toBe(false);
+    expect(navigateSpy).toHaveBeenCalledWith('/ingreso');
+  });
+
+  it('un 401 estando en una pagina publica solo limpia la sesion, sin navegar', () => {
+    iniciarSesionCliente();
+    vi.spyOn(router, 'url', 'get').mockReturnValue('/contacto');
+    const navigateSpy = vi.spyOn(router, 'navigateByUrl');
+
+    http.get('/api/solicitudes').subscribe({ error: () => {} });
+
+    httpMock.expectOne('/api/solicitudes').flush('No autenticado', { status: 401, statusText: 'Unauthorized' });
+
+    expect(sesion.estaAutenticado()).toBe(false);
+    expect(navigateSpy).not.toHaveBeenCalled();
   });
 
   it('un 401 en el login NO limpia la sesion ni navega (lo maneja la propia pagina de login)', () => {
@@ -83,4 +120,12 @@ describe('tokenInterceptor', () => {
 
     expect(navigateSpy).not.toHaveBeenCalled();
   });
+
+  function iniciarSesionAdmin(): void {
+    sesion.iniciarSesion({ token: 'token-de-prueba', rol: 'ADMIN', correo: 'admin@crearcode-cesar.local' });
+  }
+
+  function iniciarSesionCliente(): void {
+    sesion.iniciarSesion({ token: 'token-cliente', rol: 'CLIENTE', correo: 'cliente@correo-de-prueba.com' });
+  }
 });

@@ -44,7 +44,7 @@ export class LoginPage {
     const { correo, contrasena } = this.datos();
     this.authApi.login(correo, contrasena).subscribe({
       next: (sesion) => {
-        this.sesion.iniciarSesion(sesion.token);
+        this.sesion.iniciarSesion(sesion);
         this.enviando.set(false);
         this.router.navigateByUrl('/admin');
       },

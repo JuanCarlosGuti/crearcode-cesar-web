@@ -15,7 +15,7 @@ describe('CerrarSesionButton', () => {
 
   it('al hacer click limpia la sesion y navega a /admin/login', async () => {
     const sesion = TestBed.inject(SesionService);
-    sesion.iniciarSesion('token-de-prueba');
+    sesion.iniciarSesion({ token: 'token-de-prueba', rol: 'ADMIN', correo: 'admin@crearcode-cesar.local' });
     const router = TestBed.inject(Router);
     const navigateSpy = vi.spyOn(router, 'navigateByUrl');
 

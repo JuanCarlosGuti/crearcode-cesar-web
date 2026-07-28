@@ -62,12 +62,18 @@ describe('LoginPage', () => {
     (el.querySelector('form') as HTMLFormElement).requestSubmit();
     await fixture.whenStable();
 
-    httpMock.expectOne('/api/auth/login').flush({ token: 'token-de-prueba', expiraEn: '2026-07-17T18:00:00Z' });
+    httpMock.expectOne('/api/auth/login').flush({
+      token: 'token-de-prueba',
+      expiraEn: '2026-07-17T18:00:00Z',
+      rol: 'ADMIN',
+      correo: 'admin@crearcode-cesar.local',
+    });
     await fixture.whenStable();
 
     const sesion = TestBed.inject(SesionService);
     expect(sesion.estaAutenticado()).toBe(true);
     expect(sesion.obtenerToken()).toBe('token-de-prueba');
+    expect(sesion.esAdmin()).toBe(true);
     expect(navigateSpy).toHaveBeenCalledWith('/admin');
   });
 

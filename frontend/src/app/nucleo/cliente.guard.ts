@@ -3,9 +3,9 @@ import { CanActivateFn, Router } from '@angular/router';
 
 import { SesionService } from './sesion';
 
-export const adminGuard: CanActivateFn = () => {
+export const clienteGuard: CanActivateFn = () => {
   const sesion = inject(SesionService);
   const router = inject(Router);
 
-  return sesion.esAdmin() ? true : router.createUrlTree(['/admin/login']);
+  return sesion.esCliente() ? true : router.createUrlTree(['/ingreso']);
 };
