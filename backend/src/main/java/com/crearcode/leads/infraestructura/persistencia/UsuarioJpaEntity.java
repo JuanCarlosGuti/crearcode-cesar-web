@@ -36,4 +36,6 @@ class UsuarioJpaEntity {
 	@Enumerated(EnumType.STRING)
 	private Rol rol;
 
+	private boolean verificado;
+
 }

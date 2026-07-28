@@ -15,7 +15,8 @@ final class UsuarioMapper {
 				usuario.id().valor(),
 				usuario.correo().valor(),
 				usuario.contrasenaHash(),
-				usuario.rol());
+				usuario.rol(),
+				usuario.verificado());
 	}
 
 	static Usuario aDominio(UsuarioJpaEntity entidad) {
@@ -23,7 +24,8 @@ final class UsuarioMapper {
 				new UsuarioId(entidad.getId()),
 				new Correo(entidad.getCorreo()),
 				entidad.getContrasenaHash(),
-				entidad.getRol());
+				entidad.getRol(),
+				entidad.isVerificado());
 	}
 
 }
