@@ -18,10 +18,13 @@ del usuario). La fase F8.5 — rediseño visual y valor de la cuenta
 (ISS-101 a ISS-107) — está TERMINADA y APROBADA (28 jul 2026;
 Lighthouse 97-98/100/100/100, 21/21 e2e con axe, verificación manual).
 La fase F9 — asistente IA con Groq (ISS-108 a ISS-118) — está
-CONSTRUIDA y verificada en local, incluida la prueba real contra Groq
-(respuestas ancladas, sin inventar precios, escalamiento funcionando);
-**pendiente el OK explícito del usuario para publicarla** (push →
-Render) y la variable `GROQ_API_KEY` en el dashboard de Render.
+TERMINADA, APROBADA y PUBLICADA (28 jul 2026), verificada con Groq
+real en local (respuestas ancladas, sin inventar precios,
+escalamiento funcionando). Para que el asistente viva en producción
+falta solo la variable `GROQ_API_KEY` en el dashboard de Render (sin
+ella responde el mensaje de indisponibilidad con la alternativa de
+WhatsApp — el resto del sitio no se afecta). La fase F10 (demo de
+diseño con IA) no arranca sin OK explícito del usuario.
 La v1 está PUBLICADA en producción desde el 27 jul
 2026: Render (capa gratis) + Neon. De la Etapa 2 solo queda abierta la
 compra del dominio propio (no bloquea).**
@@ -135,9 +138,9 @@ variable de entorno en Render el día que se use — nunca en el repo.
   Render (pausado a pedido del usuario).
 - [x] **F8.5** — Rediseño visual y valor de la cuenta (ISS-101 a
   ISS-107): terminada y aprobada (28 jul 2026).
-- [x] **F9** — Asistente IA (Groq, ISS-108 a ISS-118): construida y
-  verificada (incluida la prueba real con Groq); pendiente OK del
-  usuario para publicar + `GROQ_API_KEY` en Render.
+- [x] **F9** — Asistente IA (Groq, ISS-108 a ISS-118): terminada,
+  aprobada y publicada (28 jul 2026); su `GROQ_API_KEY` espera en el
+  dashboard de Render.
 - [ ] **F10** — Demo de diseño con IA.
 - [ ] **F11** — Gestión interna.
 
