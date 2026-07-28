@@ -34,6 +34,30 @@
   </div>
 </section>
 
+<section class="seccion-cuenta" aria-labelledby="titulo-cuenta" aparecerAlVer>
+  <div class="contenedor">
+    <h2 id="titulo-cuenta">{{ beneficios.titulo }}</h2>
+    <p class="seccion-cuenta__intro">{{ beneficios.intro }}</p>
+    <div class="rejilla-beneficios">
+      @for (tarjeta of beneficios.tarjetas; track tarjeta.titulo) {
+        <article class="tarjeta-beneficio tarjeta-elevada">
+          <h3>
+            {{ tarjeta.titulo }}
+            @if (tarjeta.muyPronto) {
+              <span class="badge badge-muy-pronto">{{ beneficios.etiquetaMuyPronto }}</span>
+            }
+          </h3>
+          <p>{{ tarjeta.descripcion }}</p>
+        </article>
+      }
+    </div>
+    <div class="cta-doble">
+      <a routerLink="/registro" class="boton boton-primario">{{ beneficios.ctaPrincipal }}</a>
+      <a routerLink="/ingreso" class="boton boton-secundario">{{ beneficios.ctaSecundario }}</a>
+    </div>
+  </div>
+</section>
+
 <section class="contenedor seccion-testimonios" aria-labelledby="titulo-testimonios" aparecerAlVer>
   <h2 id="titulo-testimonios">Empresas que ya confiaron en nosotros</h2>
   <div class="rejilla-testimonios">

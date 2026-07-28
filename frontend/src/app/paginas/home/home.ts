@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+import { BENEFICIOS_CUENTA } from '../../../contenido/cuenta';
 import { HOME, TESTIMONIOS } from '../../../contenido/home';
 import { METADATOS_HOME } from '../../../contenido/metadatos-paginas';
 import { SERVICIOS } from '../../../contenido/servicios';
@@ -19,6 +20,7 @@ export class HomePage {
   protected readonly home = HOME;
   protected readonly servicios = SERVICIOS;
   protected readonly testimonios = TESTIMONIOS;
+  protected readonly beneficios = BENEFICIOS_CUENTA;
 
   constructor() {
     establecerMetadatosDePagina(() => ({ ...METADATOS_HOME, ruta: '/' }));

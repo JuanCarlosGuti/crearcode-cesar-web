@@ -42,4 +42,34 @@ describe('HomePage', () => {
 
     expect(TestBed.inject(Title).getTitle()).toBe(METADATOS_HOME.titulo);
   });
+
+  it('muestra la seccion de beneficios de la cuenta con sus tres tarjetas', async () => {
+    const fixture = TestBed.createComponent(HomePage);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+
+    expect(el.textContent).toContain('Tu cuenta te da más');
+    expect(el.querySelectorAll('.tarjeta-beneficio').length).toBe(3);
+  });
+
+  it('los beneficios que aun no existen llevan la etiqueta Muy pronto', async () => {
+    const fixture = TestBed.createComponent(HomePage);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+
+    const badges = Array.from(el.querySelectorAll('.tarjeta-beneficio .badge'));
+    expect(badges.length).toBe(2);
+    for (const badge of badges) {
+      expect(badge.textContent).toContain('Muy pronto');
+    }
+  });
+
+  it('la seccion de beneficios invita a crear cuenta o ingresar', async () => {
+    const fixture = TestBed.createComponent(HomePage);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+
+    expect(el.querySelector('a[href="/registro"]')).toBeTruthy();
+    expect(el.querySelector('a[href="/ingreso"]')).toBeTruthy();
+  });
 });

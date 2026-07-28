@@ -78,6 +78,40 @@ export const CUENTA = {
   },
 } as const;
 
+/**
+ * Sección "Tu cuenta te da más" (Home y /registro — HU-34, fase F8.5).
+ * Regla de honestidad (docs/08): lo que aún no existe (F9/F10) lleva
+ * SIEMPRE la etiqueta "Muy pronto" — acceso anticipado, no promesa.
+ */
+export const BENEFICIOS_CUENTA = {
+  titulo: 'Tu cuenta te da más',
+  intro:
+    'Crear tu cuenta es gratis, toma un minuto y no es obligatoria para nada del sitio. Pero quienes la tienen van a estrenar primero lo que viene:',
+  etiquetaMuyPronto: 'Muy pronto',
+  tarjetas: [
+    {
+      titulo: 'Asistente con IA',
+      muyPronto: true,
+      descripcion:
+        'Pregúntale a nuestro asistente lo que necesites sobre software, automatización o costos, y recibe respuesta al instante. Los usuarios registrados tendrán más consultas por día.',
+    },
+    {
+      titulo: 'Demo de diseño con IA',
+      muyPronto: true,
+      descripcion:
+        'Describe tu negocio y mira un primer boceto de tu solución, generado con inteligencia artificial. Exclusivo para usuarios registrados.',
+    },
+    {
+      titulo: 'Acceso anticipado',
+      muyPronto: false,
+      descripcion:
+        'Cada herramienta nueva del sitio la estrenan primero las personas registradas — sin costo y sin compromiso.',
+    },
+  ],
+  ctaPrincipal: 'Crear mi cuenta gratis',
+  ctaSecundario: 'Ya tengo cuenta',
+} as const;
+
 export const MENSAJE_ERROR_CORREO_CUENTA = 'Escribe un correo válido, ej. nombre@empresa.com.';
 export const MENSAJE_ERROR_CONTRASENA_CORTA = 'La contraseña debe tener al menos 10 caracteres.';
 export const MENSAJE_ERROR_CONTRASENAS_NO_COINCIDEN = 'Las contraseñas no coinciden.';
