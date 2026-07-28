@@ -72,4 +72,36 @@ class AutenticarUsuarioUseCaseTest {
 				.isInstanceOf(CredencialesInvalidasException.class);
 	}
 
+	@Test
+	void unClienteSinVerificarConContrasenaCorrectaLanzaCuentaNoVerificada() {
+		repositorio.guardar(
+				Usuario.registrarCliente(new Correo("cliente@correo-de-prueba.com"), cifrador.hash("clave-correcta")));
+
+		assertThatThrownBy(() -> useCase.autenticar("cliente@correo-de-prueba.com", "clave-correcta"))
+				.isInstanceOf(CuentaNoVerificadaException.class);
+	}
+
+	@Test
+	void unClienteSinVerificarConContrasenaIncorrectaLanzaCredencialesInvalidasNoCuentaNoVerificada() {
+		repositorio.guardar(
+				Usuario.registrarCliente(new Correo("cliente@correo-de-prueba.com"), cifrador.hash("clave-correcta")));
+
+		// El gate va DESPUÉS de verificar la contraseña: sin ella, el estado
+		// de la cuenta no se revela (invariante 6 del contexto).
+		assertThatThrownBy(() -> useCase.autenticar("cliente@correo-de-prueba.com", "clave-incorrecta"))
+				.isInstanceOf(CredencialesInvalidasException.class);
+	}
+
+	@Test
+	void unClienteVerificadoConCredencialesCorrectasObtieneSesion() {
+		repositorio.guardar(Usuario
+				.registrarCliente(new Correo("cliente@correo-de-prueba.com"), cifrador.hash("clave-correcta"))
+				.verificar());
+
+		SesionAutenticada sesion = useCase.autenticar("cliente@correo-de-prueba.com", "clave-correcta");
+
+		assertThat(sesion.token()).isNotBlank();
+		assertThat(sesion.rol()).isEqualTo(Rol.CLIENTE);
+	}
+
 }

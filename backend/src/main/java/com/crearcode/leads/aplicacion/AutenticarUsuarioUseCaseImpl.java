@@ -39,6 +39,10 @@ class AutenticarUsuarioUseCaseImpl implements AutenticarUsuarioUseCase {
 			throw new CredencialesInvalidasException();
 		}
 
+		if (!usuario.verificado()) {
+			throw new CuentaNoVerificadaException();
+		}
+
 		return generadorDeToken.generar(usuario, Instant.now(reloj));
 	}
 
