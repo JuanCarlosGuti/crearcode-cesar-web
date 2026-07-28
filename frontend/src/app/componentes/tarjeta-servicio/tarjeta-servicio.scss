@@ -5,17 +5,22 @@
   padding: var(--espacio-3);
   background-color: var(--color-blanco);
   border: 1px solid color-mix(in srgb, var(--color-primario) 12%, white);
-  border-radius: var(--radio-borde);
+  border-radius: var(--radio-borde-grande);
+  box-shadow: var(--sombra-1);
   text-decoration: none;
   color: inherit;
   height: 100%;
-  transition: border-color 0.2s ease, transform 0.2s ease;
+  transition:
+    border-color var(--transicion-estandar),
+    transform var(--transicion-estandar),
+    box-shadow var(--transicion-estandar);
 }
 
 .tarjeta-servicio:hover,
 .tarjeta-servicio:focus-visible {
-  border-color: var(--color-acento);
-  transform: translateY(-2px);
+  border-color: var(--color-acento-luminoso);
+  transform: translateY(-3px);
+  box-shadow: var(--sombra-3);
 }
 
 .tarjeta-servicio:focus-visible {
@@ -31,4 +36,15 @@
   color: var(--color-acento);
   font-weight: 600;
   margin-top: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tarjeta-servicio {
+    transition: none;
+  }
+
+  .tarjeta-servicio:hover,
+  .tarjeta-servicio:focus-visible {
+    transform: none;
+  }
 }

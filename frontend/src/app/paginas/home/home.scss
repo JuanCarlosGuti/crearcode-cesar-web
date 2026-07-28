@@ -1,16 +1,55 @@
 .hero {
-  background-color: var(--color-blanco);
-  border-bottom: 1px solid color-mix(in srgb, var(--color-primario) 10%, white);
-  padding-block: var(--espacio-6);
+  position: relative;
+  overflow: hidden;
+  background: var(--gradiente-marca);
+  padding-block: calc(var(--espacio-6) * 1.2);
+}
+
+.hero__decoracion {
+  position: absolute;
+  inset-block: 0;
+  right: -3rem;
+  width: 34rem;
+  max-width: 70%;
+  pointer-events: none;
+  opacity: 0.55;
+}
+
+.hero__decoracion svg {
+  width: 100%;
+  height: 100%;
 }
 
 .hero__contenido {
+  position: relative;
   max-width: 42rem;
 }
 
+.hero h1 {
+  color: var(--color-blanco);
+}
+
 .hero__subheadline {
-  font-size: 1.1rem;
+  color: var(--color-fondo);
+  font-size: 1.15rem;
   margin-bottom: var(--espacio-4);
+}
+
+// Sobre el gradiente oscuro, el boton primario (fondo oscuro) seria
+// invisible: se invierte a blanco con texto primario.
+.hero .boton-primario {
+  background-color: var(--color-blanco);
+  color: var(--color-primario);
+}
+
+.hero .boton-primario:hover {
+  background-color: color-mix(in srgb, var(--color-blanco) 86%, #14424d);
+}
+
+@media (min-width: 48rem) {
+  .hero__decoracion {
+    opacity: 1;
+  }
 }
 
 .seccion-servicios,
@@ -33,7 +72,8 @@
 .testimonio {
   background-color: var(--color-blanco);
   border-left: 4px solid var(--color-acento);
-  border-radius: var(--radio-borde);
+  border-radius: var(--radio-borde-grande);
+  box-shadow: var(--sombra-1);
   padding: var(--espacio-3);
   margin: 0;
 }

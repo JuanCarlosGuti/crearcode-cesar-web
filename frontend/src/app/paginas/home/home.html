@@ -1,4 +1,20 @@
 <section class="hero">
+  <div class="hero__decoracion" aria-hidden="true">
+    <svg viewBox="0 0 420 420" preserveAspectRatio="xMidYMid slice" focusable="false">
+      <defs>
+        <radialGradient id="hero-brillo" cx="0.5" cy="0.4" r="0.6">
+          <stop offset="0" stop-color="#4cc38a" stop-opacity="0.32" />
+          <stop offset="1" stop-color="#4cc38a" stop-opacity="0" />
+        </radialGradient>
+        <pattern id="hero-puntos" width="26" height="26" patternUnits="userSpaceOnUse">
+          <circle cx="2.5" cy="2.5" r="2.5" fill="#4cc38a" opacity="0.22" />
+        </pattern>
+      </defs>
+      <circle cx="290" cy="130" r="190" fill="url(#hero-brillo)" />
+      <rect x="30" y="200" width="300" height="190" rx="16" fill="url(#hero-puntos)" />
+      <circle cx="330" cy="330" r="70" fill="none" stroke="#4cc38a" stroke-opacity="0.25" stroke-width="1.5" />
+    </svg>
+  </div>
   <div class="contenedor hero__contenido">
     <h1>{{ home.headline }}</h1>
     <p class="hero__subheadline">{{ home.subheadline }}</p>
@@ -9,7 +25,7 @@
   </div>
 </section>
 
-<section class="contenedor seccion-servicios" aria-labelledby="titulo-servicios">
+<section class="contenedor seccion-servicios" aria-labelledby="titulo-servicios" aparecerAlVer>
   <h2 id="titulo-servicios">Nuestros servicios</h2>
   <div class="rejilla-servicios">
     @for (servicio of servicios; track servicio.slug) {
@@ -18,7 +34,7 @@
   </div>
 </section>
 
-<section class="contenedor seccion-testimonios" aria-labelledby="titulo-testimonios">
+<section class="contenedor seccion-testimonios" aria-labelledby="titulo-testimonios" aparecerAlVer>
   <h2 id="titulo-testimonios">Empresas que ya confiaron en nosotros</h2>
   <div class="rejilla-testimonios">
     @for (testimonio of testimonios; track testimonio.nombre) {
