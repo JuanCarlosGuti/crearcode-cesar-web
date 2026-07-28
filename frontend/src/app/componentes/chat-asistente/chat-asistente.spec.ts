@@ -112,4 +112,57 @@ describe('ChatAsistente', () => {
 
     expect(el.querySelector('.chat-mensajes')?.getAttribute('aria-live')).toBe('polite');
   });
+
+  it('una respuesta con escalamiento muestra WhatsApp y el enlace a contacto (HU-37)', async () => {
+    const { fixture, el } = await crearWidget();
+    await abrirPanel(fixture);
+    escribirYEnviar(el, '¿Cuánto cuesta una app?');
+    await fixture.whenStable();
+
+    httpMock.expectOne('/api/asistente/mensajes').flush({
+      texto: 'Cada proyecto se cotiza a la medida.',
+      escalarAHumano: true,
+    });
+    await fixture.whenStable();
+
+    const escalamiento = el.querySelector('.chat-escalamiento') as HTMLElement;
+    expect(escalamiento).not.toBeNull();
+    expect(escalamiento.textContent).toContain('mejor hablemos');
+    expect(escalamiento.querySelector('a[href^="https://wa.me/"]')).not.toBeNull();
+    expect(escalamiento.querySelector('a[href="/contacto"]')).not.toBeNull();
+  });
+
+  it('el limite anonimo invita a crear cuenta con enlace a /registro (HU-38)', async () => {
+    const { fixture, el } = await crearWidget();
+    await abrirPanel(fixture);
+    escribirYEnviar(el, 'hola');
+    await fixture.whenStable();
+
+    httpMock.expectOne('/api/asistente/mensajes').flush(
+      { mensaje: 'límite', codigo: 'limite-anonimo' },
+      { status: 429, statusText: 'Too Many Requests' },
+    );
+    await fixture.whenStable();
+
+    const aviso = el.querySelector('.chat-aviso') as HTMLElement;
+    expect(aviso.textContent).toContain('Crea tu cuenta');
+    expect(aviso.querySelector('a[href="/registro"]')).not.toBeNull();
+  });
+
+  it('la indisponibilidad muestra la alternativa de WhatsApp (HU-36)', async () => {
+    const { fixture, el } = await crearWidget();
+    await abrirPanel(fixture);
+    escribirYEnviar(el, 'hola');
+    await fixture.whenStable();
+
+    httpMock.expectOne('/api/asistente/mensajes').flush('error', {
+      status: 503,
+      statusText: 'Service Unavailable',
+    });
+    await fixture.whenStable();
+
+    const aviso = el.querySelector('.chat-aviso') as HTMLElement;
+    expect(aviso.textContent).toContain('descansando un momento');
+    expect(aviso.querySelector('a[href^="https://wa.me/"]')).not.toBeNull();
+  });
 });
