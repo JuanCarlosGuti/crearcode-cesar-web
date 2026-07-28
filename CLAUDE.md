@@ -8,15 +8,16 @@ correspondiente antes de seguir.
 ## Estado del proyecto
 
 **Etapa actual: Etapa 3 — Plataforma v2. La fase F8 (cuentas de
-cliente) está CONSTRUIDA y verificada en local (ISS-083 a ISS-100:
-suites backend/frontend/e2e en verde + verificación manual en
-navegador); pendiente el OK explícito del usuario para cerrarla, la
-App Password de Gmail (guía en
-[docs/09-despliegue.md](docs/09-despliegue.md) §7) y el redeploy en
-Render. La v1 está PUBLICADA en producción desde el 27 jul 2026:
-Render (capa gratis) + Neon. De la Etapa 2 solo queda abierta la
-compra del dominio propio (no bloquea). El usuario aprobó
-[docs/10-vision-v2.md](docs/10-vision-v2.md) el 27 jul 2026.**
+cliente) está TERMINADA y APROBADA por el usuario (28 jul 2026;
+ISS-083 a ISS-100, suites backend/frontend/e2e en verde + verificación
+manual en navegador). Para que quede viva en producción faltan solo
+las variables `MAIL_USERNAME`/`MAIL_PASSWORD` en el dashboard de
+Render (App Password de Gmail, guía en
+[docs/09-despliegue.md](docs/09-despliegue.md) §7). La v1 está
+PUBLICADA en producción desde el 27 jul 2026: Render (capa gratis) +
+Neon. De la Etapa 2 solo queda abierta la compra del dominio propio
+(no bloquea). La fase F9 (asistente IA con Groq) no arranca sin OK
+explícito del usuario.**
 
 URLs de producción:
 - Frontend: https://crearcodecesar-frontend.onrender.com
