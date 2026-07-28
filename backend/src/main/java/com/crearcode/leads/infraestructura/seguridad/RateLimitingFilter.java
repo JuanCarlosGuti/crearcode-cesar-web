@@ -49,7 +49,9 @@ class RateLimitingFilter extends OncePerRequestFilter {
 			@Value("${app.rate-limit.recuperacion.max-intentos}") int maxRecuperaciones,
 			@Value("${app.rate-limit.recuperacion.ventana-minutos}") long ventanaRecuperacionMinutos,
 			@Value("${app.rate-limit.restablecimiento.max-intentos}") int maxRestablecimientos,
-			@Value("${app.rate-limit.restablecimiento.ventana-minutos}") long ventanaRestablecimientoMinutos) {
+			@Value("${app.rate-limit.restablecimiento.ventana-minutos}") long ventanaRestablecimientoMinutos,
+			@Value("${app.rate-limit.asistente.max-intentos}") int maxMensajesAsistente,
+			@Value("${app.rate-limit.asistente.ventana-minutos}") long ventanaAsistenteMinutos) {
 		this.reloj = reloj;
 		this.reglas = List.of(
 				new Regla("POST", "/api/solicitudes", maxSolicitudesContacto, Duration.ofMinutes(ventanaContactoMinutos)),
@@ -62,7 +64,9 @@ class RateLimitingFilter extends OncePerRequestFilter {
 				new Regla("POST", "/api/auth/recuperacion", maxRecuperaciones,
 						Duration.ofMinutes(ventanaRecuperacionMinutos)),
 				new Regla("POST", "/api/auth/restablecimiento", maxRestablecimientos,
-						Duration.ofMinutes(ventanaRestablecimientoMinutos)));
+						Duration.ofMinutes(ventanaRestablecimientoMinutos)),
+				new Regla("POST", "/api/asistente/mensajes", maxMensajesAsistente,
+						Duration.ofMinutes(ventanaAsistenteMinutos)));
 	}
 
 	@Override

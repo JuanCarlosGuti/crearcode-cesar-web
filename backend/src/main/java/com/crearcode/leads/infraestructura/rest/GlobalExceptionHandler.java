@@ -10,11 +10,16 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.crearcode.leads.aplicacion.CredencialesInvalidasException;
 import com.crearcode.leads.aplicacion.CuentaNoVerificadaException;
+import com.crearcode.leads.aplicacion.LimiteDeUsoAlcanzadoException;
+import com.crearcode.leads.aplicacion.LimiteGlobalAlcanzadoException;
 import com.crearcode.leads.aplicacion.SolicitudNoEncontradaException;
 import com.crearcode.leads.aplicacion.UsuarioYaExisteException;
+import com.crearcode.leads.dominio.AsistenteNoDisponibleException;
 import com.crearcode.leads.dominio.ConsentimientoRequeridoException;
 import com.crearcode.leads.dominio.ContrasenaInvalidaException;
+import com.crearcode.leads.dominio.ConversacionInvalidaException;
 import com.crearcode.leads.dominio.DatosDeContactoInvalidosException;
+import com.crearcode.leads.dominio.MensajeDeChatInvalidoException;
 import com.crearcode.leads.dominio.TokenDeCuentaInvalidoException;
 import com.crearcode.leads.dominio.TransicionDeEstadoInvalidaException;
 
@@ -86,6 +91,30 @@ class GlobalExceptionHandler {
 	@ExceptionHandler(ContrasenaInvalidaException.class)
 	ResponseEntity<ErrorResponse> contrasenaInvalida(ContrasenaInvalidaException excepcion) {
 		return ResponseEntity.badRequest().body(new ErrorResponse(excepcion.getMessage()));
+	}
+
+	@ExceptionHandler({ MensajeDeChatInvalidoException.class, ConversacionInvalidaException.class })
+	ResponseEntity<ErrorResponse> conversacionInvalida(RuntimeException excepcion) {
+		return ResponseEntity.badRequest().body(new ErrorResponse(excepcion.getMessage()));
+	}
+
+	@ExceptionHandler(LimiteDeUsoAlcanzadoException.class)
+	ResponseEntity<ErrorAsistenteResponse> limiteDeUsoDelAsistente(LimiteDeUsoAlcanzadoException excepcion) {
+		String codigo = excepcion.identidadRegistrada() ? "limite-registrado" : "limite-anonimo";
+		return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+				.body(new ErrorAsistenteResponse(excepcion.getMessage(), codigo));
+	}
+
+	/**
+	 * El límite global agotado y el fallo del proveedor son lo mismo para
+	 * el visitante: asistente no disponible, con la alternativa humana
+	 * (invariante 3 del contexto asistente).
+	 */
+	@ExceptionHandler({ LimiteGlobalAlcanzadoException.class, AsistenteNoDisponibleException.class })
+	ResponseEntity<ErrorAsistenteResponse> asistenteNoDisponible(RuntimeException excepcion) {
+		return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+				.body(new ErrorAsistenteResponse("El asistente no está disponible en este momento",
+						"no-disponible"));
 	}
 
 }

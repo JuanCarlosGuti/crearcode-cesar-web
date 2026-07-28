@@ -57,6 +57,11 @@ class RateLimitingFilterIT {
 		registry.add("app.rate-limit.recuperacion.ventana-minutos", () -> 15);
 		registry.add("app.rate-limit.restablecimiento.max-intentos", () -> MAX_CUENTAS_EN_ESTE_TEST);
 		registry.add("app.rate-limit.restablecimiento.ventana-minutos", () -> 15);
+		registry.add("app.rate-limit.asistente.max-intentos", () -> MAX_CUENTAS_EN_ESTE_TEST);
+		registry.add("app.rate-limit.asistente.ventana-minutos", () -> 15);
+		// Puerto cerrado: las peticiones que pasan el filtro fallan al
+		// instante (503) en vez de intentar salir a la red real.
+		registry.add("app.asistente.groq.url", () -> "http://localhost:1");
 	}
 
 	@Autowired
@@ -120,6 +125,20 @@ class RateLimitingFilterIT {
 		assertThat(estadosTrasRepetir("/api/auth/restablecimiento",
 				Map.of("token", "token-cualquiera", "contrasena", "contrasena-larga")))
 				.contains(HttpStatus.TOO_MANY_REQUESTS);
+	}
+
+	@Test
+	void limitaLosMensajesAlAsistenteRepetidosDesdeLaMismaIp() {
+		Map<String, Object> conversacion = Map.of("mensajes",
+				List.of(Map.of("rol", "USUARIO", "texto", "hola")));
+
+		List<HttpStatusCode> estados = new ArrayList<>();
+		for (int i = 0; i < MAX_CUENTAS_EN_ESTE_TEST + 3; i++) {
+			estados.add(restTemplate.postForEntity("/api/asistente/mensajes", conversacion, String.class)
+					.getStatusCode());
+		}
+
+		assertThat(estados).contains(HttpStatus.TOO_MANY_REQUESTS);
 	}
 
 	private List<HttpStatusCode> estadosTrasRepetir(String ruta, Map<String, String> cuerpo) {
