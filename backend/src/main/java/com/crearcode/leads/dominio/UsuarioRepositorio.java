@@ -17,4 +17,10 @@ public interface UsuarioRepositorio {
 	 */
 	Optional<Usuario> buscarPorCorreo(Correo correo);
 
+	/**
+	 * Desde F8: los tokens de correo referencian al usuario por id, y
+	 * verificar/restablecer necesitan cargarlo.
+	 */
+	Optional<Usuario> buscarPorId(UsuarioId id);
+
 }

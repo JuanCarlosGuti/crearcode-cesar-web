@@ -12,7 +12,8 @@ class FakeGeneradorDeToken implements GeneradorDeToken {
 
 	@Override
 	public SesionAutenticada generar(Usuario usuario, Instant ahora) {
-		return new SesionAutenticada("token-de-prueba:" + usuario.id().valor(), ahora.plus(Duration.ofHours(8)));
+		return new SesionAutenticada("token-de-prueba:" + usuario.id().valor(), ahora.plus(Duration.ofHours(8)),
+				usuario.rol(), usuario.correo());
 	}
 
 }

@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import com.crearcode.leads.dominio.Correo;
 import com.crearcode.leads.dominio.Usuario;
+import com.crearcode.leads.dominio.UsuarioId;
 import com.crearcode.leads.dominio.UsuarioRepositorio;
 
 /** Fake en memoria de {@link UsuarioRepositorio} para tests de casos de uso. */
@@ -23,6 +24,13 @@ class FakeUsuarioRepositorio implements UsuarioRepositorio {
 	public Optional<Usuario> buscarPorCorreo(Correo correo) {
 		return usuarios.stream()
 				.filter(u -> u.correo().valor().equalsIgnoreCase(correo.valor()))
+				.findFirst();
+	}
+
+	@Override
+	public Optional<Usuario> buscarPorId(UsuarioId id) {
+		return usuarios.stream()
+				.filter(u -> u.id().equals(id))
 				.findFirst();
 	}
 

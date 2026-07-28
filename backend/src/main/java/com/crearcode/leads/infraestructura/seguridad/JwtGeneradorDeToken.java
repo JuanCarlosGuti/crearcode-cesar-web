@@ -42,7 +42,7 @@ class JwtGeneradorDeToken implements GeneradorDeToken {
 		JwsHeader header = JwsHeader.with(MacAlgorithm.HS256).build();
 		String token = jwtEncoder.encode(JwtEncoderParameters.from(header, claims)).getTokenValue();
 
-		return new SesionAutenticada(token, expiraEn);
+		return new SesionAutenticada(token, expiraEn, usuario.rol(), usuario.correo());
 	}
 
 }
