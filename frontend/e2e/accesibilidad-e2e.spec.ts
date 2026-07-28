@@ -13,6 +13,14 @@ const API_BASE_URL = process.env['E2E_API_BASE_URL'] ?? 'http://localhost:8080';
 const ADMIN_USERNAME = process.env['E2E_ADMIN_USERNAME'] ?? 'admin@crearcode-cesar.local';
 const ADMIN_PASSWORD = process.env['E2E_ADMIN_PASSWORD'] ?? 'cambiar-en-produccion';
 
+// Con reduced-motion el scroll-reveal de F8.5 se apaga (contrato
+// probado en aparecer-al-ver.spec.ts): sin esto, axe puede escanear en
+// plena transicion (opacidad intermedia -> contraste mezclado) y las
+// secciones aun ocultas bajo el fold quedarian fuera del analisis.
+test.beforeEach(async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+});
+
 const PAGINAS_PUBLICAS = [
   { nombre: 'Home', ruta: '/' },
   { nombre: 'Servicio (Desarrollo a la medida)', ruta: '/servicios/desarrollo-a-la-medida' },

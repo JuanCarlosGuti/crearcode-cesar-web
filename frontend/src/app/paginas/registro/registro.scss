@@ -42,11 +42,6 @@
   margin-top: var(--espacio-2);
 }
 
-.badge-muy-pronto {
-  background-color: color-mix(in srgb, var(--color-acento) 14%, white);
-  color: var(--color-acento);
-}
-
 @media (min-width: 48rem) {
   .pagina-registro__columnas {
     grid-template-columns: 3fr 2fr;

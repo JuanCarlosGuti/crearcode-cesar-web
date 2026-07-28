@@ -80,7 +80,9 @@ test('un visitante se registra, verifica su correo con el enlace real e ingresa 
   expect(resultados.violations, JSON.stringify(resultados.violations, null, 2)).toEqual([]);
 
   // 6. Cerrar sesion -> vuelve al inicio y el header ofrece Ingresar
+  // (selector anclado al header: la Home tambien enlaza /ingreso desde
+  // la seccion de beneficios, F8.5)
   await page.getByRole('button', { name: 'Cerrar sesión' }).click();
   await page.waitForURL(/\/$/);
-  await expect(page.locator('a[href="/ingreso"]')).toBeVisible();
+  await expect(page.locator('header a[href="/ingreso"]')).toBeVisible();
 });

@@ -220,6 +220,14 @@ img {
   color: var(--color-texto-secundario);
 }
 
+// Beneficios de la cuenta (F8.5). Texto oscurecido sobre el fondo
+// tintado: el acento puro da 4.19:1, bajo el minimo AA de 4.5:1
+// (lo encontro axe en ISS-107).
+.badge-muy-pronto {
+  background-color: color-mix(in srgb, var(--color-acento) 14%, white);
+  color: color-mix(in srgb, var(--color-acento) 78%, black);
+}
+
 // ----- Evolución visual F8.5 -----
 
 // Tarjeta elevada: base de las tarjetas de servicios/beneficios.

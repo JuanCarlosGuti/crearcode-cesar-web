@@ -14,11 +14,11 @@ manual en navegador). Para que su correo funcione en producción faltan
 solo las variables `MAIL_USERNAME`/`MAIL_PASSWORD` en el dashboard de
 Render (App Password de Gmail, guía en
 [docs/09-despliegue.md](docs/09-despliegue.md) §7 — pausado a pedido
-del usuario). Sigue la fase F8.5 — rediseño visual y valor de la
-cuenta (ISS-101 a ISS-107, documentada el 28 jul 2026 a pedido del
-usuario: evolucionar la paleta actual, diseño antes que F9) —
-**pendiente del OK explícito del usuario para arrancar la
-implementación**. La v1 está PUBLICADA en producción desde el 27 jul
+del usuario). La fase F8.5 — rediseño visual y valor de la cuenta
+(ISS-101 a ISS-107) — está CONSTRUIDA y verificada (Lighthouse
+97-98/100/100/100, 21/21 e2e con axe, verificación manual);
+**pendiente el OK explícito del usuario para cerrarla y arrancar F9**.
+La v1 está PUBLICADA en producción desde el 27 jul
 2026: Render (capa gratis) + Neon. De la Etapa 2 solo queda abierta la
 compra del dominio propio (no bloquea).**
 
@@ -129,8 +129,9 @@ variable de entorno en Render el día que se use — nunca en el repo.
 - [x] **F8** — Cuentas de cliente (ISS-083 a ISS-100): terminada,
   aprobada y en producción; su correo espera las variables `MAIL_*` en
   Render (pausado a pedido del usuario).
-- [ ] **F8.5** — Rediseño visual y valor de la cuenta (ISS-101 a
-  ISS-107): documentada; la implementación no arranca sin OK explícito.
+- [x] **F8.5** — Rediseño visual y valor de la cuenta (ISS-101 a
+  ISS-107): construida y verificada; pendiente el OK del usuario para
+  cerrarla.
 - [ ] **F9** — Asistente IA (Groq) — no arranca sin OK explícito.
 - [ ] **F10** — Demo de diseño con IA.
 - [ ] **F11** — Gestión interna.
@@ -330,6 +331,28 @@ páginas de token. E2e `cuentas-e2e.spec.ts`: flujo completo con el
 enlace real del correo leído de la API REST de Mailpit + axe (que
 encontró y permitió corregir un contraste AA insuficiente en los
 banners de error, también en el login del admin).
+
+## Rediseño visual (tras la fase F8.5)
+
+Evolución de la paleta oficial sin cambiarla (decisión del usuario, 28
+jul 2026): tokens nuevos en `styles.scss` (gradiente de marca, acento
+luminoso `#4CC38A` solo decorativo, sombras de elevación, transición
+estándar, radio grande — valores en
+[docs/07-guia-de-estilo.md](docs/07-guia-de-estilo.md) §Evolución
+visual). Hero de la Home sobre el gradiente con decoración SVG y botón
+primario invertido; tarjetas con elevación en hover; scroll-reveal vía
+la directiva `aparecerAlVer`
+(`frontend/src/app/componentes/aparecer-al-ver/`) — IntersectionObserver
+de un solo disparo, no-op en SSR y bajo `prefers-reduced-motion`, el
+estado oculto solo se aplica desde JS (sin JS todo es visible). Sección
+"Tu cuenta te da más" en la Home y beneficios junto al formulario de
+`/registro` (HU-34), con la regla de honestidad: lo que llega con
+F9/F10 lleva badge "Muy pronto". El e2e de accesibilidad emula
+`reducedMotion` para que axe escanee la página completa sin estados de
+transición; axe atrapó dos contrastes AA reales en esta fase (banners
+de error 4.27:1 y badge "Muy pronto" 4.19:1), ambos corregidos
+oscureciendo el texto. Lighthouse tras el rediseño: Performance 97-98,
+resto 100 — se mantiene lo ganado en F6.
 
 ## SEO, rendimiento y accesibilidad (tras la fase F6)
 
