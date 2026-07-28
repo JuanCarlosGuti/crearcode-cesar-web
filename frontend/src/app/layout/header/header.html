@@ -26,6 +26,17 @@
       <a routerLink="/sobre-nosotros" routerLinkActive="activo" (click)="cerrarMenu()">Sobre nosotros</a>
       <a routerLink="/blog" routerLinkActive="activo" (click)="cerrarMenu()">Blog</a>
       <a routerLink="/contacto" routerLinkActive="activo" (click)="cerrarMenu()">Contacto</a>
+      @if (hidratado()) {
+        @if (sesion.estaAutenticado()) {
+          <a [routerLink]="enlaceCuenta()" routerLinkActive="activo" (click)="cerrarMenu()">{{
+            textosCuenta.miCuenta
+          }}</a>
+        } @else {
+          <a routerLink="/ingreso" routerLinkActive="activo" (click)="cerrarMenu()">{{
+            textosCuenta.ingresar
+          }}</a>
+        }
+      }
 
       <div class="cabecera__cta cta-doble">
         <a routerLink="/contacto" class="boton boton-primario" (click)="cerrarMenu()">Agenda tu consulta</a>

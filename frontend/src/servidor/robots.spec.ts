@@ -12,6 +12,14 @@ describe('generarRobotsTxt', () => {
     expect(txt).toContain('Allow: /');
   });
 
+  it('excluye las paginas privadas o de un solo uso de la cuenta de cliente', () => {
+    const txt = generarRobotsTxt();
+
+    expect(txt).toContain('Disallow: /mi-cuenta');
+    expect(txt).toContain('Disallow: /verificar-correo');
+    expect(txt).toContain('Disallow: /restablecer-contrasena');
+  });
+
   it('referencia el sitemap con la URL base configurada, sin dominio hardcodeado', () => {
     const txt = generarRobotsTxt();
 

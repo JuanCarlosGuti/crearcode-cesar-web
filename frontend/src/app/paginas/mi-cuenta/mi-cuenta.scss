@@ -1,0 +1,10 @@
+@use '../formulario-cuenta';
+
+.pagina-cuenta__nota {
+  margin-top: var(--espacio-4);
+  font-size: 0.95rem;
+}
+
+button {
+  margin-top: var(--espacio-3);
+}

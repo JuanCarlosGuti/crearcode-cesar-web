@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 
 import { POLITICA_DE_DATOS, TERMINOS_DE_USO } from '../contenido/legales';
 import { adminGuard } from './nucleo/admin.guard';
+import { clienteGuard } from './nucleo/cliente.guard';
 
 export const routes: Routes = [
   {
@@ -55,6 +56,42 @@ export const routes: Routes = [
     loadComponent: () => import('./paginas/legal/legal').then((m) => m.LegalPage),
     data: { documento: TERMINOS_DE_USO, ruta: '/legales/terminos' },
     title: 'Términos de uso — Crear Code Cesar',
+  },
+  {
+    path: 'registro',
+    loadComponent: () => import('./paginas/registro/registro').then((m) => m.RegistroPage),
+    title: 'Crea tu cuenta — Crear Code Cesar',
+  },
+  {
+    path: 'ingreso',
+    loadComponent: () => import('./paginas/ingreso/ingreso').then((m) => m.IngresoPage),
+    title: 'Inicia sesión — Crear Code Cesar',
+  },
+  {
+    path: 'recuperar-contrasena',
+    loadComponent: () =>
+      import('./paginas/recuperar-contrasena/recuperar-contrasena').then((m) => m.RecuperarContrasenaPage),
+    title: 'Recupera tu contraseña — Crear Code Cesar',
+  },
+  {
+    path: 'verificar-correo',
+    loadComponent: () =>
+      import('./paginas/verificar-correo/verificar-correo').then((m) => m.VerificarCorreoPage),
+    title: 'Verificación de correo — Crear Code Cesar',
+  },
+  {
+    path: 'restablecer-contrasena',
+    loadComponent: () =>
+      import('./paginas/restablecer-contrasena/restablecer-contrasena').then(
+        (m) => m.RestablecerContrasenaPage,
+      ),
+    title: 'Crea tu nueva contraseña — Crear Code Cesar',
+  },
+  {
+    path: 'mi-cuenta',
+    loadComponent: () => import('./paginas/mi-cuenta/mi-cuenta').then((m) => m.MiCuentaPage),
+    canActivate: [clienteGuard],
+    title: 'Mi cuenta — Crear Code Cesar',
   },
   {
     path: 'admin/login',

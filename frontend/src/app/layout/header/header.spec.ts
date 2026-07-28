@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 
 import { SERVICIOS } from '../../../contenido/servicios';
+import { SesionService } from '../../nucleo/sesion';
 import { Header } from './header';
 
 @Component({ template: '' })
@@ -66,5 +67,42 @@ describe('Header', () => {
 
     const enlace = fixture.nativeElement.querySelector('a[href^="https://wa.me/"]') as HTMLAnchorElement;
     expect(enlace.href).toContain(encodeURIComponent(servicio.mensajeWhatsapp));
+  });
+
+  it('sin sesion muestra el enlace Ingresar', async () => {
+    const fixture = TestBed.createComponent(Header);
+    await fixture.whenStable();
+
+    const enlace = fixture.nativeElement.querySelector('a[href="/ingreso"]') as HTMLAnchorElement;
+    expect(enlace).not.toBeNull();
+    expect(enlace.textContent).toContain('Ingresar');
+  });
+
+  it('con sesion de cliente muestra Mi cuenta apuntando a /mi-cuenta', async () => {
+    TestBed.inject(SesionService).iniciarSesion({
+      token: 'token-cliente',
+      rol: 'CLIENTE',
+      correo: 'cliente@correo-de-prueba.com',
+    });
+    const fixture = TestBed.createComponent(Header);
+    await fixture.whenStable();
+
+    const enlace = fixture.nativeElement.querySelector('a[href="/mi-cuenta"]') as HTMLAnchorElement;
+    expect(enlace).not.toBeNull();
+    expect(enlace.textContent).toContain('Mi cuenta');
+    expect(fixture.nativeElement.querySelector('a[href="/ingreso"]')).toBeNull();
+  });
+
+  it('con sesion de admin el enlace de cuenta apunta al panel /admin', async () => {
+    TestBed.inject(SesionService).iniciarSesion({
+      token: 'token-admin',
+      rol: 'ADMIN',
+      correo: 'admin@crearcode-cesar.local',
+    });
+    const fixture = TestBed.createComponent(Header);
+    await fixture.whenStable();
+
+    expect(fixture.nativeElement.querySelector('a[href="/admin"]')).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('a[href="/ingreso"]')).toBeNull();
   });
 });

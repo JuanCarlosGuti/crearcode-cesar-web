@@ -46,4 +46,15 @@ describe('generarSitemap', () => {
 
     expect(xml).not.toContain('/admin');
   });
+
+  it('de las paginas de cuenta solo incluye /registro', () => {
+    const xml = generarSitemap();
+
+    expect(xml).toContain(`<loc>${BASE_URL}/registro</loc>`);
+    expect(xml).not.toContain('/mi-cuenta');
+    expect(xml).not.toContain('/verificar-correo');
+    expect(xml).not.toContain('/restablecer-contrasena');
+    expect(xml).not.toContain('/ingreso');
+    expect(xml).not.toContain('/recuperar-contrasena');
+  });
 });

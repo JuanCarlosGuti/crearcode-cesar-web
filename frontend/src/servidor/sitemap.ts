@@ -3,12 +3,16 @@ import { CASOS } from '../contenido/casos';
 import { SERVICIOS } from '../contenido/servicios';
 import { BASE_URL } from '../contenido/sitio';
 
+// De las paginas de cuenta (F8) solo /registro entra al sitemap: es la
+// unica con valor de captacion. Ingreso/recuperacion no aportan SEO y
+// las de token/area privada quedan ademas excluidas en robots.txt.
 const RUTAS_ESTATICAS: readonly string[] = [
   '/',
   '/casos',
   '/sobre-nosotros',
   '/blog',
   '/contacto',
+  '/registro',
   '/legales/politica-de-datos',
   '/legales/terminos',
 ];

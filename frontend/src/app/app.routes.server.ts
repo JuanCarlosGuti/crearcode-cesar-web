@@ -34,6 +34,21 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Client,
   },
   {
+    // Destino del enlace de verificacion (?token=): la llamada tiene
+    // efectos y depende de la URL, nada que prerenderizar.
+    path: 'verificar-correo',
+    renderMode: RenderMode.Client,
+  },
+  {
+    path: 'restablecer-contrasena',
+    renderMode: RenderMode.Client,
+  },
+  {
+    // Area del cliente: detras de clienteGuard, sin valor SEO.
+    path: 'mi-cuenta',
+    renderMode: RenderMode.Client,
+  },
+  {
     path: '**',
     renderMode: RenderMode.Prerender,
   },
