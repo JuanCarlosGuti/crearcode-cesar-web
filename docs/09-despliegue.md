@@ -180,6 +180,18 @@ Camino elegido: Opción 4 (Render + Neon), proxy sin CORS (ADR-09).
       (`contacto-e2e.spec.ts`, `accesibilidad-e2e.spec.ts`) pasa
       completa contra el build de producción con el proxy activo, sin
       modificar ningún test existente.
+- [x] `render.yaml` (Blueprint de Render, raíz del repo): declara los
+      dos web services en la capa gratis, región Virginia, con
+      `healthCheckPath`, `JWT_SECRET` autogenerado por Render,
+      credenciales de Neon como `sync: false` (se ingresan en el
+      dashboard, nunca en el repo), `BACKEND_URL` tomado
+      automáticamente del servicio del backend y
+      `NG_ALLOWED_HOSTS=*.onrender.com`.
+- [x] `DB_URL` en el backend: variable nueva que acepta la URL JDBC
+      completa — necesaria porque Neon exige `sslmode=require`, que no
+      se puede expresar con solo host/puerto/nombre. Sin `DB_URL`, el
+      comportamiento local es idéntico al de siempre (verificado con
+      `mvnw verify` y arrancando la app real por ambos caminos).
 - [ ] `contenido/sitio.ts` (`BASE_URL`): sin cambios de mecanismo —
       ya cumple ADR-06 con un solo valor a editar el día que se compre
       el dominio (pendiente, no bloquea nada de lo anterior).

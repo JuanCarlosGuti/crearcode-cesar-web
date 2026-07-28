@@ -1,0 +1,54 @@
+# Blueprint de Render (ISS-082): define los dos web services (backend y
+# frontend) construidos desde sus Dockerfile de produccion (ISS-081).
+# La base de datos NO va aqui: es PostgreSQL gestionado en Neon (capa
+# gratis, ver docs/09-despliegue.md) — sus credenciales se ingresan como
+# variables de entorno al crear el Blueprint (sync: false = Render las
+# pide en el dashboard y nunca quedan en el repo).
+services:
+  - type: web
+    name: crearcodecesar-backend
+    runtime: docker
+    rootDir: backend
+    plan: free
+    region: virginia
+    healthCheckPath: /actuator/health
+    envVars:
+      # URL JDBC completa de Neon, ej.:
+      # jdbc:postgresql://ep-xxxxx.us-east-1.aws.neon.tech/leads?sslmode=require
+      - key: DB_URL
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      # Debe ser un correo valido (ver ADR-08).
+      - key: ADMIN_USERNAME
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      # Render genera un valor aleatorio seguro (cumple el minimo de 32
+      # bytes que exige la firma HS256 del JWT).
+      - key: JWT_SECRET
+        generateValue: true
+
+  - type: web
+    name: crearcodecesar-frontend
+    runtime: docker
+    rootDir: frontend
+    plan: free
+    region: virginia
+    healthCheckPath: /
+    envVars:
+      # URL publica del backend para el proxy /api (ADR-09) — se toma
+      # automaticamente del servicio de arriba. Si Render rechazara esta
+      # referencia, reemplazar por la URL real del backend a mano.
+      - key: BACKEND_URL
+        fromService:
+          name: crearcodecesar-backend
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
+      # Allowlist del header Host de Angular SSR (proteccion SSRF).
+      # Comodin de subdominios de onrender.com; el dia que haya dominio
+      # propio se agrega aqui separado por coma.
+      - key: NG_ALLOWED_HOSTS
+        value: "*.onrender.com"

@@ -319,7 +319,14 @@ cómputo, único costo fijo el dominio (aún no comprado).
   backend real vía `http-proxy-middleware` — el navegador solo ve un
   origen. `SolicitudesApi`/`AuthApi` no cambiaron (siguen con rutas
   relativas `/api/...`).
+- **`render.yaml`** (Blueprint de Render, raíz del repo): declara los
+  dos web services (capa gratis, región Virginia) con sus variables —
+  secretos como `sync: false` (se ingresan en el dashboard de Render,
+  nunca en el repo) y `JWT_SECRET` autogenerado por Render.
 - **Variables de entorno nuevas para producción**:
+  - `DB_URL` (backend): URL JDBC completa hacia Neon (con
+    `sslmode=require`, que Neon exige). Sin setearla, se arma desde
+    `DB_HOST`/`DB_PORT`/`DB_NAME` como siempre en local.
   - `BACKEND_URL` (frontend): URL pública del backend en Render. Sin
     setearla, el proxy local apunta a `http://localhost:8080`.
   - `PORT` (ambos): ya estándar — Render la inyecta sola; el backend
