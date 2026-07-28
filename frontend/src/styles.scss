@@ -26,6 +26,18 @@
 
   --ancho-contenido: 72rem;
   --radio-borde: 0.5rem;
+
+  // Evolución visual F8.5 (valores documentados en docs/07-guia-de-estilo.md
+  // §Evolución visual — ese documento es la fuente de verdad).
+  --gradiente-marca: linear-gradient(135deg, #22303f 0%, #14424d 100%);
+  // Solo detalles decorativos (subrayados, íconos, bordes en hover) —
+  // NUNCA como color de texto: para texto sigue valiendo --color-acento.
+  --color-acento-luminoso: #4cc38a;
+  --sombra-1: 0 1px 3px rgb(23 27 31 / 8%);
+  --sombra-2: 0 4px 12px rgb(23 27 31 / 10%);
+  --sombra-3: 0 12px 32px rgb(23 27 31 / 14%);
+  --transicion-estandar: 180ms ease-out;
+  --radio-borde-grande: 16px;
 }
 
 *,
@@ -206,4 +218,52 @@ img {
 .badge-descartada {
   background-color: color-mix(in srgb, var(--color-texto-secundario) 15%, white);
   color: var(--color-texto-secundario);
+}
+
+// ----- Evolución visual F8.5 -----
+
+// Tarjeta elevada: base de las tarjetas de servicios/beneficios.
+.tarjeta-elevada {
+  background-color: var(--color-blanco);
+  border-radius: var(--radio-borde-grande);
+  box-shadow: var(--sombra-1);
+  transition: box-shadow var(--transicion-estandar), transform var(--transicion-estandar);
+}
+
+.tarjeta-elevada:hover,
+.tarjeta-elevada:focus-within {
+  box-shadow: var(--sombra-3);
+  transform: translateY(-3px);
+}
+
+// Scroll-reveal (directiva aparecerAlVer): el estado oculto lo aplica
+// SOLO la directiva desde JS — sin JS (o en SSR puro) no existe la
+// clase y todo el contenido es visible (progressive enhancement).
+.aparecer-oculto {
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+.aparecer-visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 400ms ease-out, transform 400ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aparecer-oculto {
+    opacity: 1;
+    transform: none;
+  }
+
+  .aparecer-visible,
+  .tarjeta-elevada,
+  .boton {
+    transition: none;
+  }
+
+  .tarjeta-elevada:hover,
+  .tarjeta-elevada:focus-within {
+    transform: none;
+  }
 }
