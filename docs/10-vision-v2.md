@@ -181,11 +181,14 @@ arrancar sin fricción, no una restricción permanente.
 3. **Facturación**: cotizaciones y cuentas de cobro propias (PDF);
    DIAN vía proveedor autorizado queda para después, documentado.
 
-## Pendiente de aprobación
+## Aprobación
 
-Igual que en la Etapa 1: este documento requiere la aprobación
-explícita del usuario antes de escribir la primera línea de código de
-F8. Prerequisito adicional: cerrar ISS-082 (publicar la v1).
+**Aprobado explícitamente por el usuario el 27 jul 2026** ("si
+aprobada arranca por fa"), el mismo día de la publicación de la v1 en
+Render (backend y frontend en producción, flujo de contacto verificado
+extremo a extremo contra la base real de Neon). Prerequisito de
+publicación cumplido; único pendiente de la Etapa 2 que sigue abierto:
+la compra del dominio propio (no bloquea la Etapa 3).
 
 ## Fuentes consultadas (jul 2026)
 

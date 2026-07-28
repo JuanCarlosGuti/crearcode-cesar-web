@@ -12,6 +12,12 @@ services:
     plan: free
     region: virginia
     healthCheckPath: /actuator/health
+    # Solo redesplegar cuando cambie el backend (o este blueprint) — los
+    # commits de docs/frontend no deben reconstruir este servicio.
+    buildFilter:
+      paths:
+        - backend/**
+        - render.yaml
     envVars:
       # URL JDBC completa de Neon, ej.:
       # jdbc:postgresql://ep-xxxxx.us-east-1.aws.neon.tech/leads?sslmode=require
@@ -38,6 +44,10 @@ services:
     plan: free
     region: virginia
     healthCheckPath: /
+    buildFilter:
+      paths:
+        - frontend/**
+        - render.yaml
     envVars:
       # URL publica del backend para el proxy /api (ADR-09) — se toma
       # automaticamente del servicio de arriba. Si Render rechazara esta

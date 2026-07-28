@@ -7,9 +7,17 @@ correspondiente antes de seguir.
 
 ## Estado del proyecto
 
-**Etapa actual: Etapa 2 — Desarrollo. Fases F0 a F6 completas
-(ISS-001 a ISS-078), pendiente de OK explícito del usuario para
-pasar a F7.**
+**Etapa actual: Etapa 3 — Plataforma v2, fase F8 (cuentas de
+cliente). La v1 está PUBLICADA en producción desde el 27 jul 2026:
+Render (capa gratis) + Neon, flujo de contacto y panel admin
+verificados extremo a extremo. De la Etapa 2 solo queda abierta la
+compra del dominio propio (no bloquea). El usuario aprobó
+[docs/10-vision-v2.md](docs/10-vision-v2.md) el 27 jul 2026.**
+
+URLs de producción:
+- Frontend: https://crearcodecesar-frontend.onrender.com
+- Backend: https://crearcodecesar-backend.onrender.com (API detrás
+  del proxy `/api` del frontend, ver ADR-09)
 
 El usuario aprobó la documentación el 16 jul 2026 con la frase
 "APRUEBO LA DOCUMENTACIÓN, ARRANCA LA FASE 1". Regla dura: no se avanza
