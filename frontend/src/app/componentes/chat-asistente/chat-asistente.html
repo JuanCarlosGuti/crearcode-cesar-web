@@ -1,0 +1,95 @@
+<button
+  type="button"
+  class="chat-burbuja"
+  (click)="alternarPanel()"
+  [attr.aria-expanded]="abierto()"
+  aria-controls="panel-asistente"
+>
+  <span class="sr-only">{{ textos.etiquetaBurbuja }}</span>
+  <span aria-hidden="true" class="chat-burbuja__icono">💬</span>
+</button>
+
+@if (abierto()) {
+  <section
+    id="panel-asistente"
+    class="chat-panel"
+    role="dialog"
+    [attr.aria-label]="textos.titulo"
+    (keydown.escape)="cerrarPanel()"
+  >
+    <header class="chat-panel__encabezado">
+      <div>
+        <h2>{{ textos.titulo }}</h2>
+        <p>{{ textos.subtitulo }}</p>
+      </div>
+      <button type="button" class="chat-panel__cerrar" (click)="cerrarPanel()">
+        <span class="sr-only">{{ textos.cerrar }}</span>
+        <span aria-hidden="true">✕</span>
+      </button>
+    </header>
+
+    <div class="chat-mensajes" aria-live="polite">
+      @for (mensaje of conversacion.mensajes(); track $index) {
+        <div class="chat-mensaje" [class.chat-mensaje--usuario]="mensaje.rol === 'USUARIO'">
+          <p>{{ mensaje.texto }}</p>
+          @if (mensaje.escalar) {
+            <div class="chat-escalamiento">
+              <p>{{ textos.escalamiento }}</p>
+              <app-whatsapp-cta [mensaje]="mensajeWhatsapp()" etiqueta="WhatsApp" />
+              <a routerLink="/contacto" (click)="cerrarPanel()">{{ textos.enlaceContacto }}</a>
+            </div>
+          }
+        </div>
+      }
+
+      @if (conversacion.enviando()) {
+        <p class="chat-escribiendo">{{ textos.escribiendo }}</p>
+      }
+
+      @if (conversacion.error(); as error) {
+        <div class="chat-aviso" role="alert">
+          @if (error === 'limite-anonimo') {
+            <p>{{ textos.limiteAnonimo }}</p>
+            <a routerLink="/registro" class="boton boton-primario" (click)="cerrarPanel()">
+              {{ textos.ctaCrearCuenta }}
+            </a>
+          } @else if (error === 'limite-registrado') {
+            <p>{{ textos.limiteRegistrado }}</p>
+            <app-whatsapp-cta [mensaje]="mensajeWhatsapp()" etiqueta="WhatsApp" />
+          } @else {
+            <p>{{ textos.noDisponible }}</p>
+            <app-whatsapp-cta [mensaje]="mensajeWhatsapp()" etiqueta="WhatsApp" />
+          }
+        </div>
+      }
+    </div>
+
+    @if (conversacion.mensajes().length === 0) {
+      <div class="chat-sugerencias">
+        @for (sugerencia of textos.sugerencias; track sugerencia) {
+          <button type="button" class="chat-sugerencia" (click)="enviarSugerencia(sugerencia)">
+            {{ sugerencia }}
+          </button>
+        }
+      </div>
+    }
+
+    <form (submit)="enviar($event)" class="chat-formulario">
+      <label class="sr-only" for="pregunta-asistente">{{ textos.placeholder }}</label>
+      <input
+        id="pregunta-asistente"
+        type="text"
+        #campoPregunta
+        [placeholder]="textos.placeholder"
+        autocomplete="off"
+        maxlength="1000"
+        [disabled]="conversacion.enviando()"
+      />
+      <button type="submit" class="boton boton-primario" [disabled]="conversacion.enviando()">
+        {{ textos.botonEnviar }}
+      </button>
+    </form>
+
+    <p class="chat-nota">{{ textos.notaAlPie }}</p>
+  </section>
+}

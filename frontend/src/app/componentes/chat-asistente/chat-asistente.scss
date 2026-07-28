@@ -1,0 +1,203 @@
+:host {
+  position: fixed;
+  right: var(--espacio-3);
+  bottom: var(--espacio-3);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--espacio-2);
+}
+
+.chat-burbuja {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  background: var(--gradiente-marca);
+  color: var(--color-blanco);
+  font-size: 1.5rem;
+  box-shadow: var(--sombra-3);
+  transition: transform var(--transicion-estandar);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-burbuja:hover {
+  transform: translateY(-2px);
+}
+
+.chat-burbuja:focus-visible {
+  outline: 3px solid var(--color-acento);
+  outline-offset: 2px;
+}
+
+.chat-panel {
+  order: -1;
+  width: min(22rem, calc(100vw - 2 * var(--espacio-3)));
+  max-height: min(32rem, calc(100vh - 8rem));
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-blanco);
+  border-radius: var(--radio-borde-grande);
+  box-shadow: var(--sombra-3);
+  overflow: hidden;
+}
+
+.chat-panel__encabezado {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--espacio-2);
+  padding: var(--espacio-2) var(--espacio-3);
+  background: var(--gradiente-marca);
+}
+
+.chat-panel__encabezado h2 {
+  color: var(--color-blanco);
+  font-size: 1.05rem;
+  margin-bottom: 0.15rem;
+}
+
+.chat-panel__encabezado p {
+  color: var(--color-fondo);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.chat-panel__cerrar {
+  border: none;
+  background: transparent;
+  color: var(--color-blanco);
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  flex-shrink: 0;
+}
+
+.chat-panel__cerrar:focus-visible {
+  outline: 3px solid var(--color-acento-luminoso);
+  outline-offset: 2px;
+}
+
+.chat-mensajes {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--espacio-2) var(--espacio-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-2);
+  min-height: 6rem;
+}
+
+.chat-mensaje p {
+  margin: 0;
+  padding: 0.6rem 0.85rem;
+  border-radius: var(--radio-borde);
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+  width: fit-content;
+  max-width: 90%;
+}
+
+.chat-mensaje--usuario p {
+  background-color: var(--color-primario);
+  color: var(--color-blanco);
+  margin-left: auto;
+}
+
+.chat-escalamiento,
+.chat-aviso {
+  margin-top: var(--espacio-1);
+  padding: var(--espacio-2);
+  border-radius: var(--radio-borde);
+  border: 1px solid color-mix(in srgb, var(--color-acento) 30%, white);
+  background-color: color-mix(in srgb, var(--color-acento) 8%, white);
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-1);
+  align-items: flex-start;
+}
+
+.chat-escalamiento p,
+.chat-aviso p {
+  margin: 0;
+  background: none;
+  padding: 0;
+  max-width: 100%;
+}
+
+.chat-escribiendo {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-texto-secundario);
+  font-style: italic;
+}
+
+.chat-sugerencias {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-1);
+  padding: 0 var(--espacio-3) var(--espacio-2);
+}
+
+.chat-sugerencia {
+  border: 1px solid color-mix(in srgb, var(--color-primario) 25%, white);
+  background-color: var(--color-blanco);
+  color: var(--color-primario);
+  border-radius: 999px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: border-color var(--transicion-estandar), background-color var(--transicion-estandar);
+}
+
+.chat-sugerencia:hover,
+.chat-sugerencia:focus-visible {
+  border-color: var(--color-acento);
+  background-color: color-mix(in srgb, var(--color-acento) 8%, white);
+}
+
+.chat-formulario {
+  display: flex;
+  gap: var(--espacio-1);
+  padding: var(--espacio-2) var(--espacio-3);
+  border-top: 1px solid color-mix(in srgb, var(--color-primario) 10%, white);
+}
+
+.chat-formulario input {
+  flex: 1;
+  font: inherit;
+  padding: 0.5rem 0.75rem;
+  border: 2px solid color-mix(in srgb, var(--color-primario) 20%, white);
+  border-radius: var(--radio-borde);
+  min-width: 0;
+}
+
+.chat-formulario input:focus-visible {
+  outline: 3px solid var(--color-acento);
+  outline-offset: 1px;
+}
+
+.chat-formulario .boton {
+  padding: 0.5rem 1rem;
+}
+
+.chat-nota {
+  margin: 0;
+  padding: 0 var(--espacio-3) var(--espacio-2);
+  font-size: 0.75rem;
+  color: var(--color-texto-secundario);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-burbuja {
+    transition: none;
+  }
+
+  .chat-burbuja:hover {
+    transform: none;
+  }
+}

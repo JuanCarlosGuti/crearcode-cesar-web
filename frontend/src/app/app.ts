@@ -3,12 +3,13 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
 
+import { ChatAsistente } from './componentes/chat-asistente/chat-asistente';
 import { Footer } from './layout/footer/footer';
 import { Header } from './layout/header/header';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Header, Footer],
+  imports: [RouterOutlet, Header, Footer, ChatAsistente],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
