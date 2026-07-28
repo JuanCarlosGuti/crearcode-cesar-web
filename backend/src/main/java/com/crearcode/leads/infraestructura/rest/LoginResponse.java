@@ -2,6 +2,8 @@ package com.crearcode.leads.infraestructura.rest;
 
 import java.time.Instant;
 
-record LoginResponse(String token, Instant expiraEn) {
+import com.crearcode.leads.dominio.Rol;
+
+record LoginResponse(String token, Instant expiraEn, Rol rol, String correo) {
 
 }

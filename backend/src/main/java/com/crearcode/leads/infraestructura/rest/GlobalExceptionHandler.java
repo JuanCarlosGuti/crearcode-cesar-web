@@ -9,9 +9,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.crearcode.leads.aplicacion.CredencialesInvalidasException;
+import com.crearcode.leads.aplicacion.CuentaNoVerificadaException;
 import com.crearcode.leads.aplicacion.SolicitudNoEncontradaException;
+import com.crearcode.leads.aplicacion.UsuarioYaExisteException;
 import com.crearcode.leads.dominio.ConsentimientoRequeridoException;
+import com.crearcode.leads.dominio.ContrasenaInvalidaException;
 import com.crearcode.leads.dominio.DatosDeContactoInvalidosException;
+import com.crearcode.leads.dominio.TokenDeCuentaInvalidoException;
 import com.crearcode.leads.dominio.TransicionDeEstadoInvalidaException;
 
 /**
@@ -62,6 +66,26 @@ class GlobalExceptionHandler {
 	@ExceptionHandler(CredencialesInvalidasException.class)
 	ResponseEntity<ErrorResponse> credencialesInvalidas(CredencialesInvalidasException excepcion) {
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(excepcion.getMessage()));
+	}
+
+	@ExceptionHandler(CuentaNoVerificadaException.class)
+	ResponseEntity<ErrorResponse> cuentaNoVerificada(CuentaNoVerificadaException excepcion) {
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse(excepcion.getMessage()));
+	}
+
+	@ExceptionHandler(UsuarioYaExisteException.class)
+	ResponseEntity<ErrorResponse> usuarioYaExiste(UsuarioYaExisteException excepcion) {
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(excepcion.getMessage()));
+	}
+
+	@ExceptionHandler(TokenDeCuentaInvalidoException.class)
+	ResponseEntity<ErrorResponse> tokenDeCuentaInvalido(TokenDeCuentaInvalidoException excepcion) {
+		return ResponseEntity.badRequest().body(new ErrorResponse(excepcion.getMessage()));
+	}
+
+	@ExceptionHandler(ContrasenaInvalidaException.class)
+	ResponseEntity<ErrorResponse> contrasenaInvalida(ContrasenaInvalidaException excepcion) {
+		return ResponseEntity.badRequest().body(new ErrorResponse(excepcion.getMessage()));
 	}
 
 }

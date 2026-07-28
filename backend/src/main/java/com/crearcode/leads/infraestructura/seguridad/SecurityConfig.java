@@ -38,7 +38,15 @@ class SecurityConfig {
 						// en vez del status real.
 						.requestMatchers("/error").permitAll()
 						.requestMatchers(HttpMethod.POST, "/api/solicitudes").permitAll()
+						// Endpoints de cuenta uno a uno, sin comodín
+						// /api/auth/**: un endpoint nuevo bajo /api/auth
+						// no queda público por accidente.
 						.requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+						.requestMatchers(HttpMethod.POST, "/api/auth/registro").permitAll()
+						.requestMatchers(HttpMethod.POST, "/api/auth/verificacion").permitAll()
+						.requestMatchers(HttpMethod.POST, "/api/auth/reenvio-verificacion").permitAll()
+						.requestMatchers(HttpMethod.POST, "/api/auth/recuperacion").permitAll()
+						.requestMatchers(HttpMethod.POST, "/api/auth/restablecimiento").permitAll()
 						.anyRequest().authenticated())
 				.oauth2ResourceServer(oauth2 -> oauth2
 						.jwt(jwt -> jwt.decoder(jwtDecoder).jwtAuthenticationConverter(jwtAuthenticationConverter)))
