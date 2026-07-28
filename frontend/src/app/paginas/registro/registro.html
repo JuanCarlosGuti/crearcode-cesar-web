@@ -1,0 +1,115 @@
+<section class="contenedor pagina-cuenta">
+  <h1>{{ textos.titulo }}</h1>
+
+  @if (exito()) {
+    <p class="pagina-cuenta__exito" role="status">
+      {{ textos.exitoAntesDelCorreo }} <strong>{{ correoRegistrado() }}</strong>
+      {{ textos.exitoDespuesDelCorreo }}
+    </p>
+  } @else {
+    <p>{{ textos.intro }}</p>
+
+    @if (errorYaRegistrada()) {
+      <p class="pagina-cuenta__error" role="alert">
+        {{ textos.errorYaRegistrada }}
+        <a routerLink="/ingreso">{{ textos.enlaceIniciarSesion }}</a>
+        {{ textos.errorYaRegistradaO }}
+        <a routerLink="/recuperar-contrasena">{{ textos.enlaceRecuperar }}</a
+        >{{ textos.errorYaRegistradaCierre }}
+      </p>
+    }
+    @if (errorEnvio()) {
+      <p class="pagina-cuenta__error" role="alert">
+        No pudimos crear tu cuenta en este momento. Inténtalo de nuevo en unos minutos.
+      </p>
+    }
+
+    <form (submit)="enviar($event)" novalidate>
+      <div class="campo">
+        <label for="correo">{{ textos.labelCorreo }}</label>
+        <input
+          id="correo"
+          type="email"
+          autocomplete="email"
+          [formField]="formulario.correo"
+          [attr.aria-invalid]="formulario.correo().touched() && formulario.correo().invalid() ? 'true' : null"
+          [attr.aria-describedby]="
+            formulario.correo().touched() && formulario.correo().invalid() ? 'correo-error' : null
+          "
+        />
+        @if (formulario.correo().touched() && formulario.correo().invalid()) {
+          <p class="campo__error" id="correo-error">{{ formulario.correo().errors()[0]?.message }}</p>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="contrasena">{{ textos.labelContrasena }}</label>
+        <input
+          id="contrasena"
+          type="password"
+          autocomplete="new-password"
+          [formField]="formulario.contrasena"
+          [attr.aria-invalid]="
+            formulario.contrasena().touched() && formulario.contrasena().invalid() ? 'true' : null
+          "
+          [attr.aria-describedby]="
+            formulario.contrasena().touched() && formulario.contrasena().invalid() ? 'contrasena-error' : null
+          "
+        />
+        @if (formulario.contrasena().touched() && formulario.contrasena().invalid()) {
+          <p class="campo__error" id="contrasena-error">{{ formulario.contrasena().errors()[0]?.message }}</p>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="confirmacion">{{ textos.labelConfirmacion }}</label>
+        <input
+          id="confirmacion"
+          type="password"
+          autocomplete="new-password"
+          [formField]="formulario.confirmacion"
+          [attr.aria-invalid]="
+            formulario.confirmacion().touched() && formulario.confirmacion().invalid() ? 'true' : null
+          "
+          [attr.aria-describedby]="
+            formulario.confirmacion().touched() && formulario.confirmacion().invalid()
+              ? 'confirmacion-error'
+              : null
+          "
+        />
+        @if (formulario.confirmacion().touched() && formulario.confirmacion().invalid()) {
+          <p class="campo__error" id="confirmacion-error">
+            {{ formulario.confirmacion().errors()[0]?.message }}
+          </p>
+        }
+      </div>
+
+      <div class="campo campo--checkbox">
+        <input
+          id="aceptaPolitica"
+          type="checkbox"
+          [formField]="formulario.aceptaPolitica"
+          [attr.aria-invalid]="
+            formulario.aceptaPolitica().touched() && formulario.aceptaPolitica().invalid() ? 'true' : null
+          "
+          [attr.aria-describedby]="
+            formulario.aceptaPolitica().touched() && formulario.aceptaPolitica().invalid()
+              ? 'politica-error'
+              : null
+          "
+        />
+        <label for="aceptaPolitica">
+          {{ textos.labelPolitica }}
+          <a routerLink="/legales/politica-de-datos">{{ textos.enlacePolitica }}</a>
+        </label>
+        @if (formulario.aceptaPolitica().touched() && formulario.aceptaPolitica().invalid()) {
+          <p class="campo__error" id="politica-error">{{ formulario.aceptaPolitica().errors()[0]?.message }}</p>
+        }
+      </div>
+
+      <button type="submit" class="boton boton-primario" [disabled]="enviando()">
+        {{ enviando() ? textos.botonEnviando : textos.boton }}
+      </button>
+    </form>
+  }
+</section>

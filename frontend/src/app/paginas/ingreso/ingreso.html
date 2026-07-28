@@ -1,0 +1,67 @@
+<section class="contenedor pagina-cuenta">
+  <h1>{{ textos.titulo }}</h1>
+  <p>{{ textos.intro }}</p>
+
+  @if (errorCredenciales()) {
+    <p class="pagina-cuenta__error" role="alert">{{ textos.errorCredenciales }}</p>
+  }
+  @if (errorSinVerificar()) {
+    <p class="pagina-cuenta__error" role="alert">
+      {{ textos.errorSinVerificar }}
+      <a routerLink="/verificar-correo">{{ textos.enlaceReenviar }}</a
+      >.
+    </p>
+  }
+  @if (errorEnvio()) {
+    <p class="pagina-cuenta__error" role="alert">
+      No pudimos iniciar tu sesión en este momento. Inténtalo de nuevo en unos minutos.
+    </p>
+  }
+
+  <form (submit)="enviar($event)" novalidate>
+    <div class="campo">
+      <label for="correo">{{ textos.labelCorreo }}</label>
+      <input
+        id="correo"
+        type="email"
+        autocomplete="username"
+        [formField]="formulario.correo"
+        [attr.aria-invalid]="formulario.correo().touched() && formulario.correo().invalid() ? 'true' : null"
+        [attr.aria-describedby]="
+          formulario.correo().touched() && formulario.correo().invalid() ? 'correo-error' : null
+        "
+      />
+      @if (formulario.correo().touched() && formulario.correo().invalid()) {
+        <p class="campo__error" id="correo-error">{{ formulario.correo().errors()[0]?.message }}</p>
+      }
+    </div>
+
+    <div class="campo">
+      <label for="contrasena">{{ textos.labelContrasena }}</label>
+      <input
+        id="contrasena"
+        type="password"
+        autocomplete="current-password"
+        [formField]="formulario.contrasena"
+        [attr.aria-invalid]="
+          formulario.contrasena().touched() && formulario.contrasena().invalid() ? 'true' : null
+        "
+        [attr.aria-describedby]="
+          formulario.contrasena().touched() && formulario.contrasena().invalid() ? 'contrasena-error' : null
+        "
+      />
+      @if (formulario.contrasena().touched() && formulario.contrasena().invalid()) {
+        <p class="campo__error" id="contrasena-error">{{ formulario.contrasena().errors()[0]?.message }}</p>
+      }
+    </div>
+
+    <button type="submit" class="boton boton-primario" [disabled]="enviando()">
+      {{ enviando() ? textos.botonEnviando : textos.boton }}
+    </button>
+  </form>
+
+  <nav class="pagina-cuenta__enlaces" aria-label="Opciones de cuenta">
+    <a routerLink="/recuperar-contrasena">{{ textos.enlaceRecuperar }}</a>
+    <a routerLink="/registro">{{ textos.enlaceRegistro }}</a>
+  </nav>
+</section>

@@ -1,0 +1,94 @@
+/* Estilos compartidos de las páginas de cuenta de cliente (F8):
+   mismo lenguaje visual del login del panel admin. */
+
+.pagina-cuenta {
+  padding-block: var(--espacio-6);
+  max-width: 26rem;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+  margin-top: var(--espacio-4);
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-1);
+}
+
+.campo--checkbox {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--espacio-2);
+}
+
+label {
+  font-weight: 600;
+  color: var(--color-primario);
+}
+
+.campo--checkbox label {
+  font-weight: 400;
+}
+
+input:not([type='checkbox']) {
+  font: inherit;
+  padding: 0.65rem 0.85rem;
+  border: 2px solid color-mix(in srgb, var(--color-primario) 20%, white);
+  border-radius: var(--radio-borde);
+  background-color: var(--color-blanco);
+  color: var(--color-texto);
+}
+
+input:focus-visible {
+  outline: 3px solid var(--color-acento);
+  outline-offset: 1px;
+}
+
+input[aria-invalid='true'] {
+  border-color: var(--color-error);
+}
+
+.campo__error {
+  margin: 0;
+  color: var(--color-error);
+  font-size: 0.9rem;
+  flex-basis: 100%;
+}
+
+.pagina-cuenta__error {
+  margin-top: var(--espacio-3);
+  padding: var(--espacio-2) var(--espacio-3);
+  border-radius: var(--radio-borde);
+  background-color: color-mix(in srgb, var(--color-error) 10%, white);
+  color: var(--color-error);
+}
+
+.pagina-cuenta__error a {
+  color: inherit;
+  font-weight: 600;
+}
+
+.pagina-cuenta__exito {
+  margin-top: var(--espacio-3);
+  padding: var(--espacio-2) var(--espacio-3);
+  border-radius: var(--radio-borde);
+  background-color: color-mix(in srgb, var(--color-exito) 12%, white);
+  color: var(--color-texto);
+}
+
+.pagina-cuenta__enlaces {
+  margin-top: var(--espacio-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-1);
+}
+
+button[type='submit']:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}

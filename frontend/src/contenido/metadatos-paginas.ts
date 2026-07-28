@@ -33,3 +33,19 @@ export const METADATOS_CONTACTO = {
   titulo: 'Contacto — Crear Code Cesar',
   descripcion: 'Cuéntanos qué necesita tu negocio. Te contactamos pronto — sin compromiso.',
 };
+
+export const METADATOS_REGISTRO = {
+  titulo: 'Crea tu cuenta — Crear Code Cesar',
+  descripcion:
+    'Regístrate gratis para acceder a los servicios para clientes de Crear Code Cesar. Toma un minuto.',
+};
+
+export const METADATOS_INGRESO = {
+  titulo: 'Inicia sesión — Crear Code Cesar',
+  descripcion: 'Entra a tu cuenta de Crear Code Cesar.',
+};
+
+export const METADATOS_RECUPERAR = {
+  titulo: 'Recupera tu contraseña — Crear Code Cesar',
+  descripcion: 'Te enviamos un enlace al correo para crear una contraseña nueva.',
+};
