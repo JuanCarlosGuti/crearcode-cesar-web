@@ -2,13 +2,14 @@ import { Component, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { SERVICIOS } from '../../../contenido/servicios';
+import { AparecerAlVer } from '../../componentes/aparecer-al-ver/aparecer-al-ver';
 import { Faq } from '../../componentes/faq/faq';
 import { WhatsappCta } from '../../componentes/whatsapp-cta/whatsapp-cta';
 import { establecerMetadatosDePagina } from '../../nucleo/metadatos-pagina';
 
 @Component({
   selector: 'app-pagina-servicio',
-  imports: [RouterLink, Faq, WhatsappCta],
+  imports: [RouterLink, Faq, WhatsappCta, AparecerAlVer],
   templateUrl: './servicio.html',
   styleUrl: './servicio.scss',
 })

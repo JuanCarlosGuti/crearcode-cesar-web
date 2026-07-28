@@ -5,6 +5,7 @@ import { FormField, required, pattern, schema, form, validate } from '@angular/f
 
 import { AuthApi } from '../../api/auth-api';
 import {
+  BENEFICIOS_CUENTA,
   CUENTA,
   MENSAJE_ERROR_CONTRASENAS_NO_COINCIDEN,
   MENSAJE_ERROR_CONTRASENA_CORTA,
@@ -59,6 +60,7 @@ export class RegistroPage {
   private readonly authApi = inject(AuthApi);
 
   protected readonly textos = CUENTA.registro;
+  protected readonly beneficios = BENEFICIOS_CUENTA;
   protected readonly enviando = signal(false);
   protected readonly exito = signal(false);
   protected readonly correoRegistrado = signal('');

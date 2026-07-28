@@ -51,6 +51,17 @@ describe('RegistroPage', () => {
     expect(el.querySelector('a[href="/legales/politica-de-datos"]')).not.toBeNull();
   });
 
+  it('muestra los beneficios de la cuenta junto al formulario (HU-34)', async () => {
+    const { el } = await crearPagina();
+
+    expect(el.querySelectorAll('.beneficio-compacto').length).toBe(3);
+    const badges = Array.from(el.querySelectorAll('.beneficio-compacto .badge'));
+    expect(badges.length).toBe(2);
+    for (const badge of badges) {
+      expect(badge.textContent).toContain('Muy pronto');
+    }
+  });
+
   it('bloquea el envio si los campos estan vacios', async () => {
     const { fixture, el } = await crearPagina();
 

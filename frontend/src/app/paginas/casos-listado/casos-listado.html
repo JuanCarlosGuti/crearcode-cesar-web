@@ -4,7 +4,7 @@
     Los siguientes casos son ejemplos de referencia y se irán reemplazando por casos reales.
   </p>
 
-  <div class="pagina-casos__rejilla">
+  <div class="pagina-casos__rejilla" aparecerAlVer>
     @for (caso of casos; track caso.slug) {
       <a [routerLink]="['/casos', caso.slug]" class="tarjeta-caso">
         <h2>{{ caso.titulo }}</h2>

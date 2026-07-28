@@ -4,7 +4,7 @@
   @if (articulos.length === 0) {
     <p>Todavía no hay artículos publicados. Vuelve pronto.</p>
   } @else {
-    <ul class="pagina-blog__lista">
+    <ul class="pagina-blog__lista" aparecerAlVer>
       @for (articulo of articulos; track articulo.slug) {
         <li>
           <a [routerLink]="['/blog', articulo.slug]" class="tarjeta-articulo">

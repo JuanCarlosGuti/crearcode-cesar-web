@@ -2,12 +2,12 @@
   <section class="contenedor pagina-servicio">
     <h1>{{ s.nombre }}</h1>
 
-    <section class="pagina-servicio__bloque" aria-labelledby="titulo-problema">
+    <section class="pagina-servicio__bloque" aparecerAlVer aria-labelledby="titulo-problema">
       <h2 id="titulo-problema">El problema que resolvemos</h2>
       <p>{{ s.problema }}</p>
     </section>
 
-    <section class="pagina-servicio__bloque" aria-labelledby="titulo-incluye">
+    <section class="pagina-servicio__bloque" aparecerAlVer aria-labelledby="titulo-incluye">
       <h2 id="titulo-incluye">Qué incluye</h2>
       <ul>
         @for (item of s.incluye; track item) {
@@ -16,7 +16,7 @@
       </ul>
     </section>
 
-    <section class="pagina-servicio__bloque" aria-labelledby="titulo-proceso">
+    <section class="pagina-servicio__bloque" aparecerAlVer aria-labelledby="titulo-proceso">
       <h2 id="titulo-proceso">Nuestro proceso</h2>
       <ol class="pagina-servicio__proceso">
         @for (paso of s.proceso; track paso.titulo; let numero = $index) {
@@ -31,7 +31,7 @@
       </ol>
     </section>
 
-    <section class="pagina-servicio__bloque" aria-labelledby="titulo-entregables">
+    <section class="pagina-servicio__bloque" aparecerAlVer aria-labelledby="titulo-entregables">
       <h2 id="titulo-entregables">Qué te entregamos</h2>
       <ul>
         @for (item of s.entregables; track item) {
@@ -40,7 +40,7 @@
       </ul>
     </section>
 
-    <section class="pagina-servicio__bloque" aria-labelledby="titulo-faq">
+    <section class="pagina-servicio__bloque" aparecerAlVer aria-labelledby="titulo-faq">
       <h2 id="titulo-faq">Preguntas frecuentes</h2>
       <app-faq [preguntas]="s.faq" />
     </section>

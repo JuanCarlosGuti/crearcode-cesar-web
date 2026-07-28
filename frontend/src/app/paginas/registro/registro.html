@@ -1,4 +1,4 @@
-<section class="contenedor pagina-cuenta">
+<section class="contenedor pagina-cuenta pagina-registro">
   <h1>{{ textos.titulo }}</h1>
 
   @if (exito()) {
@@ -7,6 +7,8 @@
       {{ textos.exitoDespuesDelCorreo }}
     </p>
   } @else {
+    <div class="pagina-registro__columnas">
+      <div class="pagina-registro__formulario">
     <p>{{ textos.intro }}</p>
 
     @if (errorYaRegistrada()) {
@@ -111,5 +113,22 @@
         {{ enviando() ? textos.botonEnviando : textos.boton }}
       </button>
     </form>
+      </div>
+
+      <aside class="pagina-registro__beneficios" aria-label="Beneficios de tu cuenta">
+        <h2>{{ beneficios.titulo }}</h2>
+        @for (tarjeta of beneficios.tarjetas; track tarjeta.titulo) {
+          <div class="beneficio-compacto">
+            <h3>
+              {{ tarjeta.titulo }}
+              @if (tarjeta.muyPronto) {
+                <span class="badge badge-muy-pronto">{{ beneficios.etiquetaMuyPronto }}</span>
+              }
+            </h3>
+            <p>{{ tarjeta.descripcion }}</p>
+          </div>
+        }
+      </aside>
+    </div>
   }
 </section>

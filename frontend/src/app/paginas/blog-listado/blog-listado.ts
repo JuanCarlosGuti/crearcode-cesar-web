@@ -3,11 +3,12 @@ import { RouterLink } from '@angular/router';
 
 import { ARTICULOS } from '../../../contenido/blog';
 import { METADATOS_BLOG_LISTADO } from '../../../contenido/metadatos-paginas';
+import { AparecerAlVer } from '../../componentes/aparecer-al-ver/aparecer-al-ver';
 import { establecerMetadatosDePagina } from '../../nucleo/metadatos-pagina';
 
 @Component({
   selector: 'app-pagina-blog-listado',
-  imports: [RouterLink],
+  imports: [RouterLink, AparecerAlVer],
   templateUrl: './blog-listado.html',
   styleUrl: './blog-listado.scss',
 })

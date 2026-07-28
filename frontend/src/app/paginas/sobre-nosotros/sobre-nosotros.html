@@ -1,12 +1,12 @@
 <section class="contenedor pagina-sobre-nosotros">
   <h1>Sobre nosotros</h1>
 
-  <section class="pagina-sobre-nosotros__bloque">
+  <section class="pagina-sobre-nosotros__bloque" aparecerAlVer>
     <h2>Nuestra historia</h2>
     <p>{{ datos.historia }}</p>
   </section>
 
-  <section class="pagina-sobre-nosotros__bloque">
+  <section class="pagina-sobre-nosotros__bloque" aparecerAlVer>
     <h2>El fundador</h2>
     <p>{{ datos.fundador.perfil }}</p>
     <a [href]="datos.fundador.linkedinUrl" target="_blank" rel="noopener">
@@ -14,12 +14,12 @@
     </a>
   </section>
 
-  <section class="pagina-sobre-nosotros__bloque">
+  <section class="pagina-sobre-nosotros__bloque" aparecerAlVer>
     <h2>Cómo trabajamos: documentar, probar, construir</h2>
     <p>{{ datos.formaDeTrabajar }}</p>
   </section>
 
-  <section class="pagina-sobre-nosotros__bloque">
+  <section class="pagina-sobre-nosotros__bloque" aparecerAlVer>
     <h2>Nuestros valores</h2>
     <div class="pagina-sobre-nosotros__valores">
       @for (valor of valores; track valor.titulo) {
