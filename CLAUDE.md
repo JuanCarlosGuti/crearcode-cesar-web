@@ -20,11 +20,14 @@ Lighthouse 97-98/100/100/100, 21/21 e2e con axe, verificación manual).
 La fase F9 — asistente IA con Groq (ISS-108 a ISS-118) — está
 TERMINADA, APROBADA y PUBLICADA (28 jul 2026), verificada con Groq
 real en local (respuestas ancladas, sin inventar precios,
-escalamiento funcionando). Para que el asistente viva en producción
-falta solo la variable `GROQ_API_KEY` en el dashboard de Render (sin
-ella responde el mensaje de indisponibilidad con la alternativa de
-WhatsApp — el resto del sitio no se afecta). La fase F10 (demo de
-diseño con IA) no arranca sin OK explícito del usuario.
+escalamiento funcionando). La `GROQ_API_KEY` ya está en Render y el
+asistente quedó verificado EN PRODUCCIÓN (28 jul 2026: pregunta de
+precio respondida sin cifras inventadas y con escalamiento). Decisión
+del usuario (28 jul 2026): la configuración del correo de producción
+(`MAIL_USERNAME`/`MAIL_PASSWORD` en Render) queda **pospuesta hasta
+las pruebas del MVP** — antes de eso el usuario quiere pulir
+funcionalidad y estética. La fase F10 (demo de diseño con IA) no
+arranca sin OK explícito del usuario.
 La v1 está PUBLICADA en producción desde el 27 jul
 2026: Render (capa gratis) + Neon. De la Etapa 2 solo queda abierta la
 compra del dominio propio (no bloquea).**
