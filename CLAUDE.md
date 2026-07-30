@@ -490,5 +490,9 @@ cómputo, único costo fijo el dominio (aún no comprado).
 
 - Dominio web definitivo y correo corporativo final con ese dominio
   (decisión al cierre de la fase F7).
+- Revisar el eslogan del hero ("Tecnología que trabaja para tu
+  negocio, no al revés.") — el usuario quiere mirarlo más adelante,
+  dentro del pulido funcional/estético previo a las pruebas del MVP
+  (29 jul 2026).
 - Aprobación explícita de [docs/10-vision-v2.md](docs/10-vision-v2.md)
   para arrancar la Etapa 3 (después de publicar la v1).
