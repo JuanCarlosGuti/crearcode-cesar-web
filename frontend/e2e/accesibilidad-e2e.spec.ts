@@ -24,6 +24,7 @@ test.beforeEach(async ({ page }) => {
 const PAGINAS_PUBLICAS = [
   { nombre: 'Home', ruta: '/' },
   { nombre: 'Servicio (Desarrollo a la medida)', ruta: '/servicios/desarrollo-a-la-medida' },
+  { nombre: 'Herramientas', ruta: '/herramientas' },
   { nombre: 'Contacto', ruta: '/contacto' },
   // Paginas de cuenta de cliente (fase F8). /verificar-correo sin token
   // muestra el estado de error con el formulario de reenvio — tambien

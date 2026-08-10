@@ -41,6 +41,11 @@ export const routes: Routes = [
     title: 'Blog — Crear Code Cesar',
   },
   {
+    path: 'herramientas',
+    loadComponent: () => import('./paginas/herramientas/herramientas').then((m) => m.HerramientasPage),
+    title: 'Herramientas para tu negocio — Crear Code Cesar',
+  },
+  {
     path: 'contacto',
     loadComponent: () => import('./paginas/contacto/contacto').then((m) => m.ContactoPage),
     title: 'Contacto — Crear Code Cesar',

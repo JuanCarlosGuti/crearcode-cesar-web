@@ -23,6 +23,12 @@ export const METADATOS_SOBRE_NOSOTROS = {
     'Conoce la historia, el fundador y la forma de trabajar de Crear Code Cesar S.A.S., empresa de software con sede en Valledupar y alcance nacional.',
 };
 
+export const METADATOS_HERRAMIENTAS = {
+  titulo: 'Herramientas para tu negocio — Crear Code Cesar',
+  descripcion:
+    'Prueba gratis el asistente con IA y el cotizador de proyectos de Crear Code Cesar: herramientas para que tu pyme vea lo que la tecnología puede hacer, sin registrarte.',
+};
+
 export const METADATOS_BLOG_LISTADO = {
   titulo: 'Blog y recursos — Crear Code Cesar',
   descripcion:

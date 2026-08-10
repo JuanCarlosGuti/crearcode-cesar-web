@@ -23,6 +23,7 @@ describe('generarSitemap', () => {
     expect(xml).toContain(`<loc>${BASE_URL}/sobre-nosotros</loc>`);
     expect(xml).toContain(`<loc>${BASE_URL}/blog</loc>`);
     expect(xml).toContain(`<loc>${BASE_URL}/contacto</loc>`);
+    expect(xml).toContain(`<loc>${BASE_URL}/herramientas</loc>`);
     expect(xml).toContain(`<loc>${BASE_URL}/legales/politica-de-datos</loc>`);
     expect(xml).toContain(`<loc>${BASE_URL}/legales/terminos</loc>`);
   });

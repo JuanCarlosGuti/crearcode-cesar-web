@@ -1,0 +1,83 @@
+.herramientas-intro {
+  color: var(--color-texto-secundario);
+  font-size: 1.05rem;
+  max-width: 40rem;
+  margin: var(--espacio-1) 0 var(--espacio-3);
+}
+
+.herramientas-grilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: var(--espacio-2);
+}
+
+.herramienta-tarjeta {
+  background-color: var(--color-blanco);
+  border-radius: var(--radio-borde-grande);
+  padding: var(--espacio-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-1);
+}
+
+.herramienta-tarjeta--inactiva {
+  opacity: 0.88;
+}
+
+.herramienta-tarjeta__encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-1);
+}
+
+.herramienta-tarjeta__encabezado h2 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.herramienta-tarjeta p {
+  margin: 0;
+  color: var(--color-texto-secundario);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.herramienta-tarjeta__nota {
+  font-size: 0.82rem;
+}
+
+.herramientas-cotizador {
+  background-color: color-mix(in srgb, var(--color-primario) 4%, white);
+}
+
+.contenedor--angosto {
+  max-width: 46rem;
+}
+
+.herramientas-cuenta {
+  background: var(--gradiente-marca);
+  color: var(--color-blanco);
+  border-radius: var(--radio-borde-grande);
+  padding: var(--espacio-3);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-2);
+}
+
+.herramientas-cuenta h2 {
+  color: var(--color-blanco);
+  margin: 0 0 0.35rem;
+}
+
+.herramientas-cuenta p {
+  margin: 0;
+  color: var(--color-fondo);
+  max-width: 34rem;
+}
+
+.herramientas-cuenta .boton {
+  flex-shrink: 0;
+}

@@ -8,6 +8,7 @@ import { BASE_URL } from '../contenido/sitio';
 // las de token/area privada quedan ademas excluidas en robots.txt.
 const RUTAS_ESTATICAS: readonly string[] = [
   '/',
+  '/herramientas',
   '/casos',
   '/sobre-nosotros',
   '/blog',

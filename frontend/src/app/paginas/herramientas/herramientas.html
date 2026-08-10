@@ -1,0 +1,39 @@
+<section class="seccion">
+  <div class="contenedor">
+    <h1>{{ datos.titulo }}</h1>
+    <p class="herramientas-intro">{{ datos.intro }}</p>
+
+    <div class="herramientas-grilla" aparecerAlVer>
+      @for (tarjeta of datos.tarjetas; track tarjeta.titulo) {
+        <article class="herramienta-tarjeta tarjeta-elevada" [class.herramienta-tarjeta--inactiva]="!tarjeta.activa">
+          <div class="herramienta-tarjeta__encabezado">
+            <h2>{{ tarjeta.titulo }}</h2>
+            @if (!tarjeta.activa) {
+              <span class="badge-muy-pronto">{{ datos.etiquetaMuyPronto }}</span>
+            }
+          </div>
+          <p>{{ tarjeta.descripcion }}</p>
+          <p class="herramienta-tarjeta__nota">{{ tarjeta.nota }}</p>
+        </article>
+      }
+    </div>
+  </div>
+</section>
+
+<section class="seccion herramientas-cotizador" id="cotizador">
+  <div class="contenedor contenedor--angosto">
+    <app-cotizador />
+  </div>
+</section>
+
+<section class="seccion">
+  <div class="contenedor">
+    <div class="herramientas-cuenta" aparecerAlVer>
+      <div>
+        <h2>{{ datos.cuenta.titulo }}</h2>
+        <p>{{ datos.cuenta.texto }}</p>
+      </div>
+      <a routerLink="/registro" class="boton boton-primario">{{ datos.cuenta.cta }}</a>
+    </div>
+  </div>
+</section>
