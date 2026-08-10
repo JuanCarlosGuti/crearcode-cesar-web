@@ -2,8 +2,8 @@
  * Datos del cotizador interactivo (fase F10a, HU-39).
  * Fuente: docs/08 §Cotizador + prototipo aprobado (docs/10, decisión 10).
  *
- * Los rangos son la PROPUESTA del prototipo — el usuario debe
- * aprobarlos antes de publicar F10a (docs/10, decisión 13).
+ * Rangos validados contra el mercado colombiano 2026 y APROBADOS por
+ * el usuario el 10 ago 2026 (docs/08 §Cotizador).
  */
 
 export interface PasoDeCotizador {

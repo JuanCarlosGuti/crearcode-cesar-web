@@ -607,8 +607,8 @@ redacta al arrancar cada una, con la misma regla de honestidad.
   **{rango}**." + "Cada proyecto se cotiza a la medida: este rango es
   solo una referencia para que sepas en qué orden de magnitud te
   mueves. El alcance final lo definimos juntos."
-- **Rangos VALIDADOS contra el mercado (10 ago 2026, a aprobar por el
-  usuario antes de publicar)**: algo puntual → COP 4–9 millones ·
+- **Rangos VALIDADOS contra el mercado y APROBADOS por el usuario
+  (10 ago 2026)**: algo puntual → COP 4–9 millones ·
   varias funciones conectadas → COP 9–25 millones · sistema completo →
   COP 25–80 millones. Referencias públicas del mercado colombiano
   2026: web corporativa pyme 3.5–8M; tienda online 6–20M+; software a
