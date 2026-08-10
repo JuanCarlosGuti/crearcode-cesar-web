@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { Router, provideRouter } from '@angular/router';
+import { provideRouter } from '@angular/router';
 
-import { SERVICIOS } from '../../../contenido/servicios';
 import { SesionService } from '../../nucleo/sesion';
 import { Header } from './header';
 
@@ -21,6 +20,10 @@ describe('Header', () => {
     });
   });
 
+  afterEach(() => {
+    sessionStorage.clear();
+  });
+
   it('muestra el nombre de la empresa', async () => {
     const fixture = TestBed.createComponent(Header);
     await fixture.whenStable();
@@ -37,12 +40,14 @@ describe('Header', () => {
     expect(enlaces.length).toBe(3);
   });
 
-  it('incluye el CTA doble: agendar consulta y WhatsApp', async () => {
+  it('incluye el CTA doble del prototipo: agenda y crear cuenta (ISS-135)', async () => {
     const fixture = TestBed.createComponent(Header);
     await fixture.whenStable();
+    const cta = fixture.nativeElement.querySelector('.cabecera__cta') as HTMLElement;
 
-    expect(fixture.nativeElement.querySelector('a[href="/contacto"]')).toBeTruthy();
-    expect(fixture.nativeElement.querySelector('a[href^="https://wa.me/"]')).toBeTruthy();
+    expect(cta.querySelector('a[href="/contacto"]')?.textContent).toContain('Agenda tu consulta');
+    expect(cta.querySelector('a[href="/registro"]')?.textContent).toContain('Crear cuenta');
+    expect(fixture.nativeElement.querySelector('a[href^="https://wa.me/"]')).toBeNull();
   });
 
   it('alterna el menu movil al hacer click en el boton', async () => {
@@ -57,16 +62,18 @@ describe('Header', () => {
     expect(boton.getAttribute('aria-expanded')).toBe('true');
   });
 
-  it('usa el mensaje de WhatsApp propio del servicio al navegar a su pagina', async () => {
+  it('con sesion de cliente el CTA de cuenta es Mi cuenta y no duplica el enlace en el nav', async () => {
+    TestBed.inject(SesionService).iniciarSesion({
+      token: 'token-cliente',
+      rol: 'CLIENTE',
+      correo: 'cliente@correo-de-prueba.com',
+    });
     const fixture = TestBed.createComponent(Header);
     await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
 
-    const servicio = SERVICIOS[1];
-    await TestBed.inject(Router).navigateByUrl(`/servicios/${servicio.slug}`);
-    await fixture.whenStable();
-
-    const enlace = fixture.nativeElement.querySelector('a[href^="https://wa.me/"]') as HTMLAnchorElement;
-    expect(enlace.href).toContain(encodeURIComponent(servicio.mensajeWhatsapp));
+    expect(el.querySelectorAll('a[href="/mi-cuenta"]').length).toBe(1);
+    expect(el.querySelector('.cabecera__cta a[href="/registro"]')).toBeNull();
   });
 
   it('sin sesion muestra el enlace Ingresar', async () => {

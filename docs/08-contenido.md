@@ -85,8 +85,12 @@ v1 — regla de honestidad, decisión 13 de docs/10):**
 > videollamada, sin costo y sin venta forzada. Salimos con un
 > diagnóstico claro, así no trabajemos juntos." + CTA doble.
 
-**CTA doble (aparece también en header/footer de todo el sitio):**
+**CTA doble (Home y footer):**
 > **Agenda tu consulta gratuita** · **Escríbenos por WhatsApp**
+> Desde el rediseño F10e (ISS-135) el **header** lleva su propio doble
+> CTA: **Agenda tu consulta** + **Crear cuenta** (o **Mi cuenta** con
+> sesión iniciada). El WhatsApp sigue en footer, hero, cierre y en el
+> escalamiento del asistente.
 
 **Mensaje precargado de WhatsApp (Home):**
 > Hola, vengo del sitio web de Crear Code Cesar y quiero saber más sobre

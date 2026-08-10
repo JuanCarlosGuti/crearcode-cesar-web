@@ -27,21 +27,28 @@
       <a routerLink="/sobre-nosotros" routerLinkActive="activo" (click)="cerrarMenu()">Sobre nosotros</a>
       <a routerLink="/blog" routerLinkActive="activo" (click)="cerrarMenu()">Blog</a>
       <a routerLink="/contacto" routerLinkActive="activo" (click)="cerrarMenu()">Contacto</a>
-      @if (hidratado()) {
-        @if (sesion.estaAutenticado()) {
-          <a [routerLink]="enlaceCuenta()" routerLinkActive="activo" (click)="cerrarMenu()">{{
-            textosCuenta.miCuenta
-          }}</a>
-        } @else {
-          <a routerLink="/ingreso" routerLinkActive="activo" (click)="cerrarMenu()">{{
-            textosCuenta.ingresar
-          }}</a>
-        }
+      @if (hidratado() && !sesion.estaAutenticado()) {
+        <a routerLink="/ingreso" routerLinkActive="activo" (click)="cerrarMenu()">{{
+          textosCuenta.ingresar
+        }}</a>
       }
 
+      <!-- Doble CTA del prototipo (ISS-135): agenda + cuenta. El de
+           cuenta depende de la sesion (sessionStorage), asi que espera
+           a la hidratacion como el enlace Ingresar. -->
       <div class="cabecera__cta cta-doble">
         <a routerLink="/contacto" class="boton boton-primario" (click)="cerrarMenu()">Agenda tu consulta</a>
-        <app-whatsapp-cta [mensaje]="mensajeWhatsapp()" etiqueta="WhatsApp" />
+        @if (hidratado()) {
+          @if (sesion.estaAutenticado()) {
+            <a [routerLink]="enlaceCuenta()" class="boton boton-secundario" (click)="cerrarMenu()">{{
+              textosCuenta.miCuenta
+            }}</a>
+          } @else {
+            <a routerLink="/registro" class="boton boton-secundario" (click)="cerrarMenu()">{{
+              textosCuenta.crearCuenta
+            }}</a>
+          }
+        }
       </div>
     </nav>
   </div>

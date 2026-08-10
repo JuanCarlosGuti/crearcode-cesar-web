@@ -75,6 +75,7 @@ export const CUENTA = {
   header: {
     ingresar: 'Ingresar',
     miCuenta: 'Mi cuenta',
+    crearCuenta: 'Crear cuenta',
   },
 } as const;
 

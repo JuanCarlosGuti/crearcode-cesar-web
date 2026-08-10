@@ -50,6 +50,26 @@ test('el centro muestra las herramientas con honestidad de estados', async ({ pa
   await expect(page.locator('.badge-muy-pronto')).toHaveCount(0);
 });
 
+test.describe('header movil (ISS-135)', () => {
+  test.use({ viewport: { width: 375, height: 812 } });
+
+  test('el menu hamburguesa abre con el doble CTA, navega y se cierra', async ({ page }) => {
+    await page.goto('/');
+    const boton = page.locator('.cabecera__boton-menu');
+    await expect(boton).toBeVisible();
+    await expect(page.locator('#menu-principal')).not.toBeVisible();
+
+    await boton.click();
+    await expect(page.locator('#menu-principal')).toBeVisible();
+    await expect(page.locator('#menu-principal .cabecera__cta a[href="/contacto"]')).toBeVisible();
+    await expect(page.locator('#menu-principal .cabecera__cta a[href="/registro"]')).toBeVisible();
+
+    await page.locator('#menu-principal > a[href="/herramientas"]').click();
+    await expect(page).toHaveURL(/\/herramientas$/);
+    await expect(page.locator('#menu-principal')).not.toBeVisible();
+  });
+});
+
 test('el aside de una pagina de servicio lleva al diagnostico anclado (ISS-134)', async ({ page }) => {
   await page.goto('/servicios/desarrollo-a-la-medida');
 
