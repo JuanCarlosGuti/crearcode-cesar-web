@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.crearcode.leads.dominio.ConversacionDeAsistente;
 import com.crearcode.leads.dominio.IdentidadDelVisitante;
 import com.crearcode.leads.dominio.MensajeDeChat;
+import com.crearcode.leads.dominio.GenerarDemoDeDisenoUseCase;
 import com.crearcode.leads.dominio.GenerarDiagnosticoUseCase;
+import com.crearcode.leads.dominio.SolicitudDeDemo;
 import com.crearcode.leads.dominio.MensajeDeChatInvalidoException;
 import com.crearcode.leads.dominio.NegocioSimulado;
 import com.crearcode.leads.dominio.ParDeDiagnostico;
@@ -36,12 +38,14 @@ class AsistenteController {
 	private final ResponderAlVisitanteUseCase responderAlVisitante;
 	private final SimularChatbotUseCase simularChatbot;
 	private final GenerarDiagnosticoUseCase generarDiagnostico;
+	private final GenerarDemoDeDisenoUseCase generarDemo;
 
 	AsistenteController(ResponderAlVisitanteUseCase responderAlVisitante, SimularChatbotUseCase simularChatbot,
-			GenerarDiagnosticoUseCase generarDiagnostico) {
+			GenerarDiagnosticoUseCase generarDiagnostico, GenerarDemoDeDisenoUseCase generarDemo) {
 		this.responderAlVisitante = responderAlVisitante;
 		this.simularChatbot = simularChatbot;
 		this.generarDiagnostico = generarDiagnostico;
+		this.generarDemo = generarDemo;
 	}
 
 	@PostMapping("/mensajes")
@@ -90,6 +94,22 @@ class AsistenteController {
 				: IdentidadDelVisitante.anonima(idSesionAnonima);
 
 		return ResponseEntity.ok(InformeDiagnosticoResponse.desde(generarDiagnostico.generar(respuestas, identidad)));
+	}
+
+	/**
+	 * SOLO registrados (HU-42): la ruta NO está en permitAll, así que
+	 * Spring Security exige el Bearer antes de llegar aquí; el caso de
+	 * uso vuelve a validar la identidad (defensa en profundidad).
+	 */
+	@PostMapping("/demo-diseno")
+	ResponseEntity<BocetoDemoResponse> demoDiseno(
+			@Valid @RequestBody DemoDisenoRequest request,
+			Authentication autenticacion) {
+		SolicitudDeDemo solicitud = new SolicitudDeDemo(request.sector(), request.queHace(),
+				request.queNecesita());
+		IdentidadDelVisitante identidad = IdentidadDelVisitante.registrada(autenticacion.getName());
+
+		return ResponseEntity.ok(BocetoDemoResponse.desde(generarDemo.generar(solicitud, identidad)));
 	}
 
 	private static RolDeMensaje rolDesde(String rol) {

@@ -65,6 +65,8 @@ class RateLimitingFilter extends OncePerRequestFilter {
 						Duration.ofMinutes(ventanaRecuperacionMinutos)),
 				new Regla("POST", "/api/auth/restablecimiento", maxRestablecimientos,
 						Duration.ofMinutes(ventanaRestablecimientoMinutos)),
+				new Regla("POST", "/api/asistente/demo-diseno", maxMensajesAsistente,
+						Duration.ofMinutes(ventanaAsistenteMinutos)),
 				new Regla("POST", "/api/asistente/diagnostico", maxMensajesAsistente,
 						Duration.ofMinutes(ventanaAsistenteMinutos)),
 				new Regla("POST", "/api/asistente/simulador", maxMensajesAsistente,

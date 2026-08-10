@@ -19,7 +19,9 @@ import com.crearcode.leads.dominio.ConsentimientoRequeridoException;
 import com.crearcode.leads.dominio.ContrasenaInvalidaException;
 import com.crearcode.leads.dominio.ConversacionInvalidaException;
 import com.crearcode.leads.dominio.DatosDeContactoInvalidosException;
+import com.crearcode.leads.dominio.DemoSoloParaRegistradosException;
 import com.crearcode.leads.dominio.DiagnosticoInvalidoException;
+import com.crearcode.leads.dominio.SolicitudDeDemoInvalidaException;
 import com.crearcode.leads.dominio.MensajeDeChatInvalidoException;
 import com.crearcode.leads.dominio.NegocioSimuladoInvalidoException;
 import com.crearcode.leads.dominio.TokenDeCuentaInvalidoException;
@@ -96,7 +98,8 @@ class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler({ MensajeDeChatInvalidoException.class, ConversacionInvalidaException.class,
-			NegocioSimuladoInvalidoException.class, DiagnosticoInvalidoException.class })
+			NegocioSimuladoInvalidoException.class, DiagnosticoInvalidoException.class,
+			SolicitudDeDemoInvalidaException.class })
 	ResponseEntity<ErrorResponse> conversacionInvalida(RuntimeException excepcion) {
 		return ResponseEntity.badRequest().body(new ErrorResponse(excepcion.getMessage()));
 	}
@@ -113,6 +116,12 @@ class GlobalExceptionHandler {
 	 * el visitante: asistente no disponible, con la alternativa humana
 	 * (invariante 3 del contexto asistente).
 	 */
+	@ExceptionHandler(DemoSoloParaRegistradosException.class)
+	ResponseEntity<ErrorAsistenteResponse> demoSoloParaRegistrados(DemoSoloParaRegistradosException excepcion) {
+		return ResponseEntity.status(HttpStatus.FORBIDDEN)
+				.body(new ErrorAsistenteResponse(excepcion.getMessage(), "solo-registrados"));
+	}
+
 	@ExceptionHandler({ LimiteGlobalAlcanzadoException.class, AsistenteNoDisponibleException.class })
 	ResponseEntity<ErrorAsistenteResponse> asistenteNoDisponible(RuntimeException excepcion) {
 		return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
