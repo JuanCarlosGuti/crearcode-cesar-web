@@ -46,10 +46,13 @@ export const COTIZADOR = {
       opciones: ['Sin afán, en los próximos meses', 'En 4 a 8 semanas', 'Lo antes posible'],
     },
   ] as readonly PasoDeCotizador[],
+  // Validados contra rangos publicados del mercado colombiano 2026
+  // (web corporativa pyme 3.5-8M, sistemas a medida 8-80M+, apps
+  // 35-80M) — investigación del 10 ago 2026, ver docs/08.
   rangosPorAlcance: {
     'Algo puntual, una sola función': 'COP 4 – 9 millones',
-    'Varias funciones conectadas': 'COP 9 – 22 millones',
-    'Un sistema completo para el negocio': 'COP 22 – 60 millones',
+    'Varias funciones conectadas': 'COP 9 – 25 millones',
+    'Un sistema completo para el negocio': 'COP 25 – 80 millones',
   } as Record<string, string>,
   resultado: {
     etiqueta: 'Rango orientativo para tu caso',

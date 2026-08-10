@@ -607,10 +607,14 @@ redacta al arrancar cada una, con la misma regla de honestidad.
   **{rango}**." + "Cada proyecto se cotiza a la medida: este rango es
   solo una referencia para que sepas en qué orden de magnitud te
   mueves. El alcance final lo definimos juntos."
-- **Rangos PROPUESTOS por el prototipo (a aprobar por el usuario
-  antes de publicar)**: algo puntual → COP 4–9 millones · varias
-  funciones conectadas → COP 9–22 millones · sistema completo →
-  COP 22–60 millones.
+- **Rangos VALIDADOS contra el mercado (10 ago 2026, a aprobar por el
+  usuario antes de publicar)**: algo puntual → COP 4–9 millones ·
+  varias funciones conectadas → COP 9–25 millones · sistema completo →
+  COP 25–80 millones. Referencias públicas del mercado colombiano
+  2026: web corporativa pyme 3.5–8M; tienda online 6–20M+; software a
+  medida 8–80M+; app móvil MVP 16–28M, media 35–80M, avanzada 100M+.
+  Nuestros rangos quedan dentro del mercado, en la franja media-baja
+  (coherente con posicionamiento de entrada de la empresa).
 - **CTAs**: Agenda tu consulta gratuita (prellena el formulario de
   contacto con la selección) · WhatsApp (mensaje prellenado con la
   selección) · Empezar de nuevo

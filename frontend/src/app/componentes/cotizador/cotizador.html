@@ -1,0 +1,39 @@
+<div class="cotizador tarjeta-elevada">
+  <div class="cotizador-encabezado">
+    <h3>{{ textos.titulo }}</h3>
+    <span class="cotizador-progreso-etiqueta">Paso {{ etiquetaProgreso() }}</span>
+  </div>
+  <p class="cotizador-intro">{{ textos.intro }}</p>
+
+  <div class="cotizador-barra" aria-hidden="true">
+    <div class="cotizador-barra__relleno" [style.width.%]="porcentaje()"></div>
+  </div>
+
+  @if (!completado()) {
+    <div class="cotizador-paso">
+      <h4>{{ paso().titulo }}</h4>
+      <p class="cotizador-ayuda">{{ paso().ayuda }}</p>
+      <div class="cotizador-opciones">
+        @for (opcion of paso().opciones; track opcion) {
+          <button type="button" class="cotizador-opcion" (click)="elegir(opcion)">
+            {{ opcion }}
+          </button>
+        }
+      </div>
+    </div>
+  } @else {
+    <div class="cotizador-resultado" aria-live="polite">
+      <p class="cotizador-etiqueta">{{ textos.resultado.etiqueta }}</p>
+      <p class="cotizador-rango">{{ rango() }}</p>
+      <p class="cotizador-aclaracion">{{ textos.resultado.aclaracion }}</p>
+      <p class="cotizador-resumen">{{ resumen() }}</p>
+      <div class="cotizador-ctas">
+        <a routerLink="/contacto" class="boton boton-primario">{{ textos.ctaContacto }}</a>
+        <app-whatsapp-cta [mensaje]="mensajeWhatsapp()" [etiqueta]="textos.ctaWhatsapp" />
+        <button type="button" class="cotizador-reiniciar" (click)="reiniciar()">
+          {{ textos.reiniciar }}
+        </button>
+      </div>
+    </div>
+  }
+</div>
