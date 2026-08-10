@@ -47,9 +47,9 @@ export const HERRAMIENTAS = {
     {
       titulo: 'Demo de diseño con IA',
       descripcion:
-        'Describe tu negocio y recibe un boceto visual de tu futura app o web, con funcionalidades sugeridas.',
-      nota: 'Para cuentas gratis',
-      activa: false,
+        'Describe tu negocio y recibe un boceto visual de tu futura app o web, con funcionalidades sugeridas. Está aquí abajo.',
+      nota: 'Para cuentas gratis · 3 bocetos al día',
+      activa: true,
     },
   ] as readonly TarjetaDeHerramienta[],
   cuenta: {

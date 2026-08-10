@@ -26,11 +26,10 @@ describe('HerramientasPage (centro de herramientas vivo, HU-43)', () => {
     expect(el.querySelectorAll('.herramienta-tarjeta')).toHaveLength(HERRAMIENTAS.tarjetas.length);
   });
 
-  it('marca Muy pronto SOLO las herramientas que no estan activas (honestidad)', async () => {
+  it('ya NO queda ninguna herramienta en Muy pronto: las 5 estan activas (F10 completa)', async () => {
     const el = await crear();
-    const esperadas = HERRAMIENTAS.tarjetas.filter((t) => !t.activa).length;
-    expect(el.querySelectorAll('.badge-muy-pronto')).toHaveLength(esperadas);
-    expect(esperadas).toBeGreaterThan(0);
+    expect(HERRAMIENTAS.tarjetas.every((t) => t.activa)).toBe(true);
+    expect(el.querySelectorAll('.badge-muy-pronto')).toHaveLength(0);
   });
 
   it('integra el cotizador funcionando en la misma pagina (decision 11)', async () => {

@@ -14,7 +14,16 @@ test('el centro muestra las herramientas con honestidad de estados', async ({ pa
 
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Herramientas');
   await expect(page.locator('.herramienta-tarjeta')).toHaveCount(5);
-  await expect(page.locator('.badge-muy-pronto')).toHaveCount(1);
+  await expect(page.locator('.badge-muy-pronto')).toHaveCount(0);
+});
+
+test('el demo de diseno muestra el estado bloqueado a un visitante anonimo (HU-42)', async ({ page }) => {
+  await page.goto('/herramientas');
+
+  const demo = page.locator('app-demo-diseno');
+  await expect(demo.getByText('Crea tu cuenta gratis para ver tu boceto')).toBeVisible();
+  await expect(demo.locator('a[href="/registro"]')).toBeVisible();
+  await expect(demo.locator('#demo-sector')).toHaveCount(0);
 });
 
 test('un visitante responde el quiz y recibe su radiografia en pantalla (F10c)', async ({ page }) => {

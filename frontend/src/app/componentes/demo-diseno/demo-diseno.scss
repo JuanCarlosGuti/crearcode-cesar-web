@@ -1,0 +1,238 @@
+.demo {
+  background-color: var(--color-blanco);
+  border-radius: var(--radio-borde-grande);
+  padding: var(--espacio-3);
+}
+
+.demo-encabezado h3 {
+  margin: 0 0 0.25rem;
+}
+
+.demo-encabezado p {
+  margin: 0 0 var(--espacio-2);
+  color: var(--color-texto-secundario);
+  font-size: 0.95rem;
+}
+
+.demo-bloqueado {
+  border: 1px solid color-mix(in srgb, var(--color-acento) 30%, white);
+  background-color: color-mix(in srgb, var(--color-acento) 6%, white);
+  border-radius: var(--radio-borde-grande);
+  padding: var(--espacio-3);
+  text-align: center;
+}
+
+.demo-bloqueado h4 {
+  margin: 0 0 0.35rem;
+}
+
+.demo-bloqueado p {
+  margin: 0 auto var(--espacio-2);
+  max-width: 28rem;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--color-texto-secundario);
+}
+
+.demo-bloqueado__ctas {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-1);
+  align-items: center;
+}
+
+.demo-enlace {
+  font-size: 0.9rem;
+  color: var(--color-texto-secundario);
+  text-underline-offset: 3px;
+}
+
+.demo-formulario {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-2);
+}
+
+.demo-formulario label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-texto);
+}
+
+.demo-formulario input,
+.demo-formulario textarea {
+  margin-top: 0.35rem;
+  width: 100%;
+  font: inherit;
+  padding: 0.6rem 0.85rem;
+  border: 2px solid color-mix(in srgb, var(--color-primario) 20%, white);
+  border-radius: var(--radio-borde);
+  background-color: var(--color-fondo);
+  resize: vertical;
+}
+
+.demo-formulario input:focus-visible,
+.demo-formulario textarea:focus-visible {
+  outline: 3px solid var(--color-acento);
+  outline-offset: 1px;
+}
+
+.demo-generar {
+  align-self: flex-start;
+}
+
+.demo-generar:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.demo-nota {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--color-texto-secundario);
+}
+
+.demo-generando {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.95rem;
+  font-style: italic;
+  color: var(--color-texto-secundario);
+}
+
+.demo-pulso {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--color-acento-luminoso);
+  animation: demo-pulso 1.2s ease-in-out infinite;
+}
+
+@keyframes demo-pulso {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .demo-pulso {
+    animation: none;
+  }
+}
+
+.demo-resultado {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-3);
+}
+
+.demo-imagen {
+  flex: 1 1 16rem;
+  border: 1px solid color-mix(in srgb, var(--color-primario) 12%, white);
+  border-radius: var(--radio-borde-grande);
+  overflow: hidden;
+  background-color: var(--color-fondo);
+  align-self: flex-start;
+}
+
+.demo-imagen img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.demo-detalle {
+  flex: 1 1 16rem;
+  min-width: 0;
+}
+
+.demo-detalle h4 {
+  margin: 0 0 0.35rem;
+  font-size: 1.15rem;
+}
+
+.demo-aclaracion {
+  margin: 0 0 var(--espacio-2);
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--color-texto-secundario);
+}
+
+.demo-subtitulo {
+  margin: 0 0 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.demo-funcionalidades {
+  margin: 0 0 var(--espacio-2);
+  padding-left: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.demo-funcionalidad {
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.demo-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-1);
+  align-items: center;
+}
+
+.demo-variacion {
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+  color: var(--color-texto);
+  background-color: var(--color-blanco);
+  border: 1px solid color-mix(in srgb, var(--color-primario) 20%, white);
+  border-radius: var(--radio-borde);
+  padding: 0.55rem 0.9rem;
+  transition: border-color var(--transicion-estandar);
+}
+
+.demo-variacion:hover,
+.demo-variacion:focus-visible {
+  border-color: var(--color-acento);
+  color: var(--color-acento);
+}
+
+.demo-reiniciar {
+  background: none;
+  border: 0;
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--color-texto-secundario);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 0.25rem;
+}
+
+.demo-aviso {
+  border: 1px solid color-mix(in srgb, var(--color-acento) 30%, white);
+  background-color: color-mix(in srgb, var(--color-acento) 8%, white);
+  border-radius: var(--radio-borde);
+  padding: var(--espacio-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-1);
+  align-items: flex-start;
+}
+
+.demo-aviso p {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.55;
+}

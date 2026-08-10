@@ -1,0 +1,111 @@
+<div class="demo tarjeta-elevada">
+  <div class="demo-encabezado">
+    <h3>{{ textos.titulo }}</h3>
+    <p>{{ textos.intro }}</p>
+  </div>
+
+  @if (!desbloqueado()) {
+    <div class="demo-bloqueado">
+      <h4>{{ textos.bloqueado.titulo }}</h4>
+      <p>{{ textos.bloqueado.texto }}</p>
+      <div class="demo-bloqueado__ctas">
+        <a routerLink="/registro" class="boton boton-primario">{{ textos.bloqueado.ctaRegistro }}</a>
+        <a routerLink="/ingreso" class="demo-enlace">{{ textos.bloqueado.ctaIngreso }}</a>
+      </div>
+    </div>
+  } @else {
+    @if (boceto() === null && !generando()) {
+      <form class="demo-formulario" (submit)="$event.preventDefault(); generar()">
+        <label for="demo-sector">{{ textos.formulario.etiquetaSector }}
+          <input
+            id="demo-sector"
+            type="text"
+            [value]="sector()"
+            (input)="actualizar('sector', $event)"
+            [placeholder]="textos.formulario.placeholderSector"
+            maxlength="60"
+            autocomplete="off"
+          />
+        </label>
+        <label for="demo-que-hace">{{ textos.formulario.etiquetaQueHace }}
+          <textarea
+            id="demo-que-hace"
+            rows="2"
+            [value]="queHace()"
+            (input)="actualizar('queHace', $event)"
+            [placeholder]="textos.formulario.placeholderQueHace"
+            maxlength="300"
+          ></textarea>
+        </label>
+        <label for="demo-que-necesita">{{ textos.formulario.etiquetaQueNecesita }}
+          <textarea
+            id="demo-que-necesita"
+            rows="2"
+            [value]="queNecesita()"
+            (input)="actualizar('queNecesita', $event)"
+            [placeholder]="textos.formulario.placeholderQueNecesita"
+            maxlength="300"
+          ></textarea>
+        </label>
+        <button type="submit" class="boton boton-primario demo-generar" [disabled]="!puedeGenerar()">
+          {{ textos.formulario.boton }}
+        </button>
+        <p class="demo-nota">{{ textos.formulario.nota }}</p>
+      </form>
+    }
+
+    @if (generando()) {
+      <p class="demo-generando" role="status">
+        <span class="demo-pulso" aria-hidden="true"></span>{{ textos.generando }}
+      </p>
+    }
+
+    @if (boceto(); as resultado) {
+      @if (!generando()) {
+        <div class="demo-resultado" aria-live="polite">
+          <div class="demo-imagen">
+            <img [src]="imagenSrc()" [alt]="textos.resultado.altImagen" />
+          </div>
+          <div class="demo-detalle">
+            <h4>{{ resultado.titulo }}</h4>
+            <p class="demo-aclaracion">{{ textos.resultado.aclaracion }}</p>
+            <p class="demo-subtitulo">{{ textos.resultado.subtituloFuncionalidades }}</p>
+            <ul class="demo-funcionalidades">
+              @for (funcionalidad of resultado.funcionalidades; track funcionalidad) {
+                <li class="demo-funcionalidad">{{ funcionalidad }}</li>
+              }
+            </ul>
+            <div class="demo-ctas">
+              <a routerLink="/contacto" class="boton boton-primario">{{ textos.resultado.ctaHazloRealidad }}</a>
+              <app-whatsapp-cta [mensaje]="mensajeWhatsapp" [etiqueta]="textos.resultado.ctaWhatsapp" />
+              @if (!variacionUsada()) {
+                <button type="button" class="demo-variacion" (click)="pedirVariacion()">
+                  {{ textos.resultado.ctaVariacion }}
+                </button>
+              }
+              <button type="button" class="demo-reiniciar" (click)="reiniciar()">
+                {{ textos.volverAEmpezar }}
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    }
+
+    @if (error(); as codigo) {
+      <div class="demo-aviso" role="alert">
+        @if (codigo === 'limite') {
+          <p>{{ textos.limite }}</p>
+        } @else {
+          <p>{{ textos.noDisponible }}</p>
+          <button type="button" class="boton boton-primario demo-reintentar" (click)="reintentar()">
+            {{ textos.reintentar }}
+          </button>
+        }
+        <button type="button" class="demo-reiniciar" (click)="reiniciar()">
+          {{ textos.volverAEmpezar }}
+        </button>
+      </div>
+    }
+  }
+</div>
