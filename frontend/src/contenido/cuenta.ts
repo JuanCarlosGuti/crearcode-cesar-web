@@ -80,26 +80,27 @@ export const CUENTA = {
 
 /**
  * Sección "Tu cuenta te da más" (Home y /registro — HU-34, fase F8.5).
- * Regla de honestidad (docs/08): lo que aún no existe (F9/F10) lleva
- * SIEMPRE la etiqueta "Muy pronto" — acceso anticipado, no promesa.
+ * Regla de honestidad (docs/08): lo que aún no existe lleva SIEMPRE la
+ * etiqueta "Muy pronto". Con F10 completa (10 ago 2026) las
+ * herramientas ya están VIVAS — cero badges (ISS-131).
  */
 export const BENEFICIOS_CUENTA = {
   titulo: 'Tu cuenta te da más',
   intro:
-    'Crear tu cuenta es gratis, toma un minuto y no es obligatoria para nada del sitio. Pero quienes la tienen van a estrenar primero lo que viene:',
+    'Crear tu cuenta es gratis, toma un minuto y no es obligatoria para nada del sitio. Pero con ella tienes más de cada herramienta:',
   etiquetaMuyPronto: 'Muy pronto',
   tarjetas: [
     {
-      titulo: 'Asistente con IA',
-      muyPronto: true,
+      titulo: 'Más usos del asistente y las herramientas',
+      muyPronto: false,
       descripcion:
-        'Pregúntale a nuestro asistente lo que necesites sobre software, automatización o costos, y recibe respuesta al instante. Los usuarios registrados tendrán más consultas por día.',
+        'El asistente, el chatbot de tu negocio y el diagnóstico digital tienen cupo diario gratis para todos — con cuenta, el tuyo se multiplica.',
     },
     {
       titulo: 'Demo de diseño con IA',
-      muyPronto: true,
+      muyPronto: false,
       descripcion:
-        'Describe tu negocio y mira un primer boceto de tu solución, generado con inteligencia artificial. Exclusivo para usuarios registrados.',
+        'Describe tu negocio y mira un primer boceto de tu solución generado con inteligencia artificial, con funcionalidades sugeridas. Exclusivo para cuentas: 3 bocetos al día.',
     },
     {
       titulo: 'Acceso anticipado',

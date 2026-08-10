@@ -52,16 +52,12 @@ describe('HomePage', () => {
     expect(el.querySelectorAll('.tarjeta-beneficio').length).toBe(3);
   });
 
-  it('los beneficios que aun no existen llevan la etiqueta Muy pronto', async () => {
+  it('con F10 completa ningun beneficio lleva Muy pronto: todo esta vivo (ISS-131)', async () => {
     const fixture = TestBed.createComponent(HomePage);
     await fixture.whenStable();
     const el = fixture.nativeElement as HTMLElement;
 
-    const badges = Array.from(el.querySelectorAll('.tarjeta-beneficio .badge'));
-    expect(badges.length).toBe(2);
-    for (const badge of badges) {
-      expect(badge.textContent).toContain('Muy pronto');
-    }
+    expect(el.querySelectorAll('.tarjeta-beneficio .badge')).toHaveLength(0);
   });
 
   it('la seccion de beneficios invita a crear cuenta o ingresar', async () => {

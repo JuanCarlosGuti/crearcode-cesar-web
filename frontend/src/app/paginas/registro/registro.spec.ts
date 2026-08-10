@@ -55,11 +55,8 @@ describe('RegistroPage', () => {
     const { el } = await crearPagina();
 
     expect(el.querySelectorAll('.beneficio-compacto').length).toBe(3);
-    const badges = Array.from(el.querySelectorAll('.beneficio-compacto .badge'));
-    expect(badges.length).toBe(2);
-    for (const badge of badges) {
-      expect(badge.textContent).toContain('Muy pronto');
-    }
+    // Con F10 completa todo esta vivo: cero badges Muy pronto (ISS-131)
+    expect(el.querySelectorAll('.beneficio-compacto .badge')).toHaveLength(0);
   });
 
   it('bloquea el envio si los campos estan vacios', async () => {
