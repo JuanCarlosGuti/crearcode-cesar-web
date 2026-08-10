@@ -304,9 +304,12 @@ Registradas el 10 ago 2026 (al aprobar el prototipo del rediseño):
     `DEMO_PROVEEDOR_IMAGENES`: `pollinations` (interino por defecto:
     gratis, sin key, verificado funcionando — pero SIN SLA) y `gemini`
     (listo para cuando vuelva la cuota o haya billing). La decisión
-    del proveedor DE PRODUCCIÓN se cierra con el usuario en ISS-132;
-    Cloudflare Workers AI (10k neurons/día gratis, requiere cuenta y
-    token) sigue como candidato recomendado.
+    del proveedor DE PRODUCCIÓN quedó CERRADA por el usuario el 10 ago
+    2026 (opción A): **Pollinations para el MVP** — gratis, sin cuenta,
+    verificado; riesgo de SLA aceptado y documentado. Cloudflare
+    Workers AI (10k neurons/día gratis, requiere cuenta y token) queda
+    como plan B listo si Pollinations falla — el cambio es solo la
+    variable `DEMO_PROVEEDOR_IMAGENES`.
 
 ## Aprobación
 
