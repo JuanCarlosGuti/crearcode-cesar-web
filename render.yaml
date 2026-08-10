@@ -37,13 +37,10 @@ services:
       - key: JWT_SECRET
         generateValue: true
       # URL publica del frontend: base de los enlaces de los correos de
-      # verificacion/recuperacion (fase F8) — se toma automaticamente
-      # del servicio frontend de abajo.
+      # verificacion/recuperacion (fase F8). Con dominio propio (ADR-11)
+      # los correos enlazan al dominio canonico, no a onrender.com.
       - key: FRONTEND_URL
-        fromService:
-          name: crearcodecesar-frontend
-          type: web
-          envVarKey: RENDER_EXTERNAL_URL
+        value: https://crearcodecesar.com
       # SMTP para los correos de cuenta (fase F8): Gmail con App
       # Password (ver guia en docs/09-despliegue.md). MAIL_USERNAME es
       # el Gmail completo; MAIL_PASSWORD es la App Password de 16
@@ -87,7 +84,8 @@ services:
           type: web
           envVarKey: RENDER_EXTERNAL_URL
       # Allowlist del header Host de Angular SSR (proteccion SSRF).
-      # Comodin de subdominios de onrender.com; el dia que haya dominio
-      # propio se agrega aqui separado por coma.
+      # Dominio canonico + www (ADR-11) y el comodin de onrender.com
+      # durante la transicion — sin esto el dominio nuevo responderia
+      # 400 a todo.
       - key: NG_ALLOWED_HOSTS
-        value: "*.onrender.com"
+        value: "crearcodecesar.com,www.crearcodecesar.com,*.onrender.com"

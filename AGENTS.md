@@ -1,4 +1,4 @@
-# CLAUDE.md — Crear Code Cesar S.A.S. · Sitio web corporativo
+# AGENTS.md — Crear Code Cesar S.A.S. · Sitio web corporativo
 
 Resumen operativo del proyecto. La fuente de verdad viva es la carpeta
 [`docs/`](docs/) — si una decisión no está documentada allí, no se
@@ -26,19 +26,15 @@ precio respondida sin cifras inventadas y con escalamiento). Decisión
 del usuario (28 jul 2026): la configuración del correo de producción
 (`MAIL_USERNAME`/`MAIL_PASSWORD` en Render) queda **pospuesta hasta
 las pruebas del MVP** — antes de eso el usuario quiere pulir
-funcionalidad y estética. La fase F10 fue AMPLIADA a **Centro de
-herramientas con IA** (29 jul 2026, decisiones 7-9 de docs/10):
-cotizador (F10a) → simulador de chatbot (F10b) → diagnóstico digital
-(F10c) → demo de diseño con Gemini Flash Image (F10d), ISS-119 a
-ISS-132 en docs/05. Documentada; la implementación no arranca sin OK
-explícito del usuario al plan.
+funcionalidad y estética. La fase F10 (demo de diseño con IA) no
+arranca sin OK explícito del usuario.
 La v1 está PUBLICADA en producción desde el 27 jul
 2026: Render (capa gratis) + Neon. De la Etapa 2 solo queda abierta la
 compra del dominio propio (no bloquea).**
 
 URLs de producción:
-- **Dominio canónico: https://crearcodecesar.com** (comprado el 10 ago
-  2026, Cloudflare como DNS/proxy, ver ADR-11; www redirige 301)
+- **Dominio canónico: https://crearcodecesar.com** (ADR-11; www
+  redirige 301 en Cloudflare)
 - Frontend (origen del servicio): https://crearcodecesar-frontend.onrender.com
 - Backend: https://crearcodecesar-backend.onrender.com (API detrás
   del proxy `/api` del frontend, ver ADR-09)
@@ -150,13 +146,7 @@ variable de entorno en Render el día que se use — nunca en el repo.
 - [x] **F9** — Asistente IA (Groq, ISS-108 a ISS-118): terminada,
   aprobada y publicada (28 jul 2026); su `GROQ_API_KEY` espera en el
   dashboard de Render.
-- [ ] **F10** — Centro de herramientas con IA (ISS-119 a ISS-135):
-  F10a cotizador + /herramientas viva → F10b simulador de chatbot →
-  F10c diagnóstico digital → F10d demo de diseño (Gemini) → F10e
-  rediseño Home/servicios según el prototipo aprobado (10 ago 2026,
-  decisiones 10-14 de docs/10). Niveles de prueba obligatorios por
-  issue: Unit, Component, Integration, API y E2E
-  (docs/06 §7). EN IMPLEMENTACIÓN (OK del usuario, 10 ago 2026).
+- [ ] **F10** — Demo de diseño con IA.
 - [ ] **F11** — Gestión interna.
 
 ## Arranque local

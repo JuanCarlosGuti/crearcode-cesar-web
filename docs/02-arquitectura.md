@@ -324,6 +324,38 @@ protección fina porque en producción todas las peticiones comparten la
 IP del proxy (lección de F8). Sin memoria entre sesiones ni
 function-calling en v1.
 
+### ADR-11 — Dominio canónico crearcodecesar.com detrás de Cloudflare (10 ago 2026)
+
+**Decisión**: el dominio canónico del sitio es
+**`https://crearcodecesar.com`** (sin `www`); `www.crearcodecesar.com`
+redirige 301 en Cloudflare, que actúa como DNS/proxy delante del
+servicio de Render. `*.onrender.com` sigue funcionando durante la
+transición (queda en `NG_ALLOWED_HOSTS` junto al dominio nuevo). La
+fuente única del dominio en el código es `BASE_URL` en
+`contenido/sitio.ts` (ADR-06) — alimenta sitemap, robots, `og:url`,
+`og:image` y la nueva `<link rel="canonical">`; va como constante y no
+como variable de entorno porque las metas se hornean en el prerender
+(build), no en runtime. Los enlaces de los correos de cuenta usan
+`FRONTEND_URL` en Render, que pasa de la URL de onrender al dominio
+canónico.
+**HSTS**: la emite **Cloudflare** (manda ella). Spring Security no
+compite: su HSTS por defecto solo aplica a peticiones HTTPS y el
+backend nunca habla con el navegador — solo recibe HTTP interno del
+proxy SSR (ADR-09); las cabeceras que ve el navegador salen de
+Cloudflare/Express.
+**CORS**: el cambio de dominio NO requiere configurar CORS — por
+ADR-09 el navegador solo conoce un origen (el frontend) y `/api` se
+reenvía por dentro; agregar una allowlist de orígenes sería
+configuración muerta. Si algún día el navegador llamara al backend
+directo, ahí se crea `app.cors.allowed-origins` por variable de
+entorno.
+**Consecuencia**: `render.yaml` agrega los dominios a
+`NG_ALLOWED_HOSTS` (sin esto, Angular SSR respondería 400 al dominio
+nuevo — protección SSRF) y fija `FRONTEND_URL`; el archivo estático
+`/monday-app-association.json` (requisito del marketplace de
+monday.com) vive en `frontend/public/` y lo sirve Express antes del
+router de Angular, sin autenticación.
+
 ## 6. Seguridad (resumen, detalle en épica E3)
 
 - Panel admin protegido con Spring Security vía JWT (ver ADR-08):

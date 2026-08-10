@@ -31,8 +31,25 @@ describe('establecerMetadatosDePagina', () => {
     const meta = TestBed.inject(Meta);
     expect(meta.getTag('property="og:title"')?.content).toBe('Título');
     expect(meta.getTag('property="og:description"')?.content).toBe('Descripción');
-    expect(meta.getTag('property="og:url"')?.content).toBe('https://crearcodecesar.example/servicios/x');
-    expect(meta.getTag('property="og:image"')?.content).toBe('https://crearcodecesar.example/imagenes/og-defecto.jpg');
+    expect(meta.getTag('property="og:url"')?.content).toBe('https://crearcodecesar.com/servicios/x');
+    expect(meta.getTag('property="og:image"')?.content).toBe('https://crearcodecesar.com/imagenes/og-defecto.jpg');
+  });
+
+  it('emite el link canonical con el dominio canonico (ADR-11)', async () => {
+    const fixture = TestBed.createComponent(AnfitrionDePrueba);
+    fixture.componentInstance.datos.set({ titulo: 'Título', descripcion: 'Descripción', ruta: '/herramientas' });
+    await fixture.whenStable();
+
+    const canonical = document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+    expect(canonical?.getAttribute('href')).toBe('https://crearcodecesar.com/herramientas');
+
+    // Navegar a otra pagina ACTUALIZA el canonical existente (no duplica)
+    fixture.componentInstance.datos.set({ titulo: 'Otro', descripcion: 'Otra', ruta: '/casos' });
+    await fixture.whenStable();
+    expect(document.head.querySelectorAll('link[rel="canonical"]')).toHaveLength(1);
+    expect(document.head.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe(
+      'https://crearcodecesar.com/casos',
+    );
   });
 
   it('usa la imagen propia de la pagina cuando se especifica', async () => {
@@ -46,7 +63,7 @@ describe('establecerMetadatosDePagina', () => {
     await fixture.whenStable();
 
     expect(TestBed.inject(Meta).getTag('property="og:image"')?.content).toBe(
-      'https://crearcodecesar.example/imagenes/blog-x.png',
+      'https://crearcodecesar.com/imagenes/blog-x.png',
     );
   });
 

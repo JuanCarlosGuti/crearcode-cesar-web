@@ -6,6 +6,9 @@
  * este único valor ese día — nada más en el sitio debe hardcodear el
  * dominio (ADR-06).
  */
-export const BASE_URL = 'https://crearcodecesar.example';
+// Dominio canónico (ADR-11, comprado el 10 ago 2026): sin www; el www
+// redirige 301 en Cloudflare. Constante y no variable de entorno
+// porque las metas se hornean en el prerender.
+export const BASE_URL = 'https://crearcodecesar.com';
 
 export const IMAGEN_OG_DEFECTO = '/imagenes/og-defecto.jpg';

@@ -186,15 +186,40 @@ Camino elegido: Opción 4 (Render + Neon), proxy sin CORS (ADR-09).
       credenciales de Neon como `sync: false` (se ingresan en el
       dashboard, nunca en el repo), `BACKEND_URL` tomado
       automáticamente del servicio del backend y
-      `NG_ALLOWED_HOSTS=*.onrender.com`.
+      `NG_ALLOWED_HOSTS` (desde el 10 ago 2026 incluye el dominio
+      propio: `crearcodecesar.com,www.crearcodecesar.com,*.onrender.com`).
 - [x] `DB_URL` en el backend: variable nueva que acepta la URL JDBC
       completa — necesaria porque Neon exige `sslmode=require`, que no
       se puede expresar con solo host/puerto/nombre. Sin `DB_URL`, el
       comportamiento local es idéntico al de siempre (verificado con
       `mvnw verify` y arrancando la app real por ambos caminos).
-- [ ] `contenido/sitio.ts` (`BASE_URL`): sin cambios de mecanismo —
-      ya cumple ADR-06 con un solo valor a editar el día que se compre
-      el dominio (pendiente, no bloquea nada de lo anterior).
+- [x] `contenido/sitio.ts` (`BASE_URL`): actualizado el 10 ago 2026 al
+      dominio canónico `https://crearcodecesar.com` (ADR-11) — deja de
+      ser el placeholder `.example` que salía en sitemap/OG.
+
+## 8. Dominio propio crearcodecesar.com (10 ago 2026, ADR-11)
+
+Dominio comprado; Cloudflare actúa como DNS/proxy delante de Render.
+Checklist de la transición:
+
+1. **En Cloudflare**: registro apex `crearcodecesar.com` → CNAME
+   (aplanado) o A hacia `crearcodecesar-frontend.onrender.com`;
+   `www` → CNAME al mismo destino con regla de redirección 301 a la
+   raíz. SSL "Full (strict)". HSTS la emite Cloudflare (ADR-11).
+2. **En Render** (dashboard del frontend → Custom Domains): agregar
+   `crearcodecesar.com` y `www.crearcodecesar.com` para que Render
+   emita/acepte el certificado del dominio.
+3. **En el repo** (hecho): `NG_ALLOWED_HOSTS` con los dominios nuevos,
+   `FRONTEND_URL=https://crearcodecesar.com` (enlaces de correos),
+   `BASE_URL` canónico, `<link rel="canonical">` en todas las páginas
+   y `/monday-app-association.json` estático en `frontend/public/`.
+4. **Después de propagar DNS**: probar https://crearcodecesar.com
+   (páginas, /herramientas, sitemap.xml, robots.txt,
+   /monday-app-association.json) y reenviar el dominio en Google
+   Search Console cuando se quiera indexar.
+5. El correo corporativo con dominio propio (ej. hola@crearcodecesar.com)
+   sigue PENDIENTE — decisión aparte (Cloudflare Email Routing gratis
+   es candidato).
 - [ ] `NG_ALLOWED_HOSTS`: variable de entorno a configurar en Render
       con el dominio real el día del despliegue (sin cambio de código,
       Angular ya la lee nativamente, ver CLAUDE.md).
