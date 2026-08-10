@@ -5,6 +5,7 @@ import { HERRAMIENTAS } from '../../../contenido/herramientas';
 import { METADATOS_HERRAMIENTAS } from '../../../contenido/metadatos-paginas';
 import { AparecerAlVer } from '../../componentes/aparecer-al-ver/aparecer-al-ver';
 import { Cotizador } from '../../componentes/cotizador/cotizador';
+import { DiagnosticoDigital } from '../../componentes/diagnostico-digital/diagnostico-digital';
 import { SimuladorChatbot } from '../../componentes/simulador-chatbot/simulador-chatbot';
 import { establecerMetadatosDePagina } from '../../nucleo/metadatos-pagina';
 
@@ -15,7 +16,7 @@ import { establecerMetadatosDePagina } from '../../nucleo/metadatos-pagina';
  */
 @Component({
   selector: 'app-pagina-herramientas',
-  imports: [RouterLink, AparecerAlVer, Cotizador, SimuladorChatbot],
+  imports: [RouterLink, AparecerAlVer, Cotizador, DiagnosticoDigital, SimuladorChatbot],
   templateUrl: './herramientas.html',
   styleUrl: './herramientas.scss',
 })

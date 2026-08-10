@@ -1,0 +1,79 @@
+<div class="diagnostico tarjeta-elevada">
+  <div class="diagnostico-encabezado">
+    <h3>{{ textos.titulo }}</h3>
+    <span class="diagnostico-progreso-etiqueta">{{ etiquetaProgreso() }}</span>
+  </div>
+  <p class="diagnostico-intro">{{ textos.intro }}</p>
+
+  <div class="diagnostico-barra" aria-hidden="true">
+    <div class="diagnostico-barra__relleno" [style.width.%]="porcentaje()"></div>
+  </div>
+
+  @if (enQuiz()) {
+    <div class="diagnostico-paso">
+      <h4>{{ pregunta().pregunta }}</h4>
+      <div class="diagnostico-opciones">
+        @for (opcion of pregunta().opciones; track opcion) {
+          <button type="button" class="diagnostico-opcion" (click)="responder(opcion)">
+            {{ opcion }}
+          </button>
+        }
+      </div>
+    </div>
+  }
+
+  @if (analizando()) {
+    <p class="diagnostico-analizando" role="status">{{ textos.analizando }}</p>
+  }
+
+  @if (informe(); as radiografia) {
+    <div class="diagnostico-informe" aria-live="polite">
+      <p class="diagnostico-etiqueta">{{ textos.tituloRadiografia }}</p>
+      <p class="diagnostico-veredicto">{{ radiografia.veredicto }}</p>
+
+      <h4>{{ textos.subtituloOportunidades }}</h4>
+      <p class="diagnostico-nota-orden">{{ textos.notaOrden }}</p>
+      <div class="diagnostico-oportunidades">
+        @for (oportunidad of radiografia.oportunidades; track oportunidad.titulo) {
+          <div class="diagnostico-oportunidad">
+            <h5>{{ oportunidad.titulo }}</h5>
+            <p>{{ oportunidad.detalle }}</p>
+            <p class="diagnostico-beneficio">{{ textos.prefijoBeneficio }}{{ oportunidad.beneficio }}</p>
+          </div>
+        }
+      </div>
+
+      <div class="diagnostico-cierre">
+        <h4>{{ textos.cierreTitulo }}</h4>
+        <p>{{ textos.cierreTexto }}</p>
+        <div class="diagnostico-ctas">
+          <a routerLink="/contacto" class="boton boton-primario">{{ textos.ctaContacto }}</a>
+          <app-whatsapp-cta [mensaje]="mensajeWhatsapp" [etiqueta]="textos.ctaWhatsapp" />
+          <button type="button" class="diagnostico-reiniciar" (click)="reiniciar()">
+            {{ textos.reiniciar }}
+          </button>
+        </div>
+        <p class="diagnostico-nota-correo">{{ textos.notaCorreo }}</p>
+      </div>
+    </div>
+  }
+
+  @if (error(); as codigo) {
+    <div class="diagnostico-aviso" role="alert">
+      @if (codigo === 'limite-anonimo') {
+        <p>{{ textos.limiteAnonimo }}</p>
+        <a routerLink="/registro" class="boton boton-primario">{{ textos.ctaCrearCuenta }}</a>
+      } @else if (codigo === 'limite-registrado') {
+        <p>{{ textos.limiteRegistrado }}</p>
+      } @else {
+        <p>{{ textos.noDisponible }}</p>
+        <button type="button" class="boton boton-primario diagnostico-reintentar" (click)="reintentar()">
+          Reintentar
+        </button>
+      }
+      <button type="button" class="diagnostico-reiniciar" (click)="reiniciar()">
+        {{ textos.reiniciar }}
+      </button>
+    </div>
+  }
+</div>

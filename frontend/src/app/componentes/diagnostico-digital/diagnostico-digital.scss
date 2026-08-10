@@ -1,0 +1,189 @@
+.diagnostico {
+  background-color: var(--color-blanco);
+  border-radius: var(--radio-borde-grande);
+  padding: var(--espacio-3);
+}
+
+.diagnostico-encabezado {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--espacio-2);
+}
+
+.diagnostico-encabezado h3 {
+  margin: 0;
+}
+
+.diagnostico-progreso-etiqueta {
+  font-size: 0.8rem;
+  color: var(--color-texto-secundario);
+  white-space: nowrap;
+}
+
+.diagnostico-intro {
+  color: var(--color-texto-secundario);
+  font-size: 0.95rem;
+  margin: var(--espacio-1) 0 var(--espacio-2);
+}
+
+.diagnostico-barra {
+  height: 4px;
+  border-radius: 999px;
+  background-color: color-mix(in srgb, var(--color-primario) 10%, white);
+  overflow: hidden;
+  margin-bottom: var(--espacio-2);
+}
+
+.diagnostico-barra__relleno {
+  height: 100%;
+  border-radius: 999px;
+  background-color: var(--color-acento);
+  transition: width var(--transicion-estandar);
+}
+
+.diagnostico-paso h4 {
+  margin: 0 0 var(--espacio-2);
+  line-height: 1.4;
+}
+
+.diagnostico-opciones {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-1);
+}
+
+.diagnostico-opcion {
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  color: var(--color-texto);
+  background-color: var(--color-fondo);
+  border: 1px solid color-mix(in srgb, var(--color-primario) 12%, white);
+  border-radius: var(--radio-borde);
+  padding: 0.85rem 1rem;
+  transition: border-color var(--transicion-estandar), background-color var(--transicion-estandar);
+}
+
+.diagnostico-opcion:hover,
+.diagnostico-opcion:focus-visible {
+  border-color: var(--color-acento);
+  background-color: color-mix(in srgb, var(--color-acento) 6%, white);
+}
+
+.diagnostico-analizando {
+  margin: 0;
+  font-size: 0.95rem;
+  font-style: italic;
+  color: var(--color-texto-secundario);
+}
+
+.diagnostico-etiqueta {
+  margin: 0 0 0.25rem;
+  font-size: 0.85rem;
+  color: var(--color-texto-secundario);
+}
+
+.diagnostico-veredicto {
+  margin: 0 0 var(--espacio-2);
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--color-primario);
+}
+
+.diagnostico-informe h4 {
+  margin: 0 0 0.2rem;
+}
+
+.diagnostico-nota-orden {
+  margin: 0 0 var(--espacio-2);
+  font-size: 0.85rem;
+  color: var(--color-texto-secundario);
+}
+
+.diagnostico-oportunidades {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-2);
+  margin-bottom: var(--espacio-3);
+}
+
+.diagnostico-oportunidad {
+  border-left: 2px solid var(--color-acento);
+  padding-left: var(--espacio-2);
+}
+
+.diagnostico-oportunidad h5 {
+  margin: 0 0 0.2rem;
+  font-size: 1rem;
+}
+
+.diagnostico-oportunidad p {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--color-texto-secundario);
+}
+
+.diagnostico-beneficio {
+  font-weight: 600;
+  color: var(--color-texto) !important;
+}
+
+.diagnostico-cierre {
+  background-color: var(--color-fondo);
+  border-radius: var(--radio-borde);
+  padding: var(--espacio-2);
+}
+
+.diagnostico-cierre h4 {
+  margin: 0 0 0.25rem;
+}
+
+.diagnostico-cierre p {
+  margin: 0 0 var(--espacio-2);
+  font-size: 0.92rem;
+  color: var(--color-texto-secundario);
+}
+
+.diagnostico-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-1);
+  align-items: center;
+}
+
+.diagnostico-reiniciar {
+  background: none;
+  border: 0;
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--color-texto-secundario);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 0.25rem;
+}
+
+.diagnostico-nota-correo {
+  margin: var(--espacio-1) 0 0 !important;
+  font-size: 0.78rem !important;
+}
+
+.diagnostico-aviso {
+  border: 1px solid color-mix(in srgb, var(--color-acento) 30%, white);
+  background-color: color-mix(in srgb, var(--color-acento) 8%, white);
+  border-radius: var(--radio-borde);
+  padding: var(--espacio-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-1);
+  align-items: flex-start;
+}
+
+.diagnostico-aviso p {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.55;
+}

@@ -14,7 +14,20 @@ test('el centro muestra las herramientas con honestidad de estados', async ({ pa
 
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Herramientas');
   await expect(page.locator('.herramienta-tarjeta')).toHaveCount(5);
-  await expect(page.locator('.badge-muy-pronto')).toHaveCount(2);
+  await expect(page.locator('.badge-muy-pronto')).toHaveCount(1);
+});
+
+test('un visitante responde el quiz y recibe su radiografia en pantalla (F10c)', async ({ page }) => {
+  await page.goto('/herramientas');
+
+  for (let i = 0; i < 6; i++) {
+    await page.locator('.diagnostico-opcion').first().click();
+  }
+
+  await expect(page.getByText('Tu negocio tiene un problema de tiempo')).toBeVisible({ timeout: 15000 });
+  await expect(page.locator('.diagnostico-oportunidad')).toHaveCount(3);
+  await expect(page.getByText('Beneficio: Dejas de contestar lo mismo todo el día.')).toBeVisible();
+  await expect(page.locator('.diagnostico-cierre a[href="/contacto"]')).toBeVisible();
 });
 
 test('un visitante conversa con el chatbot de su negocio (F10b, requiere backend + stub)', async ({ page }) => {

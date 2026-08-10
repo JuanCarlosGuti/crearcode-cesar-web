@@ -40,9 +40,9 @@ export const HERRAMIENTAS = {
     {
       titulo: 'Diagnóstico digital',
       descripcion:
-        'Seis preguntas sobre cómo opera tu negocio y una radiografía con tres oportunidades de automatización.',
-      nota: 'En construcción',
-      activa: false,
+        'Seis preguntas sobre cómo opera tu negocio y una radiografía con tres oportunidades de automatización. Está aquí abajo.',
+      nota: 'Sin registro · 2 al día, 10 con cuenta',
+      activa: true,
     },
     {
       titulo: 'Demo de diseño con IA',

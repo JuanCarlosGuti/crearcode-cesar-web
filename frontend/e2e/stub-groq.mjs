@@ -18,10 +18,23 @@ createServer((peticion, respuesta) => {
       // Cuerpo no JSON: se responde igual, el backend valida antes.
     }
 
+    let contexto = '';
+    try {
+      contexto = JSON.parse(cuerpo).messages?.[0]?.content ?? '';
+    } catch {
+      // Sin contexto: cae en la rama genérica.
+    }
+
+    const esDiagnostico = contexto.includes('VEREDICTO:');
     const debeEscalar = /precio|cuesta|cotiza|humano|persona/i.test(ultimaPregunta);
-    const content = debeEscalar
-      ? 'Cada proyecto se cotiza a la medida según su alcance.\n[ESCALAR]'
-      : 'Ofrecemos desarrollo a la medida, IA y automatización para pymes, y soluciones tecnológicas.';
+    const content = esDiagnostico
+      ? 'VEREDICTO: Tu negocio tiene un problema de tiempo, no de ventas.\n' +
+        'OPORTUNIDAD: Respuestas automáticas | Las preguntas repetidas se contestan solas. | Dejas de contestar lo mismo todo el día.\n' +
+        'OPORTUNIDAD: Pedidos en un solo lugar | Cada pedido queda registrado con su estado. | Nadie vuelve a preguntar en qué va ese pedido.\n' +
+        'OPORTUNIDAD: Reportes que se arman solos | Ventas calculadas a partir de lo que registras. | Cierras el mes sin cuadrar nada a mano.'
+      : debeEscalar
+        ? 'Cada proyecto se cotiza a la medida según su alcance.\n[ESCALAR]'
+        : 'Ofrecemos desarrollo a la medida, IA y automatización para pymes, y soluciones tecnológicas.';
 
     respuesta.setHeader('Content-Type', 'application/json');
     respuesta.end(JSON.stringify({ choices: [{ message: { role: 'assistant', content } }] }));
