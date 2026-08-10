@@ -604,13 +604,55 @@ redacta al arrancar cada una, con la misma regla de honestidad.
   funciones) · Grande (varios módulos o integraciones)
 - **Paso 3 — Urgencia**: Sin afán · Próximos 2-3 meses · Lo necesito ya
 - **Resultado**: "Un proyecto como el tuyo suele estar en el rango de
-  **{rango}**." + "Cada proyecto se cotiza a la medida según su
-  alcance — cuéntanos el tuyo y te damos la cifra real en una consulta
-  gratuita." (los valores de {rango} los define el usuario en
-  `contenido/cotizador.ts` antes de publicar)
+  **{rango}**." + "Cada proyecto se cotiza a la medida: este rango es
+  solo una referencia para que sepas en qué orden de magnitud te
+  mueves. El alcance final lo definimos juntos."
+- **Rangos PROPUESTOS por el prototipo (a aprobar por el usuario
+  antes de publicar)**: algo puntual → COP 4–9 millones · varias
+  funciones conectadas → COP 9–22 millones · sistema completo →
+  COP 22–60 millones.
 - **CTAs**: Agenda tu consulta gratuita (prellena el formulario de
   contacto con la selección) · WhatsApp (mensaje prellenado con la
-  selección)
+  selección) · Empezar de nuevo
+
+### Microcopy del prototipo aprobado (10 ago 2026)
+
+Frases clave portadas del prototipo (decisión 10 de docs/10); el resto
+del texto de cada sub-fase se redacta al arrancarla siguiendo este tono.
+
+- **Hero**: "No te contamos lo que la tecnología puede hacer por ti:
+  te lo mostramos aquí mismo, en dos minutos y sin compromiso."
+  (El titular del prototipo acorta el eslogan — decisión PENDIENTE.)
+- **Centro (intro)**: "Prueba la tecnología antes de contratarla.
+  Todo funciona sin registrarte. Los usos diarios se reinician cada
+  día a medianoche; con cuenta gratis tienes cinco veces más."
+- **Tabla de cuenta (Home)**: "La cuenta es gratis y opcional. Esto es
+  lo que cambia." — filas: bocetos con IA, diagnósticos, mensajes al
+  chatbot, herramientas nuevas (acceso anticipado). Los números salen
+  de las variables de límites, no se fijan en el copy.
+- **Placeholders honestos (Home)**: "Casos reales de clientes" y "El
+  equipo" marcados como espacio reservado: "No publicamos cifras ni
+  testimonios que no podamos sustentar."
+- **Demo de diseño — 5 estados**:
+  - Bloqueado: "Crea tu cuenta gratis para ver tu boceto. Generar un
+    diseño con IA cuesta procesamiento, así que lo reservamos para
+    cuentas. Toma 30 segundos y no pedimos tarjeta."
+  - Formulario: contador visible "N de M usos hoy" + "Tarda unos 20
+    segundos."
+  - Generando: "Dibujando tu app…" con checklist de progreso.
+  - Resultado: "Basado en lo que nos contaste. Es una referencia
+    visual: el diseño final se define contigo." + funcionalidades
+    sugeridas + "Hazlo realidad" + "Pedir otra variación" + "Te
+    quedan N bocetos hoy."
+  - Error: "El asistente está descansando. No perdiste ningún uso:
+    puedes intentarlo otra vez en un minuto." / Límite: "Usaste tus
+    M bocetos de hoy. Se reinician mañana a la medianoche."
+- **Diagnóstico (radiografía)**: "Tu negocio opera bien, pero depende
+  demasiado de que alguien esté pendiente. Hay tres cosas que pueden
+  funcionar solas." + 3 oportunidades con título y beneficio concreto.
+  (El envío por correo del informe queda para el MVP — decisión 13.)
+- **Simulador**: "El demo usa respuestas de ejemplo. Un chatbot real
+  se entrena con tu catálogo, horarios y forma de atender."
 
 ---
 

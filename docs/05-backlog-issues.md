@@ -257,14 +257,19 @@ mayor esfuerzo, cada una entregable y verificable por sí sola. Regla
 transversal: límites diarios al estilo F9, estados amables, honestidad
 en textos, e2e con stubs (sin gastar cuota) y AA/Lighthouse intactos.
 
-### F10a — Cotizador + centro de herramientas
+**Referencia visual (10 ago 2026)**: el prototipo aprobado por el
+usuario (decisiones 10-13 de [[10-vision-v2]]). Niveles de prueba por
+issue según [[06-plan-de-pruebas]] §7 (Unit / Component / Integration /
+API / E2E — CI ejecuta los cinco).
+
+### F10a — Centro de herramientas vivo con el cotizador
 
 | ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
 |---|---|---|---|---|---|---|
 | ISS-119 | Documentación de F10 (épica E9, visión ampliada, backlog, copy de cotizador y centro en docs/08) | HU-39..43 | Docs 04/05/08/10 y CLAUDE.md antes del código | S | — | No aplica |
-| ISS-120 | `contenido/cotizador.ts`: pasos, opciones y rangos configurables (sin código en los textos) | HU-39 | Rangos orientativos aprobables por el usuario; ADR-05 | S | ISS-119 | Spec de datos mínimo |
-| ISS-121 | Página del cotizador: wizard de 3 pasos con signals, resultado por rango, CTA contacto/WhatsApp prellenado | HU-39 | Sin backend; accesible; móvil 375px | M | ISS-120 | `cotizador.spec` |
-| ISS-122 | Página del centro de herramientas (4 tarjetas con estado real) + header/Home/sitemap | HU-43 | "Muy pronto" honesto en las que falten | M | ISS-121 | `herramientas.spec`, `sitemap.spec` |
+| ISS-120 | `contenido/cotizador.ts`: pasos, opciones y rangos configurables (propuesta del prototipo, a aprobar antes de publicar) | HU-39 | Rangos orientativos aprobables por el usuario; ADR-05 | S | ISS-119 | Unit (spec de datos) |
+| ISS-121 | Componente del cotizador: wizard de 3 pasos con signals, barra de progreso, resultado por rango con resumen, CTA contacto/WhatsApp prellenado y "empezar de nuevo" | HU-39 | Sin backend; accesible; móvil 375px | M | ISS-120 | Unit + Component (`cotizador.spec`) |
+| ISS-122 | Página VIVA `/herramientas` (decisión 11): cotizador integrado + demo destacado + secciones del diagnóstico/simulador en estado "Muy pronto" + banda de cuenta 5×; header/Home/sitemap | HU-43 | "Muy pronto" honesto; axe | M | ISS-121 | Component + E2E (`herramientas`, sitemap) |
 
 ### F10b — Simulador "un chatbot para tu negocio"
 
@@ -289,12 +294,24 @@ en textos, e2e con stubs (sin gastar cuota) y AA/Lighthouse intactos.
 | ISS-129 | Frontend: página del demo (form → generando → resultado como imagen + variación + CTA) y estado bloqueado para anónimos | HU-42 | Imagen nunca HTML; estados completos; axe | L | ISS-122, ISS-128 | `demo-diseno.spec` |
 | ISS-130 | e2e del demo con stubs (Groq + Gemini) + CI | HU-42 | Flujo completo registrado y bloqueo anónimo | M | ISS-129 | `demo-diseno-e2e` |
 
+### F10e — Rediseño de Home y servicios según el prototipo (decisión 12)
+
+Los componentes de F10b/c/d se integran inline en `/herramientas` a
+medida que cada sub-fase los active (reemplazan su tarjeta "Muy
+pronto").
+
+| ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
+|---|---|---|---|---|---|---|
+| ISS-133 | Home rediseñada: hero con tarjeta del demo (estado según sub-fases vivas), sección centro de herramientas (4 tarjetas), sección asistente con preguntas sugeridas que abren el widget, tabla "visitante vs. con cuenta", placeholders honestos de casos/equipo, CTA de agenda | HU-34, HU-43 | Tokens F8.5 intactos; AA 4.5:1 (los textos translúcidos del prototipo se oscurecen); móvil 375 sin overflow | L | ISS-122 | Component + E2E + axe |
+| ISS-134 | Páginas de servicio rediseñadas: breadcrumb, aside con CTA al diagnóstico, "lo que resolvemos", "cómo trabajamos", FAQ existente, CTA final | HU-43 | Contenido desde `contenido/` (ADR-05) | M | ISS-133 | Component + E2E + axe |
+| ISS-135 | Header según prototipo: enlace Herramientas, doble CTA (agenda + cuenta), menú móvil verificado | HU-43 | Hidratación intacta (patrón `afterNextRender`) | S | ISS-133 | Component + E2E |
+
 ### Cierre F10
 
 | ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
 |---|---|---|---|---|---|---|
 | ISS-131 | Home/beneficios/registro: quitar "Muy pronto" a lo vivo; robots/sitemap; textos finales | HU-43, HU-34 | Honestidad al día en todo el sitio | S | por sub-fase | Specs ajustados |
-| ISS-132 | Verificación integral (Lighthouse ≥95/100/100/100, axe, e2e completas, manual 375/1280) + `render.yaml` (`GEMINI_API_KEY`) + CLAUDE.md + OK del usuario | HU-39..43 | Prueba real con Gemini/Groq antes de publicar | M | todo F10 | Checklist manual |
+| ISS-132 | Verificación integral (Lighthouse ≥95/100/100/100, axe, e2e completas, manual 375/1280, los 5 niveles en verde) + `render.yaml` (`GEMINI_API_KEY`) + CLAUDE.md + OK del usuario | HU-39..43 | Prueba real con Gemini/Groq antes de publicar; cubre también F10e | M | todo F10 | Checklist manual |
 
 **Fase F11**: sigue sin descomponer — se descompone al arrancar, según
 [[10-vision-v2]].

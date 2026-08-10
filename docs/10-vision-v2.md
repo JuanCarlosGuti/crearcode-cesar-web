@@ -250,6 +250,43 @@ Registradas el 29 jul 2026 (al arrancar F10):
 9. **Correo de producción pospuesto al MVP** (28 jul): el informe del
    diagnóstico se muestra en pantalla, sin envío por correo en F10.
 
+Registradas el 10 ago 2026 (al aprobar el prototipo del rediseño):
+
+10. **Prototipo visual aprobado como referencia de F10**: el usuario
+    generó con una IA de diseño el archivo "Crear Code - Rediseno
+    (standalone).html" (Home, página de servicio, centro de
+    herramientas y los 5 estados del demo, en desktop 1280 y móvil
+    375). Respeta la paleta y los tokens de F8.5; su estructura y
+    microcopy quedan portados a docs/05 y docs/08 — el HTML del
+    prototipo es referencia visual, NO código a reutilizar (se
+    implementa en nuestro stack Angular con nuestras reglas).
+11. **El centro de herramientas es una página VIVA**: cotizador,
+    diagnóstico y simulador se usan directamente dentro de
+    `/herramientas` (como en el prototipo), no en páginas separadas;
+    solo el demo de diseño tiene página propia por su peso y su
+    bloqueo por cuenta.
+12. **Nueva sub-fase F10e — rediseño de Home y páginas de servicio**
+    según el prototipo: hero con tarjeta del demo, sección del centro
+    de herramientas, sección del asistente con preguntas sugeridas,
+    tabla "visitante vs. con cuenta", placeholders honestos de
+    casos/equipo, y en servicios breadcrumb + aside del diagnóstico +
+    "lo que resolvemos" + "cómo trabajamos".
+13. **Ajustes de honestidad sobre el prototipo**: la captura de correo
+    del diagnóstico ("Enviarme el informe") queda para el MVP (cuando
+    el correo de producción se active) — en F10 el informe va en
+    pantalla; los rangos COP del cotizador que muestra el prototipo
+    (4–9 / 9–22 / 22–60 millones según alcance) son la PROPUESTA a
+    aprobar por el usuario antes de publicar F10a; los límites diarios
+    que muestra son copy configurable, la fuente de verdad son las
+    variables `ASISTENTE_*`/`DEMO_*`. El hero del prototipo acorta el
+    eslogan ("Tecnología que trabaja para tu negocio", sin "no al
+    revés") — la revisión del eslogan sigue PENDIENTE como decisión
+    aparte del usuario.
+14. **Niveles de prueba obligatorios** (pedido del usuario): cada
+    issue de F10 cubre sus niveles aplicables — Unit, Component,
+    Integration, API y End-to-End — según el mapa de
+    [06-plan-de-pruebas.md](06-plan-de-pruebas.md) §7.
+
 ## Aprobación
 
 **Aprobado explícitamente por el usuario el 27 jul 2026** ("si

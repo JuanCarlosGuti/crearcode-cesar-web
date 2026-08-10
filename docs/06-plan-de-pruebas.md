@@ -177,3 +177,17 @@ Accesibilidad final: 100 en las 3 páginas públicas auditadas
 - Pruebas de penetración formales: la seguridad se cubre con las
   prácticas de la épica E2/E3 (validación, rate limiting, Spring
   Security) pero un pentest formal queda fuera de v1.
+
+## 7. Niveles de prueba obligatorios en F10 (10 ago 2026)
+
+Pedido explícito del usuario al aprobar el rediseño: **ningún issue de
+F10 se cierra sin sus niveles aplicables en verde**, y CI ejecuta los
+cinco. Mapa de cada nivel a nuestras herramientas:
+
+| Nivel | Qué cubre en F10 | Herramienta / patrón |
+|---|---|---|
+| **Unit Test** | Dominio y casos de uso backend (límites, prompts, reglas) con fakes; servicios y utilidades frontend (signals, mapeo de rangos del cotizador) | JUnit puro (sin Spring) / Vitest |
+| **Component Test** | Cada componente interactivo renderizado con su DOM: wizard del cotizador, quiz del diagnóstico, simulador, los 5 estados del demo, widget | Vitest + TestBed (patrón `chat-asistente.spec.ts`) |
+| **Integration Test** | Persistencia y adaptadores backend contra dependencias reales o stubs: Testcontainers (PostgreSQL), stubs HTTP del JDK para Groq/Gemini — nunca red externa ni cuota | `@SpringBootTest` + Testcontainers + stub HTTP (patrón `GroqGeneradorDeRespuestasAdapterIT`) |
+| **API Test** | Contrato de cada endpoint nuevo: códigos de estado, cuerpos, códigos de error estables, límites, auth (anónimo vs. registrado) | `@SpringBootTest` + `TestRestTemplate` (patrón `AsistenteControllerIT`) |
+| **End-to-End** | Flujo completo en navegador real contra el stack levantado con stubs (`stub-groq.mjs` y el futuro `stub-gemini.mjs`) + axe en cada página nueva | Playwright (patrón `asistente-e2e.spec.ts`), job propio en CI |

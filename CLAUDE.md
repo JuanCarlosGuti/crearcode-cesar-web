@@ -148,10 +148,13 @@ variable de entorno en Render el día que se use — nunca en el repo.
 - [x] **F9** — Asistente IA (Groq, ISS-108 a ISS-118): terminada,
   aprobada y publicada (28 jul 2026); su `GROQ_API_KEY` espera en el
   dashboard de Render.
-- [ ] **F10** — Centro de herramientas con IA (ISS-119 a ISS-132,
-  ampliada 29 jul 2026): F10a cotizador + /herramientas → F10b
-  simulador de chatbot → F10c diagnóstico digital → F10d demo de
-  diseño (Gemini). Documentada, pendiente OK para implementar.
+- [ ] **F10** — Centro de herramientas con IA (ISS-119 a ISS-135):
+  F10a cotizador + /herramientas viva → F10b simulador de chatbot →
+  F10c diagnóstico digital → F10d demo de diseño (Gemini) → F10e
+  rediseño Home/servicios según el prototipo aprobado (10 ago 2026,
+  decisiones 10-14 de docs/10). Niveles de prueba obligatorios por
+  issue: Unit, Component, Integration, API y E2E
+  (docs/06 §7). EN IMPLEMENTACIÓN (OK del usuario, 10 ago 2026).
 - [ ] **F11** — Gestión interna.
 
 ## Arranque local
