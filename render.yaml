@@ -62,6 +62,15 @@ services:
       # defaults en application.properties.
       - key: GROQ_API_KEY
         sync: false
+      # En produccion TODOS los visitantes comparten la IP del proxy
+      # SSR (leccion F8): el default de 30/15min bloqueaba las
+      # herramientas con trafico real (verificado 10 ago 2026). La
+      # proteccion fina son los cupos diarios por sesion/usuario en la
+      # capa de aplicacion; este es solo un techo anti-abuso global.
+      # Follow-up ISS-136: propagar X-Forwarded-For para volver al
+      # limite por IP real.
+      - key: RATE_LIMIT_ASISTENTE_MAX_INTENTOS
+        value: "600"
 
   - type: web
     name: crearcodecesar-frontend

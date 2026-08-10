@@ -306,6 +306,12 @@ pronto").
 | ISS-134 | Páginas de servicio rediseñadas: breadcrumb, aside con CTA al diagnóstico, "lo que resolvemos", "cómo trabajamos", FAQ existente, CTA final | HU-43 | Contenido desde `contenido/` (ADR-05) | M | ISS-133 | Component + E2E + axe |
 | ISS-135 | Header según prototipo: enlace Herramientas, doble CTA (agenda + cuenta), menú móvil verificado | HU-43 | Hidratación intacta (patrón `afterNextRender`) | S | ISS-133 | Component + E2E |
 
+### Seguimiento descubierto en producción (10 ago 2026)
+
+| ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
+|---|---|---|---|---|---|---|
+| ISS-136 | Rate limit por IP REAL detrás del proxy: `xfwd` en el proxy SSR + lectura confiable de `X-Forwarded-For` en el backend (evaluando el riesgo de spoofing porque el backend es públicamente accesible). Mientras tanto el techo del asistente sube a 600/15min vía Render (la protección fina son los cupos por sesión/usuario) | — | Límite por visitante real sin bloquear el tráfico legítimo | M | F10 | Integration + API |
+
 ### Cierre F10
 
 | ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
