@@ -33,9 +33,9 @@ export const HERRAMIENTAS = {
     {
       titulo: 'Chatbot para tu negocio',
       descripcion:
-        'Escribe el nombre y el rubro de tu empresa y conversa con el bot que podrías tener atendiendo a tus clientes.',
-      nota: 'En construcción',
-      activa: false,
+        'Escribe el nombre y el rubro de tu empresa y conversa con el bot que podrías tener atendiendo a tus clientes. Está aquí abajo.',
+      nota: 'Sin registro · 10 mensajes al día',
+      activa: true,
     },
     {
       titulo: 'Diagnóstico digital',

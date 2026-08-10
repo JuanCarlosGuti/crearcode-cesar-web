@@ -1,0 +1,83 @@
+<div class="simulador tarjeta-elevada">
+  <div class="simulador-encabezado">
+    <h3>{{ textos.titulo }}</h3>
+    <p>{{ textos.intro }}</p>
+  </div>
+
+  <div class="simulador-cuerpo">
+    <div class="simulador-negocio">
+      <label for="simulador-nombre">{{ textos.etiquetaNombre }}
+        <input
+          id="simulador-nombre"
+          type="text"
+          [value]="nombre()"
+          (input)="actualizarNombre($event)"
+          [placeholder]="textos.placeholderNombre"
+          maxlength="60"
+          autocomplete="off"
+        />
+      </label>
+      <label for="simulador-rubro">{{ textos.etiquetaRubro }}
+        <input
+          id="simulador-rubro"
+          type="text"
+          [value]="rubro()"
+          (input)="actualizarRubro($event)"
+          [placeholder]="textos.placeholderRubro"
+          maxlength="40"
+          autocomplete="off"
+        />
+      </label>
+      <p class="simulador-nota">{{ textos.notaDemo }}</p>
+    </div>
+
+    <div class="simulador-chat">
+      <div class="simulador-chat__titulo">{{ tituloChat() }}</div>
+      <div class="simulador-mensajes" aria-live="polite">
+        <div class="simulador-mensaje">
+          <p>{{ textos.mensajeInicial }}</p>
+        </div>
+        @for (mensaje of mensajes(); track $index) {
+          <div class="simulador-mensaje" [class.simulador-mensaje--usuario]="mensaje.rol === 'USUARIO'">
+            <p>{{ mensaje.texto }}</p>
+          </div>
+        }
+        @if (enviando()) {
+          <p class="simulador-escribiendo">{{ textos.escribiendo }}</p>
+        }
+        @if (avisoNegocio()) {
+          <p class="simulador-aviso-negocio" role="alert">{{ textos.avisoNegocioIncompleto }}</p>
+        }
+        @if (error(); as codigo) {
+          <div class="simulador-aviso" role="alert">
+            @if (codigo === 'limite-anonimo') {
+              <p>{{ textos.limiteAnonimo }}</p>
+              <a routerLink="/registro" class="boton boton-primario">{{ textos.ctaCrearCuenta }}</a>
+            } @else if (codigo === 'limite-registrado') {
+              <p>{{ textos.limiteRegistrado }}</p>
+            } @else {
+              <p>{{ textos.noDisponible }}</p>
+            }
+          </div>
+        }
+      </div>
+      <form class="simulador-formulario" (submit)="enviar($event)">
+        <label class="sr-only" for="simulador-mensaje">{{ textos.placeholderMensaje }}</label>
+        <input
+          id="simulador-mensaje"
+          type="text"
+          [value]="borrador()"
+          (input)="actualizarBorrador($event)"
+          [placeholder]="textos.placeholderMensaje"
+          maxlength="1000"
+          autocomplete="off"
+          [disabled]="enviando()"
+        />
+        <button type="submit" class="boton boton-primario" [disabled]="enviando()">
+          {{ textos.botonEnviar }}
+        </button>
+      </form>
+      <p class="simulador-nota simulador-nota--ia">{{ textos.notaIa }}</p>
+    </div>
+  </div>
+</div>

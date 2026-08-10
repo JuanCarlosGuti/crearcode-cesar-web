@@ -1,0 +1,164 @@
+.simulador {
+  background-color: var(--color-blanco);
+  border-radius: var(--radio-borde-grande);
+  padding: var(--espacio-3);
+}
+
+.simulador-encabezado h3 {
+  margin: 0 0 0.25rem;
+}
+
+.simulador-encabezado p {
+  margin: 0 0 var(--espacio-2);
+  color: var(--color-texto-secundario);
+  font-size: 0.95rem;
+}
+
+.simulador-cuerpo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-3);
+}
+
+.simulador-negocio {
+  flex: 1 1 14rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-2);
+}
+
+.simulador-negocio label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-texto);
+  display: block;
+}
+
+.simulador-negocio input {
+  margin-top: 0.35rem;
+  width: 100%;
+  font: inherit;
+  padding: 0.6rem 0.85rem;
+  border: 2px solid color-mix(in srgb, var(--color-primario) 20%, white);
+  border-radius: var(--radio-borde);
+  background-color: var(--color-fondo);
+}
+
+.simulador-negocio input:focus-visible {
+  outline: 3px solid var(--color-acento);
+  outline-offset: 1px;
+}
+
+.simulador-nota {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--color-texto-secundario);
+  line-height: 1.55;
+}
+
+.simulador-chat {
+  flex: 1 1 20rem;
+  border: 1px solid color-mix(in srgb, var(--color-primario) 12%, white);
+  border-radius: var(--radio-borde-grande);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.simulador-chat__titulo {
+  background: var(--gradiente-marca);
+  color: var(--color-blanco);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.7rem 1rem;
+}
+
+.simulador-mensajes {
+  flex: 1;
+  padding: var(--espacio-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-1);
+  background-color: var(--color-fondo);
+  min-height: 11rem;
+  max-height: 18rem;
+  overflow-y: auto;
+}
+
+.simulador-mensaje p {
+  margin: 0;
+  padding: 0.55rem 0.8rem;
+  border-radius: var(--radio-borde);
+  background-color: var(--color-blanco);
+  border: 1px solid color-mix(in srgb, var(--color-primario) 8%, white);
+  color: var(--color-texto);
+  width: fit-content;
+  max-width: 90%;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.simulador-mensaje--usuario p {
+  background-color: var(--color-primario);
+  border-color: var(--color-primario);
+  color: var(--color-blanco);
+  margin-left: auto;
+}
+
+.simulador-escribiendo {
+  margin: 0;
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--color-texto-secundario);
+}
+
+.simulador-aviso-negocio {
+  margin: 0;
+  font-size: 0.88rem;
+  color: color-mix(in srgb, var(--color-error) 80%, black);
+}
+
+.simulador-aviso {
+  border: 1px solid color-mix(in srgb, var(--color-acento) 30%, white);
+  background-color: color-mix(in srgb, var(--color-acento) 8%, white);
+  border-radius: var(--radio-borde);
+  padding: var(--espacio-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-1);
+  align-items: flex-start;
+}
+
+.simulador-aviso p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.simulador-formulario {
+  display: flex;
+  gap: var(--espacio-1);
+  padding: var(--espacio-1) var(--espacio-2);
+  border-top: 1px solid color-mix(in srgb, var(--color-primario) 10%, white);
+  background-color: var(--color-blanco);
+}
+
+.simulador-formulario input {
+  flex: 1;
+  font: inherit;
+  padding: 0.55rem 0.8rem;
+  border: 2px solid color-mix(in srgb, var(--color-primario) 20%, white);
+  border-radius: var(--radio-borde);
+  min-width: 0;
+}
+
+.simulador-formulario input:focus-visible {
+  outline: 3px solid var(--color-acento);
+  outline-offset: 1px;
+}
+
+.simulador-nota--ia {
+  padding: 0 var(--espacio-2) var(--espacio-1);
+  background-color: var(--color-blanco);
+}

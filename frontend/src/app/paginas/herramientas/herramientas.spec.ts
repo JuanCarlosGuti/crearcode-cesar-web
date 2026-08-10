@@ -1,4 +1,6 @@
 import { TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 
 import { HERRAMIENTAS } from '../../../contenido/herramientas';
@@ -6,7 +8,9 @@ import { HerramientasPage } from './herramientas';
 
 describe('HerramientasPage (centro de herramientas vivo, HU-43)', () => {
   beforeEach(() => {
-    TestBed.configureTestingModule({ providers: [provideRouter([])] });
+    TestBed.configureTestingModule({
+      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
+    });
   });
 
   async function crear() {

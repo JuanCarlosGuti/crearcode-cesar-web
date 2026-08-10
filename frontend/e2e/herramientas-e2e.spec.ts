@@ -14,7 +14,21 @@ test('el centro muestra las herramientas con honestidad de estados', async ({ pa
 
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Herramientas');
   await expect(page.locator('.herramienta-tarjeta')).toHaveCount(5);
-  await expect(page.locator('.badge-muy-pronto')).toHaveCount(3);
+  await expect(page.locator('.badge-muy-pronto')).toHaveCount(2);
+});
+
+test('un visitante conversa con el chatbot de su negocio (F10b, requiere backend + stub)', async ({ page }) => {
+  await page.goto('/herramientas');
+
+  await page.fill('#simulador-nombre', 'Ferretería La 16');
+  await page.fill('#simulador-rubro', 'ferretería');
+  await page.fill('#simulador-mensaje', '¿Tienen tornillos?');
+  await page.locator('.simulador-formulario button[type="submit"]').click();
+
+  await expect(page.locator('.simulador-chat__titulo')).toContainText('Ferretería La 16');
+  await expect(page.locator('.simulador-mensaje--usuario')).toContainText('¿Tienen tornillos?');
+  // El stub de Groq responde su texto fijo para preguntas sin precio
+  await expect(page.getByText('desarrollo a la medida, IA y automatización')).toBeVisible();
 });
 
 test('un visitante completa el cotizador y recibe su rango orientativo', async ({ page }) => {
