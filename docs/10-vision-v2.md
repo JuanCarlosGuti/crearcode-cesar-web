@@ -297,6 +297,16 @@ Registradas el 10 ago 2026 (al aprobar el prototipo del rediseño):
     todo en 1280 y 375. Cumple la decisión 13 (radiografía sin campo
     de correo) y el contraste AA. Es la referencia visual de F10b-F10e;
     su microcopy quedó portado a docs/08.
+16. **Proveedor de imágenes conmutable** (10 ago 2026): verificado con
+    la key real del usuario (válida) que la capa gratis de Gemini ya
+    NO incluye modelos de imagen (429 "limit: 0" en todos). El puerto
+    `GeneradorDeImagenes` tiene dos adaptadores conmutables por
+    `DEMO_PROVEEDOR_IMAGENES`: `pollinations` (interino por defecto:
+    gratis, sin key, verificado funcionando — pero SIN SLA) y `gemini`
+    (listo para cuando vuelva la cuota o haya billing). La decisión
+    del proveedor DE PRODUCCIÓN se cierra con el usuario en ISS-132;
+    Cloudflare Workers AI (10k neurons/día gratis, requiere cuenta y
+    token) sigue como candidato recomendado.
 
 ## Aprobación
 
