@@ -332,9 +332,13 @@ Registradas el 10 ago 2026 (al aprobar el prototipo del rediseño):
 **Aprobado explícitamente por el usuario el 27 jul 2026** ("si
 aprobada arranca por fa"), el mismo día de la publicación de la v1 en
 Render (backend y frontend en producción, flujo de contacto verificado
-extremo a extremo contra la base real de Neon). Prerequisito de
-publicación cumplido; único pendiente de la Etapa 2 que sigue abierto:
-la compra del dominio propio (no bloquea la Etapa 3).
+extremo a extremo contra la base real de Neon).
+
+Estado de la Etapa 3 al 10 ago 2026: **F8, F8.5, F9 y F10 terminadas,
+aprobadas y publicadas**; el dominio propio (pendiente que arrastraba
+la Etapa 2) se compró y migró ese mismo día (ADR-11). Queda **F11 —
+gestión interna**, sin descomponer: se descompone al arrancarla, con
+el OK del usuario.
 
 ## Fuentes consultadas (jul 2026)
 

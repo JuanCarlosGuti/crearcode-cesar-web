@@ -366,7 +366,11 @@ sitio: **describir lo que sí se quiere, nunca lo que no**.
 | ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
 |---|---|---|---|---|---|---|
 | ISS-131 | Home/beneficios/registro: quitar "Muy pronto" a lo vivo; robots/sitemap; textos finales | HU-43, HU-34 | Honestidad al día en todo el sitio | S | por sub-fase | Specs ajustados |
-| ISS-132 | Verificación integral (Lighthouse ≥95/100/100/100, axe, e2e completas, manual 375/1280, los 5 niveles en verde) + `render.yaml` (`GEMINI_API_KEY`) + CLAUDE.md + OK del usuario | HU-39..43 | Prueba real con Gemini/Groq antes de publicar; cubre también F10e | M | todo F10 | Checklist manual |
+| ISS-132 ✅ | Verificación integral (Lighthouse ≥95/100/100/100, axe, e2e completas, manual 375/1280, los 5 niveles en verde) + `render.yaml` + CLAUDE.md + OK del usuario | HU-39..43 | Prueba real con Groq/Cloudflare antes de publicar; cubre también F10e | M | todo F10 | Checklist manual |
+
+**Fase F10 CERRADA el 10 ago 2026** con el OK explícito del usuario,
+cumplida la regla dura del proyecto: suites en verde, ArchUnit en
+verde y aprobación para esa fase concreta.
 
 **Verificación de ISS-132 (10 ago 2026, local)** — falta solo la prueba
 en producción tras el despliegue y el OK explícito del usuario:

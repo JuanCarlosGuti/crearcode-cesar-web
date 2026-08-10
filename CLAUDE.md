@@ -26,15 +26,30 @@ precio respondida sin cifras inventadas y con escalamiento). Decisión
 del usuario (28 jul 2026): la configuración del correo de producción
 (`MAIL_USERNAME`/`MAIL_PASSWORD` en Render) queda **pospuesta hasta
 las pruebas del MVP** — antes de eso el usuario quiere pulir
-funcionalidad y estética. La fase F10 fue AMPLIADA a **Centro de
-herramientas con IA** (29 jul 2026, decisiones 7-9 de docs/10):
-cotizador (F10a) → simulador de chatbot (F10b) → diagnóstico digital
-(F10c) → demo de diseño con Gemini Flash Image (F10d), ISS-119 a
-ISS-132 en docs/05. Documentada; la implementación no arranca sin OK
-explícito del usuario al plan.
+funcionalidad y estética.
+
+La fase F10 — **Centro de herramientas con IA** (ISS-119 a ISS-137) —
+está TERMINADA, APROBADA por el usuario y PUBLICADA (10 ago 2026).
+Incluye el cotizador y la página `/herramientas` viva (F10a), el
+simulador de chatbot (F10b), el diagnóstico digital (F10c), el demo de
+diseño con IA para cuentas registradas (F10d) y el rediseño de Home,
+páginas de servicio y header según el prototipo aprobado (F10e).
+Verificación de cierre (ISS-132): backend en verde (92 ITs + ArchUnit),
+215 specs de frontend, 36 e2e con axe sin violaciones, Lighthouse
+97-98/100/100/100 sobre el build de producción en Home, servicio,
+`/herramientas` y Contacto, revisión manual en 375 y 1280 px, y prueba
+real en producción del asistente (respuesta anclada de Groq y pregunta
+de precio escalada sin inventar cifras). El mismo día se compró y
+migró el dominio propio (ADR-11) y quedó implementado el proveedor de
+imágenes con respaldo (ISS-137, Cloudflare Workers AI + Pollinations),
+verificado con credenciales reales.
+
+**Lo siguiente es la fase F11 — gestión interna**, aún sin descomponer:
+se descompone al arrancarla, con el OK del usuario, según
+[docs/10-vision-v2.md](docs/10-vision-v2.md).
+
 La v1 está PUBLICADA en producción desde el 27 jul
-2026: Render (capa gratis) + Neon. De la Etapa 2 solo queda abierta la
-compra del dominio propio (no bloquea).**
+2026: Render (capa gratis) + Neon.**
 
 URLs de producción:
 - **Dominio canónico: https://crearcodecesar.com** (comprado el 10 ago
@@ -150,16 +165,18 @@ variable de entorno en Render el día que se use — nunca en el repo.
 - [x] **F9** — Asistente IA (Groq, ISS-108 a ISS-118): terminada,
   aprobada y publicada (28 jul 2026); su `GROQ_API_KEY` espera en el
   dashboard de Render.
-- [ ] **F10** — Centro de herramientas con IA (ISS-119 a ISS-135):
-  F10a cotizador + /herramientas viva → F10b simulador de chatbot →
-  F10c diagnóstico digital → F10d demo de diseño (Pollinations) → F10e
-  rediseño Home/servicios/header según el prototipo aprobado (10 ago
-  2026, decisiones 10-17 de docs/10). Niveles de prueba obligatorios
-  por issue: Unit, Component, Integration, API y E2E (docs/06 §7).
-  **Todas las sub-fases están implementadas** (ISS-119 a ISS-131 y
-  ISS-133 a ISS-135). Falta ISS-132: verificación en producción tras
-  el despliegue y el OK explícito del usuario para cerrar la fase.
-- [ ] **F11** — Gestión interna.
+- [x] **F10** — Centro de herramientas con IA (ISS-119 a ISS-137):
+  terminada, aprobada y publicada (10 ago 2026). F10a cotizador +
+  /herramientas viva → F10b simulador de chatbot → F10c diagnóstico
+  digital → F10d demo de diseño → F10e rediseño Home/servicios/header
+  según el prototipo aprobado (decisiones 10-17 de docs/10). Los cinco
+  niveles de prueba por issue (Unit, Component, Integration, API y
+  E2E, docs/06 §7) se cumplieron; cierre verificado en ISS-132.
+  Pendiente solo del usuario: ingresar `CLOUDFLARE_ACCOUNT_ID` y
+  `CLOUDFLARE_API_TOKEN` en Render para que el demo use Cloudflare
+  (hasta entonces responde el respaldo de Pollinations).
+- [ ] **F11** — Gestión interna: sin descomponer todavía; se
+  descompone al arrancarla, con el OK del usuario.
 
 ## Arranque local
 
@@ -564,11 +581,21 @@ cómputo, único costo fijo el dominio (aún no comprado).
 
 ## Pendientes que requieren input del usuario
 
-- Dominio web definitivo y correo corporativo final con ese dominio
-  (decisión al cierre de la fase F7).
-- Revisar el eslogan del hero ("Tecnología que trabaja para tu
-  negocio, no al revés.") — el usuario quiere mirarlo más adelante,
-  dentro del pulido funcional/estético previo a las pruebas del MVP
-  (29 jul 2026).
-- Aprobación explícita de [docs/10-vision-v2.md](docs/10-vision-v2.md)
-  para arrancar la Etapa 3 (después de publicar la v1).
+Al cierre de la fase F10 (10 ago 2026) quedan abiertos:
+
+- **Credenciales de Cloudflare en Render** (`CLOUDFLARE_ACCOUNT_ID` y
+  `CLOUDFLARE_API_TOKEN`): sin ellas el demo de diseño responde con el
+  respaldo de Pollinations en vez de Workers AI.
+- **Correo corporativo final con el dominio propio** y las variables
+  `MAIL_USERNAME`/`MAIL_PASSWORD` en Render — pospuesto por decisión
+  del usuario hasta las pruebas del MVP (28 jul 2026).
+- **Rotar los secretos que circularon por el chat** antes de las
+  pruebas de campo: token de Cloudflare, App Password de Gmail y la
+  contraseña de Neon. Todos viven solo en el `.env` local (gitignored)
+  y en el dashboard de Render, así que rotarlos es pegar el valor
+  nuevo en dos sitios.
+- **Revisar el eslogan del hero** ("Tecnología que trabaja para tu
+  negocio, no al revés.") — el usuario quiere mirarlo dentro del
+  pulido previo a las pruebas del MVP (29 jul 2026).
+- **Arranque de la fase F11** (gestión interna): se descompone en
+  issues cuando el usuario dé la orden.
