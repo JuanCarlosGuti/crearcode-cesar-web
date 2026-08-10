@@ -39,6 +39,17 @@ test('un visitante abre el asistente, usa una sugerencia y recibe respuesta', as
   expect(resultados.violations, JSON.stringify(resultados.violations, null, 2)).toEqual([]);
 });
 
+test('una sugerencia de la Home abre el widget y envia esa pregunta (ISS-133)', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('.chat-panel')).toHaveCount(0);
+
+  await page.locator('.sugerencia-asistente').first().click();
+
+  await expect(page.locator('.chat-panel')).toBeVisible();
+  await expect(page.locator('.chat-mensaje').first()).toContainText('¿Qué servicios ofrecen?');
+  await expect(page.getByText('desarrollo a la medida, IA y automatización')).toBeVisible();
+});
+
 test('preguntar por precios escala a un humano con el WhatsApp contextual', async ({ page }) => {
   await page.goto('/servicios/desarrollo-a-la-medida');
   await abrirAsistente(page);

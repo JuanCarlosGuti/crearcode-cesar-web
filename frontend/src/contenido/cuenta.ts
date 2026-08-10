@@ -113,6 +113,24 @@ export const BENEFICIOS_CUENTA = {
   ctaSecundario: 'Ya tengo cuenta',
 } as const;
 
+/**
+ * Tabla "visitante vs. con cuenta" (Home, F10e — prototipo aprobado).
+ * Los números espejan los defaults de las variables de límites del
+ * backend (ASISTENTE_*, SIMULADOR_*, DIAGNOSTICO_*, DEMO_*).
+ */
+export const TABLA_CUENTA = {
+  columnaConcepto: 'Cada día tienes…',
+  columnaVisitante: 'Visitante',
+  columnaCuenta: 'Con cuenta',
+  filas: [
+    { concepto: 'Bocetos del demo de diseño', visitante: '—', conCuenta: '3' },
+    { concepto: 'Diagnósticos digitales', visitante: '2', conCuenta: '10' },
+    { concepto: 'Mensajes al chatbot de tu negocio', visitante: '10', conCuenta: '50' },
+    { concepto: 'Consultas al asistente', visitante: '10', conCuenta: '50' },
+    { concepto: 'Herramientas nuevas', visitante: 'Cuando salen', conCuenta: 'Acceso anticipado' },
+  ],
+} as const;
+
 export const MENSAJE_ERROR_CORREO_CUENTA = 'Escribe un correo válido, ej. nombre@empresa.com.';
 export const MENSAJE_ERROR_CONTRASENA_CORTA = 'La contraseña debe tener al menos 10 caracteres.';
 export const MENSAJE_ERROR_CONTRASENAS_NO_COINCIDEN = 'Las contraseñas no coinciden.';

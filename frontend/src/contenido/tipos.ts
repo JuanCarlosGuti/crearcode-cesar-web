@@ -26,12 +26,6 @@ export interface Servicio {
   readonly mensajeWhatsapp: string;
 }
 
-export interface Testimonio {
-  readonly nombre: string;
-  readonly cargo: string;
-  readonly cita: string;
-}
-
 export interface Caso {
   readonly slug: string;
   readonly titulo: string;

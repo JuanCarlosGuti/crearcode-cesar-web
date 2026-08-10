@@ -1,4 +1,4 @@
-.hero {
+﻿.hero {
   position: relative;
   overflow: hidden;
   background: var(--gradiente-marca);
@@ -52,8 +52,7 @@
   }
 }
 
-.seccion-servicios,
-.seccion-testimonios {
+.seccion-servicios {
   padding-block: var(--espacio-6);
 }
 
@@ -103,29 +102,343 @@
   grid-template-columns: 1fr;
 }
 
-.rejilla-testimonios {
+@media (min-width: 48rem) {
+  .rejilla-servicios {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+// ---- Rediseno F10e (ISS-133) ----------------------------------------
+
+.hero__disposicion {
+  position: relative;
+  display: grid;
+  gap: var(--espacio-4);
+  grid-template-columns: 1fr;
+  align-items: center;
+}
+
+.hero__gancho {
+  color: var(--color-blanco);
+  font-weight: 600;
+  margin-bottom: var(--espacio-4);
+}
+
+// Tarjeta del demo sobre el gradiente: fondo blanco para contraste AA.
+.hero__demo {
+  position: relative;
+  background-color: var(--color-blanco);
+  border-radius: var(--radio-borde-grande);
+  box-shadow: var(--sombra-2);
+  padding: var(--espacio-3);
+  max-width: 26rem;
+}
+
+.hero__demo-encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-1);
+  flex-wrap: wrap;
+  margin-bottom: var(--espacio-2);
+}
+
+.hero__demo-titulo {
+  font-weight: 700;
+  color: var(--color-primario);
+}
+
+.hero__demo-badge {
+  background-color: color-mix(in srgb, var(--color-acento-luminoso) 18%, white);
+  color: #14532d;
+  border-radius: 999px;
+  padding: 0.15rem 0.65rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.hero__demo-ejemplos {
+  display: grid;
+  gap: var(--espacio-1);
+  margin: 0 0 var(--espacio-2);
+}
+
+.hero__demo-ejemplo {
+  display: flex;
+  gap: var(--espacio-1);
+  align-items: baseline;
+  background-color: var(--color-fondo);
+  border-radius: var(--radio-borde);
+  padding: 0.4rem 0.65rem;
+}
+
+.hero__demo-ejemplo dt {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-texto-secundario);
+  flex-shrink: 0;
+}
+
+.hero__demo-ejemplo dd {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+// Dentro de la tarjeta blanca el boton primario vuelve a su color normal.
+.hero__demo .boton-primario {
+  background-color: var(--color-primario);
+  color: var(--color-blanco);
+  width: 100%;
+  text-align: center;
+}
+
+.hero__demo .boton-primario:hover {
+  background-color: color-mix(in srgb, var(--color-primario) 88%, black);
+}
+
+.hero__demo-nota {
+  font-size: 0.8rem;
+  color: var(--color-texto-secundario);
+  margin: var(--espacio-1) 0 0;
+}
+
+@media (min-width: 60rem) {
+  .hero__disposicion {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  }
+
+  .hero__demo {
+    justify-self: end;
+    width: 100%;
+  }
+}
+
+.seccion-herramientas {
+  padding-block: var(--espacio-6);
+  background-color: var(--color-blanco);
+  border-block: 1px solid color-mix(in srgb, var(--color-primario) 8%, white);
+}
+
+.seccion-herramientas__encabezado {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--espacio-3);
+  margin-bottom: var(--espacio-4);
+}
+
+.seccion-herramientas__encabezado p {
+  max-width: 46rem;
+  margin-bottom: 0;
+}
+
+.rejilla-herramientas-home {
   display: grid;
   gap: var(--espacio-3);
   grid-template-columns: 1fr;
 }
 
-.testimonio {
-  background-color: var(--color-blanco);
-  border-left: 4px solid var(--color-acento);
+.tarjeta-herramienta-home {
+  display: block;
+  background-color: var(--color-fondo);
   border-radius: var(--radio-borde-grande);
-  box-shadow: var(--sombra-1);
   padding: var(--espacio-3);
-  margin: 0;
+  text-decoration: none;
+  color: inherit;
+  border-top: 4px solid var(--color-acento-luminoso);
 }
 
-.testimonio footer {
-  margin-top: var(--espacio-2);
+.tarjeta-herramienta-home h3 {
+  color: var(--color-primario);
+  margin-bottom: var(--espacio-1);
+}
+
+.tarjeta-herramienta-home p {
+  font-size: 0.95rem;
+  margin-bottom: var(--espacio-1);
+}
+
+.tarjeta-herramienta-home__nota {
+  font-size: 0.8rem;
   font-weight: 600;
-  color: var(--color-texto);
+  color: var(--color-texto-secundario);
+}
+
+// minmax(0, 1fr): con zoom de texto al 200% el contenido minimo de una
+// tarjeta puede superar el ancho de su columna; asi la columna comprime
+// y el texto envuelve en vez de desbordar la pagina.
+@media (min-width: 48rem) {
+  .rejilla-herramientas-home {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 64rem) {
+  .rejilla-herramientas-home {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.seccion-asistente {
+  padding-block: var(--espacio-6);
+}
+
+.seccion-asistente__texto {
+  max-width: 46rem;
+}
+
+.seccion-asistente__invitacion {
+  font-weight: 600;
+  margin-bottom: var(--espacio-2);
+}
+
+.seccion-asistente__sugerencias {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-2);
+}
+
+.sugerencia-asistente {
+  background-color: var(--color-blanco);
+  border: 1px solid color-mix(in srgb, var(--color-primario) 25%, white);
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--color-primario);
+  cursor: pointer;
+  transition: var(--transicion-estandar);
+}
+
+.sugerencia-asistente:hover {
+  background-color: color-mix(in srgb, var(--color-primario) 8%, white);
+  border-color: var(--color-primario);
+}
+
+.tabla-cuenta-envoltorio {
+  overflow-x: auto;
+  margin-bottom: var(--espacio-4);
+}
+
+.tabla-cuenta {
+  width: 100%;
+  max-width: 46rem;
+  border-collapse: collapse;
+  background-color: var(--color-fondo);
+  border-radius: var(--radio-borde-grande);
+  overflow: hidden;
+}
+
+.tabla-cuenta th,
+.tabla-cuenta td {
+  text-align: left;
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-primario) 10%, white);
+  font-size: 0.95rem;
+}
+
+.tabla-cuenta thead th {
+  background-color: var(--color-primario);
+  color: var(--color-blanco);
+}
+
+.tabla-cuenta tbody th {
+  font-weight: 500;
+}
+
+.tabla-cuenta tbody tr:last-child th,
+.tabla-cuenta tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.tabla-cuenta__destacado {
+  font-weight: 700;
+  color: var(--color-primario);
+}
+
+.seccion-placeholders {
+  padding-block: var(--espacio-6);
+}
+
+.rejilla-placeholders {
+  display: grid;
+  gap: var(--espacio-3);
+  grid-template-columns: 1fr;
+}
+
+// Estetica deliberada de "espacio reservado": borde discontinuo, sin
+// pretender ser contenido real (regla de honestidad, docs/10 decision 13).
+.tarjeta-placeholder {
+  border: 2px dashed color-mix(in srgb, var(--color-primario) 30%, white);
+  border-radius: var(--radio-borde-grande);
+  padding: var(--espacio-3);
+  background-color: var(--color-blanco);
+}
+
+.tarjeta-placeholder h3 {
+  margin-bottom: var(--espacio-1);
+}
+
+.tarjeta-placeholder p {
+  margin-bottom: 0;
+  color: var(--color-texto-secundario);
+}
+
+.badge-placeholder {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-texto-secundario);
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  padding: 0.1rem 0.6rem;
+  margin-bottom: var(--espacio-1);
 }
 
 @media (min-width: 48rem) {
-  .rejilla-servicios {
-    grid-template-columns: repeat(3, 1fr);
+  .rejilla-placeholders {
+    grid-template-columns: repeat(2, 1fr);
   }
+}
+
+.seccion-cierre {
+  padding-block: 0 var(--espacio-6);
+}
+
+.tarjeta-cierre {
+  background: var(--gradiente-marca);
+  border-radius: var(--radio-borde-grande);
+  padding: var(--espacio-5) var(--espacio-3);
+  text-align: center;
+}
+
+.tarjeta-cierre h2,
+.tarjeta-cierre p {
+  color: var(--color-blanco);
+}
+
+.tarjeta-cierre p {
+  max-width: 40rem;
+  margin-inline: auto;
+}
+
+// Mismo caso que el hero: boton primario invertido sobre el gradiente.
+.tarjeta-cierre .boton-primario {
+  background-color: var(--color-blanco);
+  color: var(--color-primario);
+}
+
+.tarjeta-cierre .boton-primario:hover {
+  background-color: color-mix(in srgb, var(--color-blanco) 86%, #14424d);
+}
+
+.tarjeta-cierre .boton-secundario {
+  border-color: var(--color-blanco);
+  color: var(--color-blanco);
+}
+
+.cta-doble--centrado {
+  justify-content: center;
 }

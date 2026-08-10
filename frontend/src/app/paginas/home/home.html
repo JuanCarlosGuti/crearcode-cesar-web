@@ -15,13 +15,34 @@
       <circle cx="330" cy="330" r="70" fill="none" stroke="#4cc38a" stroke-opacity="0.25" stroke-width="1.5" />
     </svg>
   </div>
-  <div class="contenedor hero__contenido">
-    <h1>{{ home.headline }}</h1>
-    <p class="hero__subheadline">{{ home.subheadline }}</p>
-    <div class="cta-doble">
-      <a routerLink="/contacto" class="boton boton-primario">Agenda tu consulta gratuita</a>
-      <app-whatsapp-cta [mensaje]="home.mensajeWhatsapp" etiqueta="Escríbenos por WhatsApp" />
+  <div class="contenedor hero__disposicion">
+    <div class="hero__contenido">
+      <h1>{{ home.headline }}</h1>
+      <p class="hero__subheadline">{{ home.subheadline }}</p>
+      <p class="hero__gancho">{{ home.gancho }}</p>
+      <div class="cta-doble">
+        <a routerLink="/contacto" class="boton boton-primario">Agenda tu consulta gratuita</a>
+        <app-whatsapp-cta [mensaje]="home.mensajeWhatsapp" etiqueta="Escríbenos por WhatsApp" />
+      </div>
     </div>
+    <aside class="hero__demo" aria-label="Demo de diseño con IA">
+      <div class="hero__demo-encabezado">
+        <span class="hero__demo-titulo">{{ home.demo.titulo }}</span>
+        <span class="hero__demo-badge">{{ home.demo.badge }}</span>
+      </div>
+      <dl class="hero__demo-ejemplos">
+        @for (ejemplo of home.demo.ejemplos; track ejemplo.etiqueta) {
+          <div class="hero__demo-ejemplo">
+            <dt>{{ ejemplo.etiqueta }}</dt>
+            <dd>{{ ejemplo.valor }}</dd>
+          </div>
+        }
+      </dl>
+      <a routerLink="/herramientas" fragment="demo-diseno" class="boton boton-primario hero__demo-cta">
+        {{ home.demo.cta }}
+      </a>
+      <p class="hero__demo-nota">{{ home.demo.nota }}</p>
+    </aside>
   </div>
 </section>
 
@@ -30,6 +51,40 @@
   <div class="rejilla-servicios">
     @for (servicio of servicios; track servicio.slug) {
       <app-tarjeta-servicio [servicio]="servicio" />
+    }
+  </div>
+</section>
+
+<section class="seccion-herramientas" aria-labelledby="titulo-herramientas" aparecerAlVer>
+  <div class="contenedor">
+    <div class="seccion-herramientas__encabezado">
+      <div>
+        <h2 id="titulo-herramientas">{{ home.herramientas.titulo }}</h2>
+        <p>{{ home.herramientas.intro }}</p>
+      </div>
+      <a routerLink="/herramientas" class="boton boton-secundario">{{ home.herramientas.cta }}</a>
+    </div>
+    <div class="rejilla-herramientas-home">
+      @for (tarjeta of home.herramientas.tarjetas; track tarjeta.titulo) {
+        <a routerLink="/herramientas" class="tarjeta-herramienta-home tarjeta-elevada">
+          <h3>{{ tarjeta.titulo }}</h3>
+          <p>{{ tarjeta.descripcion }}</p>
+          <span class="tarjeta-herramienta-home__nota">{{ tarjeta.nota }}</span>
+        </a>
+      }
+    </div>
+  </div>
+</section>
+
+<section class="contenedor seccion-asistente" aria-labelledby="titulo-asistente" aparecerAlVer>
+  <h2 id="titulo-asistente">{{ home.asistente.titulo }}</h2>
+  <p class="seccion-asistente__texto">{{ home.asistente.texto }}</p>
+  <p class="seccion-asistente__invitacion">{{ home.asistente.invitacion }}</p>
+  <div class="seccion-asistente__sugerencias">
+    @for (sugerencia of sugerencias; track sugerencia) {
+      <button type="button" class="sugerencia-asistente" (click)="preguntarAlAsistente(sugerencia)">
+        {{ sugerencia }}
+      </button>
     }
   </div>
 </section>
@@ -51,6 +106,27 @@
         </article>
       }
     </div>
+    <div class="tabla-cuenta-envoltorio">
+      <table class="tabla-cuenta">
+        <caption class="sr-only">Comparación de usos diarios entre visitante y cuenta registrada</caption>
+        <thead>
+          <tr>
+            <th scope="col">{{ tablaCuenta.columnaConcepto }}</th>
+            <th scope="col">{{ tablaCuenta.columnaVisitante }}</th>
+            <th scope="col">{{ tablaCuenta.columnaCuenta }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (fila of tablaCuenta.filas; track fila.concepto) {
+            <tr>
+              <th scope="row">{{ fila.concepto }}</th>
+              <td>{{ fila.visitante }}</td>
+              <td class="tabla-cuenta__destacado">{{ fila.conCuenta }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
     <div class="cta-doble">
       <a routerLink="/registro" class="boton boton-primario">{{ beneficios.ctaPrincipal }}</a>
       <a routerLink="/ingreso" class="boton boton-secundario">{{ beneficios.ctaSecundario }}</a>
@@ -58,14 +134,29 @@
   </div>
 </section>
 
-<section class="contenedor seccion-testimonios" aria-labelledby="titulo-testimonios" aparecerAlVer>
-  <h2 id="titulo-testimonios">Empresas que ya confiaron en nosotros</h2>
-  <div class="rejilla-testimonios">
-    @for (testimonio of testimonios; track testimonio.nombre) {
-      <blockquote class="testimonio">
-        <p>"{{ testimonio.cita }}"</p>
-        <footer>— {{ testimonio.nombre }}, {{ testimonio.cargo }}</footer>
-      </blockquote>
-    }
+<section class="contenedor seccion-placeholders" aria-labelledby="titulo-placeholders" aparecerAlVer>
+  <h2 id="titulo-placeholders" class="sr-only">Casos y equipo</h2>
+  <div class="rejilla-placeholders">
+    <article class="tarjeta-placeholder">
+      <span class="badge-placeholder">{{ home.placeholders.etiqueta }}</span>
+      <h3>{{ home.placeholders.casos.titulo }}</h3>
+      <p>{{ home.placeholders.casos.texto }}</p>
+    </article>
+    <article class="tarjeta-placeholder">
+      <span class="badge-placeholder">{{ home.placeholders.etiqueta }}</span>
+      <h3>{{ home.placeholders.equipo.titulo }}</h3>
+      <p>{{ home.placeholders.equipo.texto }}</p>
+    </article>
+  </div>
+</section>
+
+<section class="contenedor seccion-cierre" aparecerAlVer>
+  <div class="tarjeta-cierre tarjeta-elevada">
+    <h2>{{ home.cierre.titulo }}</h2>
+    <p>{{ home.cierre.texto }}</p>
+    <div class="cta-doble cta-doble--centrado">
+      <a routerLink="/contacto" class="boton boton-primario">Agenda tu consulta gratuita</a>
+      <app-whatsapp-cta [mensaje]="home.mensajeWhatsapp" etiqueta="Escríbenos por WhatsApp" />
+    </div>
   </div>
 </section>

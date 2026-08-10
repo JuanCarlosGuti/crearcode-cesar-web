@@ -36,13 +36,54 @@ marcados con `[...]` cuando el dato aún no existe.
    Ponemos tu negocio al día sin proyectos eternos ni sorpresas.*
    → Conocer más
 
-**Prueba social (placeholder):**
-> Empresas que ya confiaron en nosotros *(logos placeholder — reemplazar
-> con clientes reales cuando estén disponibles)*
->
-> *"[Testimonio placeholder — cita corta de un cliente sobre el
-> resultado obtenido]"*
-> — [Nombre placeholder], [Cargo/Empresa placeholder]
+**Gancho del hero (rediseño F10e, ISS-133):**
+> No te contamos lo que la tecnología puede hacer por ti: te lo
+> mostramos aquí mismo, en dos minutos y sin compromiso.
+
+**Tarjeta del demo en el hero (enlaza a /herramientas#demo-diseno):**
+> **Demo de diseño con IA** — badge "Gratis · para cuentas"
+> Ejemplo precargado: Sector *Restaurante* · Qué hace *Domicilios en
+> Valledupar* · Qué necesita *Recibir pedidos sin saturar el WhatsApp*
+> CTA: **Ver mi boceto con IA**
+> Nota: "Genera una imagen de referencia, no un producto final."
+
+**Sección de herramientas (4 tarjetas cortas + CTA a /herramientas):**
+> **Pruébalo con tu propio negocio, ahora mismo** — "Herramientas
+> abiertas, sin registro para empezar. Si creas tu cuenta gratis,
+> tienes más usos cada día y acceso anticipado a lo nuevo."
+> Tarjetas: Asistente con IA (Sin registro) · Cotizador de proyectos
+> (Sin registro · ilimitado) · Chatbot para tu negocio (Sin registro ·
+> 10 mensajes al día) · Diagnóstico digital (Sin registro · 2 al día).
+> CTA: **Abrir el centro de herramientas**
+
+**Sección del asistente (las sugerencias abren el widget flotante):**
+> **Pregúntale a nuestro asistente antes de escribirnos** — "Está en la
+> burbuja de abajo a la derecha, en todas las páginas. Responde en
+> segundos sobre plazos, forma de trabajo y qué se puede automatizar en
+> tu rubro." + las tres preguntas sugeridas del asistente (docs/08
+> §Asistente).
+
+**Tabla visitante vs. con cuenta (dentro de "Tu cuenta te da más"):**
+> Columnas: "Cada día tienes…" / Visitante / Con cuenta. Filas: bocetos
+> del demo (—/3), diagnósticos (2/10), mensajes al chatbot (10/50),
+> consultas al asistente (10/50), herramientas nuevas (cuando salen /
+> acceso anticipado). Los números espejan los defaults de las variables
+> de límites del backend.
+
+**Placeholders honestos (reemplazan a los testimonios ficticios de la
+v1 — regla de honestidad, decisión 13 de docs/10):**
+> **Casos reales de clientes** *(badge "Espacio reservado")*: "Este
+> espacio queda reservado para proyectos verificables, con nombre y
+> resultado autorizados por cada cliente. No publicamos cifras ni
+> testimonios que no podamos sustentar."
+> **El equipo** *(badge "Espacio reservado")*: "Fotos y roles del
+> equipo, con material real. Mientras llega, preferimos este aviso a
+> inventar perfiles."
+
+**Cierre:**
+> **Cuéntanos qué te está quitando tiempo** — "Media hora por
+> videollamada, sin costo y sin venta forzada. Salimos con un
+> diagnóstico claro, así no trabajemos juntos." + CTA doble.
 
 **CTA doble (aparece también en header/footer de todo el sitio):**
 > **Agenda tu consulta gratuita** · **Escríbenos por WhatsApp**

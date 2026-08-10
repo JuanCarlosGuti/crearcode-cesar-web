@@ -1,9 +1,10 @@
-import { Component, ElementRef, computed, inject, signal, viewChild } from '@angular/core';
+import { Component, ElementRef, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter, map } from 'rxjs';
 
 import { ASISTENTE } from '../../../contenido/asistente';
+import { AsistenteUiService } from '../../nucleo/asistente-ui';
 import { ConversacionService } from '../../nucleo/conversacion';
 import { SesionService } from '../../nucleo/sesion';
 import { mensajeWhatsappParaRuta } from '../../layout/mensaje-whatsapp-por-ruta';
@@ -38,6 +39,24 @@ export class ChatAsistente {
   protected readonly mensajeWhatsapp = computed(() => mensajeWhatsappParaRuta(this.urlActual()));
 
   private readonly campoDePregunta = viewChild<ElementRef<HTMLInputElement>>('campoPregunta');
+
+  private readonly asistenteUi = inject(AsistenteUiService);
+
+  constructor() {
+    // Apertura desde otras páginas (F10e): las sugerencias de la Home
+    // abren el panel y envían la pregunta a través del servicio puente.
+    effect(() => {
+      if (this.asistenteUi.aperturas() === 0) {
+        return;
+      }
+      this.abierto.set(true);
+      const pregunta = this.asistenteUi.consumirPregunta();
+      if (pregunta) {
+        this.conversacion.enviar(pregunta);
+      }
+      queueMicrotask(() => this.campoDePregunta()?.nativeElement.focus());
+    });
+  }
 
   protected alternarPanel(): void {
     this.abierto.update((abierto) => !abierto);

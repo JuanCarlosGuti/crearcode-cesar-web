@@ -3,6 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 
+import { AsistenteUiService } from '../../nucleo/asistente-ui';
 import { ChatAsistente } from './chat-asistente';
 
 async function crearWidget() {
@@ -147,6 +148,34 @@ describe('ChatAsistente', () => {
     const aviso = el.querySelector('.chat-aviso') as HTMLElement;
     expect(aviso.textContent).toContain('Crea tu cuenta');
     expect(aviso.querySelector('a[href="/registro"]')).not.toBeNull();
+  });
+
+  it('AsistenteUiService.abrir con pregunta abre el panel y la envia (ISS-133)', async () => {
+    const { fixture, el } = await crearWidget();
+    expect(el.querySelector('.chat-panel')).toBeNull();
+
+    TestBed.inject(AsistenteUiService).abrir('¿Qué servicios ofrecen?');
+    await fixture.whenStable();
+
+    expect(el.querySelector('.chat-panel')).not.toBeNull();
+    const solicitud = httpMock.expectOne('/api/asistente/mensajes');
+    expect((solicitud.request.body as { mensajes: { texto: string }[] }).mensajes[0].texto).toBe(
+      '¿Qué servicios ofrecen?',
+    );
+    solicitud.flush({ texto: 'Te cuento.', escalarAHumano: false });
+    await fixture.whenStable();
+
+    expect(el.textContent).toContain('Te cuento.');
+  });
+
+  it('AsistenteUiService.abrir sin pregunta solo abre el panel (ISS-133)', async () => {
+    const { fixture, el } = await crearWidget();
+
+    TestBed.inject(AsistenteUiService).abrir();
+    await fixture.whenStable();
+
+    expect(el.querySelector('.chat-panel')).not.toBeNull();
+    httpMock.expectNone('/api/asistente/mensajes');
   });
 
   it('la indisponibilidad muestra la alternativa de WhatsApp (HU-36)', async () => {
