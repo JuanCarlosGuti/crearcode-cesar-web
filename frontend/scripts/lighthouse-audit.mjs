@@ -11,7 +11,7 @@ import { chromium } from 'playwright';
 import lighthouse from 'lighthouse';
 
 const baseUrl = process.argv[2] ?? 'http://localhost:4300';
-const rutas = ['/', '/servicios/desarrollo-a-la-medida', '/contacto'];
+const rutas = ['/', '/servicios/desarrollo-a-la-medida', '/herramientas', '/contacto'];
 const PORT = 9222;
 
 const userDataDir = mkdtempSync(join(tmpdir(), 'lh-chrome-'));

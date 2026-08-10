@@ -214,6 +214,33 @@ cuenta, hero con gradiente) usan estos tokens; los valores exactos
 viven como custom properties en `styles.scss` — este documento es la
 fuente de verdad de sus valores.
 
+### Rediseño F10e (10 ago 2026) — patrones nuevos
+
+El rediseño de la fase F10e (prototipo aprobado, ISS-133 a ISS-135)
+no cambia la paleta ni los tokens de F8.5: los reutiliza. Patrones
+que quedan como convención del sitio:
+
+- **Tarjeta clara sobre gradiente**: cualquier tarjeta que viva sobre
+  el gradiente de marca (tarjeta del demo en el hero) va con fondo
+  blanco y `--sombra-2`; dentro de ella el botón primario recupera su
+  color normal (fuera, sobre el gradiente, se invierte a blanco).
+- **Rejillas con `minmax(0, 1fr)`**, no `1fr` a secas: con zoom de
+  texto al 200% el contenido mínimo de una tarjeta puede exceder su
+  columna y desbordar la página. Lo atrapó el e2e de accesibilidad en
+  la rejilla de herramientas de la Home.
+- **Espacios reservados honestos**: borde discontinuo, badge "Espacio
+  reservado" y texto que explica por qué está vacío. Reemplazan a
+  cualquier contenido ficticio (los testimonios inventados de la v1
+  se eliminaron con esta regla).
+- **Aside pegajoso** en páginas de contenido largo (servicios): dos
+  columnas desde `64rem`, `position: sticky` solo en esa media query;
+  en móvil cae al final del flujo, después del CTA.
+- **Presupuesto de estilos por componente**: `anyComponentStyle` sube
+  a 8kB de aviso / 12kB de error en `angular.json`. La Home tiene
+  siete secciones con estilos propios (7.1 kB) y el límite anterior de
+  4 kB ya no describe una página real del sitio; el presupuesto sigue
+  existiendo para atrapar crecimiento descontrolado.
+
 ### Imágenes (convención para cuando existan imágenes de contenido)
 
 Al cierre de la fase F6 el sitio no tiene ninguna imagen de contenido

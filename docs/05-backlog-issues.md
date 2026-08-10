@@ -302,9 +302,25 @@ pronto").
 
 | ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
 |---|---|---|---|---|---|---|
-| ISS-133 | Home rediseñada: hero con tarjeta del demo (estado según sub-fases vivas), sección centro de herramientas (4 tarjetas), sección asistente con preguntas sugeridas que abren el widget, tabla "visitante vs. con cuenta", placeholders honestos de casos/equipo, CTA de agenda | HU-34, HU-43 | Tokens F8.5 intactos; AA 4.5:1 (los textos translúcidos del prototipo se oscurecen); móvil 375 sin overflow | L | ISS-122 | Component + E2E + axe |
-| ISS-134 | Páginas de servicio rediseñadas: breadcrumb, aside con CTA al diagnóstico, "lo que resolvemos", "cómo trabajamos", FAQ existente, CTA final | HU-43 | Contenido desde `contenido/` (ADR-05) | M | ISS-133 | Component + E2E + axe |
-| ISS-135 | Header según prototipo: enlace Herramientas, doble CTA (agenda + cuenta), menú móvil verificado | HU-43 | Hidratación intacta (patrón `afterNextRender`) | S | ISS-133 | Component + E2E |
+| ISS-133 ✅ | Home rediseñada: hero con tarjeta del demo (estado según sub-fases vivas), sección centro de herramientas (4 tarjetas), sección asistente con preguntas sugeridas que abren el widget, tabla "visitante vs. con cuenta", placeholders honestos de casos/equipo, CTA de agenda | HU-34, HU-43 | Tokens F8.5 intactos; AA 4.5:1 (los textos translúcidos del prototipo se oscurecen); móvil 375 sin overflow | L | ISS-122 | Component + E2E + axe |
+| ISS-134 ✅ | Páginas de servicio rediseñadas: breadcrumb, aside con CTA al diagnóstico, "lo que resolvemos", "cómo trabajamos", FAQ existente, CTA final | HU-43 | Contenido desde `contenido/` (ADR-05) | M | ISS-133 | Component + E2E + axe |
+| ISS-135 ✅ | Header según prototipo: enlace Herramientas, doble CTA (agenda + cuenta), menú móvil verificado | HU-43 | Hidratación intacta (patrón `afterNextRender`) | S | ISS-133 | Component + E2E |
+
+**Hallazgos de F10e** (los que valen para el resto del sitio quedan en
+[[07-guia-de-estilo]] §Rediseño F10e):
+
+- El e2e de zoom de texto al 200% atrapó un overflow horizontal real en
+  la rejilla de herramientas de la Home: `1fr` deja que el contenido
+  mínimo de una tarjeta empuje la columna. Se corrigió con
+  `minmax(0, 1fr)` — convención nueva para todas las rejillas.
+- El `AsistenteUiService` (nuevo, `nucleo/`) desacopla "abrir el
+  asistente con esta pregunta" del componente del widget: la Home no
+  conoce al chat, solo publica la intención. Contador de aperturas +
+  pregunta de un solo uso para que repetir la misma sugerencia vuelva
+  a disparar el efecto.
+- El presupuesto `anyComponentStyle` de Angular (4 kB) ya no describía
+  una página real: la Home rediseñada tiene siete secciones con estilos
+  propios (7.1 kB). Subió a 8 kB de aviso / 12 kB de error.
 
 ### Seguimiento descubierto en producción (10 ago 2026)
 
@@ -318,6 +334,19 @@ pronto").
 |---|---|---|---|---|---|---|
 | ISS-131 | Home/beneficios/registro: quitar "Muy pronto" a lo vivo; robots/sitemap; textos finales | HU-43, HU-34 | Honestidad al día en todo el sitio | S | por sub-fase | Specs ajustados |
 | ISS-132 | Verificación integral (Lighthouse ≥95/100/100/100, axe, e2e completas, manual 375/1280, los 5 niveles en verde) + `render.yaml` (`GEMINI_API_KEY`) + CLAUDE.md + OK del usuario | HU-39..43 | Prueba real con Gemini/Groq antes de publicar; cubre también F10e | M | todo F10 | Checklist manual |
+
+**Verificación de ISS-132 (10 ago 2026, local)** — falta solo la prueba
+en producción tras el despliegue y el OK explícito del usuario:
+
+| Comprobación | Resultado |
+|---|---|
+| Backend (`mvnw verify`: unit + ArchUnit + 88 ITs) | BUILD SUCCESS |
+| Frontend (`npm test`) | 215 specs en verde |
+| E2E Playwright + axe (`npm run e2e`) | 36 en verde, cero violaciones |
+| Build de producción con SSR/prerender | 19 rutas, sin warnings |
+| Lighthouse móvil sobre el build real (`/`, servicio, `/herramientas`, `/contacto`) | Performance 97-98 · Accesibilidad 100 · Buenas Prácticas 100 · SEO 100 |
+| Manual 375 px / 1280 px (Home, servicio, herramientas, menú móvil) | Sin overflow horizontal, sin errores de consola |
+| Sugerencias de la Home → abren el asistente y responden | Verificado en el build de producción |
 
 **Fase F11**: sigue sin descomponer — se descompone al arrancar, según
 [[10-vision-v2]].

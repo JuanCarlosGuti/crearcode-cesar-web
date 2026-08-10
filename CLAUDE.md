@@ -152,11 +152,13 @@ variable de entorno en Render el día que se use — nunca en el repo.
   dashboard de Render.
 - [ ] **F10** — Centro de herramientas con IA (ISS-119 a ISS-135):
   F10a cotizador + /herramientas viva → F10b simulador de chatbot →
-  F10c diagnóstico digital → F10d demo de diseño (Gemini) → F10e
-  rediseño Home/servicios según el prototipo aprobado (10 ago 2026,
-  decisiones 10-14 de docs/10). Niveles de prueba obligatorios por
-  issue: Unit, Component, Integration, API y E2E
-  (docs/06 §7). EN IMPLEMENTACIÓN (OK del usuario, 10 ago 2026).
+  F10c diagnóstico digital → F10d demo de diseño (Pollinations) → F10e
+  rediseño Home/servicios/header según el prototipo aprobado (10 ago
+  2026, decisiones 10-16 de docs/10). Niveles de prueba obligatorios
+  por issue: Unit, Component, Integration, API y E2E (docs/06 §7).
+  **Todas las sub-fases están implementadas** (ISS-119 a ISS-131 y
+  ISS-133 a ISS-135). Falta ISS-132: verificación en producción tras
+  el despliegue y el OK explícito del usuario para cerrar la fase.
 - [ ] **F11** — Gestión interna.
 
 ## Arranque local
@@ -400,6 +402,38 @@ de error 4.27:1 y badge "Muy pronto" 4.19:1), ambos corregidos
 oscureciendo el texto. Lighthouse tras el rediseño: Performance 97-98,
 resto 100 — se mantiene lo ganado en F6.
 
+## Rediseño F10e (Home, servicios y header — ISS-133 a ISS-135)
+
+Segunda capa visual sobre F8.5, siguiendo el prototipo aprobado por el
+usuario (10 ago 2026). No cambia paleta ni tokens: los reutiliza.
+
+- **Home**: hero con gancho + tarjeta blanca del demo de diseño (CTA a
+  `/herramientas#demo-diseno`), sección "Pruébalo con tu propio
+  negocio" con las 4 herramientas, sección del asistente cuyas
+  preguntas sugeridas **abren el widget flotante y envían la pregunta**
+  (vía `AsistenteUiService` en `nucleo/` — la página no conoce al chat,
+  solo publica la intención; contador de aperturas + pregunta de un
+  solo uso), tabla "visitante vs. con cuenta" (`TABLA_CUENTA`, espeja
+  los defaults de los límites del backend), y **placeholders honestos**
+  de casos/equipo que reemplazan a los testimonios ficticios de la v1.
+- **Servicios**: miga de pan, resumen corto, dos columnas con aside
+  pegajoso que lleva al diagnóstico (`/herramientas#diagnostico`), y
+  los títulos "Lo que resolvemos" / "Cómo trabajamos".
+- **Header**: doble CTA "Agenda tu consulta" + "Crear cuenta" (o "Mi
+  cuenta" con sesión, `/admin` para admins), detrás de la hidratación
+  como siempre. El botón de WhatsApp salió del header; sigue en footer,
+  hero, cierre y escalamiento del asistente.
+- **`anchorScrolling: 'enabled'`** en el router: los CTA con ancla a
+  `/herramientas` posicionan en la herramienta correcta.
+- **Hallazgo AA**: el e2e de zoom de texto al 200% atrapó un overflow
+  horizontal real — `1fr` en una rejilla deja que el contenido mínimo
+  de una tarjeta empuje la columna. Convención nueva: `minmax(0, 1fr)`
+  (ver [docs/07-guia-de-estilo.md](docs/07-guia-de-estilo.md)
+  §Rediseño F10e).
+- Lighthouse tras el rediseño (build de producción, móvil): Performance
+  97-98, Accesibilidad/Buenas Prácticas/SEO 100 en Home, servicio,
+  `/herramientas` y Contacto.
+
 ## SEO, rendimiento y accesibilidad (tras la fase F6)
 
 - **Metadatos por página** (`title`, `meta description`, Open Graph):
@@ -424,8 +458,9 @@ resto 100 — se mantiene lo ganado en F6.
   `frontend/scripts/lighthouse-audit.mjs` — Playwright + lighthouse
   programático vía CDP, sin depender de un Chrome del sistema; corre
   contra el build de producción real, no el dev server): Home, un
-  servicio y Contacto en modo móvil dan Performance 98-99,
-  Accesibilidad 100, Buenas Prácticas 100, SEO 100.
+  servicio, `/herramientas` (añadida en F10e) y Contacto en modo móvil
+  dan Performance 97-98, Accesibilidad 100, Buenas Prácticas 100,
+  SEO 100.
 - **Checklist de accesibilidad**: los 10 puntos de
   [docs/06-plan-de-pruebas.md](docs/06-plan-de-pruebas.md) §5
   verificados con axe-core vía Playwright
