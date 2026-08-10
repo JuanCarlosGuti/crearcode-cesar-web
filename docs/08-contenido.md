@@ -577,6 +577,43 @@ mantenido a mano desde este documento — ADR-10).
 
 ---
 
+## Centro de herramientas (fase F10 — HU-39 a HU-43)
+
+Copy de F10a (cotizador + centro). El de las sub-fases b/c/d se
+redacta al arrancar cada una, con la misma regla de honestidad.
+
+### Página del centro (`/herramientas`)
+
+- **Título**: Herramientas para tu negocio
+- **Intro**: Pruébalas gratis y hazte una idea de lo que la tecnología
+  puede hacer por tu empresa — sin compromiso y en minutos.
+- **Tarjetas**: Asistente con IA (activa) · Cotizador de proyectos
+  (activa desde F10a) · Chatbot para tu negocio *(Muy pronto)* ·
+  Diagnóstico digital *(Muy pronto)* · Demo de diseño con IA *(Muy
+  pronto — para registrados)*
+
+### Cotizador (`/herramientas/cotizador`)
+
+- **Título**: ¿Cuánto podría costar tu proyecto?
+- **Intro**: Tres preguntas y te damos un rango orientativo. La cifra
+  exacta sale de entender tu negocio — la primera consulta es gratis.
+- **Paso 1 — Tipo de proyecto**: Página web corporativa · Tienda o
+  cobros en línea · Sistema interno a la medida · Automatización con
+  IA · No estoy seguro
+- **Paso 2 — Tamaño**: Algo sencillo para empezar · Mediano (varias
+  funciones) · Grande (varios módulos o integraciones)
+- **Paso 3 — Urgencia**: Sin afán · Próximos 2-3 meses · Lo necesito ya
+- **Resultado**: "Un proyecto como el tuyo suele estar en el rango de
+  **{rango}**." + "Cada proyecto se cotiza a la medida según su
+  alcance — cuéntanos el tuyo y te damos la cifra real en una consulta
+  gratuita." (los valores de {rango} los define el usuario en
+  `contenido/cotizador.ts` antes de publicar)
+- **CTAs**: Agenda tu consulta gratuita (prellena el formulario de
+  contacto con la selección) · WhatsApp (mensaje prellenado con la
+  selección)
+
+---
+
 ## Legales
 
 ### Política de tratamiento de datos personales (borrador — Ley 1581 de 2012)

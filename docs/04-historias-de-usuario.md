@@ -884,3 +884,83 @@ registrado, por sesión anónima y global diario — el de IP es respaldo
 grueso, ver ADR-10); los valores exactos son configurables por
 variables de entorno.
 **Prioridad**: Must (para F9).
+
+## Épica E9 — Centro de herramientas con IA (Etapa 3, fase F10)
+
+El sitio como herramienta viva ([[10-vision-v2]] §F10 ampliada, 29 jul
+2026): cada pyme prueba en minutos lo que la tecnología haría por su
+negocio. Todas las herramientas comparten: límites diarios (registrado
+> anónimo, como F9), estados de carga/error/límite amables, y la regla
+de honestidad (nada de precios ni promesas inventadas).
+
+### HU-39 — Visitante estima el costo de su proyecto (cotizador)
+Como **visitante** quiero **responder 3 pasos sobre mi proyecto y ver
+un rango orientativo** para **saber si esto está a mi alcance antes de
+contactar**.
+
+- Dado que completo tipo de proyecto, alcance y urgencia, entonces veo
+  un RANGO orientativo (nunca una cifra exacta) con la aclaración de
+  que cada proyecto se cotiza a la medida.
+- Dado que veo mi rango, cuando toco el CTA de contacto o WhatsApp,
+  entonces el mensaje va prellenado con mi selección.
+- Dado que el cotizador es informativo, entonces funciona sin registro
+  y sin IA (reglas y rangos configurables en `contenido/`).
+
+**Prioridad**: Must (F10a).
+
+### HU-40 — Visitante prueba el chatbot de SU negocio (simulador)
+Como **dueño de pyme** quiero **escribir el nombre y rubro de mi
+negocio y conversar con el chatbot que podría tener** para **entender
+qué haría la IA por mis clientes**.
+
+- Dado que ingreso nombre y rubro, cuando pregunto como si fuera mi
+  cliente, entonces el bot responde en el tono de MI negocio.
+- Dado que el simulador usa una plantilla segura, entonces mi texto no
+  puede alterar las reglas del prompt (anti-inyección) ni sacar al bot
+  de su papel.
+- Dado que comparte el proveedor del asistente (F9), entonces respeta
+  los mismos límites diarios y estados de error/límite.
+
+**Prioridad**: Must (F10b).
+
+### HU-41 — Visitante recibe su diagnóstico digital
+Como **dueño de pyme** quiero **responder un quiz corto sobre cómo
+opero hoy y recibir una radiografía con oportunidades de
+automatización** para **ver por dónde empezar**.
+
+- Dado que respondo ~6 preguntas de opción, entonces recibo EN
+  PANTALLA un informe breve con 3 oportunidades concretas generadas
+  por IA, ancladas a los servicios reales (sin precios inventados).
+- Dado que quiero profundizar, entonces el informe termina con CTA de
+  contacto/WhatsApp (el envío por correo llega con el MVP).
+
+**Prioridad**: Must (F10c).
+
+### HU-42 — Cliente registrado genera el boceto de su solución (demo de diseño)
+Como **cliente registrado** quiero **describir mi negocio y ver un
+boceto visual de mi futura app o web** para **imaginar lo que puede
+llegar a ser mi empresa**.
+
+- Dado que describo sector, qué hace y qué necesita, entonces recibo
+  una imagen generada por IA del boceto + una lista de funcionalidades
+  sugeridas, con opción de pedir UNA variación.
+- Dado que soy anónimo, cuando abro la herramienta, entonces veo el
+  estado bloqueado que me invita a crear cuenta gratis (HU-34).
+- Dado que la imagen la genera IA, entonces se muestra SOLO como
+  imagen (nunca HTML ejecutable) y con límites diarios propios.
+- Dado que me gusta el boceto, entonces el CTA "hazlo realidad" me
+  lleva al contacto con el contexto prellenado.
+
+**Prioridad**: Must (F10d).
+
+### HU-43 — Visitante descubre el centro de herramientas
+Como **visitante** quiero **una página de herramientas con todas las
+herramientas del sitio** para **encontrarlas y probarlas fácil**.
+
+- Dado que entro al centro de herramientas, entonces veo una tarjeta
+  por herramienta con su estado real ("Muy pronto" si no está lista).
+- Dado que navego el sitio, entonces el header y la Home me llevan al
+  centro; el sitemap lo incluye; los beneficios de la cuenta (HU-34)
+  se actualizan quitando "Muy pronto" a lo que ya esté vivo.
+
+**Prioridad**: Must (F10a, se actualiza al cierre).

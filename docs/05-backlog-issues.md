@@ -247,8 +247,57 @@ es configurable): deterministas, sin gastar cuota ni exponer la key.
 | ISS-117 | e2e `asistente-e2e.spec.ts` contra stub de Groq (conversación, escalamiento, límite) + axe del widget abierto + stub para CI | HU-36..38 | Job e2e de CI en verde con el stub como service/proceso | M | ISS-114..116 | `asistente-e2e.spec.ts` |
 | ISS-118 | Verificación manual (navegador real, prueba con Groq real en local) + `render.yaml` con `GROQ_*` + CLAUDE.md + cierre de fase | HU-36..38 | Prueba real end-to-end con la key local; OK del usuario para F10 | M | ISS-117 | Checklist manual |
 
-**Fases F10-F11**: siguen sin descomponer — se descomponen al arrancar
-cada una, según [[10-vision-v2]].
+---
+
+## Fase F10 — Centro de herramientas con IA (Etapa 3)
+
+Historias: HU-39 a HU-43 (épica E9). Ampliada el 29 jul 2026
+([[10-vision-v2]] §F10 y decisiones 7-9): cuatro sub-fases de menor a
+mayor esfuerzo, cada una entregable y verificable por sí sola. Regla
+transversal: límites diarios al estilo F9, estados amables, honestidad
+en textos, e2e con stubs (sin gastar cuota) y AA/Lighthouse intactos.
+
+### F10a — Cotizador + centro de herramientas
+
+| ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
+|---|---|---|---|---|---|---|
+| ISS-119 | Documentación de F10 (épica E9, visión ampliada, backlog, copy de cotizador y centro en docs/08) | HU-39..43 | Docs 04/05/08/10 y CLAUDE.md antes del código | S | — | No aplica |
+| ISS-120 | `contenido/cotizador.ts`: pasos, opciones y rangos configurables (sin código en los textos) | HU-39 | Rangos orientativos aprobables por el usuario; ADR-05 | S | ISS-119 | Spec de datos mínimo |
+| ISS-121 | Página del cotizador: wizard de 3 pasos con signals, resultado por rango, CTA contacto/WhatsApp prellenado | HU-39 | Sin backend; accesible; móvil 375px | M | ISS-120 | `cotizador.spec` |
+| ISS-122 | Página del centro de herramientas (4 tarjetas con estado real) + header/Home/sitemap | HU-43 | "Muy pronto" honesto en las que falten | M | ISS-121 | `herramientas.spec`, `sitemap.spec` |
+
+### F10b — Simulador "un chatbot para tu negocio"
+
+| ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
+|---|---|---|---|---|---|---|
+| ISS-123 | Backend: plantilla de prompt segura del simulador (nombre/rubro injertados como datos, anti-inyección) reutilizando `GeneradorDeRespuestas` y límites F9; endpoint propio | HU-40 | El texto del visitante no puede alterar las reglas; IT con stub | M | ISS-119 | `SimuladorUseCaseTest`, IT |
+| ISS-124 | Frontend: página del simulador (form negocio → chat demo) + e2e con stub | HU-40 | Estados de carga/error/límite; axe | M | ISS-122, ISS-123 | `simulador.spec`, e2e |
+
+### F10c — Diagnóstico digital
+
+| ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
+|---|---|---|---|---|---|---|
+| ISS-125 | Backend: caso de uso del diagnóstico (respuestas del quiz → informe anclado con Groq, límites propios) + endpoint | HU-41 | Sin precios; 3 oportunidades concretas; IT con stub | M | ISS-119 | `DiagnosticoUseCaseTest`, IT |
+| ISS-126 | Frontend: quiz de ~6 preguntas → informe en pantalla + CTA; e2e con stub | HU-41 | Informe legible en móvil; axe | M | ISS-122, ISS-125 | `diagnostico.spec`, e2e |
+
+### F10d — Demo de diseño con IA (registrados)
+
+| ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
+|---|---|---|---|---|---|---|
+| ISS-127 | Puerto `GeneradorDeImagenes` + adaptador Gemini Flash Image (`GEMINI_API_KEY` por entorno, capa gratis ~500/día) | HU-42 | IT contra stub HTTP; key jamás logueada | M | ISS-119 | `GeminiAdapterIT` (stub) |
+| ISS-128 | Backend: caso de uso del demo (imagen + funcionalidades con Groq; SOLO registrados; límites y variación única) | HU-42 | 401/403 correcto para anónimos; IT | L | ISS-127 | `DemoDeDisenoUseCaseTest`, IT |
+| ISS-129 | Frontend: página del demo (form → generando → resultado como imagen + variación + CTA) y estado bloqueado para anónimos | HU-42 | Imagen nunca HTML; estados completos; axe | L | ISS-122, ISS-128 | `demo-diseno.spec` |
+| ISS-130 | e2e del demo con stubs (Groq + Gemini) + CI | HU-42 | Flujo completo registrado y bloqueo anónimo | M | ISS-129 | `demo-diseno-e2e` |
+
+### Cierre F10
+
+| ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
+|---|---|---|---|---|---|---|
+| ISS-131 | Home/beneficios/registro: quitar "Muy pronto" a lo vivo; robots/sitemap; textos finales | HU-43, HU-34 | Honestidad al día en todo el sitio | S | por sub-fase | Specs ajustados |
+| ISS-132 | Verificación integral (Lighthouse ≥95/100/100/100, axe, e2e completas, manual 375/1280) + `render.yaml` (`GEMINI_API_KEY`) + CLAUDE.md + OK del usuario | HU-39..43 | Prueba real con Gemini/Groq antes de publicar | M | todo F10 | Checklist manual |
+
+**Fase F11**: sigue sin descomponer — se descompone al arrancar, según
+[[10-vision-v2]].
 
 ---
 

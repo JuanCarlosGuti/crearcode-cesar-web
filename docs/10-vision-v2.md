@@ -106,20 +106,39 @@ y escala a un humano cuando corresponde.
 
 ### F10 — Demo de diseño con IA
 
-La herramienta diferenciadora: un usuario registrado describe su
-negocio y recibe una propuesta visual básica generada por IA.
+**Ampliada el 29 jul 2026 a pedido del usuario**: F10 pasa de "solo el
+demo de diseño" a un **Centro de herramientas con IA** — el sitio como
+herramienta viva que le demuestra a cada pyme lo que la tecnología
+puede hacer por SU negocio (investigación de capas gratuitas: Groq ya
+integrado; Gemini 2.5 Flash Image ~500 imágenes/día gratis; Cloudflare
+Workers AI 10.000 neurons/día como respaldo documentado; Pollinations
+solo para prototipos, sin SLA). Cuatro herramientas, ordenadas de
+menor a mayor esfuerzo, cada una con límites diarios al estilo del
+asistente (F9) y el registro como beneficio (más usos por día):
 
-- Formulario breve (tipo de negocio, estilo deseado, colores) → la IA
-  genera una propuesta de landing auto-contenida (HTML/CSS sin
-  JavaScript) + paleta + estructura sugerida.
-- Render en un `<iframe sandbox>` (sin scripts) — el HTML generado por
-  IA nunca se ejecuta con privilegios en el sitio.
-- N generaciones/día por usuario registrado (control de costo y
-  abuso); las propuestas se guardan en su cuenta; CTA claro:
-  "convierte esto en un proyecto real con nosotros".
-- Solo para registrados (decisión de F8 + control de tokens).
+- **F10a — Cotizador interactivo** (sin IA): wizard de 3 pasos (tipo
+  de proyecto → alcance → urgencia) que termina en un RANGO orientativo
+  — nunca cifras exactas — + CTA de contacto/WhatsApp con el resumen
+  prellenado. Incluye la página **/herramientas** (centro con las 4
+  tarjetas, "Muy pronto" en las que falten).
+- **F10b — Simulador "un chatbot para tu negocio"**: el visitante
+  escribe nombre y rubro de su empresa y conversa con el chatbot que
+  su negocio podría tener (reusa el puerto `GeneradorDeRespuestas` y
+  los límites de F9, con plantilla de prompt segura anti-abuso).
+- **F10c — Diagnóstico digital**: quiz de ~6 preguntas sobre cómo
+  opera el negocio → "radiografía" con 3 oportunidades de
+  automatización generada por IA, mostrada EN PANTALLA (el envío por
+  correo espera a que el correo de producción se active en el MVP) +
+  CTA de contacto.
+- **F10d — Demo de diseño con IA** (la estrella, solo registrados):
+  formulario breve (sector, qué hace, qué necesita) → boceto visual
+  generado (imagen vía Gemini Flash Image, key gratuita
+  `GEMINI_API_KEY` solo por entorno) + lista de funcionalidades
+  sugeridas (Groq) + opción de variación + CTA "hazlo realidad".
+  Anti-abuso: la imagen se muestra como imagen (nunca HTML ejecutable);
+  límites diarios propios.
 - **No incluye**: editor visual interactivo, export a producción,
-  sitios multipágina, imágenes generadas.
+  sitios multipágina, memoria entre sesiones.
 
 ### F11 — Gestión interna: roles, cotizaciones y cuentas de cobro
 
@@ -218,6 +237,18 @@ Registradas el 28 jul 2026 (al cerrar F8):
    radical) — se conserva la identidad "Minimal Corporativo" y los
    resultados de F6.
 6. **Orden**: diseño primero (F8.5), F9 después.
+
+Registradas el 29 jul 2026 (al arrancar F10):
+
+7. **F10 ampliada a Centro de herramientas con IA** (cotizador,
+   simulador de chatbot, diagnóstico digital y demo de diseño):
+   "implementemos todo lo que se pueda" con capas gratuitas primero.
+8. **Proveedor de imágenes**: Gemini 2.5 Flash Image (capa gratis
+   ~500/día, key gratuita) para el demo de diseño; Cloudflare Workers
+   AI documentado como respaldo. La `GEMINI_API_KEY` seguirá el mismo
+   camino que la de Groq (.env local + dashboard de Render).
+9. **Correo de producción pospuesto al MVP** (28 jul): el informe del
+   diagnóstico se muestra en pantalla, sin envío por correo en F10.
 
 ## Aprobación
 
