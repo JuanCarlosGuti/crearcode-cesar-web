@@ -1,55 +1,78 @@
 @if (servicio(); as s) {
-  <section class="contenedor pagina-servicio">
-    <h1>{{ s.nombre }}</h1>
-
-    <section class="pagina-servicio__bloque" aparecerAlVer aria-labelledby="titulo-problema">
-      <h2 id="titulo-problema">El problema que resolvemos</h2>
-      <p>{{ s.problema }}</p>
-    </section>
-
-    <section class="pagina-servicio__bloque" aparecerAlVer aria-labelledby="titulo-incluye">
-      <h2 id="titulo-incluye">Qué incluye</h2>
-      <ul>
-        @for (item of s.incluye; track item) {
-          <li>{{ item }}</li>
-        }
-      </ul>
-    </section>
-
-    <section class="pagina-servicio__bloque" aparecerAlVer aria-labelledby="titulo-proceso">
-      <h2 id="titulo-proceso">Nuestro proceso</h2>
-      <ol class="pagina-servicio__proceso">
-        @for (paso of s.proceso; track paso.titulo; let numero = $index) {
-          <li>
-            <span class="pagina-servicio__paso-numero" aria-hidden="true">{{ numero + 1 }}</span>
-            <div>
-              <h3>{{ paso.titulo }}</h3>
-              <p>{{ paso.descripcion }}</p>
-            </div>
-          </li>
-        }
+  <div class="contenedor pagina-servicio">
+    <nav class="miga-de-pan" aria-label="Miga de pan">
+      <ol>
+        <li><a routerLink="/">Inicio</a></li>
+        <li aria-current="page">{{ s.nombre }}</li>
       </ol>
-    </section>
+    </nav>
 
-    <section class="pagina-servicio__bloque" aparecerAlVer aria-labelledby="titulo-entregables">
-      <h2 id="titulo-entregables">Qué te entregamos</h2>
-      <ul>
-        @for (item of s.entregables; track item) {
-          <li>{{ item }}</li>
-        }
-      </ul>
-    </section>
+    <h1>{{ s.nombre }}</h1>
+    <p class="pagina-servicio__resumen">{{ s.resumenCorto }}</p>
 
-    <section class="pagina-servicio__bloque" aparecerAlVer aria-labelledby="titulo-faq">
-      <h2 id="titulo-faq">Preguntas frecuentes</h2>
-      <app-faq [preguntas]="s.faq" />
-    </section>
+    <div class="pagina-servicio__disposicion">
+      <div class="pagina-servicio__principal">
+        <section class="pagina-servicio__bloque" aparecerAlVer aria-labelledby="titulo-problema">
+          <h2 id="titulo-problema">Lo que resolvemos</h2>
+          <p>{{ s.problema }}</p>
+        </section>
 
-    <section class="pagina-servicio__cta cta-doble">
-      <a routerLink="/contacto" class="boton boton-primario">Agenda tu consulta gratuita</a>
-      <app-whatsapp-cta [mensaje]="s.mensajeWhatsapp" etiqueta="Escríbenos por WhatsApp" />
-    </section>
-  </section>
+        <section class="pagina-servicio__bloque" aparecerAlVer aria-labelledby="titulo-incluye">
+          <h2 id="titulo-incluye">Qué incluye</h2>
+          <ul>
+            @for (item of s.incluye; track item) {
+              <li>{{ item }}</li>
+            }
+          </ul>
+        </section>
+
+        <section class="pagina-servicio__bloque" aparecerAlVer aria-labelledby="titulo-proceso">
+          <h2 id="titulo-proceso">Cómo trabajamos</h2>
+          <ol class="pagina-servicio__proceso">
+            @for (paso of s.proceso; track paso.titulo; let numero = $index) {
+              <li>
+                <span class="pagina-servicio__paso-numero" aria-hidden="true">{{ numero + 1 }}</span>
+                <div>
+                  <h3>{{ paso.titulo }}</h3>
+                  <p>{{ paso.descripcion }}</p>
+                </div>
+              </li>
+            }
+          </ol>
+        </section>
+
+        <section class="pagina-servicio__bloque" aparecerAlVer aria-labelledby="titulo-entregables">
+          <h2 id="titulo-entregables">Qué te entregamos</h2>
+          <ul>
+            @for (item of s.entregables; track item) {
+              <li>{{ item }}</li>
+            }
+          </ul>
+        </section>
+
+        <section class="pagina-servicio__bloque" aparecerAlVer aria-labelledby="titulo-faq">
+          <h2 id="titulo-faq">Preguntas frecuentes</h2>
+          <app-faq [preguntas]="s.faq" />
+        </section>
+
+        <section class="pagina-servicio__cta cta-doble">
+          <a routerLink="/contacto" class="boton boton-primario">Agenda tu consulta gratuita</a>
+          <app-whatsapp-cta [mensaje]="s.mensajeWhatsapp" etiqueta="Escríbenos por WhatsApp" />
+        </section>
+      </div>
+
+      <aside class="servicio-aside" aria-label="Diagnóstico digital">
+        <div class="servicio-aside__tarjeta tarjeta-elevada">
+          <h2>{{ aside.titulo }}</h2>
+          <p>{{ aside.texto }}</p>
+          <a routerLink="/herramientas" fragment="diagnostico" class="boton boton-primario">
+            {{ aside.cta }}
+          </a>
+          <p class="servicio-aside__nota">{{ aside.nota }}</p>
+        </div>
+      </aside>
+    </div>
+  </div>
 } @else {
   <section class="contenedor pagina-servicio">
     <h1>Servicio no encontrado</h1>

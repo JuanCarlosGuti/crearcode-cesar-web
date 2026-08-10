@@ -142,3 +142,15 @@ export const SERVICIOS: readonly Servicio[] = [
     mensajeWhatsapp: 'Hola, quiero saber más sobre soluciones tecnológicas y cobro digital para mi negocio.',
   },
 ] as const;
+
+/**
+ * Aside de las páginas de servicio (rediseño F10e, ISS-134): invita al
+ * diagnóstico digital del centro de herramientas antes de contactar.
+ */
+export const SERVICIO_ASIDE = {
+  titulo: '¿No sabes por dónde empezar?',
+  texto:
+    'Haz el diagnóstico digital gratis: seis preguntas y te decimos qué automatizar primero en tu negocio, sin registrarte.',
+  cta: 'Hacer mi diagnóstico',
+  nota: 'Toma menos de dos minutos.',
+} as const;

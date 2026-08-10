@@ -50,6 +50,15 @@ test('el centro muestra las herramientas con honestidad de estados', async ({ pa
   await expect(page.locator('.badge-muy-pronto')).toHaveCount(0);
 });
 
+test('el aside de una pagina de servicio lleva al diagnostico anclado (ISS-134)', async ({ page }) => {
+  await page.goto('/servicios/desarrollo-a-la-medida');
+
+  await page.locator('.servicio-aside a[href="/herramientas#diagnostico"]').click();
+
+  await expect(page).toHaveURL(/\/herramientas#diagnostico$/);
+  await expect(page.locator('#diagnostico')).toBeInViewport();
+});
+
 test('el demo de diseno muestra el estado bloqueado a un visitante anonimo (HU-42)', async ({ page }) => {
   await page.goto('/herramientas');
 

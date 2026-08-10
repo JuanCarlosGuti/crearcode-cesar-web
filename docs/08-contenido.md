@@ -94,6 +94,23 @@ v1 — regla de honestidad, decisión 13 de docs/10):**
 
 ---
 
+## Páginas de servicio — estructura del rediseño (F10e, ISS-134)
+
+Las tres páginas comparten la estructura del prototipo aprobado: miga
+de pan (Inicio › servicio), resumen corto bajo el título, y dos
+columnas en escritorio — contenido principal + aside pegajoso. Los
+títulos de sección son **"Lo que resolvemos"** y **"Cómo trabajamos"**
+(antes "El problema que resolvemos" / "Nuestro proceso"); "Qué
+incluye", "Qué te entregamos" y las FAQ se mantienen.
+
+**Aside del diagnóstico (compartido por las tres páginas):**
+> **¿No sabes por dónde empezar?** — "Haz el diagnóstico digital
+> gratis: seis preguntas y te decimos qué automatizar primero en tu
+> negocio, sin registrarte." CTA: **Hacer mi diagnóstico**
+> (→ /herramientas#diagnostico) · Nota: "Toma menos de dos minutos."
+
+---
+
 ## Página de servicio — Desarrollo a la medida
 
 **Problema que resuelve:**
