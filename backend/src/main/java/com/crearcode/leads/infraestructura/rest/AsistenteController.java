@@ -11,8 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.crearcode.leads.dominio.ConversacionDeAsistente;
 import com.crearcode.leads.dominio.IdentidadDelVisitante;
 import com.crearcode.leads.dominio.MensajeDeChat;
+import com.crearcode.leads.dominio.GenerarDiagnosticoUseCase;
 import com.crearcode.leads.dominio.MensajeDeChatInvalidoException;
 import com.crearcode.leads.dominio.NegocioSimulado;
+import com.crearcode.leads.dominio.ParDeDiagnostico;
+import com.crearcode.leads.dominio.RespuestasDeDiagnostico;
 import com.crearcode.leads.dominio.ResponderAlVisitanteUseCase;
 import com.crearcode.leads.dominio.SimularChatbotUseCase;
 import com.crearcode.leads.dominio.RespuestaDelAsistente;
@@ -32,10 +35,13 @@ class AsistenteController {
 
 	private final ResponderAlVisitanteUseCase responderAlVisitante;
 	private final SimularChatbotUseCase simularChatbot;
+	private final GenerarDiagnosticoUseCase generarDiagnostico;
 
-	AsistenteController(ResponderAlVisitanteUseCase responderAlVisitante, SimularChatbotUseCase simularChatbot) {
+	AsistenteController(ResponderAlVisitanteUseCase responderAlVisitante, SimularChatbotUseCase simularChatbot,
+			GenerarDiagnosticoUseCase generarDiagnostico) {
 		this.responderAlVisitante = responderAlVisitante;
 		this.simularChatbot = simularChatbot;
+		this.generarDiagnostico = generarDiagnostico;
 	}
 
 	@PostMapping("/mensajes")
@@ -69,6 +75,21 @@ class AsistenteController {
 
 		RespuestaDelAsistente respuesta = simularChatbot.simular(negocio, conversacion, identidad);
 		return ResponseEntity.ok(new RespuestaAsistenteResponse(respuesta.texto(), respuesta.escalarAHumano()));
+	}
+
+	@PostMapping("/diagnostico")
+	ResponseEntity<InformeDiagnosticoResponse> diagnosticar(
+			@Valid @RequestBody DiagnosticoRequest request,
+			@RequestHeader(value = "X-Sesion-Anonima", required = false) String idSesionAnonima,
+			Authentication autenticacion) {
+		RespuestasDeDiagnostico respuestas = new RespuestasDeDiagnostico(request.respuestas().stream()
+				.map(par -> new ParDeDiagnostico(par.pregunta(), par.respuesta()))
+				.toList());
+		IdentidadDelVisitante identidad = autenticacion != null && autenticacion.isAuthenticated()
+				? IdentidadDelVisitante.registrada(autenticacion.getName())
+				: IdentidadDelVisitante.anonima(idSesionAnonima);
+
+		return ResponseEntity.ok(InformeDiagnosticoResponse.desde(generarDiagnostico.generar(respuestas, identidad)));
 	}
 
 	private static RolDeMensaje rolDesde(String rol) {

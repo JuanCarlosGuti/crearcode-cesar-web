@@ -57,6 +57,8 @@ class SecurityConfig {
 						.requestMatchers(HttpMethod.POST, "/api/asistente/mensajes").permitAll()
 						// Simulador de chatbot (F10b): mismo esquema que el chat
 						.requestMatchers(HttpMethod.POST, "/api/asistente/simulador").permitAll()
+						// Diagnóstico digital (F10c): mismo esquema
+						.requestMatchers(HttpMethod.POST, "/api/asistente/diagnostico").permitAll()
 						.anyRequest().authenticated())
 				.oauth2ResourceServer(oauth2 -> oauth2
 						.jwt(jwt -> jwt.decoder(jwtDecoder).jwtAuthenticationConverter(jwtAuthenticationConverter)))
