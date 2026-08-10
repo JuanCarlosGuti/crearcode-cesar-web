@@ -1,9 +1,42 @@
-import { expect, test } from '@playwright/test';
+import { APIRequestContext, expect, test } from '@playwright/test';
 
 /**
- * ISS-122: la página viva /herramientas (F10a). El cotizador funciona
- * sin backend, así que este spec solo necesita el frontend arriba.
+ * ISS-122/ISS-130: la página viva /herramientas. El cotizador funciona
+ * sin backend; el simulador, el diagnóstico y el demo de diseño
+ * necesitan el stack completo con el stub de IA (stub-groq.mjs, que
+ * también sirve las imágenes) y Mailpit para la cuenta del demo.
  */
+
+const API_URL = process.env['E2E_API_BASE_URL'] ?? 'http://localhost:8080';
+const MAILPIT_URL = process.env['E2E_MAILPIT_URL'] ?? 'http://localhost:8025';
+
+/** Registra, verifica (enlace real de Mailpit) y loguea un cliente vía API. */
+async function sesionDeClienteNueva(request: APIRequestContext) {
+  const correo = `demo-e2e-${Date.now()}@correo-de-prueba.com`;
+  const contrasena = 'contrasena-demo-e2e';
+  await request.post(`${API_URL}/api/auth/registro`, { data: { correo, contrasena } });
+
+  let token = '';
+  for (let intento = 0; intento < 20 && !token; intento++) {
+    const busqueda = await request.get(`${MAILPIT_URL}/api/v1/search?query=to:"${correo}"`);
+    if (busqueda.ok()) {
+      const { messages } = (await busqueda.json()) as { messages: { ID: string }[] };
+      if (messages.length > 0) {
+        const mensaje = await request.get(`${MAILPIT_URL}/api/v1/message/${messages[0].ID}`);
+        const { Text } = (await mensaje.json()) as { Text: string };
+        token = Text.match(/token=([A-Za-z0-9_-]+)/)?.[1] ?? '';
+      }
+    }
+    if (!token) {
+      await new Promise((listo) => setTimeout(listo, 500));
+    }
+  }
+  await request.post(`${API_URL}/api/auth/verificacion`, { data: { token } });
+
+  const login = await request.post(`${API_URL}/api/auth/login`, { data: { correo, contrasena } });
+  const datos = (await login.json()) as { token: string; rol: string; correo: string };
+  return { token: datos.token, rol: datos.rol, correo: datos.correo };
+}
 
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -24,6 +57,29 @@ test('el demo de diseno muestra el estado bloqueado a un visitante anonimo (HU-4
   await expect(demo.getByText('Crea tu cuenta gratis para ver tu boceto')).toBeVisible();
   await expect(demo.locator('a[href="/registro"]')).toBeVisible();
   await expect(demo.locator('#demo-sector')).toHaveCount(0);
+});
+
+test('un cliente registrado genera su boceto con imagen y funcionalidades (F10d)', async ({ page, request }) => {
+  const sesion = await sesionDeClienteNueva(request);
+  await page.addInitScript(
+    (datos) => sessionStorage.setItem('crearcode-sesion', JSON.stringify(datos)),
+    sesion,
+  );
+
+  await page.goto('/herramientas');
+  await expect(page.locator('#demo-sector')).toBeVisible();
+
+  await page.fill('#demo-sector', 'Restaurante');
+  await page.fill('#demo-que-hace', 'Vendemos almuerzos y domicilios');
+  await page.fill('#demo-que-necesita', 'Recibir pedidos sin saturar el WhatsApp');
+  await page.locator('.demo-generar').click();
+
+  await expect(page.getByText('App de pedidos para tu restaurante')).toBeVisible({ timeout: 20000 });
+  await expect(page.locator('.demo-funcionalidad')).toHaveCount(5);
+  const imagen = page.locator('.demo-imagen img');
+  await expect(imagen).toBeVisible();
+  expect(await imagen.getAttribute('src')).toMatch(/^data:image\/(png|jpeg);base64,/);
+  await expect(page.locator('.demo-variacion')).toBeVisible();
 });
 
 test('un visitante responde el quiz y recibe su radiografia en pantalla (F10c)', async ({ page }) => {

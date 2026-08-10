@@ -109,6 +109,8 @@ jobs:
           # El asistente apunta al stub local; limite anonimo bajo para
           # que el e2e de HU-38 sea verificable en pocos mensajes.
           GROQ_API_URL: http://localhost:9099/openai/v1
+          # El mismo stub sirve las imagenes del demo de diseno (F10d)
+          POLLINATIONS_URL: http://localhost:9099
           ASISTENTE_LIMITE_ANONIMO: "3"
         run: |
           ./mvnw --batch-mode -DskipTests package
