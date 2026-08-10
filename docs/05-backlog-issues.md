@@ -341,12 +341,25 @@ en producción puede toparse con este techo.
 |---|---|---|---|---|---|---|
 | ISS-137 ✅ | Adaptador de Cloudflare Workers AI + `GeneradorDeImagenesConRespaldo` (primario Cloudflare, respaldo automático Pollinations) y `ConfiguracionDeGeneradorDeImagenes` como único punto de decisión | HU-42 | Credenciales solo por entorno, jamás logueadas; el visitante nunca ve el fallo del primario | M | ISS-127 | `CloudflareGeneradorDeImagenesAdapterIT` (stub), `GeneradorDeImagenesConRespaldoTest` |
 
-Pendiente para activarlo: el usuario carga `CLOUDFLARE_ACCOUNT_ID` y
-`CLOUDFLARE_API_TOKEN` en el `.env`, se prueba una generación real en
-local, y recién ahí `DEMO_PROVEEDOR_IMAGENES=cloudflare` en Render
-(con las dos variables como `sync: false` en `render.yaml`). Mientras
-tanto el default sigue siendo `pollinations`: activar Cloudflare sin
-credenciales solo añadiría un intento fallido antes de cada respaldo.
+**Verificado con credenciales reales (10 ago 2026)**: token válido
+(`/user/tokens/verify` → active), y el flujo completo del demo —
+registro por API, verificación por Mailpit, login y
+`POST /api/asistente/demo-diseno` — devolvió un boceto real en **2,4
+segundos** (JPEG de ~275 KB) a través del adaptador nuevo. Ya está en
+`render.yaml` con `DEMO_PROVEEDOR_IMAGENES=cloudflare`; falta que el
+usuario ingrese las dos credenciales en el dashboard y acepte el sync.
+
+**Hallazgo de calidad (mismo día)**: el prompt de imagen original
+pedía "una sola pantalla principal" y "sin texto largo", y con
+Cloudflare producía mockups casi vacíos (un teléfono con la pantalla en
+blanco). El prompt nuevo va en inglés — los modelos de imagen rinden
+bastante mejor — y pide explícitamente barra superior, barra lateral,
+tarjetas y una lista; el resultado pasó a ser un dashboard creíble.
+Segundo detalle: pedir "no prices, no currency symbols" **inducía** las
+cifras en vez de evitarlas (los modelos de difusión ignoran las
+negaciones), así que ahora se le dice qué poner en cada fila (nombre,
+estado y hora). Lección transferible a cualquier prompt de imagen del
+sitio: **describir lo que sí se quiere, nunca lo que no**.
 
 ### Cierre F10
 

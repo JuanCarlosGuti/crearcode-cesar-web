@@ -71,6 +71,18 @@ services:
       # limite por IP real.
       - key: RATE_LIMIT_ASISTENTE_MAX_INTENTOS
         value: "600"
+      # Demo de diseno (ISS-137): Cloudflare Workers AI como proveedor
+      # primario, con Pollinations de respaldo automatico si falla.
+      # Las dos credenciales se ingresan en el dashboard — nunca en el
+      # repo. Si quedan vacias, cada generacion gastaria un intento
+      # fallido antes de caer al respaldo: en ese caso, volver el
+      # proveedor a "pollinations".
+      - key: DEMO_PROVEEDOR_IMAGENES
+        value: cloudflare
+      - key: CLOUDFLARE_ACCOUNT_ID
+        sync: false
+      - key: CLOUDFLARE_API_TOKEN
+        sync: false
 
   - type: web
     name: crearcodecesar-frontend

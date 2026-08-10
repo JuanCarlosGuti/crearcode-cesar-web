@@ -110,9 +110,26 @@ class GenerarDemoDeDisenoUseCaseImpl implements GenerarDemoDeDisenoUseCase {
 		return boceto;
 	}
 
+	/**
+	 * Las instrucciones van en inglés (los modelos de imagen rinden
+	 * bastante mejor) y los datos del negocio se injertan tal como los
+	 * escribió el visitante. Se pide una pantalla LLENA de elementos: la
+	 * versión anterior pedía "una sola pantalla" y "sin texto largo", y
+	 * eso producía mockups casi vacíos (verificado contra Cloudflare
+	 * Workers AI el 10 ago 2026). Para que no dibuje cifras de dinero
+	 * (regla dura del sitio: ninguna cifra que no podamos sustentar,
+	 * tampoco dibujada) se le dice QUÉ poner en cada fila — nombre,
+	 * estado y hora — en vez de prohibirle precios: los modelos de
+	 * difusión ignoran las negaciones, y nombrar "prices" aunque sea
+	 * para negarlo terminaba induciendo columnas con signos de peso.
+	 */
 	private static String descripcionDeImagen(SolicitudDeDemo solicitud, String titulo) {
-		return ("Mockup de interfaz limpio y moderno: %s. Negocio del sector %s que necesita %s. "
-				+ "Una sola pantalla principal, estilo minimalista profesional, colores sobrios, sin texto largo.")
+		return ("UI design mockup of a web app screen: %s. Business sector: %s. Key need: %s. "
+				+ "Modern clean interface showing a top navigation bar, a sidebar with menu items, "
+				+ "content cards with short placeholder text, and a list where each row shows a person "
+				+ "name, a colored status badge and a time. A primary action button. Professional SaaS "
+				+ "dashboard style, sober colors, soft shadows, flat design, straight front view, "
+				+ "full screen filled with interface elements.")
 				.formatted(titulo, solicitud.sector(), solicitud.queNecesita());
 	}
 

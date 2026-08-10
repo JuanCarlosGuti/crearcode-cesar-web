@@ -408,12 +408,13 @@ El puerto `GeneradorDeImagenes` tiene tres montajes, elegidos en un
 único punto (`ConfiguracionDeGeneradorDeImagenes`) con la variable
 `DEMO_PROVEEDOR_IMAGENES`:
 
-- **`pollinations`** (default, y lo que corre hoy en producción):
-  gratis y sin key.
-- **`cloudflare`**: Workers AI como primario **con respaldo automático
-  a Pollinations** (`GeneradorDeImagenesConRespaldo`) — si el primario
-  falla, responde el respaldo y el visitante no se entera. Necesita
-  `CLOUDFLARE_ACCOUNT_ID` y `CLOUDFLARE_API_TOKEN` por entorno.
+- **`pollinations`** (default del código): gratis y sin key.
+- **`cloudflare`** (lo que declara `render.yaml` para producción):
+  Workers AI como primario **con respaldo automático a Pollinations**
+  (`GeneradorDeImagenesConRespaldo`) — si el primario falla, responde
+  el respaldo y el visitante no se entera. Necesita
+  `CLOUDFLARE_ACCOUNT_ID` y `CLOUDFLARE_API_TOKEN` por entorno;
+  verificado extremo a extremo el 10 ago 2026 (boceto real en 2,4 s).
 - **`gemini`**: listo para el día que su capa gratis vuelva a incluir
   imágenes (en ago 2026 daba límite 0) o haya billing.
 
@@ -421,6 +422,14 @@ Ningún proveedor de la capa gratis tiene SLA: por eso el modo con
 respaldo. Los adaptadores no llevan anotaciones condicionales — se
 instancian desde la configuración, así que hay un solo lugar que leer
 para saber qué corre.
+
+**Prompts de imagen**: describir lo que sí se quiere, nunca lo que no.
+Los modelos de difusión ignoran las negaciones — pedir "sin precios"
+terminaba dibujando columnas con signos de peso, y pedir "sin texto
+largo" producía mockups vacíos. El prompt vive en
+`GenerarDemoDeDisenoUseCaseImpl.descripcionDeImagen` y va en inglés
+(rinden bastante mejor), con los datos del negocio injertados tal como
+los escribió el visitante.
 
 ## Rediseño F10e (Home, servicios y header — ISS-133 a ISS-135)
 
