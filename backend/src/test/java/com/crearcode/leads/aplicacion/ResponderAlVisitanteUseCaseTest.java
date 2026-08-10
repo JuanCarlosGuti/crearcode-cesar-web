@@ -65,6 +65,11 @@ class ResponderAlVisitanteUseCaseTest {
 			}
 			return respuesta;
 		}
+
+		@Override
+		public RespuestaDelAsistente responder(String contextoDeSistema, ConversacionDeAsistente conversacion) {
+			return responder(conversacion);
+		}
 	}
 
 	private RelojDePruebas reloj;

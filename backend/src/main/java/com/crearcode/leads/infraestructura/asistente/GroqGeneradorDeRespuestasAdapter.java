@@ -55,11 +55,16 @@ class GroqGeneradorDeRespuestasAdapter implements GeneradorDeRespuestas {
 
 	@Override
 	public RespuestaDelAsistente responder(ConversacionDeAsistente conversacion) {
+		return responder(promptDeSistema, conversacion);
+	}
+
+	@Override
+	public RespuestaDelAsistente responder(String contextoDeSistema, ConversacionDeAsistente conversacion) {
 		try {
 			RespuestaGroq respuesta = clienteHttp.post()
 					.uri("/chat/completions")
 					.contentType(MediaType.APPLICATION_JSON)
-					.body(new PeticionGroq(modelo, armarMensajes(conversacion), 0.3, 500))
+					.body(new PeticionGroq(modelo, armarMensajes(contextoDeSistema, conversacion), 0.3, 500))
 					.retrieve()
 					.body(RespuestaGroq.class);
 
@@ -76,9 +81,9 @@ class GroqGeneradorDeRespuestasAdapter implements GeneradorDeRespuestas {
 		}
 	}
 
-	private List<MensajeGroq> armarMensajes(ConversacionDeAsistente conversacion) {
+	private List<MensajeGroq> armarMensajes(String contextoDeSistema, ConversacionDeAsistente conversacion) {
 		List<MensajeGroq> mensajes = new java.util.ArrayList<>();
-		mensajes.add(new MensajeGroq("system", promptDeSistema));
+		mensajes.add(new MensajeGroq("system", contextoDeSistema));
 		for (MensajeDeChat mensaje : conversacion.mensajes()) {
 			mensajes.add(new MensajeGroq(mensaje.rol() == RolDeMensaje.USUARIO ? "user" : "assistant",
 					mensaje.texto()));

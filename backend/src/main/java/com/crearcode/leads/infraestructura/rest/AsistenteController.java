@@ -12,7 +12,9 @@ import com.crearcode.leads.dominio.ConversacionDeAsistente;
 import com.crearcode.leads.dominio.IdentidadDelVisitante;
 import com.crearcode.leads.dominio.MensajeDeChat;
 import com.crearcode.leads.dominio.MensajeDeChatInvalidoException;
+import com.crearcode.leads.dominio.NegocioSimulado;
 import com.crearcode.leads.dominio.ResponderAlVisitanteUseCase;
+import com.crearcode.leads.dominio.SimularChatbotUseCase;
 import com.crearcode.leads.dominio.RespuestaDelAsistente;
 import com.crearcode.leads.dominio.RolDeMensaje;
 
@@ -29,9 +31,11 @@ import jakarta.validation.Valid;
 class AsistenteController {
 
 	private final ResponderAlVisitanteUseCase responderAlVisitante;
+	private final SimularChatbotUseCase simularChatbot;
 
-	AsistenteController(ResponderAlVisitanteUseCase responderAlVisitante) {
+	AsistenteController(ResponderAlVisitanteUseCase responderAlVisitante, SimularChatbotUseCase simularChatbot) {
 		this.responderAlVisitante = responderAlVisitante;
+		this.simularChatbot = simularChatbot;
 	}
 
 	@PostMapping("/mensajes")
@@ -47,6 +51,23 @@ class AsistenteController {
 				: IdentidadDelVisitante.anonima(idSesionAnonima);
 
 		RespuestaDelAsistente respuesta = responderAlVisitante.responder(conversacion, identidad);
+		return ResponseEntity.ok(new RespuestaAsistenteResponse(respuesta.texto(), respuesta.escalarAHumano()));
+	}
+
+	@PostMapping("/simulador")
+	ResponseEntity<RespuestaAsistenteResponse> simular(
+			@Valid @RequestBody SimuladorRequest request,
+			@RequestHeader(value = "X-Sesion-Anonima", required = false) String idSesionAnonima,
+			Authentication autenticacion) {
+		NegocioSimulado negocio = new NegocioSimulado(request.negocio().nombre(), request.negocio().rubro());
+		ConversacionDeAsistente conversacion = new ConversacionDeAsistente(request.mensajes().stream()
+				.map(mensaje -> new MensajeDeChat(rolDesde(mensaje.rol()), mensaje.texto()))
+				.toList());
+		IdentidadDelVisitante identidad = autenticacion != null && autenticacion.isAuthenticated()
+				? IdentidadDelVisitante.registrada(autenticacion.getName())
+				: IdentidadDelVisitante.anonima(idSesionAnonima);
+
+		RespuestaDelAsistente respuesta = simularChatbot.simular(negocio, conversacion, identidad);
 		return ResponseEntity.ok(new RespuestaAsistenteResponse(respuesta.texto(), respuesta.escalarAHumano()));
 	}
 

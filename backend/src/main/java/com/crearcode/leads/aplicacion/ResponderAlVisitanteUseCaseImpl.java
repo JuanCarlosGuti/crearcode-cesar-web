@@ -2,9 +2,6 @@ package com.crearcode.leads.aplicacion;
 
 import java.time.Clock;
 import java.time.LocalDate;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -62,34 +59,6 @@ class ResponderAlVisitanteUseCaseImpl implements ResponderAlVisitanteUseCase {
 		contadorGlobal.incrementar(hoy, "global");
 		contadorPorIdentidad.incrementar(hoy, identidad.clave());
 		return respuesta;
-	}
-
-	/**
-	 * Contador por día: al cambiar la fecha se descartan los contadores
-	 * del día anterior (no hay reseteo programado — se comparan fechas).
-	 */
-	private static final class ContadorDiario {
-
-		private volatile LocalDate dia = LocalDate.MIN;
-		private final Map<String, AtomicInteger> contadores = new ConcurrentHashMap<>();
-
-		private synchronized void reiniciarSiCambioElDia(LocalDate hoy) {
-			if (!hoy.equals(dia)) {
-				contadores.clear();
-				dia = hoy;
-			}
-		}
-
-		int valor(LocalDate hoy, String clave) {
-			reiniciarSiCambioElDia(hoy);
-			AtomicInteger contador = contadores.get(clave);
-			return contador == null ? 0 : contador.get();
-		}
-
-		void incrementar(LocalDate hoy, String clave) {
-			reiniciarSiCambioElDia(hoy);
-			contadores.computeIfAbsent(clave, ignorada -> new AtomicInteger()).incrementAndGet();
-		}
 	}
 
 }

@@ -20,6 +20,7 @@ import com.crearcode.leads.dominio.ContrasenaInvalidaException;
 import com.crearcode.leads.dominio.ConversacionInvalidaException;
 import com.crearcode.leads.dominio.DatosDeContactoInvalidosException;
 import com.crearcode.leads.dominio.MensajeDeChatInvalidoException;
+import com.crearcode.leads.dominio.NegocioSimuladoInvalidoException;
 import com.crearcode.leads.dominio.TokenDeCuentaInvalidoException;
 import com.crearcode.leads.dominio.TransicionDeEstadoInvalidaException;
 
@@ -93,7 +94,8 @@ class GlobalExceptionHandler {
 		return ResponseEntity.badRequest().body(new ErrorResponse(excepcion.getMessage()));
 	}
 
-	@ExceptionHandler({ MensajeDeChatInvalidoException.class, ConversacionInvalidaException.class })
+	@ExceptionHandler({ MensajeDeChatInvalidoException.class, ConversacionInvalidaException.class,
+			NegocioSimuladoInvalidoException.class })
 	ResponseEntity<ErrorResponse> conversacionInvalida(RuntimeException excepcion) {
 		return ResponseEntity.badRequest().body(new ErrorResponse(excepcion.getMessage()));
 	}

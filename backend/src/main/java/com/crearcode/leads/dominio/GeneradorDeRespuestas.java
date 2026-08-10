@@ -17,4 +17,11 @@ public interface GeneradorDeRespuestas {
 	 */
 	RespuestaDelAsistente responder(ConversacionDeAsistente conversacion);
 
+	/**
+	 * Variante con contexto de sistema propio (F10b): el simulador de
+	 * chatbot arma su prompt por negocio y lo pasa aquí; el asistente
+	 * general sigue usando la sobrecarga sin contexto.
+	 */
+	RespuestaDelAsistente responder(String contextoDeSistema, ConversacionDeAsistente conversacion);
+
 }

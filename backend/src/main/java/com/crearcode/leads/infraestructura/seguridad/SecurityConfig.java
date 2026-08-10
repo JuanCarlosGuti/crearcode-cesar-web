@@ -55,6 +55,8 @@ class SecurityConfig {
 						// Chat del asistente (F9): público, con Bearer
 						// opcional para el límite mayor de registrados.
 						.requestMatchers(HttpMethod.POST, "/api/asistente/mensajes").permitAll()
+						// Simulador de chatbot (F10b): mismo esquema que el chat
+						.requestMatchers(HttpMethod.POST, "/api/asistente/simulador").permitAll()
 						.anyRequest().authenticated())
 				.oauth2ResourceServer(oauth2 -> oauth2
 						.jwt(jwt -> jwt.decoder(jwtDecoder).jwtAuthenticationConverter(jwtAuthenticationConverter)))
