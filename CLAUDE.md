@@ -154,7 +154,7 @@ variable de entorno en Render el día que se use — nunca en el repo.
   F10a cotizador + /herramientas viva → F10b simulador de chatbot →
   F10c diagnóstico digital → F10d demo de diseño (Pollinations) → F10e
   rediseño Home/servicios/header según el prototipo aprobado (10 ago
-  2026, decisiones 10-16 de docs/10). Niveles de prueba obligatorios
+  2026, decisiones 10-17 de docs/10). Niveles de prueba obligatorios
   por issue: Unit, Component, Integration, API y E2E (docs/06 §7).
   **Todas las sub-fases están implementadas** (ISS-119 a ISS-131 y
   ISS-133 a ISS-135). Falta ISS-132: verificación en producción tras
@@ -401,6 +401,26 @@ transición; axe atrapó dos contrastes AA reales en esta fase (banners
 de error 4.27:1 y badge "Muy pronto" 4.19:1), ambos corregidos
 oscureciendo el texto. Lighthouse tras el rediseño: Performance 97-98,
 resto 100 — se mantiene lo ganado en F6.
+
+## Proveedor de imágenes del demo (ISS-127, ISS-137)
+
+El puerto `GeneradorDeImagenes` tiene tres montajes, elegidos en un
+único punto (`ConfiguracionDeGeneradorDeImagenes`) con la variable
+`DEMO_PROVEEDOR_IMAGENES`:
+
+- **`pollinations`** (default, y lo que corre hoy en producción):
+  gratis y sin key.
+- **`cloudflare`**: Workers AI como primario **con respaldo automático
+  a Pollinations** (`GeneradorDeImagenesConRespaldo`) — si el primario
+  falla, responde el respaldo y el visitante no se entera. Necesita
+  `CLOUDFLARE_ACCOUNT_ID` y `CLOUDFLARE_API_TOKEN` por entorno.
+- **`gemini`**: listo para el día que su capa gratis vuelva a incluir
+  imágenes (en ago 2026 daba límite 0) o haya billing.
+
+Ningún proveedor de la capa gratis tiene SLA: por eso el modo con
+respaldo. Los adaptadores no llevan anotaciones condicionales — se
+instancian desde la configuración, así que hay un solo lugar que leer
+para saber qué corre.
 
 ## Rediseño F10e (Home, servicios y header — ISS-133 a ISS-135)
 

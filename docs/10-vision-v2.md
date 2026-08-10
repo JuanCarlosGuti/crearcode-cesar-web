@@ -311,6 +311,22 @@ Registradas el 10 ago 2026 (al aprobar el prototipo del rediseño):
     como plan B listo si Pollinations falla — el cambio es solo la
     variable `DEMO_PROVEEDOR_IMAGENES`.
 
+17. **Los dos proveedores a la vez, con respaldo automático** (10 ago
+    2026, a pedido del usuario — "¿las dos no se puede? ya tenemos
+    Cloudflare configurada"): en vez de elegir uno, con
+    `DEMO_PROVEEDOR_IMAGENES=cloudflare` el sistema usa **Cloudflare
+    Workers AI como primario y cae solo a Pollinations** si el primario
+    falla (`GeneradorDeImagenesConRespaldo`), sin que el visitante se
+    entere. Como ninguno de los dos tiene SLA en su capa gratis, el
+    respaldo es la diferencia entre "el demo no sirve" y "el demo tardó
+    un poco más". Qué proveedor se arma vive en un único punto
+    (`ConfiguracionDeGeneradorDeImagenes`), no repartido en
+    anotaciones condicionales por adaptador. Implementado y probado
+    contra stub en ISS-137; **queda en `pollinations` hasta que el
+    usuario cargue `CLOUDFLARE_ACCOUNT_ID` y `CLOUDFLARE_API_TOKEN`** y
+    se pruebe contra el servicio real — activarlo antes solo añadiría
+    un intento fallido a cada generación.
+
 ## Aprobación
 
 **Aprobado explícitamente por el usuario el 27 jul 2026** ("si

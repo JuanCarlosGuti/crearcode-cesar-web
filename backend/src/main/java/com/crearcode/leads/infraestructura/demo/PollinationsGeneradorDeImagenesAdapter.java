@@ -3,10 +3,7 @@ package com.crearcode.leads.infraestructura.demo;
 import java.time.Duration;
 import java.util.Base64;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.client.JdkClientHttpRequestFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
@@ -15,22 +12,18 @@ import com.crearcode.leads.dominio.GeneradorDeImagenes;
 import com.crearcode.leads.dominio.ImagenGenerada;
 
 /**
- * Adaptador de Pollinations (F10d): imágenes gratis sin key. Proveedor
- * INTERINO mientras la capa gratis de Gemini no incluya imágenes
- * (verificado 10 ago 2026: límite 0 en todos sus modelos de imagen) —
- * sin SLA, así que la decisión del proveedor de producción se cierra
- * con el usuario en ISS-132 (Gemini con cuota, Cloudflare o este).
- * Cambiar de proveedor es solo la variable DEMO_PROVEEDOR_IMAGENES.
+ * Adaptador de Pollinations (F10d): imágenes gratis sin key. Sirve de
+ * proveedor por defecto y de respaldo automático de Cloudflare Workers
+ * AI (ver {@link GeneradorDeImagenesConRespaldo}). Sin SLA en su capa
+ * gratis. Qué proveedor se usa lo decide
+ * {@link ConfiguracionDeGeneradorDeImagenes} con la variable
+ * DEMO_PROVEEDOR_IMAGENES.
  */
-@Component
-@ConditionalOnProperty(name = "app.demo.proveedor-imagenes", havingValue = "pollinations", matchIfMissing = true)
 class PollinationsGeneradorDeImagenesAdapter implements GeneradorDeImagenes {
 
 	private final RestClient clienteHttp;
 
-	PollinationsGeneradorDeImagenesAdapter(
-			@Value("${app.demo.pollinations.url}") String urlBase,
-			@Value("${app.demo.pollinations.timeout-segundos}") long timeoutSegundos) {
+	PollinationsGeneradorDeImagenesAdapter(String urlBase, long timeoutSegundos) {
 		JdkClientHttpRequestFactory fabrica = new JdkClientHttpRequestFactory();
 		fabrica.setReadTimeout(Duration.ofSeconds(timeoutSegundos));
 		this.clienteHttp = RestClient.builder()

@@ -335,6 +335,19 @@ que el visitante hubiera gastado su cupo. Mientras el sync del
 Blueprint no se acepte en Render, cualquier prueba real del asistente
 en producción puede toparse con este techo.
 
+### Proveedor de imágenes con respaldo (decisión 17 de [[10-vision-v2]])
+
+| ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
+|---|---|---|---|---|---|---|
+| ISS-137 ✅ | Adaptador de Cloudflare Workers AI + `GeneradorDeImagenesConRespaldo` (primario Cloudflare, respaldo automático Pollinations) y `ConfiguracionDeGeneradorDeImagenes` como único punto de decisión | HU-42 | Credenciales solo por entorno, jamás logueadas; el visitante nunca ve el fallo del primario | M | ISS-127 | `CloudflareGeneradorDeImagenesAdapterIT` (stub), `GeneradorDeImagenesConRespaldoTest` |
+
+Pendiente para activarlo: el usuario carga `CLOUDFLARE_ACCOUNT_ID` y
+`CLOUDFLARE_API_TOKEN` en el `.env`, se prueba una generación real en
+local, y recién ahí `DEMO_PROVEEDOR_IMAGENES=cloudflare` en Render
+(con las dos variables como `sync: false` en `render.yaml`). Mientras
+tanto el default sigue siendo `pollinations`: activar Cloudflare sin
+credenciales solo añadiría un intento fallido antes de cada respaldo.
+
 ### Cierre F10
 
 | ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
@@ -363,15 +376,22 @@ sugeridas, doble CTA del header (escritorio y menú móvil), cero badges
 "Muy pronto", miga de pan y aside del servicio, y el ancla
 `/herramientas#diagnostico` posicionando en la herramienta correcta.
 
-**Pendiente del usuario para cerrar ISS-132**: la respuesta real del
-asistente en producción sigue devolviendo **429 con cuerpo plano
-`Too Many Requests`** — es el `RateLimitingFilter` por IP (ISS-136),
-no los límites de la aplicación (que responden JSON con código
-estable). El techo nuevo (`RATE_LIMIT_ASISTENTE_MAX_INTENTOS=600`) ya
-está en `render.yaml` pero **requiere aceptar el sync del Blueprint en
-Render**; hasta entonces el cupo por IP compartida se agota entre todos
-los visitantes. El widget degrada correctamente (aviso "El asistente
-está descansando" + WhatsApp), así que no bloquea el sitio.
+**Prueba real del asistente en producción (10 ago 2026, tras aceptar el
+sync del Blueprint)**: superada. Desde la Home, una pregunta sugerida
+abre el widget y Groq responde anclado al contexto ("tres líneas de
+servicio…"); la pregunta "¿cuánto cuesta una app para mi restaurante?"
+**no inventó ninguna cifra** y escaló a humano con WhatsApp y el
+formulario de contacto. Cero errores de consola.
+
+Durante el redeploy que dispara el sync, las llamadas siguieron dando
+429 unos minutos: el contador del `RateLimitingFilter` vive en memoria
+y la ventana vieja (techo 30) siguió vigente hasta que el proceso se
+reinició con `RATE_LIMIT_ASISTENTE_MAX_INTENTOS=600`. Detalle a
+recordar al diagnosticar: **ese 429 no lo escribe el filtro con cuerpo**
+(hace `setStatus` sin cuerpo), así que un `Too Many Requests` con texto
+plano puede venir de otra capa — la forma rápida de aislarlo es llamar
+al backend directo (`crearcodecesar-backend.onrender.com`), que se
+salta Cloudflare y el proxy SSR.
 
 **Fase F11**: sigue sin descomponer — se descompone al arrancar, según
 [[10-vision-v2]].

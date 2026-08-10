@@ -3,11 +3,8 @@ package com.crearcode.leads.infraestructura.demo;
 import java.time.Duration;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.JdkClientHttpRequestFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
@@ -20,18 +17,12 @@ import com.crearcode.leads.dominio.ImagenGenerada;
  * key viaja solo en el header {@code x-goog-api-key} — nunca se
  * loguea. La URL es configurable para apuntar al stub en tests y CI.
  */
-@Component
-@ConditionalOnProperty(name = "app.demo.proveedor-imagenes", havingValue = "gemini")
 class GeminiGeneradorDeImagenesAdapter implements GeneradorDeImagenes {
 
 	private final RestClient clienteHttp;
 	private final String modelo;
 
-	GeminiGeneradorDeImagenesAdapter(
-			@Value("${app.demo.gemini.url}") String urlBase,
-			@Value("${app.demo.gemini.key}") String apiKey,
-			@Value("${app.demo.gemini.modelo}") String modelo,
-			@Value("${app.demo.gemini.timeout-segundos}") long timeoutSegundos) {
+	GeminiGeneradorDeImagenesAdapter(String urlBase, String apiKey, String modelo, long timeoutSegundos) {
 		JdkClientHttpRequestFactory fabrica = new JdkClientHttpRequestFactory();
 		fabrica.setReadTimeout(Duration.ofSeconds(timeoutSegundos));
 		this.clienteHttp = RestClient.builder()
