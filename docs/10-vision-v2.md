@@ -286,6 +286,17 @@ Registradas el 10 ago 2026 (al aprobar el prototipo del rediseño):
     issue de F10 cubre sus niveles aplicables — Unit, Component,
     Integration, API y End-to-End — según el mapa de
     [06-plan-de-pruebas.md](06-plan-de-pruebas.md) §7.
+15. **Segunda entrega del prototipo aprobada** (10 ago 2026): proyecto
+    de Claude Design "Crear Code - Pantallas faltantes"
+    (claude.ai/design/p/f2d5fbdc-a74f-485f-86f1-0df716cfd17f).
+    Cubre el diagnóstico completo (quiz → analizando → radiografía EN
+    PANTALLA → límite), el simulador (conversación, límite de
+    mensajes, error), las páginas de cuenta (registro con beneficios,
+    ingreso, mi-cuenta con usos del día por herramienta), el widget
+    del asistente abierto y el restyling de casos/sobre-nosotros/blog,
+    todo en 1280 y 375. Cumple la decisión 13 (radiografía sin campo
+    de correo) y el contraste AA. Es la referencia visual de F10b-F10e;
+    su microcopy quedó portado a docs/08.
 
 ## Aprobación
 

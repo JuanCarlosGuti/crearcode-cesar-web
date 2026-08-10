@@ -658,6 +658,33 @@ del texto de cada sub-fase se redacta al arrancarla siguiendo este tono.
 - **Simulador**: "El demo usa respuestas de ejemplo. Un chatbot real
   se entrena con tu catálogo, horarios y forma de atender."
 
+### Microcopy de la segunda entrega (pantallas faltantes, 10 ago 2026)
+
+Portado del proyecto de Claude Design (decisión 15 de docs/10).
+
+- **Límites**: "Te quedan {n} mensajes hoy · con cuenta gratis son
+  {m} al día." · "Ya usaste tus {n} diagnósticos de hoy." · "Los
+  límites existen para que la herramienta siga siendo gratis para
+  todos."
+- **Errores**: "El asistente está descansando. No perdiste ningún
+  mensaje: tu conversación sigue completa aquí arriba." · "Este
+  intento no te descuenta mensajes." · Validación de campos: "Escribe
+  un correo válido, así: nombre@empresa.com" · "Las contraseñas no
+  coinciden."
+- **Honestidad y vacíos**: "No publicamos casos que no podamos
+  sustentar." · "Todavía no guardamos historial: cuando lo tengamos,
+  aparecerá aquí." · "Muy pronto: recibirlo por correo." · "Te
+  responde una IA, no una persona."
+- **Radiografía (formato)**: veredicto en una frase con gancho ("Tu
+  negocio no tiene un problema de ventas: tiene un problema de
+  tiempo…") + chips del perfil (rubro, tamaño, cómo opera) + 3
+  oportunidades "ordenadas por lo rápido que verías el cambio", cada
+  una con título, explicación y línea "Beneficio: …" + cierre
+  "¿Hablamos de cuál te conviene primero? 30 minutos con alguien del
+  equipo, sin costo y sin compromiso. Si no te sirve, te lo decimos."
+- **Botones secundarios**: Siguiente · Atrás · Enviar · Reintentar ·
+  Ingresar · Cerrar sesión · Volver al centro de herramientas.
+
 ---
 
 ## Legales
