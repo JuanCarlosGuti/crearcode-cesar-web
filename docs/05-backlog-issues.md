@@ -328,6 +328,13 @@ pronto").
 |---|---|---|---|---|---|---|
 | ISS-136 | Rate limit por IP REAL detrás del proxy: `xfwd` en el proxy SSR + lectura confiable de `X-Forwarded-For` en el backend (evaluando el riesgo de spoofing porque el backend es públicamente accesible). Mientras tanto el techo del asistente sube a 600/15min vía Render (la protección fina son los cupos por sesión/usuario) | — | Límite por visitante real sin bloquear el tráfico legítimo | M | F10 | Integration + API |
 
+Confirmado otra vez en producción el 10 ago 2026 tras publicar F10e:
+`POST /api/asistente/mensajes` respondió 429 con cuerpo plano
+`Too Many Requests` (firma del filtro por IP, no de la aplicación) sin
+que el visitante hubiera gastado su cupo. Mientras el sync del
+Blueprint no se acepte en Render, cualquier prueba real del asistente
+en producción puede toparse con este techo.
+
 ### Cierre F10
 
 | ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
@@ -347,6 +354,24 @@ en producción tras el despliegue y el OK explícito del usuario:
 | Lighthouse móvil sobre el build real (`/`, servicio, `/herramientas`, `/contacto`) | Performance 97-98 · Accesibilidad 100 · Buenas Prácticas 100 · SEO 100 |
 | Manual 375 px / 1280 px (Home, servicio, herramientas, menú móvil) | Sin overflow horizontal, sin errores de consola |
 | Sugerencias de la Home → abren el asistente y responden | Verificado en el build de producción |
+
+**Verificación en producción (https://crearcodecesar.com, 10 ago
+2026)** con navegador real, sin errores de consola ni overflow en 375 y
+1280 px: tarjeta del demo con su ancla, 4 tarjetas de herramientas, 5
+filas de la tabla de cuenta, 2 espacios reservados, 3 preguntas
+sugeridas, doble CTA del header (escritorio y menú móvil), cero badges
+"Muy pronto", miga de pan y aside del servicio, y el ancla
+`/herramientas#diagnostico` posicionando en la herramienta correcta.
+
+**Pendiente del usuario para cerrar ISS-132**: la respuesta real del
+asistente en producción sigue devolviendo **429 con cuerpo plano
+`Too Many Requests`** — es el `RateLimitingFilter` por IP (ISS-136),
+no los límites de la aplicación (que responden JSON con código
+estable). El techo nuevo (`RATE_LIMIT_ASISTENTE_MAX_INTENTOS=600`) ya
+está en `render.yaml` pero **requiere aceptar el sync del Blueprint en
+Render**; hasta entonces el cupo por IP compartida se agota entre todos
+los visitantes. El widget degrada correctamente (aviso "El asistente
+está descansando" + WhatsApp), así que no bloquea el sitio.
 
 **Fase F11**: sigue sin descomponer — se descompone al arrancar, según
 [[10-vision-v2]].
