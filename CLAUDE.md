@@ -647,11 +647,20 @@ cómputo, único costo fijo el dominio (aún no comprado).
 
 ## Decisiones ya resueltas por el usuario
 
-- Correo corporativo: **`admin@crearcodecesar.com`** (11 ago 2026), con
-  el dominio propio. Reemplaza al `crearcodecesar@gmail.com` temporal
-  en todo el sitio, el PDF de cotizaciones, el contexto del asistente y
-  las notificaciones internas. Falta saber **con qué proveedor vive ese
-  buzón** (Google Workspace, Zoho…) para fijar el SMTP de producción.
+- Correo corporativo: **`admin@crearcodecesar.com`** en **Zoho Mail**
+  (11 ago 2026). Reemplaza al `crearcodecesar@gmail.com` temporal en
+  todo el sitio, el PDF de cotizaciones, el contexto del asistente y
+  las notificaciones internas. `MAIL_HOST=smtp.zoho.com` ya está en
+  `render.yaml`; falta crear el buzón, publicar SPF/DKIM en Cloudflare
+  y generar la contraseña de aplicación. **Ojo**: el plan gratuito de
+  Zoho restringe el acceso por cliente externo — si el envío falla con
+  error de autenticación, hace falta Mail Lite (~USD 1/mes) o un
+  servicio transaccional (ver docs/09 §7).
+- **IVA de las cotizaciones: 19% por defecto** (11 ago 2026). Una
+  S.A.S. es persona jurídica y por regla general responsable de IVA;
+  cotizar sin él y descubrirlo después obliga a pedirle al cliente un
+  19% extra sobre algo que ya aceptó. Se baja por cotización o con
+  `COTIZACIONES_IMPUESTO` si el contador confirma que no aplica.
 - LinkedIn del fundador: https://www.linkedin.com/in/juan-carlos-gutierrez-huerfano369582/
 - Paleta oficial del sitio: **Opción C — "Minimal Corporativo"** (ver
   [docs/07-guia-de-estilo.md](docs/07-guia-de-estilo.md)).

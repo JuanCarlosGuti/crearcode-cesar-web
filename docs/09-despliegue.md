@@ -239,23 +239,43 @@ usuario, 11 ago 2026), ya con el dominio propio. Sustituye al
 `crearcodecesar@gmail.com` temporal que se había elegido el 28 jul
 2026 mientras no existía dominio.
 
-**Pendiente para poder configurarlo**: saber **con qué proveedor vive
-ese buzón**, porque de ahí salen el host y el tipo de credencial:
+**Proveedor elegido: Zoho Mail** (decisión del usuario, 11 ago 2026),
+con `MAIL_HOST=smtp.zoho.com` y puerto 587 ya declarados en
+`render.yaml`.
 
-| Proveedor del buzón | `MAIL_HOST` / `MAIL_PORT` | Credencial |
-|---|---|---|
-| Google Workspace | `smtp.gmail.com` / 587 | App Password de esa cuenta (requiere verificación en dos pasos) |
-| Zoho Mail | `smtp.zoho.com` / 587 | contraseña de aplicación de Zoho |
-| Correo del registrador/hosting | el que indique su panel | contraseña del buzón |
-| Servicio transaccional (Brevo, Resend…) | el suyo | clave de API como contraseña |
+**Advertencia importante antes de configurarlo**: el plan **Forever
+Free** de Zoho está pensado para usar el correo desde su webmail y su
+app, y **restringe el acceso por cliente externo** (bloquea IMAP; el
+acceso SMTP/POP depende del plan y la región). Si al configurar el
+envío aparece un error de autenticación o de "acceso no permitido", no
+es un problema del código: hace falta **Mail Lite** (~USD 1 al
+mes/usuario), que habilita SMTP e IMAP.
+Referencias: [configuración SMTP/IMAP de Zoho](https://www.zoho.com/mail/help/imap-access.html),
+[límites del plan gratuito](https://mail.mailbux.com/blog/email-comparisons/zoho-mail-free-plan-limitations-alternative).
 
-Gracias al puerto `EnviadorDeCorreosDeCuenta` y a que todo va por
-variables de entorno, cambiar de proveedor es configuración, no código.
-La guía de abajo aplica **solo si el buzón es de Google Workspace**.
+Alternativa si no se quiere pagar: un servicio **transaccional** con
+capa gratis (Brevo da ~300 correos/día, Resend ~3.000/mes), que además
+maneja mejor la entregabilidad de correos automáticos. Como todo va por
+variables de entorno y el envío está detrás de un puerto, cambiar de
+proveedor es configuración, no código.
 
-### Guía: crear la App Password de Google (si el buzón es de Workspace)
+**Pasos en Zoho** (una vez, con el dominio ya verificado):
 
-1. Entrar a https://myaccount.google.com con `admin@crearcodecesar.com`.
+1. Crear el buzón `admin@crearcodecesar.com` en Zoho Mail.
+2. Verificar el dominio y publicar los registros **SPF y DKIM** que
+   Zoho indique — sin ellos, Gmail y Outlook mandan los correos a spam.
+   Los registros se agregan en Cloudflare, que es quien lleva el DNS.
+3. Activar la verificación en dos pasos y generar una **contraseña de
+   aplicación** (Perfil → Seguridad → Contraseñas de aplicación). Esa
+   es `MAIL_PASSWORD`; nunca la contraseña real.
+4. Probar el envío real desde producción con el flujo de recuperación
+   de contraseña, que es el más corto de verificar.
+
+### Guía histórica: App Password de Google (del Gmail temporal)
+
+Se conserva por si se vuelve a un buzón de Google; con Zoho no aplica.
+
+1. Entrar a https://myaccount.google.com con la cuenta de Gmail.
 2. **Seguridad** → activar la **verificación en dos pasos** si no está
    activa (requisito de Google para las App Passwords).
 3. Ir a https://myaccount.google.com/apppasswords (o buscar "Contraseñas
@@ -270,7 +290,7 @@ La guía de abajo aplica **solo si el buzón es de Google Workspace**.
 
 | Variable | Valor | Cómo llega |
 |---|---|---|
-| `MAIL_HOST` | `smtp.gmail.com` (cambiar si el buzón no es de Google) | fija en `render.yaml` |
+| `MAIL_HOST` | `smtp.zoho.com` | fija en `render.yaml` |
 | `MAIL_PORT` | `587` | fija en `render.yaml` |
 | `MAIL_SMTP_AUTH` / `MAIL_SMTP_STARTTLS` | `true` / `true` | fijas en `render.yaml` |
 | `MAIL_USERNAME` | `admin@crearcodecesar.com` | `sync: false` — se escribe en el dashboard |

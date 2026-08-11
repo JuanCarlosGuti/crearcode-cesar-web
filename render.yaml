@@ -45,8 +45,13 @@ services:
       # Password (ver guia en docs/09-despliegue.md). MAIL_USERNAME es
       # el Gmail completo; MAIL_PASSWORD es la App Password de 16
       # caracteres — nunca la contrasena real de la cuenta.
+      # Buzon del dominio propio en Zoho Mail (decision del usuario, 11
+      # ago 2026). OJO: el plan Forever Free de Zoho restringe el acceso
+      # por cliente externo — si el envio falla con error de
+      # autenticacion, es que hace falta el plan Mail Lite (~USD 1 al
+      # mes) o un servicio transaccional. Ver docs/09-despliegue.md §7.
       - key: MAIL_HOST
-        value: smtp.gmail.com
+        value: smtp.zoho.com
       - key: MAIL_PORT
         value: "587"
       - key: MAIL_SMTP_AUTH

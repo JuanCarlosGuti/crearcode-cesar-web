@@ -30,7 +30,9 @@ export class NuevaCotizacionPage {
   protected readonly correo = signal('');
   protected readonly telefono = signal('');
   protected readonly identificacion = signal('');
-  protected readonly impuesto = signal(0);
+  // Espeja el default del backend (19%): el servidor manda, pero el
+  // formulario no debe proponer 0 y sorprender al fundador.
+  protected readonly impuesto = signal(19);
   protected readonly diasDeValidez = signal(15);
   protected readonly creando = signal(false);
   protected readonly error = signal<string | null>(null);
