@@ -104,7 +104,13 @@ services:
     # aportaba nada al SEO — las paginas publicas ya se prerenderizan en
     # build — y como web service el sitio se dormia a los 15 minutos.
     # Servido por CDN, sin Node en produccion y sin spin down.
-    name: crearcodecesar-frontend
+    # Nombre nuevo a proposito: Render NO convierte un web service en
+    # Static Site, son tipos distintos. Con el nombre viejo el Blueprint
+    # seguiria intentando construir el Dockerfile que ya no existe. Este
+    # se crea al lado, se verifica en su URL de onrender.com y solo
+    # entonces se le mueve el dominio y se borra el anterior
+    # (procedimiento en docs/09-despliegue.md §8).
+    name: crearcodecesar-sitio
     runtime: static
     rootDir: frontend
     buildCommand: npm ci && npm run build

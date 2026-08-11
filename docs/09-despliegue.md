@@ -198,6 +198,39 @@ Camino elegido: Opción 4 (Render + Neon), proxy sin CORS (ADR-09).
       dominio canónico `https://crearcodecesar.com` (ADR-11) — deja de
       ser el placeholder `.example` que salía en sitemap/OG.
 
+## 7 bis. Corte a Static Site sin downtime (ADR-12)
+
+**Render no convierte un web service en Static Site**: son tipos de
+servicio distintos. Si se cambia `runtime: docker` por
+`runtime: static` manteniendo el nombre, el servicio existente sigue
+siendo el de antes e intenta construir el `Dockerfile` que ya no está
+— eso pasó el 11 ago 2026 y el deploy falló (sin tumbar el sitio: Render
+conserva sirviendo la versión anterior cuando un build falla).
+
+Por eso el Blueprint declara el sitio con **nombre nuevo**
+(`crearcodecesar-sitio`), que se crea al lado del viejo. Orden del
+corte:
+
+1. **Sincronizar el Blueprint.** Render crea `crearcodecesar-sitio`
+   como Static Site y lo publica en su propia URL `*.onrender.com`. El
+   servicio viejo sigue sirviendo el dominio, intacto.
+2. **Verificar en esa URL**: que carguen las páginas públicas, que
+   `/admin` y `/mi-cuenta` entren por el fallback de SPA, que
+   `/sitemap.xml` y `/robots.txt` respondan, y que el formulario de
+   contacto funcione (eso prueba el `rewrite` de `/api`).
+3. **Mover el dominio**: quitar `crearcodecesar.com` y `www` del
+   servicio viejo y añadirlos al nuevo. Como el DNS ya apunta a
+   Cloudflare y de ahí a Render, la propagación es cuestión de minutos.
+4. **Comprobar el dominio** ya en el sitio nuevo, incluida la cabecera
+   HSTS (`curl -sI https://crearcodecesar.com | grep -i strict`).
+5. **Borrar el web service viejo** (`crearcodecesar-frontend`) y quitar
+   su declaración del Blueprint. Hasta ese momento, volver atrás es
+   devolverle el dominio.
+
+Mientras el servicio viejo exista, cada push seguirá disparándole un
+build que falla por el `Dockerfile` ausente. Es ruido, no un problema:
+no afecta a lo que está publicado.
+
 ## 8. Dominio propio crearcodecesar.com (10 ago 2026, ADR-11)
 
 Dominio comprado; Cloudflare actúa como DNS/proxy delante de Render.
