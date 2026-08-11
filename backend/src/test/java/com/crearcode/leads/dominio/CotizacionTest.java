@@ -1,6 +1,8 @@
 package com.crearcode.leads.dominio;
 
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -129,6 +131,43 @@ class CotizacionTest {
 		assertThatThrownBy(() -> cotizacion.agregarItem(new ItemDeCotizacion("Extra", 1, Dinero.de(1))))
 				.isInstanceOf(CotizacionInvalidaException.class);
 		assertThatThrownBy(() -> cotizacion.quitarItem(0))
+				.isInstanceOf(CotizacionInvalidaException.class);
+	}
+
+	@Test
+	void reemplazarItemsDejaSoloLosNuevos() {
+		Cotizacion cotizacion = borradorConUnItem();
+
+		cotizacion.reemplazarItems(List.of(
+				new ItemDeCotizacion("Analisis", 1, Dinero.de(500_000)),
+				new ItemDeCotizacion("Implementacion", 2, Dinero.de(750_000))));
+
+		assertThat(cotizacion.items()).hasSize(2);
+		assertThat(cotizacion.subtotal()).isEqualTo(Dinero.de(2_000_000));
+	}
+
+	@Test
+	void reemplazarItemsRechazaListasNulasOConNulos() {
+		Cotizacion cotizacion = borradorConUnItem();
+
+		assertThatThrownBy(() -> cotizacion.reemplazarItems(null))
+				.isInstanceOf(CotizacionInvalidaException.class);
+		assertThatThrownBy(() -> cotizacion.reemplazarItems(Arrays.asList(
+				new ItemDeCotizacion("Analisis", 1, Dinero.de(500_000)), null)))
+				.isInstanceOf(CotizacionInvalidaException.class);
+	}
+
+	@Test
+	void lasNotasSoloSeCambianMientrasEsBorrador() {
+		Cotizacion cotizacion = borradorConUnItem();
+		cotizacion.cambiarNotas("Incluye dos capacitaciones");
+		assertThat(cotizacion.notas()).isEqualTo("Incluye dos capacitaciones");
+
+		cotizacion.enviar(NumeroDeCotizacion.de(2026, 1), AHORA);
+
+		assertThatThrownBy(() -> cotizacion.cambiarNotas("otra cosa"))
+				.isInstanceOf(CotizacionInvalidaException.class);
+		assertThatThrownBy(() -> cotizacion.reemplazarItems(List.of()))
 				.isInstanceOf(CotizacionInvalidaException.class);
 	}
 

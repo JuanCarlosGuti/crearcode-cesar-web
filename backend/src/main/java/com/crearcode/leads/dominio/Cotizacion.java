@@ -3,6 +3,7 @@ package com.crearcode.leads.dominio;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Agregado raíz del contexto {@code cotizaciones} (fase F11). Como
@@ -21,7 +22,7 @@ public final class Cotizacion {
 	private final Instant creadaEn;
 	private final Instant validaHasta;
 	private final SolicitudId origen;
-	private final String notas;
+	private String notas;
 	private final List<ItemDeCotizacion> items;
 	private EstadoCotizacion estado;
 	private NumeroDeCotizacion numero;
@@ -87,6 +88,26 @@ public final class Cotizacion {
 			throw new CotizacionInvalidaException("No existe el ítem en la posición " + posicion);
 		}
 		items.remove(posicion);
+	}
+
+	/**
+	 * Reemplaza la lista completa: el formulario del panel edita la
+	 * cotización entera y guarda, no ítem por ítem.
+	 */
+	public void reemplazarItems(List<ItemDeCotizacion> nuevos) {
+		exigirBorrador();
+		// stream().anyMatch en vez de contains(null): las listas inmutables
+		// de List.of() lanzan NPE al preguntarles por null.
+		if (nuevos == null || nuevos.stream().anyMatch(Objects::isNull)) {
+			throw new CotizacionInvalidaException("La lista de ítems no puede ser nula ni contener nulos");
+		}
+		items.clear();
+		items.addAll(nuevos);
+	}
+
+	public void cambiarNotas(String nuevas) {
+		exigirBorrador();
+		this.notas = nuevas;
 	}
 
 	public void enviar(NumeroDeCotizacion numero, Instant ahora) {
