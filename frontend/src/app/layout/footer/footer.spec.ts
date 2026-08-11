@@ -4,6 +4,7 @@ import { Router, provideRouter } from '@angular/router';
 
 import { SERVICIOS } from '../../../contenido/servicios';
 import { HOME } from '../../../contenido/home';
+import { CORREO_CORPORATIVO } from '../../../contenido/legales';
 import { Footer } from './footer';
 
 @Component({ template: '' })
@@ -28,7 +29,7 @@ describe('Footer', () => {
     const texto = fixture.nativeElement.textContent;
     expect(texto).toContain('Valledupar');
     expect(texto).toContain('323 988 5883');
-    expect(texto).toContain('crearcodecesar@gmail.com');
+    expect(texto).toContain(CORREO_CORPORATIVO);
   });
 
   it('incluye los enlaces legales', async () => {

@@ -125,7 +125,7 @@ siguen pendientes deben completarse antes de publicar el sitio.
 
 | Dato | Estado | Valor / placeholder |
 |---|---|---|
-| Correo corporativo | Resuelto (temporal) | `crearcodecesar@gmail.com` — correo temporal en Gmail; se reemplaza por un correo con dominio propio cuando se compre el dominio (ver fila siguiente) |
+| Correo corporativo | Resuelto (temporal) | `admin@crearcodecesar.com` — correo temporal en Gmail; se reemplaza por un correo con dominio propio cuando se compre el dominio (ver fila siguiente) |
 | URL de LinkedIn del fundador | Resuelto | `https://www.linkedin.com/in/juan-carlos-gutierrez-huerfano369582/` |
 | Dominio web definitivo | Pendiente (decisión al final, ver [[02-arquitectura]] y Etapa 2 fase F7) | No aplica — diseño agnóstico al dominio |
 | Cifra objetivo de leads/mes | Pendiente de decisión de negocio | No aplica |
@@ -133,4 +133,4 @@ siguen pendientes deben completarse antes de publicar el sitio.
 Datos ya confirmados y usados como reales en toda la documentación:
 razón social Crear Code Cesar S.A.S., ciudad Valledupar (Cesar, Colombia),
 WhatsApp 323 988 5883, nombre del fundador Juan Carlos Gutiérrez, correo
-corporativo temporal crearcodecesar@gmail.com, LinkedIn del fundador.
+corporativo temporal admin@crearcodecesar.com, LinkedIn del fundador.

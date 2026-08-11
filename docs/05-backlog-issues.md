@@ -523,20 +523,57 @@ El certificado **confirma la decisión 18**: es una persona jurídica
 (S.A.S.), luego obligada a factura electrónica — la cotización no puede
 hacer las veces de documento de cobro.
 
+**Aclaración fiscal (11 ago 2026)**: el usuario indicó que la empresa
+"está en régimen simplificado y aún no ha facturado". Dos cosas a
+tener en cuenta antes de la primera cotización real:
+
+1. **El "régimen simplificado" ya no existe** como figura: lo
+   eliminaron la Ley 1943 de 2018 y la Ley 2010 de 2019. Hoy la
+   clasificación es **responsable / no responsable de IVA**.
+2. **"No responsable de IVA" aplica solo a personas naturales.** Una
+   S.A.S. es persona jurídica, así que por regla general **es
+   responsable de IVA** — el umbral de 3.500 UVT no la exime.
+
+Consecuencia práctica: cotizar sin IVA y descubrir después que había
+que facturarlo obliga a pedirle al cliente un 19% adicional sobre algo
+que ya aceptó, o a asumirlo del margen. Conviene confirmarlo con el
+contador **antes** de enviar la primera cotización, mirando las
+responsabilidades de la casilla 53 del RUT (código 48 = responsable de
+IVA). *Esto no es asesoría fiscal.* Fuentes:
+[responsable de IVA 2026](https://blog.alegra.com/colombia/responsable-de-iva/),
+[régimen simplificado](https://www.gerencie.com/regimen-simplificado.html).
+
+**Preparación para facturar** (cuando salga al mercado; no lo cubre
+esta app, que solo emite cotizaciones):
+
+1. Habilitarse como facturador electrónico en el portal de la DIAN.
+2. Solicitar la **resolución de numeración** (prefijo y rango, vigencia
+   de 1 a 5 años).
+3. Configurar el modo de operación y superar el **set de pruebas** para
+   quedar en estado HABILITADO; asociar los prefijos ~1 hora después de
+   pedir la resolución.
+4. Elegir cómo se emite: el sistema gratuito de la DIAN o un proveedor
+   con API (Alegra desde ~$18.000 COP/mes) si se quiere automatizar
+   desde esta app más adelante.
+
+Guías: [pasos de habilitación](https://ayuda.alegra.com/col/pasos-habilitacion-facturador-electronico-dian),
+[facturación gratuita DIAN](https://micrositios.dian.gov.co/sistema-de-facturacion-electronica/guia-de-facturacion-gratuita-dian/).
+
 **Sigue pendiente del usuario**:
 
-- **Si la empresa es responsable de IVA** y con qué porcentaje. Ese
-  dato **no está en el certificado de Cámara de Comercio**: vive en el
-  RUT de la DIAN (responsabilidad 48 "responsable de IVA" vs. 49 "no
-  responsable"). Mientras no se confirme, el impuesto queda en 0 y el
-  PDF no menciona IVA.
+- **Confirmar con el contador la condición de IVA** y, con eso, el
+  porcentaje por defecto de las cotizaciones. El impuesto ya es
+  configurable **por cotización** (se elige al abrirla), así que el
+  sistema soporta los dos escenarios sin tocar código.
 - Validez por defecto (hoy 15 días) y condiciones comerciales estándar
   (anticipo, forma de pago) para el pie del documento.
-- Datos de contacto del documento: el certificado registra
-  `juancgutierrezh@gmail.com` y los teléfonos 3015791952 / 3145408191,
-  mientras que el sitio usa `crearcodecesar@gmail.com` y el WhatsApp
-  323 988 5883. Se mantienen los del sitio (son los comerciales), pero
-  conviene decidir cuáles van en la cotización.
+- Datos de contacto del documento: desde el 11 ago 2026 el correo
+  corporativo es **`admin@crearcodecesar.com`** (dominio propio), y es
+  el que aparece en el sitio, el PDF y el asistente. El certificado
+  registra `juancgutierrezh@gmail.com` y los teléfonos 3015791952 /
+  3145408191 como datos de notificación judicial; el sitio usa el
+  WhatsApp comercial 323 988 5883. Conviene decidir si en la cotización
+  va ese WhatsApp o alguno de los teléfonos registrados.
 
 **Nota de dependencia**: el correo de producción sigue pospuesto hasta
 las pruebas del MVP, así que HU-45 se verifica en local contra Mailpit;

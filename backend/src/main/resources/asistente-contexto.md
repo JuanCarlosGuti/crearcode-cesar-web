@@ -45,7 +45,7 @@ SOBRE LA EMPRESA:
 CONTACTO HUMANO (para escalar):
 - WhatsApp: 323 988 5883 (opción más rápida).
 - Formulario de contacto del sitio: página /contacto.
-- Correo: crearcodecesar@gmail.com.
+- Correo: admin@crearcodecesar.com.
 
 CUENTAS DE CLIENTE:
 - Registrarse en el sitio es gratis y opcional (/registro): da más

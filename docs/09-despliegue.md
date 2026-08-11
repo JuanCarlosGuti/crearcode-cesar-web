@@ -226,21 +226,36 @@ Checklist de la transición:
 - [ ] Backups de PostgreSQL: Neon los incluye en su capa gratis, no
       hace falta configurar nada manual.
 
-## 7. Correo de cuentas de cliente en producción (fase F8 — Gmail con App Password)
+## 7. Correo transaccional en producción
 
-Los correos de verificación y recuperación (fase F8) se envían por SMTP.
-En local los recibe Mailpit (`docker compose up -d`, bandeja en
-http://localhost:8025) sin configurar nada. En producción se usa
-**Gmail con App Password** sobre `crearcodecesar@gmail.com` (decisión
-del usuario, 28 jul 2026; ~500 correos/día de tope, de sobra para
-empezar). **Brevo queda como la migración futura** cuando haya dominio
-propio y más volumen — gracias al puerto `EnviadorDeCorreosDeCuenta` y
-a que toda la configuración es por variables de entorno, ese cambio
-será solo de configuración SMTP, sin tocar código.
+Los correos de verificación y recuperación (F8), la notificación de
+solicitudes nuevas (F2) y el envío de cotizaciones con el PDF adjunto
+(F11) salen por SMTP. En local los recibe Mailpit
+(`docker compose up -d`, bandeja en http://localhost:8025) sin
+configurar nada.
 
-### Guía: crear la App Password (una sola vez, ~3 minutos)
+**Remitente definitivo: `admin@crearcodecesar.com`** (decisión del
+usuario, 11 ago 2026), ya con el dominio propio. Sustituye al
+`crearcodecesar@gmail.com` temporal que se había elegido el 28 jul
+2026 mientras no existía dominio.
 
-1. Entrar a https://myaccount.google.com con `crearcodecesar@gmail.com`.
+**Pendiente para poder configurarlo**: saber **con qué proveedor vive
+ese buzón**, porque de ahí salen el host y el tipo de credencial:
+
+| Proveedor del buzón | `MAIL_HOST` / `MAIL_PORT` | Credencial |
+|---|---|---|
+| Google Workspace | `smtp.gmail.com` / 587 | App Password de esa cuenta (requiere verificación en dos pasos) |
+| Zoho Mail | `smtp.zoho.com` / 587 | contraseña de aplicación de Zoho |
+| Correo del registrador/hosting | el que indique su panel | contraseña del buzón |
+| Servicio transaccional (Brevo, Resend…) | el suyo | clave de API como contraseña |
+
+Gracias al puerto `EnviadorDeCorreosDeCuenta` y a que todo va por
+variables de entorno, cambiar de proveedor es configuración, no código.
+La guía de abajo aplica **solo si el buzón es de Google Workspace**.
+
+### Guía: crear la App Password de Google (si el buzón es de Workspace)
+
+1. Entrar a https://myaccount.google.com con `admin@crearcodecesar.com`.
 2. **Seguridad** → activar la **verificación en dos pasos** si no está
    activa (requisito de Google para las App Passwords).
 3. Ir a https://myaccount.google.com/apppasswords (o buscar "Contraseñas
@@ -255,11 +270,11 @@ será solo de configuración SMTP, sin tocar código.
 
 | Variable | Valor | Cómo llega |
 |---|---|---|
-| `MAIL_HOST` | `smtp.gmail.com` | fija en `render.yaml` |
+| `MAIL_HOST` | `smtp.gmail.com` (cambiar si el buzón no es de Google) | fija en `render.yaml` |
 | `MAIL_PORT` | `587` | fija en `render.yaml` |
 | `MAIL_SMTP_AUTH` / `MAIL_SMTP_STARTTLS` | `true` / `true` | fijas en `render.yaml` |
-| `MAIL_USERNAME` | `crearcodecesar@gmail.com` | `sync: false` — se escribe en el dashboard |
-| `MAIL_PASSWORD` | la App Password de 16 letras | `sync: false` — se escribe en el dashboard |
+| `MAIL_USERNAME` | `admin@crearcodecesar.com` | `sync: false` — se escribe en el dashboard |
+| `MAIL_PASSWORD` | la contraseña de aplicación del buzón | `sync: false` — se escribe en el dashboard |
 | `FRONTEND_URL` | URL pública del frontend | automática (`fromService`) — base de los enlaces de los correos |
 
 Nota operativa: los rate limits de los endpoints de cuenta son

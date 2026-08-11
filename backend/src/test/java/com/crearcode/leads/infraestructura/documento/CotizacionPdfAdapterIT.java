@@ -30,13 +30,13 @@ class CotizacionPdfAdapterIT {
 	/** Los datos reales del certificado de Cámara de Comercio. */
 	private final DatosDeLaEmpresa empresa = new DatosDeLaEmpresa("Crear Code Cesar S.A.S.",
 			"901941017-0", "Calle 4B # 20-36, Oficina 303, Barrio Callejas", "Valledupar, Cesar",
-			"323 988 5883", "crearcodecesar@gmail.com", "crearcodecesar.com");
+			"323 988 5883", "admin@crearcodecesar.com", "crearcodecesar.com");
 	private final CotizacionPdfAdapter adapter = new CotizacionPdfAdapter(empresa);
 
 	/** Config incompleta: el PDF debe omitir las líneas, no inventarlas. */
 	private final CotizacionPdfAdapter adapterSinDatosFiscales = new CotizacionPdfAdapter(
 			new DatosDeLaEmpresa("Crear Code Cesar S.A.S.", "", "", "Valledupar, Cesar", "323 988 5883",
-					"crearcodecesar@gmail.com", "crearcodecesar.com"));
+					"admin@crearcodecesar.com", "crearcodecesar.com"));
 
 	private Cotizacion cotizacionEnviada(Porcentaje impuesto) {
 		Cotizacion cotizacion = Cotizacion.abrirBorrador(

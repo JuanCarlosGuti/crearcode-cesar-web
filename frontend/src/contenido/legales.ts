@@ -1,4 +1,6 @@
-export const CORREO_CORPORATIVO = 'crearcodecesar@gmail.com';
+// Correo corporativo del dominio propio (11 ago 2026). Reemplaza al
+// crearcodecesar@gmail.com temporal que se usó hasta comprar el dominio.
+export const CORREO_CORPORATIVO = 'admin@crearcodecesar.com';
 export const WHATSAPP_NUMERO = '323 988 5883';
 export const WHATSAPP_NUMERO_INTERNACIONAL = '573239885883';
 

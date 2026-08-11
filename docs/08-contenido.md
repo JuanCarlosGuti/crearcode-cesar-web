@@ -378,7 +378,7 @@ resumen (2-3 líneas) y fecha. Contenido en Markdown (ver
 **Datos de contacto (mostrados junto al formulario):**
 > Valledupar, Cesar, Colombia
 > WhatsApp: 323 988 5883
-> Correo: crearcodecesar@gmail.com
+> Correo: admin@crearcodecesar.com
 
 ---
 
@@ -770,7 +770,7 @@ Portado del proyecto de Claude Design (decisión 15 de docs/10).
 > reglamentarios, tienes derecho a conocer, actualizar, rectificar y
 > solicitar la eliminación de tus datos personales, así como a revocar
 > tu autorización en cualquier momento, escribiendo a
-> crearcodecesar@gmail.com.
+> admin@crearcodecesar.com.
 >
 > **Cómo protegemos tus datos**: aplicamos medidas técnicas y
 > organizativas razonables para proteger tu información contra acceso
@@ -803,7 +803,7 @@ Portado del proyecto de Claude Design (decisión 15 de docs/10).
 > ininterrumpida.
 >
 > **Contacto**: para cualquier consulta sobre estos términos, escribe a
-> crearcodecesar@gmail.com o por WhatsApp al 323 988 5883.
+> admin@crearcodecesar.com o por WhatsApp al 323 988 5883.
 >
 > *Este texto es un borrador base para revisión y ajuste con asesoría
 > legal antes de publicarlo.*
@@ -812,7 +812,7 @@ Portado del proyecto de Claude Design (decisión 15 de docs/10).
 
 ## Placeholders pendientes en este documento
 
-Correo corporativo (`crearcodecesar@gmail.com`, temporal) y LinkedIn del
+Correo corporativo (`admin@crearcodecesar.com`, temporal) y LinkedIn del
 fundador ya se resolvieron y quedaron insertados directamente en el
 texto de este documento — se mantienen como pendiente en
 [[01-vision-y-alcance]] §7 solo el correo definitivo con dominio propio
