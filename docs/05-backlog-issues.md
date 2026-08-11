@@ -468,8 +468,38 @@ issue según [[06-plan-de-pruebas]] §7.
 
 | ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
 |---|---|---|---|---|---|---|
-| ISS-154 | E2E del ciclo completo: el equipo crea desde un lead, envía, el cliente entra a su cuenta, descarga el PDF y acepta; el lead queda CONVERTIDO | HU-44..48 | Correo leído de Mailpit como en `cuentas-e2e`; axe sin violaciones | L | ISS-152 | E2E |
+| ISS-154 ✅ | E2E del ciclo completo: el equipo crea desde un lead, envía, el cliente entra a su cuenta, descarga el PDF y acepta; el lead queda CONVERTIDO | HU-44..48 | Correo leído de Mailpit como en `cuentas-e2e`; axe sin violaciones | L | ISS-152 | E2E |
 | ISS-155 | Cierre de fase: suites en verde, ArchUnit, Lighthouse, revisión manual 375/1280, docs y CLAUDE.md al día, OK del usuario | HU-44..48 | Regla dura del proyecto | M | todo F11 | Checklist manual |
+
+**Estado al 11 ago 2026**: ISS-138 a ISS-154 implementados. Verificación
+de las cuatro suites:
+
+| Comprobación | Resultado |
+|---|---|
+| Backend (`mvnw verify`: unitarios + ArchUnit + ITs) | 129 ITs, BUILD SUCCESS |
+| Frontend (`npm test`) | 244 specs |
+| E2E Playwright + axe | 38, cero violaciones |
+| Lighthouse móvil sobre el build de producción | Performance 96-97 · Accesibilidad 100 · Buenas Prácticas 100 · SEO 100 |
+
+**Hallazgos de F11** (los que valen más allá de la fase):
+
+- `List.of(...).contains(null)` lanza `NullPointerException`: validar
+  una lista inmutable buscando nulos así explota. Se usa
+  `stream().anyMatch(Objects::isNull)`.
+- El badge `CONVERTIDA` del panel arrastraba un contraste de 4.11:1
+  desde F5, por debajo del mínimo AA. Ningún test lo había visto porque
+  ninguno dejaba una solicitud en ese estado; el e2e del ciclo
+  comercial sí, y axe lo atrapó. Corregido oscureciendo el texto.
+- Los ITs que necesitan varios clientes distintos emiten el token con
+  el generador real en vez de pasar por `POST /api/auth/login`: ese
+  endpoint tiene rate limit de 5/15 min por IP y la clase entera se
+  quedaba sin cupo.
+- `MimeMessageHelper` anida multiparts (mixed → alternative): para leer
+  el cuerpo de un correo con adjunto en un test hay que recorrerlos en
+  profundidad, no solo el primer nivel.
+
+Pendiente para cerrar la fase: revisión manual en navegador (375/1280)
+y el **OK explícito del usuario**.
 
 **Datos que hacen falta antes de emitir la primera cotización real**
 (no bloquean la implementación — todo es configurable, y el diseño

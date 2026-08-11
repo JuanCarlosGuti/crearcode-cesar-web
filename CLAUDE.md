@@ -177,8 +177,11 @@ variable de entorno en Render el día que se use — nunca en el repo.
   `CLOUDFLARE_API_TOKEN` en Render para que el demo use Cloudflare
   (hasta entonces responde el respaldo de Pollinations).
 - [ ] **F11** — Gestión comercial interna (ISS-138 a ISS-155):
-  **documentada y descompuesta el 10 ago 2026**, pendiente del OK
-  explícito del usuario al plan para arrancar la implementación.
+  **implementada** (ISS-138 a ISS-154, 11 ago 2026) con las cuatro
+  suites en verde: 129 ITs de backend + ArchUnit, 244 specs de
+  frontend, 38 e2e con axe sin violaciones y Lighthouse 96-97/100/100/100
+  sobre el build de producción. Falta ISS-155: revisión manual en
+  navegador y el OK explícito del usuario para cerrar la fase.
   Alcance: pipeline lead → cotización → aceptada, cotización en PDF
   generada por la app, y respuesta del cliente desde `/mi-cuenta`.
   **La "cuenta de cobro" salió del alcance** (decisión 18 de docs/10):
@@ -502,6 +505,39 @@ usuario (10 ago 2026). No cambia paleta ni tokens: los reutiliza.
 - Lighthouse tras el rediseño (build de producción, móvil): Performance
   97-98, Accesibilidad/Buenas Prácticas/SEO 100 en Home, servicio,
   `/herramientas` y Contacto.
+
+## Cotizaciones (fase F11)
+
+Contexto `cotizaciones` con su agregado `Cotizacion` (dominio plano, sin
+Spring ni JPA). Dos invariantes mandan sobre el resto: **una cotización
+enviada ya no se edita** (lo que el cliente vio no cambia después) y
+**los totales los calcula el dominio**, nunca llegan de fuera —
+`ItemDeCotizacion` calcula su subtotal y `Dinero` lleva la aritmética
+adentro, en pesos enteros.
+
+- **Pipeline**: `lead → cotización → aceptada`. Al aceptar, el lead de
+  origen pasa a `CONVERTIDA` solo si la transición aplica: el pipeline
+  comercial no se rompe por el estado de un lead viejo.
+- **Consecutivo** `COT-AAAA-NNNN` por año, con `UPDATE … RETURNING`
+  atómico (probado con 20 envíos simultáneos). Se asigna **al enviar**:
+  un borrador que nunca sale no consume número.
+- **PDF** con OpenPDF detrás del puerto `GeneradorDeDocumento`. El
+  documento se identifica como cotización — ni factura ni cuenta de
+  cobro (decisión 18 de docs/10) — y omite NIT/dirección mientras el
+  usuario no los confirme, en vez de imprimir datos inventados.
+- **Correo** con el PDF adjunto (`MimeMessageHelper`, el primero del
+  sitio con adjunto), best-effort: si el SMTP falla, la cotización queda
+  enviada y el PDF se comparte a mano.
+- **API**: `/api/cotizaciones/**` (rol ADMIN) y `/api/mis-cotizaciones/**`
+  (cliente). El correo del cliente sale del token, nunca de la
+  petición; una cotización ajena responde **404 y no 403**, para no
+  revelar que existe.
+- **Frontend**: panel en `/admin/cotizaciones` (listado, apertura desde
+  un lead con `?solicitud=`, detalle editable con totales en vivo) y
+  `/mi-cuenta/cotizaciones` para que el cliente descargue y responda.
+- **Datos pendientes del usuario** (todo configurable, 0% de impuesto es
+  válido): NIT y dirección fiscal para el encabezado del PDF, si la
+  empresa es responsable de IVA, y la validez por defecto.
 
 ## SEO, rendimiento y accesibilidad (tras la fase F6)
 
