@@ -498,8 +498,13 @@ de las cuatro suites:
   el cuerpo de un correo con adjunto en un test hay que recorrerlos en
   profundidad, no solo el primer nivel.
 
-Pendiente para cerrar la fase: revisión manual en navegador (375/1280)
-y el **OK explícito del usuario**.
+**Revisión manual en navegador (11 ago 2026)**: panel de cotizaciones
+(listado, apertura y detalle editable) y `/mi-cuenta/cotizaciones` en
+1280 y 375 px, sin overflow horizontal ni errores de consola. Se
+corrigió el margen de las páginas nuevas del panel, que salían pegadas
+al borde por faltarles el `.contenedor` del resto del sitio.
+
+Pendiente para cerrar la fase: el **OK explícito del usuario**.
 
 **Datos que hacen falta antes de emitir la primera cotización real**
 (no bloquean la implementación — todo es configurable, y el diseño
