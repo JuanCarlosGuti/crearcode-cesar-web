@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.crearcode.leads.aplicacion.CotizacionNoEncontradaException;
 import com.crearcode.leads.aplicacion.CredencialesInvalidasException;
 import com.crearcode.leads.aplicacion.CuentaNoVerificadaException;
 import com.crearcode.leads.aplicacion.LimiteDeUsoAlcanzadoException;
@@ -18,6 +19,8 @@ import com.crearcode.leads.dominio.AsistenteNoDisponibleException;
 import com.crearcode.leads.dominio.ConsentimientoRequeridoException;
 import com.crearcode.leads.dominio.ContrasenaInvalidaException;
 import com.crearcode.leads.dominio.ConversacionInvalidaException;
+import com.crearcode.leads.dominio.CotizacionInvalidaException;
+import com.crearcode.leads.dominio.CotizacionVencidaException;
 import com.crearcode.leads.dominio.DatosDeContactoInvalidosException;
 import com.crearcode.leads.dominio.DemoSoloParaRegistradosException;
 import com.crearcode.leads.dominio.DiagnosticoInvalidoException;
@@ -70,6 +73,27 @@ class GlobalExceptionHandler {
 	@ExceptionHandler(SolicitudNoEncontradaException.class)
 	ResponseEntity<ErrorResponse> solicitudNoEncontrada(SolicitudNoEncontradaException excepcion) {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(excepcion.getMessage()));
+	}
+
+	/**
+	 * También cubre el caso de una cotización ajena: el caso de uso la
+	 * trata como inexistente para no revelar que existe (invariante 6 del
+	 * contexto de cotizaciones).
+	 */
+	@ExceptionHandler(CotizacionNoEncontradaException.class)
+	ResponseEntity<ErrorResponse> cotizacionNoEncontrada(CotizacionNoEncontradaException excepcion) {
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(excepcion.getMessage()));
+	}
+
+	@ExceptionHandler(CotizacionInvalidaException.class)
+	ResponseEntity<ErrorResponse> cotizacionInvalida(CotizacionInvalidaException excepcion) {
+		return ResponseEntity.badRequest().body(new ErrorResponse(excepcion.getMessage()));
+	}
+
+	/** Vencida: el estado era correcto, lo que falló fue el plazo. */
+	@ExceptionHandler(CotizacionVencidaException.class)
+	ResponseEntity<ErrorResponse> cotizacionVencida(CotizacionVencidaException excepcion) {
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(excepcion.getMessage()));
 	}
 
 	@ExceptionHandler(CredencialesInvalidasException.class)

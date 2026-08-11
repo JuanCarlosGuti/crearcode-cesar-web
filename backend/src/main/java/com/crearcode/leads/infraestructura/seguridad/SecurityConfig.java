@@ -43,6 +43,13 @@ class SecurityConfig {
 						// desde F8 existen tokens de CLIENTE que no deben
 						// poder leerlo (ISS-094).
 						.requestMatchers("/api/solicitudes/**").hasRole("ADMIN")
+						// Cotizaciones (F11): la gestion es del equipo. La vista
+						// del cliente vive en /api/mis-cotizaciones, que filtra
+						// por el correo del token — declarada explicita aunque
+						// el catch-all la cubriria, para que se lea de un vistazo
+						// quien entra a cada recurso.
+						.requestMatchers("/api/cotizaciones/**").hasRole("ADMIN")
+						.requestMatchers("/api/mis-cotizaciones/**").authenticated()
 						// Endpoints de cuenta uno a uno, sin comodín
 						// /api/auth/**: un endpoint nuevo bajo /api/auth
 						// no queda público por accidente.
