@@ -112,6 +112,21 @@ jobs:
           # El mismo stub sirve las imagenes del demo de diseno (F10d)
           POLLINATIONS_URL: http://localhost:9099
           ASISTENTE_LIMITE_ANONIMO: "3"
+          # La suite entera corre desde una sola IP, asi que los limites
+          # por IP la estrangulan: con los defaults de produccion (login
+          # 5/15min, registro 5/60min, contacto 20/10min) los ultimos
+          # specs se quedaban sin cupo y fallaban por 429 disfrazado de
+          # "elemento no encontrado". Se suben SOLO aqui; el filtro sigue
+          # cubierto por RateLimitingFilterIT, que prueba los umbrales de
+          # verdad.
+          RATE_LIMIT_MAX_SOLICITUDES: "1000"
+          RATE_LIMIT_LOGIN_MAX_INTENTOS: "1000"
+          RATE_LIMIT_REGISTRO_MAX_INTENTOS: "1000"
+          RATE_LIMIT_VERIFICACION_MAX_INTENTOS: "1000"
+          RATE_LIMIT_REENVIO_MAX_INTENTOS: "1000"
+          RATE_LIMIT_RECUPERACION_MAX_INTENTOS: "1000"
+          RATE_LIMIT_RESTABLECIMIENTO_MAX_INTENTOS: "1000"
+          RATE_LIMIT_ASISTENTE_MAX_INTENTOS: "1000"
         run: |
           ./mvnw --batch-mode -DskipTests package
           nohup java -jar target/*.jar --server.port=8080 > /tmp/backend.log 2>&1 &

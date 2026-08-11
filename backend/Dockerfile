@@ -1,15 +1,19 @@
 # Etapa de build: solo necesaria para compilar, no queda en la imagen final.
-FROM eclipse-temurin:25-jdk AS build
+#
+# Imagen con Maven YA instalado en vez de temurin + Maven Wrapper: el
+# wrapper descarga el distro de Maven con un cliente Java simple, y
+# Maven Central empezo a responder 403 a esa descarga desde los runners
+# de CI (11 ago 2026) — el build fallaba antes de compilar una sola
+# clase. Las dependencias del proyecto se siguen bajando de Central
+# normalmente; lo que se evita es descargar Maven mismo.
+FROM maven:3.9-eclipse-temurin-25 AS build
 WORKDIR /app
 
-COPY .mvn/ .mvn/
-COPY mvnw pom.xml ./
-# chmod explicito: si mvnw llegara sin bit de ejecucion (checkout desde
-# Windows), el build fallaria con "Permission denied" solo en Linux.
-RUN chmod +x mvnw && ./mvnw -B dependency:go-offline
+COPY pom.xml ./
+RUN mvn -B dependency:go-offline
 
 COPY src/ src/
-RUN ./mvnw -B -DskipTests package
+RUN mvn -B -DskipTests package
 
 # Etapa de ejecucion: solo el JRE y el jar ya construido.
 FROM eclipse-temurin:25-jre-alpine

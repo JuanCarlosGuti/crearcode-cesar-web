@@ -21,11 +21,21 @@ test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
 });
 
+/**
+ * Cacheado a nivel de módulo: el login tiene su propio rate limit por IP
+ * (5/15 min) y toda la suite corre desde la misma, así que cada spec que
+ * se loguea de más le quita cupo a los demás.
+ */
+let tokenAdminCacheado: string | null = null;
+
 async function tokenAdmin(request: APIRequestContext): Promise<string> {
-  const respuesta = await request.post(`${API_URL}/api/auth/login`, {
-    data: { correo: ADMIN_USUARIO, contrasena: ADMIN_CONTRASENA },
-  });
-  return (await respuesta.json()).token;
+  if (!tokenAdminCacheado) {
+    const respuesta = await request.post(`${API_URL}/api/auth/login`, {
+      data: { correo: ADMIN_USUARIO, contrasena: ADMIN_CONTRASENA },
+    });
+    tokenAdminCacheado = (await respuesta.json()).token;
+  }
+  return tokenAdminCacheado;
 }
 
 /** Cliente registrado y verificado con el enlace real del correo. */
