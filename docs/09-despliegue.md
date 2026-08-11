@@ -264,6 +264,33 @@ Cuidado con la ortografía: **`contacto@`** con o final. Y ese buzón
 debe existir de verdad para recibir: es la dirección a la que responden
 los clientes cuando contestan una cotización.
 
+### Estado del correo (verificado el 11 ago 2026)
+
+**Envío y recepción están separados a propósito y no se pisan**: Resend
+envía desde el subdominio `send`, Zoho recibe en la raíz.
+
+| Qué | Registro | Valor comprobado |
+|---|---|---|
+| DKIM de Resend | TXT `resend._domainkey` | publicado |
+| SPF de envío | TXT `send` | `v=spf1 include:amazonses.com ~all` |
+| Rebotes | MX `send` (prio 10) | `feedback-smtp.us-east-1.amazonses.com` |
+| Recepción | MX raíz | `mx.zoho.com` (10), `mx2` (20), `mx3` (50) |
+| SPF de recepción | TXT raíz | `v=spf1 include:zohomail.com ~all` |
+| DMARC | TXT `_dmarc` | `p=none; rua=mailto:admin@crearcodecesar.com` |
+
+Dominio **verificado en Resend** (región us-east-1) y la API key ya
+está como `MAIL_PASSWORD` en Render, restringida a este dominio con
+permiso de solo envío. `contacto@` existe como alias del buzón `admin@`
+en Zoho (y `contact@` sin la o también, por si alguien la escribe mal):
+las respuestas llegan a la misma bandeja.
+
+**No agregar `amazonses.com` al SPF de la raíz**: no hace falta y
+consumiría lookups. DMARC alinea igual porque el DKIM de Resend firma
+con `d=crearcodecesar.com`, que coincide con el dominio del `From`; y
+el SPF del envelope (`send.crearcodecesar.com`) alinea en modo relajado
+con la raíz. Cuando lleve semanas enviando sin incidencias, el paso
+natural es endurecer DMARC de `p=none` a `p=quarantine`.
+
 **Advertencia importante antes de configurarlo**: el plan **Forever
 Free** de Zoho está pensado para usar el correo desde su webmail y su
 app, y **restringe el acceso por cliente externo** (bloquea IMAP; el

@@ -680,15 +680,18 @@ acciones del usuario en paneles externos, o decisiones suyas.**
 - `CLOUDFLARE_ACCOUNT_ID` y `CLOUDFLARE_API_TOKEN` — sin ellas el demo
   de diseño responde con el respaldo de Pollinations en vez de Workers
   AI.
-- `MAIL_PASSWORD` con la **API key de Resend**, y el dominio
-  `crearcodecesar.com` **verificado en Resend** (registros DNS en
-  Cloudflare). Sin la verificación, Resend rechaza el envío con 422.
+- ~~`MAIL_PASSWORD` con la API key de Resend y el dominio verificado~~
+  **hecho el 11 ago 2026**: dominio verificado en Resend (us-east-1),
+  DKIM/SPF/MX de `send` publicados en Cloudflare sin tocar la recepción
+  de Zoho, y la API key ya en Render restringida a este dominio. El
+  detalle y la comprobación DNS están en docs/09 §7.
 - **Aceptar el sync del Blueprint**, que es lo que activa lo ya escrito
   en `render.yaml` y hoy inactivo en producción: HSTS, el proveedor de
   imágenes en Cloudflare, el techo del rate limit del asistente, el IVA
   y toda la configuración de Resend.
-- Que **`contacto@crearcodecesar.com` exista como buzón real**: es el
-  Reply-To de todos los correos, o sea a dónde responden los clientes.
+- ~~Que `contacto@crearcodecesar.com` exista como buzón real~~ **hecho**:
+  es alias del buzón `admin@` en Zoho (junto con `contact@` sin la o,
+  por si alguien la escribe mal), así que el Reply-To no rebota.
 
 **Decisiones del usuario**:
 
