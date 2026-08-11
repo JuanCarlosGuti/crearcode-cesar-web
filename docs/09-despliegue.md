@@ -259,6 +259,41 @@ maneja mejor la entregabilidad de correos automáticos. Como todo va por
 variables de entorno y el envío está detrás de un puerto, cambiar de
 proveedor es configuración, no código.
 
+### Checklist operativo pendiente en Render (al 11 ago 2026)
+
+Todo esto se hace en el dashboard, una sola vez. La vía más directa es
+**por servicio**, sin pasar por el Blueprint: `dashboard.render.com` →
+servicio `crearcodecesar-backend` → pestaña **Environment** → *Add
+environment variable* → **Save changes** (Render redespliega solo).
+
+| Variable | Servicio | Valor | Para qué |
+|---|---|---|---|
+| `CLOUDFLARE_ACCOUNT_ID` | backend | el de la cuenta (32 caracteres) | Demo de diseño con Workers AI |
+| `CLOUDFLARE_API_TOKEN` | backend | token de la plantilla Workers AI | ídem |
+| `MAIL_USERNAME` | backend | `admin@crearcodecesar.com` | correos de cuenta y cotizaciones |
+| `MAIL_PASSWORD` | backend | **contraseña de aplicación** de Zoho | ídem |
+
+Las variables que ya vienen fijas en `render.yaml`
+(`DEMO_PROVEEDOR_IMAGENES=cloudflare`, `MAIL_HOST=smtp.zoho.com`,
+`HSTS_MAX_AGE`, `RATE_LIMIT_ASISTENTE_MAX_INTENTOS`,
+`COTIZACIONES_IMPUESTO`) se aplican **al aceptar el sync del
+Blueprint**: `dashboard.render.com` → **Blueprints** → el del repo →
+botón de sincronizar/aplicar cambios. Render muestra el diff antes de
+aplicar y pide los valores de las variables marcadas `sync: false` que
+aún no existan.
+
+**Rotación de secretos** (todos circularon por el chat de desarrollo;
+rotar es generar el valor nuevo y pegarlo en los dos sitios donde vive:
+el `.env` local y Render):
+
+| Secreto | Dónde se rota |
+|---|---|
+| Token de Cloudflare | `dash.cloudflare.com/profile/api-tokens` → *Roll* |
+| Contraseña del buzón / app password de Zoho | Perfil de Zoho → Seguridad |
+| App Password del Gmail temporal | `myaccount.google.com/apppasswords` → revocar (ya no se usa) |
+| Contraseña de Neon | consola de Neon → *Reset password* → actualizar `DB_URL` en Render |
+| `GROQ_API_KEY` | `console.groq.com` → revocar y crear otra |
+
 **Pasos en Zoho** (una vez, con el dominio ya verificado):
 
 1. Crear el buzón `admin@crearcodecesar.com` en Zoho Mail.
