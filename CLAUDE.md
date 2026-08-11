@@ -647,8 +647,12 @@ cómputo, único costo fijo el dominio (aún no comprado).
 
 ## Decisiones ya resueltas por el usuario
 
-- Correo (11 ago 2026): **se envía por Resend** y **se responde a
-  `contacto@crearcodecesar.com`**. El remitente de todos los correos es
+- Correo (11 ago 2026): **se envía por Resend, puerto 2587**, y **se
+  responde a `contacto@crearcodecesar.com`**. El 2587 no es capricho:
+  Render descarta el tráfico saliente a los puertos SMTP clásicos (25,
+  465, 587) en el plan gratuito, y eso dejaba las peticiones colgadas
+  sin error. Verificado en producción: llega a bandeja principal de
+  Gmail. Detalle del incidente en docs/09 §7. El remitente de todos los correos es
   `Crear Code Cesar <contacto@crearcodecesar.com>`, fijado explícito en
   `RemitenteDeCorreo` porque el usuario SMTP de Resend es la palabra
   literal `resend` y el servicio **rechaza con 422** cualquier

@@ -283,6 +283,19 @@ Dos correcciones, ambas aplicadas:
    futuro vuelve a colgar la petición: el envío es best-effort, así que
    más vale fallar rápido y registrarlo.
 
+**Verificado en producción el 11 ago 2026**, tras cambiar el puerto: la
+petición pasó de colgarse más de 60 s a responder en 5,5 s, y el correo
+llegó a **bandeja principal de Gmail** (no a spam) con el remitente
+`Crear Code Cesar <contacto@crearcodecesar.com>` y el enlace apuntando
+al dominio propio. Es decir: DKIM y SPF están bien y el `From` explícito
+es aceptado por Resend.
+
+Señal útil para diagnosticar a futuro, por el tiempo de respuesta del
+endpoint que envía: **~5 s** es una conversación SMTP completa (salió);
+**menos de 1 s** significa que no se envió nada (el caso de uso fue
+silencioso, por ejemplo cuenta ya verificada o límite por correo
+alcanzado); **10 s** es el timeout, o sea que no se pudo conectar.
+
 **Plan B si Render extendiera el bloqueo a los puertos alternativos**:
 el envío está detrás de `TransporteDeCorreo`, con dos implementaciones
 elegidas por `MAIL_TRANSPORTE`:
