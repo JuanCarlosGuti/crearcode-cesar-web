@@ -361,6 +361,20 @@ negaciones), así que ahora se le dice qué poner en cada fila (nombre,
 estado y hora). Lección transferible a cualquier prompt de imagen del
 sitio: **describir lo que sí se quiere, nunca lo que no**.
 
+### Endurecimiento posterior al dominio propio
+
+| ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
+|---|---|---|---|---|---|---|
+| ISS-156 ✅ | HSTS emitido por el servidor SSR (no por Cloudflare — ADR-11 revisado): `max-age` desde `HSTS_MAX_AGE` con default de 1 día, `includeSubDomains`, sin `preload`, solo sobre https | — | Sale en `/` y en los estáticos; no rompe el desarrollo local por http | S | ADR-11 | Unit + Integration (Express montado igual que `server.ts`) |
+
+Motivo del cambio de decisión: delegar HSTS en Cloudflare daba por
+hecho que la zona propia estaría proxeada, y **Render ya sirve el sitio
+detrás de su propio Cloudflare** (`x-render-origin-server: cloudflare`).
+Encadenar otro proxy encima añade un salto que no aporta y puede
+interferir con la validación ACME de los certificados de Render — una
+renovación fallida tumba el sitio por una cabecera. Emitirla en Express
+la deja versionada con el código y bajo nuestro control.
+
 ### Cierre F10
 
 | ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |

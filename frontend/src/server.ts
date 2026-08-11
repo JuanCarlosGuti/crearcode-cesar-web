@@ -9,6 +9,7 @@ import express from 'express';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import { join } from 'node:path';
 
+import { cabeceraHsts } from './servidor/hsts';
 import { generarRobotsTxt } from './servidor/robots';
 import { generarSitemap } from './servidor/sitemap';
 
@@ -23,6 +24,14 @@ const angularApp = new AngularNodeAppEngine();
  * penaliza FCP/LCP en Lighthouse (ISS-077) y en redes móviles reales.
  */
 app.use(compression());
+
+/**
+ * HSTS en TODAS las respuestas — va antes del proxy, de los estáticos y
+ * del router de Angular para que también cubra archivos como
+ * `/monday-app-association.json`. Detalle y motivo del cambio de
+ * decisión en ADR-11 (docs/02-arquitectura.md).
+ */
+app.use(cabeceraHsts());
 
 /**
  * Proxy servidor-a-servidor hacia el backend real (ver ADR-09 en

@@ -565,6 +565,12 @@ cómputo, único costo fijo el dominio (aún no comprado).
   - `NG_ALLOWED_HOSTS` (frontend, descubierta en F6): debe incluir el
     dominio real de Render el día del despliegue — sin esto, Angular
     devuelve 400 a cualquier petición (protección SSRF nativa).
+  - `HSTS_MAX_AGE` (frontend, ADR-11 revisado el 11 ago 2026): segundos
+    del `Strict-Transport-Security` que emite el servidor SSR. Default
+    conservador de `86400` (un día); se sube desde el dashboard sin
+    desplegar código, escalando 86400 → 604800 → 2592000 → 31536000.
+    La cabecera se emite solo si `x-forwarded-proto` es https (para no
+    romper el desarrollo local) y **nunca lleva `preload`**.
 - **Verificado extremo a extremo** (no solo `docker build`): ambas
   imágenes corridas juntas en una red Docker con Postgres real
   confirmaron que el proxy reenvía correctamente login y registro de

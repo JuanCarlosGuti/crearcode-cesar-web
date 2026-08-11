@@ -338,11 +338,41 @@ como variable de entorno porque las metas se hornean en el prerender
 (build), no en runtime. Los enlaces de los correos de cuenta usan
 `FRONTEND_URL` en Render, que pasa de la URL de onrender al dominio
 canónico.
-**HSTS**: la emite **Cloudflare** (manda ella). Spring Security no
-compite: su HSTS por defecto solo aplica a peticiones HTTPS y el
-backend nunca habla con el navegador — solo recibe HTTP interno del
-proxy SSR (ADR-09); las cabeceras que ve el navegador salen de
-Cloudflare/Express.
+**HSTS — decisión revisada el 11 ago 2026**: la emite **la propia
+aplicación** (el servidor Express del SSR), no Cloudflare. La versión
+original de este ADR la delegaba en Cloudflare; el motivo del cambio es
+que **esa delegación daba por hecho que la zona propia estaría
+proxeada, y ponerla en proxy tiene un costo real**: Render ya sirve el
+sitio detrás de su propio Cloudflare (se ve en las respuestas:
+`x-render-origin-server: cloudflare`), así que encadenar nuestro proxy
+sobre el suyo añade un salto que no aporta y, sobre todo, **interfiere
+con la validación ACME de los certificados de Render**, que necesita
+alcanzar el origen; una renovación fallida tumba el sitio entero por
+una cabecera. Emitirla en Express la deja bajo nuestro control y
+versionada con el código, funcione o no el proxy de la zona.
+
+Detalles de la implementación (`frontend/src/servidor/hsts.ts`, montado
+en `server.ts` **antes** del proxy `/api`, de los estáticos y del router
+de Angular, para que cubra también `/monday-app-association.json`):
+
+- **Valor**: `max-age=<HSTS_MAX_AGE>; includeSubDomains`, con **86400
+  (un día) por defecto**. Arranque conservador y deliberado: si algo
+  sale mal con un subdominio o un certificado, el compromiso con los
+  navegadores caduca en 24 h en vez de en un año. El `max-age` sale de
+  variable de entorno justamente para subirlo desde el dashboard, sin
+  desplegar código.
+- **Sin `preload`**: entrar en la lista de precarga de los navegadores
+  es en la práctica irreversible (salir tarda meses en propagarse a las
+  versiones instaladas). Solo se añade cuando el `max-age` lleve meses
+  en 31536000 y el dominio esté estable.
+- **Solo sobre HTTPS**: se mira `x-forwarded-proto` (quedándose con el
+  primer salto, que es el del cliente). En local se sirve por http, y
+  emitirla ahí dejaría el navegador forzando https contra `localhost`,
+  rompiendo el desarrollo.
+
+Spring Security sigue sin competir: su HSTS por defecto solo aplica a
+peticiones HTTPS y el backend nunca habla con el navegador — solo
+recibe HTTP interno del proxy SSR (ADR-09).
 **CORS**: el cambio de dominio NO requiere configurar CORS — por
 ADR-09 el navegador solo conoce un origen (el frontend) y `/api` se
 reenvía por dentro; agregar una allowlist de orígenes sería

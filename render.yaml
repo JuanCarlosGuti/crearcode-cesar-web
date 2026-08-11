@@ -110,3 +110,11 @@ services:
       # 400 a todo.
       - key: NG_ALLOWED_HOSTS
         value: "crearcodecesar.com,www.crearcodecesar.com,*.onrender.com"
+      # HSTS emitido por el servidor SSR (ADR-11, revisado el 11 ago
+      # 2026). Arranque conservador de 1 dia: subirlo es cambiar este
+      # valor en el dashboard, sin desplegar codigo. La escalera
+      # habitual es 86400 -> 604800 -> 2592000 -> 31536000, dejando
+      # unos dias en cada escalon. "preload" NO se agrega aqui: eso se
+      # decide aparte y es practicamente irreversible.
+      - key: HSTS_MAX_AGE
+        value: "86400"
