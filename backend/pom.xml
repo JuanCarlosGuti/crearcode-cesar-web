@@ -136,6 +136,15 @@
 			<version>2.1.11</version>
 			<scope>test</scope>
 		</dependency>
+		<!-- PDF de las cotizaciones (F11, decision 20 de docs/10): OpenPDF
+		     (LGPL/MPL) genera el documento en el propio backend, sin
+		     servicio externo ni costo. Detras del puerto GeneradorDeDocumento,
+		     asi que cambiarlo es cambiar el adaptador. -->
+		<dependency>
+			<groupId>com.github.librepdf</groupId>
+			<artifactId>openpdf</artifactId>
+			<version>2.2.2</version>
+		</dependency>
 	</dependencies>
 
 	<build>
