@@ -210,9 +210,13 @@ img {
   color: var(--color-primario-claro);
 }
 
+// El verde de exito sobre su propio fondo claro da 4.11:1, por debajo
+// del minimo AA — lo atrapo axe en el e2e del ciclo de cotizaciones
+// (ISS-154), la primera vez que el panel mostro una solicitud
+// CONVERTIDA. Se oscurece solo el texto; el fondo no cambia.
 .badge-convertida {
   background-color: color-mix(in srgb, var(--color-exito) 15%, white);
-  color: var(--color-exito);
+  color: #1b5e3a;
 }
 
 .badge-descartada {
