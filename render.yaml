@@ -57,8 +57,13 @@ services:
         value: Crear Code Cesar <contacto@crearcodecesar.com>
       - key: MAIL_REPLY_TO
         value: contacto@crearcodecesar.com
+      # 2587 y no 587: Render bloquea el trafico saliente a los puertos
+      # SMTP clasicos (25, 465, 587) en las instancias free desde sept
+      # 2025, y no los rechaza sino que los descarta — el envio se queda
+      # colgado hasta el timeout y el correo nunca sale. Resend expone
+      # 2587 con STARTTLS igual que el 587.
       - key: MAIL_PORT
-        value: "587"
+        value: "2587"
       - key: MAIL_SMTP_AUTH
         value: "true"
       - key: MAIL_SMTP_STARTTLS

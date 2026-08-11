@@ -1,8 +1,6 @@
 package com.crearcode.leads.infraestructura.notificacion;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
 import com.crearcode.leads.dominio.Correo;
@@ -18,15 +16,13 @@ import com.crearcode.leads.dominio.EnviadorDeCorreosDeCuenta;
 @Component
 class EnviadorDeCorreosDeCuentaAdapter implements EnviadorDeCorreosDeCuenta {
 
-	private final JavaMailSender mailSender;
+	private final TransporteDeCorreo transporte;
 	private final String frontendUrl;
-	private final RemitenteDeCorreo remitente;
 
-	EnviadorDeCorreosDeCuentaAdapter(JavaMailSender mailSender,
-			@Value("${app.frontend-url}") String frontendUrl, RemitenteDeCorreo remitente) {
-		this.mailSender = mailSender;
+	EnviadorDeCorreosDeCuentaAdapter(TransporteDeCorreo transporte,
+			@Value("${app.frontend-url}") String frontendUrl) {
+		this.transporte = transporte;
 		this.frontendUrl = frontendUrl;
-		this.remitente = remitente;
 	}
 
 	@Override
@@ -65,13 +61,7 @@ class EnviadorDeCorreosDeCuentaAdapter implements EnviadorDeCorreosDeCuenta {
 	}
 
 	private void enviar(Correo destino, String asunto, String cuerpo) {
-		SimpleMailMessage mensaje = new SimpleMailMessage();
-		mensaje.setFrom(remitente.remitente());
-		mensaje.setReplyTo(remitente.responderA());
-		mensaje.setTo(destino.valor());
-		mensaje.setSubject(asunto);
-		mensaje.setText(cuerpo);
-		mailSender.send(mensaje);
+		transporte.enviar(CorreoSaliente.simple(destino.valor(), asunto, cuerpo));
 	}
 
 }

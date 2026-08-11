@@ -1,8 +1,6 @@
 package com.crearcode.leads.infraestructura.notificacion;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 
 import com.crearcode.leads.dominio.DatosDeContacto;
@@ -12,30 +10,20 @@ import com.crearcode.leads.dominio.SolicitudDeContacto;
 @Component
 class NotificadorEmailAdapter implements NotificadorPort {
 
-	private final JavaMailSender mailSender;
+	private final TransporteDeCorreo transporte;
 	private final String correoDestino;
-	private final RemitenteDeCorreo remitente;
 
-	NotificadorEmailAdapter(JavaMailSender mailSender,
-			@Value("${app.notificaciones.correo-destino}") String correoDestino,
-			RemitenteDeCorreo remitente) {
-		this.mailSender = mailSender;
+	NotificadorEmailAdapter(TransporteDeCorreo transporte,
+			@Value("${app.notificaciones.correo-destino}") String correoDestino) {
+		this.transporte = transporte;
 		this.correoDestino = correoDestino;
-		this.remitente = remitente;
 	}
 
 	@Override
 	public void notificarNuevaSolicitud(SolicitudDeContacto solicitud) {
-		SimpleMailMessage mensaje = new SimpleMailMessage();
-		mensaje.setFrom(remitente.remitente());
-		// Responder a este aviso escribe al buzón del sitio, no al
-		// visitante: sus datos están en el cuerpo y el flujo real de
-		// respuesta es el panel.
-		mensaje.setReplyTo(remitente.responderA());
-		mensaje.setTo(correoDestino);
-		mensaje.setSubject("Nueva solicitud de contacto - " + solicitud.servicioDeInteres());
-		mensaje.setText(construirCuerpo(solicitud));
-		mailSender.send(mensaje);
+		transporte.enviar(CorreoSaliente.simple(correoDestino,
+				"Nueva solicitud de contacto - " + solicitud.servicioDeInteres(),
+				construirCuerpo(solicitud)));
 	}
 
 	private String construirCuerpo(SolicitudDeContacto solicitud) {

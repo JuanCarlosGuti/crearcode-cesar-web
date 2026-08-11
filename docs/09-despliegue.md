@@ -246,7 +246,7 @@ en `render.yaml`. El buzón donde se *reciben* los correos es aparte
 | Variable | Valor | Por qué |
 |---|---|---|
 | `MAIL_HOST` | `smtp.resend.com` | fija en `render.yaml` |
-| `MAIL_PORT` | `587` (STARTTLS) | fija |
+| `MAIL_PORT` | **`2587`** (STARTTLS) | fija — ver el aviso de abajo |
 | `MAIL_USERNAME` | **`resend`** (la palabra literal) | fija — no es una dirección; le dice a su gateway que autentique con API key |
 | `MAIL_PASSWORD` | la API key (`re_…`) | `sync: false`, se ingresa en el dashboard |
 | `MAIL_FROM` | `Crear Code Cesar <contacto@crearcodecesar.com>` | fija |
@@ -263,6 +263,34 @@ verificado ahí (con sus registros en Cloudflare) antes del primer envío.
 Cuidado con la ortografía: **`contacto@`** con o final. Y ese buzón
 debe existir de verdad para recibir: es la dirección a la que responden
 los clientes cuando contestan una cotización.
+
+### Render bloquea los puertos SMTP clásicos (incidente del 11 ago 2026)
+
+Con el correo ya bien configurado, el registro en producción se quedaba
+colgado en "Creando cuenta…" y el correo nunca llegaba. La causa no era
+el código ni las credenciales: **Render bloquea el tráfico saliente a
+los puertos SMTP 25, 465 y 587 en las instancias del plan gratuito**
+([changelog](https://render.com/changelog/free-web-services-will-no-longer-allow-outbound-traffic-to-smtp-ports)).
+Y no los rechaza, los **descarta**: por eso la conexión no fallaba
+rápido, se quedaba esperando y arrastraba la petición del visitante.
+
+Dos correcciones, ambas aplicadas:
+
+1. **`MAIL_PORT=2587`**. Resend expone ese puerto alternativo con
+   STARTTLS igual que el 587, y no está en la lista de bloqueados.
+2. **Timeouts de SMTP** (`connectiontimeout`, `timeout`, `writetimeout`,
+   10 s, variable `MAIL_TIMEOUT_MS`). Sin ellos, cualquier bloqueo
+   futuro vuelve a colgar la petición: el envío es best-effort, así que
+   más vale fallar rápido y registrarlo.
+
+**Plan B si Render extendiera el bloqueo a los puertos alternativos**:
+el envío está detrás de `TransporteDeCorreo`, con dos implementaciones
+elegidas por `MAIL_TRANSPORTE`:
+
+- `smtp` (default) — Mailpit en local, GreenMail en los tests.
+- `resend` — la **API HTTP** de Resend (puerto 443, nunca bloqueado).
+  Solo hay que poner `MAIL_TRANSPORTE=resend` y `RESEND_API_KEY` con la
+  misma clave; no cambia nada más.
 
 ### Estado del correo (verificado el 11 ago 2026)
 
