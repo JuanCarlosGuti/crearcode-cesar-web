@@ -241,6 +241,19 @@ proyecto vía `npx`/scripts de `package.json`.
    formulario en el navegador (cambio solo local, no se comitea: el
    archivo versionado sigue apuntando al 8080 por defecto).
 
+   **Runbook de la suite e2e** (los 36 tests, con axe): `docker compose
+   up -d` → `node e2e/stub-groq.mjs` (puerto 9099) → backend con
+   `GROQ_API_URL=http://localhost:9099/openai/v1`,
+   `POLLINATIONS_URL=http://localhost:9099` y
+   `ASISTENTE_LIMITE_ANONIMO=3` → `npm start` → `npm run e2e` con
+   `E2E_API_BASE_URL=http://localhost:8090`. Los límites hay que
+   subirlos para poder correr la suite varias veces seguidas, y **cada
+   regla tiene su propia variable**: la del formulario es
+   `RATE_LIMIT_MAX_SOLICITUDES` (no `..._MAX_INTENTOS`, que es la de
+   login/registro/asistente) — con el nombre equivocado el límite
+   real sigue en 20/10 min y el e2e de contacto falla en la tercera
+   corrida sin decir por qué.
+
    Para probar el build de producción SSR localmente
    (`node dist/frontend/server/server.mjs`, no `npm start`): Angular 22
    valida el header `Host` contra una allowlist (protección SSRF, ver
