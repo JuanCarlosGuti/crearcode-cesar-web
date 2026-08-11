@@ -330,3 +330,104 @@ con identidad, solo objetos de valor y un puerto de salida.
    con la alternativa humana.
 4. La `GROQ_API_KEY` jamás aparece en logs, respuestas ni en el
    navegador.
+
+
+# Parte 4 — Contexto `cotizaciones` (fase F11)
+
+Contexto nuevo de gestión comercial ([[10-vision-v2]] §F11). Reutiliza
+`Correo` y `SolicitudId` del contexto de leads y `UsuarioId` del de
+usuarios; no toca sus invariantes.
+
+## 1. Entidad raíz: `Cotizacion`
+
+Campos: `CotizacionId id`, `NumeroDeCotizacion numero` (nulo mientras
+es BORRADOR), `SolicitudId origen` (opcional — puede nacer en blanco),
+`DatosDelCliente cliente`, `List<ItemDeCotizacion> items`,
+`EstadoCotizacion estado`, `Porcentaje impuesto`, `Instant creadaEn`,
+`Instant validaHasta`, `Instant respondidaEn` (nulo hasta que el
+cliente responde), `String notas`.
+
+Factorías: `abrirBorrador(...)` (aplica invariantes) y `reconstruir(...)`
+para el mapper de persistencia. Mutadores que devuelven el estado
+nuevo: `agregarItem`, `quitarItem`, `enviar(NumeroDeCotizacion, Instant)`,
+`aceptar(Instant)`, `rechazar(Instant)`, `cancelar(Instant)`.
+
+Como `SolicitudDeContacto`, **nunca llama al reloj**: todo `Instant`
+entra como parámetro desde la capa de aplicación.
+
+## 2. Objetos de valor
+
+- **`Dinero`**: monto en pesos colombianos, `BigDecimal` con escala 0
+  (el COP no maneja centavos en la práctica comercial). Invariantes:
+  nunca negativo; la aritmética vive aquí (`mas`, `por`, `porcentaje`),
+  no en el código que la usa.
+- **`ItemDeCotizacion`**: `descripcion` (no vacía, máx. ~200),
+  `cantidad` (entero > 0), `valorUnitario` (`Dinero`). Expone
+  `subtotal()` calculado — nunca almacenado ni recibido de fuera.
+- **`NumeroDeCotizacion`**: formato `COT-AAAA-NNNN`. Inmutable, único,
+  se asigna **al enviar** (un borrador que nunca se envía no consume
+  consecutivo).
+- **`DatosDelCliente`**: nombre o razón social, `Correo`, teléfono
+  opcional, identificación opcional (NIT/cédula, texto libre: la app
+  no valida dígitos de verificación ni hace nada fiscal con ellos).
+- **`Porcentaje`**: entero 0-100 para el impuesto. Configurable, con 0
+  como valor válido mientras el usuario confirma su condición de IVA.
+
+## 3. Máquina de estados: `EstadoCotizacion`
+
+`BORRADOR` → `{ENVIADA, CANCELADA}`
+`ENVIADA` → `{ACEPTADA, RECHAZADA, VENCIDA, CANCELADA}`
+`ACEPTADA`, `RECHAZADA`, `VENCIDA`, `CANCELADA` son **terminales**.
+
+Mismo patrón que `EstadoSolicitud`: mapa estático de transiciones
+válidas y `TransicionDeEstadoInvalidaException` al violarlo.
+
+## 4. Puertos
+
+**De entrada**: `AbrirBorradorDeCotizacionUseCase`,
+`EditarBorradorDeCotizacionUseCase`, `EnviarCotizacionUseCase`,
+`ListarCotizacionesUseCase` (equipo),
+`ListarMisCotizacionesUseCase` (cliente),
+`ObtenerCotizacionUseCase`, `ResponderCotizacionUseCase`
+(aceptar/rechazar), `DescargarCotizacionUseCase` (PDF).
+
+**De salida**: `CotizacionRepositorio`,
+`GeneradorDeNumeroDeCotizacion` (consecutivo atómico por año),
+`GeneradorDeDocumento` (PDF — implementado con OpenPDF, decisión 20),
+`EnviadorDeCotizaciones` (correo con adjunto).
+
+## 5. Invariantes de negocio
+
+1. Una cotización **enviada es inmutable** en cliente, ítems e
+   impuesto: lo que el cliente vio no puede cambiar después. Corregir
+   algo obliga a cancelarla y abrir otra.
+2. **Los totales los calcula el dominio**, siempre. Ninguna capa
+   externa envía un total; si lo enviara, se ignora.
+3. No se envía una cotización **sin al menos un ítem**.
+4. `validaHasta` es posterior a `creadaEn`. Una cotización vencida no
+   puede aceptarse ni rechazarse, aunque el cliente conserve el enlace
+   (la validez se comprueba en el servidor, no en el navegador).
+5. El **consecutivo no se salta ni se repite**: lo entrega la base de
+   datos de forma atómica, y solo al enviar.
+6. Un cliente solo ve y responde **las cotizaciones dirigidas a su
+   correo**; el equipo (`ADMIN`) las ve todas. La comprobación es de
+   servidor, no de interfaz.
+7. Aceptar una cotización marca su lead de origen como `CONVERTIDA`
+   **si la transición es válida** en la máquina de estados de leads;
+   si no lo es (ya estaba descartado, por ejemplo), la aceptación no
+   falla — el pipeline comercial no puede romperse por el estado de un
+   lead.
+8. El envío del correo es **best-effort**: nunca deja la cotización a
+   medias ni tumba la operación (mismo criterio que las notificaciones
+   de F2 y los correos de cuenta de F8).
+
+## 6. Fuera de este contexto, a propósito
+
+- **Documentos de cobro y factura electrónica DIAN** (decisión 18): la
+  app no emite documentos con efecto fiscal. El PDF se identifica como
+  cotización.
+- **Roles internos y multi-rol** (decisión 19): `ADMIN` cubre todo
+  hasta que haya un segundo miembro del equipo.
+- **Gestión de proyectos** (tareas, tiempos, entregables), **pagos en
+  línea** y **firma electrónica** de la aceptación: fuera. Aceptar
+  deja registro de fecha y usuario, nada más.

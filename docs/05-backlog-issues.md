@@ -410,8 +410,70 @@ plano puede venir de otra capa — la forma rápida de aislarlo es llamar
 al backend directo (`crearcodecesar-backend.onrender.com`), que se
 salta Cloudflare y el proxy SSR.
 
-**Fase F11**: sigue sin descomponer — se descompone al arrancar, según
-[[10-vision-v2]].
+## Fase F11 — Gestión comercial interna (cotizaciones)
+
+Descompuesta el 10 ago 2026 al arrancar la fase. Alcance en
+[[10-vision-v2]] §F11 y decisiones 18-20 (cotizaciones sí, documentos
+de cobro y DIAN no, rol único todavía, PDF con OpenPDF). Historias en
+[[04-historias-de-usuario]] épica E10 (HU-44 a HU-48) y modelo en
+[[03-modelo-de-dominio]] Parte 4. Niveles de prueba obligatorios por
+issue según [[06-plan-de-pruebas]] §7.
+
+### F11a — Dominio y casos de uso (sin infraestructura)
+
+| ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
+|---|---|---|---|---|---|---|
+| ISS-138 | Documentación de F11: alcance reenfocado, épica E10, modelo de dominio, este backlog | HU-44..48 | Docs antes del código; hallazgo fiscal registrado con fuentes | S | — | No aplica |
+| ISS-139 | VOs del contexto: `Dinero` (aritmética y no negativo), `ItemDeCotizacion` (subtotal calculado), `NumeroDeCotizacion`, `DatosDelCliente`, `Porcentaje` | HU-44 | Sin Spring ni JPA (ArchUnit); totales solo calculados | M | ISS-138 | Unit |
+| ISS-140 | `EstadoCotizacion` con su máquina de estados y `Cotizacion` con sus invariantes (inmutable tras enviar, mínimo un ítem, validez) | HU-44, HU-45 | Cada transición válida e inválida cubierta, como `EstadoSolicitudTest` | M | ISS-139 | Unit |
+| ISS-141 | Puertos + casos de uso de borrador: abrir (desde lead o en blanco) y editar ítems | HU-44 | Fakes a mano, `Clock` fijo; el dominio nunca llama al reloj | M | ISS-140 | Unit (fakes) |
+| ISS-142 | Caso de uso enviar: asigna consecutivo, congela la cotización, dispara el correo best-effort | HU-45 | Un fallo de correo no revierte el envío | M | ISS-141 | Unit (fakes) |
+| ISS-143 | Casos de uso de consulta y respuesta: listar (equipo y cliente), obtener, aceptar/rechazar con validez y propiedad verificadas; al aceptar, el lead pasa a CONVERTIDA sin romperse si la transición no aplica | HU-46, HU-47 | Invariantes 4, 6 y 7 cubiertos con test | L | ISS-142 | Unit (fakes) |
+
+### F11b — Infraestructura
+
+| ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
+|---|---|---|---|---|---|---|
+| ISS-144 | Migración `V6__cotizaciones.sql` (cotizaciones + ítems + consecutivos por año) y el cuarteto entidad/mapper/repositorio-adaptador | HU-44 | Patrón de `Solicitud*`; entidad JPA plana | L | ISS-140 | Integration (Testcontainers) |
+| ISS-145 | `GeneradorDeNumeroDeCotizacion`: consecutivo atómico por año en la base de datos | HU-45 | Sin saltos ni repetidos bajo concurrencia — test con hilos simultáneos | M | ISS-144 | Integration |
+| ISS-146 | Puerto `GeneradorDeDocumento` + adaptador OpenPDF con la plantilla de la cotización (identidad de la empresa, tabla de ítems, totales, validez, sello "cotización") | HU-48 | Dependencia nueva en `pom.xml`; el PDF abre y contiene los datos esperados | L | ISS-139 | Integration |
+| ISS-147 | `EnviadorDeCotizaciones`: correo con el PDF adjunto (pasa de `SimpleMailMessage` a `MimeMessageHelper`) | HU-45 | IT con GreenMail verificando el adjunto | M | ISS-146 | Integration |
+| ISS-148 | REST del equipo: crear, editar, enviar, listar, obtener y descargar (rol ADMIN) | HU-44, HU-45, HU-47 | `hasRole("ADMIN")` explícito; 409 en transición inválida | L | ISS-144 | API (IT REST) |
+| ISS-149 | REST del cliente: listar las propias, obtener, aceptar/rechazar, descargar (autenticado) | HU-46 | Un cliente NO puede leer ni responder la cotización de otro — IT del acceso cruzado | L | ISS-148 | API (IT REST) |
+
+### F11c — Frontend
+
+| ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
+|---|---|---|---|---|---|---|
+| ISS-150 | Panel: listado con filtro por estado y detalle con acciones (editar borrador, enviar, descargar, cancelar) | HU-44, HU-45, HU-47 | Estados de carga/error; sin SSR (`admin/**` sigue en Client) | L | ISS-148 | Component |
+| ISS-151 | Formulario de cotización con ítems dinámicos y totales en vivo (calculados también en servidor — el frontend solo muestra) | HU-44 | Signal Forms; accesible con teclado | L | ISS-150 | Component |
+| ISS-152 | `/mi-cuenta`: listado de cotizaciones del cliente, detalle, descargar PDF y aceptar/rechazar con confirmación | HU-46 | La cuenta pasa a servir para el negocio real, no solo cupos de IA | L | ISS-149 | Component |
+| ISS-153 | Textos en `contenido/` (panel, cuenta, correo y PDF) y metadatos de las páginas nuevas | HU-44..48 | Contenido desacoplado (ADR-05); robots/sitemap al día | S | ISS-152 | Component |
+
+### F11d — Cierre
+
+| ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
+|---|---|---|---|---|---|---|
+| ISS-154 | E2E del ciclo completo: el equipo crea desde un lead, envía, el cliente entra a su cuenta, descarga el PDF y acepta; el lead queda CONVERTIDO | HU-44..48 | Correo leído de Mailpit como en `cuentas-e2e`; axe sin violaciones | L | ISS-152 | E2E |
+| ISS-155 | Cierre de fase: suites en verde, ArchUnit, Lighthouse, revisión manual 375/1280, docs y CLAUDE.md al día, OK del usuario | HU-44..48 | Regla dura del proyecto | M | todo F11 | Checklist manual |
+
+**Datos que hacen falta antes de emitir la primera cotización real**
+(no bloquean la implementación — todo es configurable, y el diseño
+admite 0% de impuesto):
+
+- NIT de la empresa y dirección fiscal para el encabezado del PDF.
+- Si Crear Code Cesar es responsable de IVA y, en tal caso, el
+  porcentaje a aplicar.
+- Validez por defecto de una cotización (por ejemplo 15 o 30 días) y
+  las condiciones comerciales estándar (anticipo, forma de pago) que
+  van al pie del documento.
+
+**Nota de dependencia**: el correo de producción sigue pospuesto hasta
+las pruebas del MVP, así que HU-45 se verifica en local contra Mailpit;
+en producción el envío quedará operativo el día que se carguen
+`MAIL_USERNAME`/`MAIL_PASSWORD` en Render. Mientras tanto el PDF se
+descarga y se comparte a mano, que es justamente el camino de respaldo
+que exige la propia HU.
 
 ---
 

@@ -964,3 +964,86 @@ herramientas del sitio** para **encontrarlas y probarlas fácil**.
   se actualizan quitando "Muy pronto" a lo que ya esté vivo.
 
 **Prioridad**: Must (F10a, se actualiza al cierre).
+
+## Épica E10 — Gestión comercial interna (Etapa 3, fase F11)
+
+El pipeline comercial dentro de la app: de un lead a una cotización
+aceptada ([[10-vision-v2]] §F11, alcance reenfocado el 10 ago 2026 —
+decisión 18: cotizaciones sí, documentos de cobro no). Dos públicos: el
+**equipo** (hoy el fundador, rol `ADMIN`) que arma y envía, y el
+**cliente registrado** que la recibe y responde desde su cuenta.
+
+### HU-44 — El equipo arma una cotización desde un lead
+Como **fundador** quiero **crear una cotización partiendo de una
+solicitud recibida** para **responder rápido y sin volver a escribir
+los datos del cliente**.
+
+- Dado que abro una solicitud del panel, cuando elijo cotizar,
+  entonces se crea un BORRADOR con los datos del contacto ya cargados
+  y queda vinculado a esa solicitud.
+- Dado que estoy en el borrador, cuando agrego ítems con descripción,
+  cantidad y valor unitario, entonces la app calcula subtotales,
+  impuesto y total — yo nunca escribo el total a mano.
+- Dado que un borrador está incompleto (sin ítems), entonces no se
+  puede enviar y la app me dice exactamente qué falta.
+
+**Prioridad**: Must (F11).
+
+### HU-45 — El equipo envía la cotización al cliente
+Como **fundador** quiero **enviar la cotización en PDF al correo del
+cliente** para **que la reciba con la presentación de la empresa**.
+
+- Dado que envío un borrador, entonces la cotización recibe su número
+  consecutivo (`COT-AAAA-NNNN`), queda ENVIADA y ya no se puede editar
+  — para que lo que el cliente vio no cambie después.
+- Dado que la cotización se envía, entonces al cliente le llega un
+  correo con el PDF adjunto y un enlace para responderla en su cuenta.
+- Dado que el correo falla, entonces la cotización queda igualmente
+  ENVIADA y puedo descargar el PDF para compartirlo por mi cuenta (el
+  envío es best-effort, como el resto de notificaciones del sitio).
+
+**Prioridad**: Must (F11).
+
+### HU-46 — El cliente responde su cotización desde la cuenta
+Como **cliente registrado** quiero **ver mis cotizaciones y aceptarlas
+o rechazarlas** para **no tener que responder por correo ni por
+WhatsApp si no quiero**.
+
+- Dado que entro a mi cuenta, entonces veo mis cotizaciones con su
+  estado, su total y hasta cuándo son válidas, y puedo descargar el
+  PDF de cada una.
+- Dado que una cotización está ENVIADA y vigente, cuando la acepto o
+  la rechazo, entonces su estado cambia al instante y el equipo lo ve
+  en el panel.
+- Dado que una cotización venció o ya la respondí, entonces los
+  botones de aceptar y rechazar no están disponibles.
+- Dado que intento abrir una cotización que no es mía, entonces la app
+  me lo niega (no basta con esconder el enlace).
+
+**Prioridad**: Must (F11).
+
+### HU-47 — El equipo sigue el pipeline
+Como **fundador** quiero **ver en qué va cada cotización** para
+**saber qué está pendiente de respuesta y qué se cerró**.
+
+- Dado que entro al listado de cotizaciones, entonces puedo filtrar
+  por estado y ver de un vistazo número, cliente, total y validez.
+- Dado que un cliente acepta su cotización, entonces el lead vinculado
+  pasa a CONVERTIDA sin que yo tenga que tocarlo.
+- Dado que una cotización pasó su fecha de validez, entonces se
+  muestra como VENCIDA y deja de poder aceptarse.
+
+**Prioridad**: Should (F11).
+
+### HU-48 — La cotización se ve profesional en PDF
+Como **cliente** quiero **recibir un PDF claro y con la identidad de
+la empresa** para **poder compartirlo internamente y decidir**.
+
+- Dado que abro el PDF, entonces veo los datos de la empresa, el
+  número y la fecha, mis datos, la tabla de ítems con subtotales, el
+  total y hasta cuándo es válida.
+- Dado que la empresa aún no emite facturas desde la app, entonces el
+  documento se identifica claramente como **cotización** (no es una
+  factura ni una cuenta de cobro).
+
+**Prioridad**: Must (F11).

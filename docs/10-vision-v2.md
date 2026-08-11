@@ -140,22 +140,33 @@ asistente (F9) y el registro como beneficio (más usos por día):
 - **No incluye**: editor visual interactivo, export a producción,
   sitios multipágina, memoria entre sesiones.
 
-### F11 — Gestión interna: roles, cotizaciones y cuentas de cobro
+### F11 — Gestión comercial interna: cotizaciones
 
 La parte de herramienta de gestión para el equipo (hoy: el fundador).
+**Alcance reenfocado el 10 ago 2026** (decisión 18): la fase gira
+alrededor de la **cotización**, no del cobro.
 
-- Roles internos `FACTURACION`, `DISENO`, `DESARROLLO` con matriz de
-  permisos sobre el pipeline que ya existe (leads) y el nuevo:
-  lead → cotización → proyecto → cuenta de cobro.
-- **Alcance decidido por el usuario**: cotizaciones y cuentas de cobro
-  generadas por la propia app (PDF), $0/mes. La **facturación
-  electrónica DIAN queda explícitamente fuera** de esta primera
-  versión: requiere un proveedor tecnológico autorizado (Alegra tiene
-  API y planes de facturación desde ~$18.000 COP/mes; Siigo desde
-  ~$191.000 COP/mes) y se integra cuando haya volumen real de facturas
-  que lo justifique.
-- **No incluye**: contabilidad completa, nómina electrónica,
-  integración DIAN.
+- **Pipeline comercial**: `lead → cotización → aceptada`, apoyado en la
+  máquina de estados de `SolicitudDeContacto` que ya existe (una
+  cotización aceptada marca su lead como `CONVERTIDA`).
+- **Cotización propia**: creada desde un lead o en blanco, con ítems,
+  totales calculados por el dominio, validez, y **PDF generado por la
+  app** ($0/mes). Se envía por correo al cliente con el PDF adjunto.
+- **Valor para la cuenta de cliente (F8)**: el cliente registrado ve
+  sus cotizaciones en `/mi-cuenta` y puede **aceptarlas o rechazarlas**
+  desde ahí. Es la primera vez que la cuenta sirve para algo del
+  negocio real, no solo para cupos de IA.
+- **Sin documentos de cobro y sin DIAN** (decisión 18): emitir el cobro
+  es una obligación fiscal que esta app no puede cubrir legalmente
+  hoy. Se integra un proveedor autorizado cuando haya volumen que lo
+  justifique (Alegra tiene API desde ~$18.000 COP/mes; Siigo desde
+  ~$191.000 COP/mes).
+- **Sin roles internos todavía** (decisión 19): el equipo es una sola
+  persona; `ADMIN` cubre todo el pipeline. Añadir `FACTURACION`,
+  `DISENO` o `DESARROLLO` —y con ellos el salto a multi-rol— se hace
+  cuando exista un segundo miembro que los necesite.
+- **No incluye**: contabilidad, nómina electrónica, integración DIAN,
+  gestión de proyectos (tareas, tiempos), pagos en línea.
 
 ## 3. Proveedor de IA: Groq (decidido)
 
@@ -326,6 +337,45 @@ Registradas el 10 ago 2026 (al aprobar el prototipo del rediseño):
     usuario cargue `CLOUDFLARE_ACCOUNT_ID` y `CLOUDFLARE_API_TOKEN`** y
     se pruebe contra el servicio real — activarlo antes solo añadiría
     un intento fallido a cada generación.
+
+Registradas el 10 ago 2026 (al arrancar F11):
+
+18. **La "cuenta de cobro" sale del alcance; F11 es de cotizaciones**
+    (decisión del usuario tras el hallazgo). Al investigar la
+    normativa vigente antes de descomponer la fase apareció que
+    **Crear Code Cesar es una S.A.S. (persona jurídica) y, como tal,
+    está obligada a emitir factura electrónica validada por la DIAN**:
+    la cuenta de cobro es un documento exclusivo de personas naturales
+    no responsables de IVA, y a un cliente empresa no le sirve para
+    deducir el gasto. Construir "cuentas de cobro" en la app habría
+    producido un documento sin valor fiscal y con apariencia de
+    tenerlo. Se elige el alcance sano: **solo cotizaciones**, que son
+    propuestas comerciales sin regulación especial y donde está el
+    valor inmediato; el cobro se sigue emitiendo por fuera hasta que
+    se integre un proveedor autorizado. Fuentes:
+    [obligados a facturar electrónicamente](https://dian.com.co/obligados-facturacion-electronica-colombia-2026/),
+    [diferencias entre cuenta de cobro y factura](https://www.dataico.com/blog-diferencias-cuenta-cobro-factura).
+    *(No es asesoría fiscal: conviene confirmarlo con el contador de
+    la empresa antes de emitir el primer documento.)*
+
+19. **Rol único por usuario, todavía** (cierra la duda abierta desde
+    F8). Los roles internos `FACTURACION`/`DISENO`/`DESARROLLO` y el
+    salto a `Set<Rol>` se posponen hasta que exista un segundo miembro
+    del equipo: hoy serían permisos sin nadie a quien aplicárselos, y
+    tocarían el claim del JWT, el converter de authorities, los guards
+    del frontend y la persistencia. `ADMIN` cubre el pipeline
+    completo.
+
+20. **PDF con OpenPDF, detrás de un puerto**. Se genera en el backend
+    ($0/mes, sin servicio externo) con
+    [OpenPDF](https://github.com/LibrePDF/OpenPDF) (LGPL/MPL, fork
+    mantenido de iText 4, con render de HTML a PDF — release de may
+    2026). La alternativa, Apache PDFBox (licencia Apache 2.0, más
+    permisiva), obliga a dibujar el layout a mano: mucho más trabajo
+    para un documento con tabla de ítems y totales. Como siempre, el
+    dominio solo conoce un puerto `GeneradorDeDocumento`, así que
+    cambiar de librería —o pasar a un servicio externo— es cambiar el
+    adaptador.
 
 ## Aprobación
 

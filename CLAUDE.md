@@ -44,9 +44,10 @@ migró el dominio propio (ADR-11) y quedó implementado el proveedor de
 imágenes con respaldo (ISS-137, Cloudflare Workers AI + Pollinations),
 verificado con credenciales reales.
 
-**Lo siguiente es la fase F11 — gestión interna**, aún sin descomponer:
-se descompone al arrancarla, con el OK del usuario, según
-[docs/10-vision-v2.md](docs/10-vision-v2.md).
+**Lo siguiente es la fase F11 — gestión comercial interna**
+(cotizaciones): documentada y descompuesta en ISS-138 a ISS-155 el 10
+ago 2026, **a la espera del OK explícito del usuario al plan** para
+arrancar la implementación.
 
 La v1 está PUBLICADA en producción desde el 27 jul
 2026: Render (capa gratis) + Neon.**
@@ -175,8 +176,17 @@ variable de entorno en Render el día que se use — nunca en el repo.
   Pendiente solo del usuario: ingresar `CLOUDFLARE_ACCOUNT_ID` y
   `CLOUDFLARE_API_TOKEN` en Render para que el demo use Cloudflare
   (hasta entonces responde el respaldo de Pollinations).
-- [ ] **F11** — Gestión interna: sin descomponer todavía; se
-  descompone al arrancarla, con el OK del usuario.
+- [ ] **F11** — Gestión comercial interna (ISS-138 a ISS-155):
+  **documentada y descompuesta el 10 ago 2026**, pendiente del OK
+  explícito del usuario al plan para arrancar la implementación.
+  Alcance: pipeline lead → cotización → aceptada, cotización en PDF
+  generada por la app, y respuesta del cliente desde `/mi-cuenta`.
+  **La "cuenta de cobro" salió del alcance** (decisión 18 de docs/10):
+  Crear Code Cesar es una S.A.S. y como persona jurídica está obligada
+  a factura electrónica DIAN — la cuenta de cobro es de personas
+  naturales no responsables de IVA y no le sirve al cliente para
+  deducir. Tampoco entran roles internos todavía (decisión 19: rol
+  único hasta que haya un segundo miembro del equipo).
 
 ## Arranque local
 
