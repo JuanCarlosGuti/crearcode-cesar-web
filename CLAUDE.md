@@ -670,28 +670,39 @@ cómputo, único costo fijo el dominio (aún no comprado).
 
 ## Pendientes que requieren input del usuario
 
-Al cierre de la fase F11 (11 ago 2026) quedan abiertos:
+Con la Etapa 3 completa (11 ago 2026), lo que queda es puesta a punto
+para las pruebas del MVP. **Nada de esto bloquea el código: todo son
+acciones del usuario en paneles externos, o decisiones suyas.**
 
-- **Condición de IVA de la empresa** (responsable o no, y el
-  porcentaje): define si las cotizaciones llevan IVA. El dato está en
-  el RUT de la DIAN, no en el certificado de Cámara de Comercio; hasta
-  confirmarlo el impuesto queda en 0.
-- **Validez por defecto de las cotizaciones** (hoy 15 días) y las
-  condiciones comerciales del pie del PDF (anticipo, forma de pago).
+**Configuración en Render** (ver el checklist con rutas exactas en
+[docs/09-despliegue.md](docs/09-despliegue.md) §7):
 
-- **Credenciales de Cloudflare en Render** (`CLOUDFLARE_ACCOUNT_ID` y
-  `CLOUDFLARE_API_TOKEN`): sin ellas el demo de diseño responde con el
-  respaldo de Pollinations en vez de Workers AI.
-- **Correo corporativo final con el dominio propio** y las variables
-  `MAIL_USERNAME`/`MAIL_PASSWORD` en Render — pospuesto por decisión
-  del usuario hasta las pruebas del MVP (28 jul 2026).
-- **Rotar los secretos que circularon por el chat** antes de las
-  pruebas de campo: token de Cloudflare, App Password de Gmail y la
-  contraseña de Neon. Todos viven solo en el `.env` local (gitignored)
-  y en el dashboard de Render, así que rotarlos es pegar el valor
-  nuevo en dos sitios.
+- `CLOUDFLARE_ACCOUNT_ID` y `CLOUDFLARE_API_TOKEN` — sin ellas el demo
+  de diseño responde con el respaldo de Pollinations en vez de Workers
+  AI.
+- `MAIL_PASSWORD` con la **API key de Resend**, y el dominio
+  `crearcodecesar.com` **verificado en Resend** (registros DNS en
+  Cloudflare). Sin la verificación, Resend rechaza el envío con 422.
+- **Aceptar el sync del Blueprint**, que es lo que activa lo ya escrito
+  en `render.yaml` y hoy inactivo en producción: HSTS, el proveedor de
+  imágenes en Cloudflare, el techo del rate limit del asistente, el IVA
+  y toda la configuración de Resend.
+- Que **`contacto@crearcodecesar.com` exista como buzón real**: es el
+  Reply-To de todos los correos, o sea a dónde responden los clientes.
+
+**Decisiones del usuario**:
+
+- **Condición de IVA**: hoy las cotizaciones salen con **19%** por
+  defecto, porque una S.A.S. es persona jurídica y por regla general
+  responsable. Confirmar con el contador (casilla 53 del RUT) y, si no
+  aplica, bajarlo con `COTIZACIONES_IMPUESTO`.
+- **Validez por defecto** (hoy 15 días) y condiciones comerciales del
+  pie del PDF (anticipo, forma de pago).
 - **Revisar el eslogan del hero** ("Tecnología que trabaja para tu
-  negocio, no al revés.") — el usuario quiere mirarlo dentro del
-  pulido previo a las pruebas del MVP (29 jul 2026).
-- **Arranque de la fase F11** (gestión interna): se descompone en
-  issues cuando el usuario dé la orden.
+  negocio, no al revés.") — pendiente desde el 29 jul 2026.
+
+**Higiene de secretos**: rotar los que circularon por el chat de
+desarrollo (token de Cloudflare, credenciales del correo, contraseña de
+Neon, `GROQ_API_KEY`). Todos viven solo en el `.env` local (gitignored)
+y en Render, así que rotar es pegar el valor nuevo en dos sitios; la
+tabla de dónde se rota cada uno está en docs/09 §7.
