@@ -10,10 +10,11 @@ si publicar ya) es del usuario (ISS-082).
 Tres piezas, ninguna con Dockerfile todavía (ISS-081 las crea):
 
 - **Backend**: JAR de Spring Boot (JVM) + PostgreSQL con Flyway.
-- **Frontend**: servidor Node/Express con SSR (`dist/frontend/server/server.mjs`,
-  ver [[07-guia-de-estilo]] y `frontend/src/server.ts`) — no es un sitio
-  100% estático: sirve `/sitemap.xml` y `/robots.txt` dinámicos (ISS-073/074)
-  además de las páginas prerenderizadas.
+- **Frontend**: sitio **100% estático** desde ADR-12 (11 ago 2026).
+  `npm run build` prerenderiza las páginas públicas y genera
+  `sitemap.xml` y `robots.txt`; las rutas de sesión se sirven como SPA
+  desde `index.csr.html`. Antes era un servidor Node/Express con SSR,
+  que se dormía a los 15 minutos sin aportar nada al SEO.
 - **Dominio**: pendiente de compra, ~$60.000-80.000 COP/año estimado en
   la propia HU-29.
 

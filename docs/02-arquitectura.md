@@ -386,6 +386,52 @@ nuevo — protección SSRF) y fija `FRONTEND_URL`; el archivo estático
 monday.com) vive en `frontend/public/` y lo sirve Express antes del
 router de Angular, sin autenticación.
 
+### ADR-12 — El frontend pasa de web service con SSR a Static Site (11 ago 2026)
+
+**Decisión**: el frontend deja de desplegarse como web service Docker
+con servidor Node y pasa a ser un **Static Site** en Render, servido
+por CDN. El build ya no emite servidor (`outputMode: "static"`): las
+páginas públicas se prerenderizan en build —como ya ocurría— y las
+rutas de sesión (`admin/**`, `mi-cuenta/**`, las de token) se sirven
+como SPA desde `index.csr.html`.
+
+**Motivo**: el servidor Node **no estaba ahí por SEO**. Todas las rutas
+públicas ya eran `RenderMode.Prerender`; el HTML se genera en build y
+el servidor solo lo entregaba. Lo que sí aportaba eran cuatro cosas, y
+todas tienen equivalente sin Node:
+
+| Responsabilidad | Antes | Ahora |
+|---|---|---|
+| Proxy `/api` → backend (ADR-09) | `http-proxy-middleware` | `routes` de tipo `rewrite` a la URL del backend |
+| `sitemap.xml` y `robots.txt` (ADR-06) | generados en cada petición | generados en build por `scripts/generar-estaticos.ts` |
+| HSTS (ADR-11) | middleware de Express | `headers` del Static Site en `render.yaml` |
+| Compresión y estáticos | `compression` + `express.static` | el CDN de Render |
+
+A cambio se gana lo que motivó el cambio: **el sitio deja de dormirse**
+—el plan gratuito suspende los web services tras 15 minutos, y el
+arranque en frío llegó a tardar 152 s— y se sirve desde CDN. Además
+desaparece el Node de producción, con él `NG_ALLOWED_HOSTS` (la
+protección SSRF de Angular SSR ya no aplica) y el Dockerfile del
+frontend.
+
+**Lo que NO resuelve**: el backend sigue siendo un web service gratuito
+y se sigue durmiendo. La primera llamada a `/api` seguirá pagando su
+arranque; lo único que cambia es que el sitio ya está visible mientras
+tanto.
+
+**ADR-09 se preserva**: los rewrites de Render aceptan un destino
+absoluto externo, así que el navegador sigue viendo **un solo origen** y
+el proyecto sigue sin necesitar CORS. Si algún día se sirviera el
+frontend desde otro sitio sin rewrites, ahí sí habría que crear
+`app.cors.allowed-origins` en el backend.
+
+**Consecuencia**: el fallback de SPA apunta a `index.csr.html`, no a
+`index.html` — este último es la Home ya prerenderizada, y usarlo como
+comodín serviría el contenido de la Home bajo `/admin` antes de que el
+router lo corrija. Render no aplica rewrites a rutas donde existe un
+archivo, así que las 19 rutas prerenderizadas se siguen sirviendo tal
+cual.
+
 ## 6. Seguridad (resumen, detalle en épica E3)
 
 - Panel admin protegido con Spring Security vía JWT (ver ADR-08):

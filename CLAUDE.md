@@ -267,14 +267,14 @@ proyecto vía `npx`/scripts de `package.json`.
    real sigue en 20/10 min y el e2e de contacto falla en la tercera
    corrida sin decir por qué.
 
-   Para probar el build de producción SSR localmente
-   (`node dist/frontend/server/server.mjs`, no `npm start`): Angular 22
-   valida el header `Host` contra una allowlist (protección SSRF, ver
-   [angular.dev/best-practices/security](https://angular.dev/best-practices/security#preventing-server-side-request-forgery-ssrf)) —
-   sin configurarla, cualquier petición responde 400. Se resuelve con
-   la variable de entorno `NG_ALLOWED_HOSTS` (lista separada por comas,
-   **sin puerto**, ej. `NG_ALLOWED_HOSTS=localhost`). En producción esa
-   variable deberá incluir el dominio real (pendiente de F7).
+   **Probar el build de producción localmente** (desde F12 el frontend
+   es estático, ADR-12): `npm run build` y luego
+   `npm run servir:estatico` (puerto 4300). Ese script replica lo que
+   hace Render: sirve el archivo si existe y, si no, cae a
+   `index.csr.html` para que el router tome las rutas de sesión. **Y
+   comprime con gzip** — sin eso Lighthouse cae ~15 puntos de
+   Performance por servir los bundles en crudo y parece una regresión
+   que no existe, porque el CDN de Render sí comprime.
 
 Verificado manualmente end-to-end (16 jul 2026): los tres servicios
 levantados a la vez, `GET /actuator/health` respondió
@@ -619,20 +619,14 @@ cómputo, único costo fijo el dominio (aún no comprado).
   - `DB_URL` (backend): URL JDBC completa hacia Neon (con
     `sslmode=require`, que Neon exige). Sin setearla, se arma desde
     `DB_HOST`/`DB_PORT`/`DB_NAME` como siempre en local.
-  - `BACKEND_URL` (frontend): URL pública del backend en Render. Sin
-    setearla, el proxy local apunta a `http://localhost:8080`.
-  - `PORT` (ambos): ya estándar — Render la inyecta sola; el backend
-    la lee vía `server.port=${PORT:8080}`, el frontend ya la leía
-    desde antes de F7.
-  - `NG_ALLOWED_HOSTS` (frontend, descubierta en F6): debe incluir el
-    dominio real de Render el día del despliegue — sin esto, Angular
-    devuelve 400 a cualquier petición (protección SSRF nativa).
-  - `HSTS_MAX_AGE` (frontend, ADR-11 revisado el 11 ago 2026): segundos
-    del `Strict-Transport-Security` que emite el servidor SSR. Default
-    conservador de `86400` (un día); se sube desde el dashboard sin
-    desplegar código, escalando 86400 → 604800 → 2592000 → 31536000.
-    La cabecera se emite solo si `x-forwarded-proto` es https (para no
-    romper el desarrollo local) y **nunca lleva `preload`**.
+  - `PORT` (backend): ya estándar — Render la inyecta sola y se lee vía
+    `server.port=${PORT:8080}`.
+  - El frontend ya **no tiene variables de entorno**: desde ADR-12 es un
+    Static Site. La URL del backend vive en el `rewrite` de
+    `render.yaml`, el HSTS en sus `headers`, y `NG_ALLOWED_HOSTS`
+    desapareció con el servidor Node (era la protección SSRF de Angular
+    SSR). En desarrollo, `/api` lo sigue redirigiendo
+    `proxy.conf.json` de `ng serve`.
 - **Verificado extremo a extremo** (no solo `docker build`): ambas
   imágenes corridas juntas en una red Docker con Postgres real
   confirmaron que el proxy reenvía correctamente login y registro de

@@ -100,36 +100,40 @@ services:
         sync: false
 
   - type: web
+    # Static Site, no web service (ADR-12, 11 ago 2026): el SSR no
+    # aportaba nada al SEO — las paginas publicas ya se prerenderizan en
+    # build — y como web service el sitio se dormia a los 15 minutos.
+    # Servido por CDN, sin Node en produccion y sin spin down.
     name: crearcodecesar-frontend
-    runtime: docker
+    runtime: static
     rootDir: frontend
-    plan: free
-    region: virginia
-    healthCheckPath: /
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist/frontend/browser
     buildFilter:
       paths:
         - frontend/**
         - render.yaml
-    envVars:
-      # URL publica del backend para el proxy /api (ADR-09) — se toma
-      # automaticamente del servicio de arriba. Si Render rechazara esta
-      # referencia, reemplazar por la URL real del backend a mano.
-      - key: BACKEND_URL
-        fromService:
-          name: crearcodecesar-backend
-          type: web
-          envVarKey: RENDER_EXTERNAL_URL
-      # Allowlist del header Host de Angular SSR (proteccion SSRF).
-      # Dominio canonico + www (ADR-11) y el comodin de onrender.com
-      # durante la transicion — sin esto el dominio nuevo responderia
-      # 400 a todo.
-      - key: NG_ALLOWED_HOSTS
-        value: "crearcodecesar.com,www.crearcodecesar.com,*.onrender.com"
-      # HSTS emitido por el servidor SSR (ADR-11, revisado el 11 ago
-      # 2026). Arranque conservador de 1 dia: subirlo es cambiar este
-      # valor en el dashboard, sin desplegar codigo. La escalera
-      # habitual es 86400 -> 604800 -> 2592000 -> 31536000, dejando
-      # unos dias en cada escalon. "preload" NO se agrega aqui: eso se
-      # decide aparte y es practicamente irreversible.
-      - key: HSTS_MAX_AGE
-        value: "86400"
+    routes:
+      # Reemplaza al proxy de Express y mantiene vivo el ADR-09: el
+      # navegador sigue viendo un solo origen, asi que el proyecto sigue
+      # sin necesitar CORS.
+      - type: rewrite
+        source: /api/*
+        destination: https://crearcodecesar-backend.onrender.com/api/*
+      # Fallback de SPA para las rutas de sesion (admin, mi-cuenta y las
+      # de token). Apunta a index.csr.html y NO a index.html: este
+      # ultimo es la Home ya prerenderizada, y servirla bajo /admin
+      # mostraria el contenido de la Home hasta que el router lo
+      # corrigiera. Render no aplica rewrites donde ya existe un
+      # archivo, asi que las 19 rutas prerenderizadas se sirven tal cual.
+      - type: rewrite
+        source: /*
+        destination: /index.csr.html
+    headers:
+      # HSTS (ADR-11). Arranque conservador de 1 dia; la escalera
+      # habitual es 86400 -> 604800 -> 2592000 -> 31536000, dejando unos
+      # dias en cada escalon. "preload" NO se agrega: es practicamente
+      # irreversible.
+      - path: /*
+        name: Strict-Transport-Security
+        value: max-age=86400; includeSubDomains

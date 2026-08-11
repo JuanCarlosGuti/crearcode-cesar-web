@@ -48,16 +48,17 @@ jobs:
         run: npm run build
 
   docker-build:
-    name: Docker (verifica que ambas imagenes construyan)
+    # Solo el backend: desde ADR-12 el frontend se despliega como Static
+    # Site en Render (sin Node en produccion), asi que ya no tiene imagen
+    # que construir. Su artefacto lo verifica el job "frontend" con
+    # npm run build.
+    name: Docker (verifica que la imagen del backend construya)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - name: docker build backend
         run: docker build backend/
-
-      - name: docker build frontend
-        run: docker build frontend/
 
   e2e:
     name: E2E (Playwright, contacto + cuentas + asistente + accesibilidad axe-core)

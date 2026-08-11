@@ -361,6 +361,19 @@ negaciones), así que ahora se le dice qué poner en cada fila (nombre,
 estado y hora). Lección transferible a cualquier prompt de imagen del
 sitio: **describir lo que sí se quiere, nunca lo que no**.
 
+### Frontend como Static Site (ADR-12, 11 ago 2026)
+
+Fase corta de infraestructura, aprobada por el usuario tras comprobar
+que el SSR no aportaba nada al SEO (todas las rutas públicas ya eran
+prerender). Objetivo: que el sitio deje de dormirse y se sirva por CDN.
+
+| ID | Descripción | Definición de hecho | Est. | Tests |
+|---|---|---|---|---|
+| ISS-157 | `sitemap.xml` y `robots.txt` generados en build desde `contenido/sitio.ts`, no en cada petición | La URL base sigue saliendo de un solo sitio (ADR-06); los archivos quedan en `dist` | S | Unit (los de `sitemap`/`robots` siguen valiendo) + verificación del archivo generado |
+| ISS-158 | `render.yaml`: el frontend pasa a `type: web` estático con `rewrite` de `/api` al backend, fallback a `index.csr.html` y cabecera HSTS | ADR-09 intacto: un solo origen, sin CORS | S | Verificación manual del sitio desplegado |
+| ISS-159 | Retirar `server.ts`, el `Dockerfile` del frontend y las dependencias de servidor (`express`, `compression`, `http-proxy-middleware`, `@angular/ssr` si deja de usarse) | El build no emite `server/`; CI sigue en verde | M | Las cuatro suites |
+| ISS-160 | Ajustar la verificación local que dependía del servidor Node (Lighthouse y el runbook de e2e) y actualizar CLAUDE.md/docs | Lighthouse sigue midiendo el artefacto real de producción | S | Lighthouse ≥95/100/100/100 |
+
 ### Endurecimiento posterior al dominio propio
 
 | ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
