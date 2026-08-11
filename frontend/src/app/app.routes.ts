@@ -116,4 +116,34 @@ export const routes: Routes = [
     canActivate: [adminGuard],
     title: 'Solicitud — Panel Crear Code Cesar',
   },
+  // Cotizaciones (F11). "nueva" va antes que ":id" para que no la
+  // capture como si fuera un identificador.
+  {
+    path: 'admin/cotizaciones',
+    loadComponent: () =>
+      import('./admin/listado-cotizaciones/listado-cotizaciones').then((m) => m.ListadoCotizacionesPage),
+    canActivate: [adminGuard],
+    title: 'Cotizaciones — Panel Crear Code Cesar',
+  },
+  {
+    path: 'admin/cotizaciones/nueva',
+    loadComponent: () =>
+      import('./admin/nueva-cotizacion/nueva-cotizacion').then((m) => m.NuevaCotizacionPage),
+    canActivate: [adminGuard],
+    title: 'Nueva cotización — Panel Crear Code Cesar',
+  },
+  {
+    path: 'admin/cotizaciones/:id',
+    loadComponent: () =>
+      import('./admin/detalle-cotizacion/detalle-cotizacion').then((m) => m.DetalleCotizacionPage),
+    canActivate: [adminGuard],
+    title: 'Cotización — Panel Crear Code Cesar',
+  },
+  {
+    path: 'mi-cuenta/cotizaciones',
+    loadComponent: () =>
+      import('./paginas/mis-cotizaciones/mis-cotizaciones').then((m) => m.MisCotizacionesPage),
+    canActivate: [clienteGuard],
+    title: 'Mis cotizaciones — Crear Code Cesar',
+  },
 ];

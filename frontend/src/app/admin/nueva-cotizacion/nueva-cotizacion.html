@@ -1,0 +1,77 @@
+<header class="admin-encabezado">
+  <a routerLink="/admin/cotizaciones" class="enlace-volver">← {{ textos.volver }}</a>
+  <app-cerrar-sesion />
+</header>
+
+<h1>Nueva cotización</h1>
+
+@if (vieneDeUnLead) {
+  <p class="aviso-lead" role="status">
+    Los datos del cliente se toman de la solicitud de contacto.
+  </p>
+}
+
+@if (error(); as mensaje) {
+  <p class="mensaje-error" role="alert">{{ mensaje }}</p>
+}
+
+<form (submit)="crear($event)" class="formulario-cotizacion">
+  @if (!vieneDeUnLead) {
+    <label for="cliente-nombre">{{ textos.labelCliente }}</label>
+    <input
+      id="cliente-nombre"
+      type="text"
+      required
+      [value]="nombre()"
+      (input)="nombre.set($any($event.target).value)"
+    />
+
+    <label for="cliente-correo">{{ textos.labelCorreo }}</label>
+    <input
+      id="cliente-correo"
+      type="email"
+      required
+      [value]="correo()"
+      (input)="correo.set($any($event.target).value)"
+    />
+
+    <label for="cliente-telefono">{{ textos.labelTelefono }}</label>
+    <input
+      id="cliente-telefono"
+      type="tel"
+      [value]="telefono()"
+      (input)="telefono.set($any($event.target).value)"
+    />
+
+    <label for="cliente-identificacion">{{ textos.labelIdentificacion }}</label>
+    <input
+      id="cliente-identificacion"
+      type="text"
+      [value]="identificacion()"
+      (input)="identificacion.set($any($event.target).value)"
+    />
+  }
+
+  <label for="impuesto">{{ textos.labelImpuesto }}</label>
+  <input
+    id="impuesto"
+    type="number"
+    min="0"
+    max="100"
+    [value]="impuesto()"
+    (input)="impuesto.set(+$any($event.target).value)"
+  />
+
+  <label for="validez">{{ textos.labelValidez }}</label>
+  <input
+    id="validez"
+    type="number"
+    min="1"
+    [value]="diasDeValidez()"
+    (input)="diasDeValidez.set(+$any($event.target).value)"
+  />
+
+  <button type="submit" class="boton boton-primario" [disabled]="creando()">
+    {{ creando() ? 'Creando…' : 'Crear borrador' }}
+  </button>
+</form>

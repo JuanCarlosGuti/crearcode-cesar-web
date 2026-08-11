@@ -1,0 +1,62 @@
+<header class="admin-encabezado">
+  <div>
+    <h1>{{ textos.titulo }}</h1>
+    <p>{{ textos.intro }}</p>
+  </div>
+  <div class="admin-encabezado__acciones">
+    <a routerLink="/admin" class="boton boton-secundario">Solicitudes</a>
+    <a routerLink="/admin/cotizaciones/nueva" class="boton boton-primario">{{ textos.nueva }}</a>
+    <app-cerrar-sesion />
+  </div>
+</header>
+
+<div class="filtro">
+  <label for="filtro-estado">Filtrar por estado</label>
+  <select id="filtro-estado" (change)="filtrarPor($any($event.target).value)">
+    <option value="">{{ textos.filtroTodas }}</option>
+    @for (estado of estados; track estado) {
+      <option [value]="estado">{{ etiquetasDeEstado[estado] }}</option>
+    }
+  </select>
+</div>
+
+@if (cargando()) {
+  <p class="estado-carga">{{ textos.cargando }}</p>
+} @else if (error()) {
+  <p class="mensaje-error" role="alert">{{ textos.error }}</p>
+} @else if (cotizaciones().length === 0) {
+  <p class="estado-vacio">{{ textos.sinResultados }}</p>
+} @else {
+  <div class="tabla-envoltorio">
+    <table class="tabla-cotizaciones">
+      <thead>
+        <tr>
+          <th scope="col">{{ textos.columnaNumero }}</th>
+          <th scope="col">{{ textos.columnaCliente }}</th>
+          <th scope="col">{{ textos.columnaTotal }}</th>
+          <th scope="col">{{ textos.columnaEstado }}</th>
+          <th scope="col">{{ textos.columnaValidez }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (cotizacion of cotizaciones(); track cotizacion.id) {
+          <tr>
+            <td>
+              <a [routerLink]="['/admin/cotizaciones', cotizacion.id]">
+                {{ cotizacion.numero ?? 'Borrador' }}
+              </a>
+            </td>
+            <td>{{ cotizacion.clienteNombre }}</td>
+            <td>{{ formatearPesos(cotizacion.total) }}</td>
+            <td>
+              <span class="etiqueta-estado" [attr.data-estado]="cotizacion.estado">
+                {{ etiquetasDeEstado[cotizacion.estado] }}
+              </span>
+            </td>
+            <td>{{ formatearFecha(cotizacion.validaHasta) }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

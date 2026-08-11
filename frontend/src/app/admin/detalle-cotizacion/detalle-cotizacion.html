@@ -1,0 +1,137 @@
+<header class="admin-encabezado">
+  <a routerLink="/admin/cotizaciones" class="enlace-volver">← {{ textos.volver }}</a>
+  <app-cerrar-sesion />
+</header>
+
+@if (cargando()) {
+  <p class="estado-carga">Cargando…</p>
+} @else if (cotizacion(); as c) {
+  <h1>{{ c.numero ?? textos.tituloBorrador }}</h1>
+
+  <dl class="datos-cliente">
+    <div><dt>{{ textos.labelCliente }}</dt><dd>{{ c.clienteNombre }}</dd></div>
+    <div><dt>{{ textos.labelCorreo }}</dt><dd>{{ c.clienteCorreo }}</dd></div>
+    <div><dt>Estado</dt><dd>{{ etiquetasDeEstado[c.estado] }}</dd></div>
+    <div><dt>Válida hasta</dt><dd>{{ formatearFecha(c.validaHasta) }}</dd></div>
+  </dl>
+
+  @if (error(); as mensaje) {
+    <p class="mensaje-error" role="alert">{{ mensaje }}</p>
+  }
+
+  @if (!esBorrador()) {
+    <p class="aviso-congelada" role="status">{{ textos.avisoCongelada }}</p>
+  }
+
+  <section aria-labelledby="titulo-items">
+    <h2 id="titulo-items">{{ textos.itemsTitulo }}</h2>
+
+    @if (esBorrador()) {
+      <div class="items-editables">
+        @for (item of items(); track $index) {
+          <fieldset class="item-editable">
+            <legend class="sr-only">Ítem {{ $index + 1 }}</legend>
+            <label [attr.for]="'descripcion-' + $index">{{ textos.labelDescripcion }}</label>
+            <input
+              [id]="'descripcion-' + $index"
+              type="text"
+              [value]="item.descripcion"
+              (input)="actualizarItem($index, 'descripcion', $any($event.target).value)"
+            />
+
+            <label [attr.for]="'cantidad-' + $index">{{ textos.labelCantidad }}</label>
+            <input
+              [id]="'cantidad-' + $index"
+              type="number"
+              min="1"
+              [value]="item.cantidad"
+              (input)="actualizarItem($index, 'cantidad', $any($event.target).value)"
+            />
+
+            <label [attr.for]="'valor-' + $index">{{ textos.labelValorUnitario }}</label>
+            <input
+              [id]="'valor-' + $index"
+              type="number"
+              min="0"
+              step="1000"
+              [value]="item.valorUnitario"
+              (input)="actualizarItem($index, 'valorUnitario', $any($event.target).value)"
+            />
+
+            <button type="button" class="boton boton-secundario" (click)="quitarItem($index)">
+              {{ textos.quitarItem }}
+            </button>
+          </fieldset>
+        }
+      </div>
+
+      <button type="button" class="boton boton-secundario" (click)="agregarItem()">
+        {{ textos.agregarItem }}
+      </button>
+
+      <label for="notas" class="label-notas">{{ textos.labelNotas }}</label>
+      <textarea id="notas" rows="3" [value]="notas()" (input)="notas.set($any($event.target).value)"></textarea>
+    } @else {
+      <table class="tabla-items">
+        <thead>
+          <tr>
+            <th scope="col">{{ textos.labelDescripcion }}</th>
+            <th scope="col">{{ textos.labelCantidad }}</th>
+            <th scope="col">{{ textos.labelValorUnitario }}</th>
+            <th scope="col">Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of c.items; track item.descripcion) {
+            <tr>
+              <td>{{ item.descripcion }}</td>
+              <td>{{ item.cantidad }}</td>
+              <td>{{ formatearPesos(item.valorUnitario) }}</td>
+              <td>{{ formatearPesos(item.subtotal) }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </section>
+
+  <section class="totales" aria-label="Totales">
+    @if (esBorrador()) {
+      <p>{{ textos.subtotal }}: {{ formatearPesos(subtotalPrevisto()) }}</p>
+      <p class="total">{{ textos.total }}: {{ formatearPesos(totalPrevisto()) }}</p>
+    } @else {
+      <p>{{ textos.subtotal }}: {{ formatearPesos(c.subtotal) }}</p>
+      @if (c.impuestoPorcentaje > 0) {
+        <p>{{ textos.impuesto }} ({{ c.impuestoPorcentaje }}%): {{ formatearPesos(c.impuesto) }}</p>
+      }
+      <p class="total">{{ textos.total }}: {{ formatearPesos(c.total) }}</p>
+    }
+  </section>
+
+  <div class="acciones">
+    @if (esBorrador()) {
+      <button type="button" class="boton boton-secundario" (click)="guardar()" [disabled]="guardando()">
+        {{ guardando() ? textos.guardando : textos.guardar }}
+      </button>
+      <button
+        type="button"
+        class="boton boton-primario"
+        (click)="enviar()"
+        [disabled]="!puedeEnviar() || enviando()"
+      >
+        {{ enviando() ? textos.enviando : textos.enviar }}
+      </button>
+      @if (!puedeEnviar()) {
+        <p class="nota-sin-items">{{ textos.sinItems }}</p>
+      }
+    }
+    <button type="button" class="boton boton-secundario" (click)="descargar()">
+      {{ textos.descargar }}
+    </button>
+    @if (c.estado === 'BORRADOR' || c.estado === 'ENVIADA') {
+      <button type="button" class="boton boton-secundario" (click)="cancelar()">
+        {{ textos.cancelar }}
+      </button>
+    }
+  </div>
+}

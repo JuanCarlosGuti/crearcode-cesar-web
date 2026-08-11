@@ -1,0 +1,102 @@
+<section class="contenedor pagina-mis-cotizaciones">
+  @if (seleccionada(); as cotizacion) {
+    <button type="button" class="enlace-volver" (click)="volverAlListado()">
+      ← {{ textos.volver }}
+    </button>
+
+    <h1>{{ cotizacion.numero }}</h1>
+    <p class="validez">
+      {{ textos.validaHasta }}: {{ formatearFecha(cotizacion.validaHasta) }}
+      <span class="etiqueta-estado">{{ etiquetasDeEstado[cotizacion.estado] }}</span>
+    </p>
+
+    <table class="tabla-items">
+      <caption class="sr-only">Ítems de la cotización</caption>
+      <thead>
+        <tr>
+          <th scope="col">Descripción</th>
+          <th scope="col">Cantidad</th>
+          <th scope="col">Valor unitario</th>
+          <th scope="col">Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of cotizacion.items; track item.descripcion) {
+          <tr>
+            <td>{{ item.descripcion }}</td>
+            <td>{{ item.cantidad }}</td>
+            <td>{{ formatearPesos(item.valorUnitario) }}</td>
+            <td>{{ formatearPesos(item.subtotal) }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <div class="totales">
+      <p>Subtotal: {{ formatearPesos(cotizacion.subtotal) }}</p>
+      @if (cotizacion.impuestoPorcentaje > 0) {
+        <p>Impuesto ({{ cotizacion.impuestoPorcentaje }}%): {{ formatearPesos(cotizacion.impuesto) }}</p>
+      }
+      <p class="total">Total: {{ formatearPesos(cotizacion.total) }}</p>
+    </div>
+
+    @if (cotizacion.notas) {
+      <p class="notas">{{ cotizacion.notas }}</p>
+    }
+
+    @if (errorAlResponder()) {
+      <p class="mensaje-error" role="alert">{{ textos.errorResponder }}</p>
+    }
+
+    <div class="acciones">
+      <button type="button" class="boton boton-secundario" (click)="descargar(cotizacion)">
+        {{ textos.descargar }}
+      </button>
+
+      @if (puedeResponder()) {
+        <button type="button" class="boton boton-primario" (click)="aceptar()" [disabled]="respondiendo()">
+          {{ textos.aceptar }}
+        </button>
+        <button type="button" class="boton boton-secundario" (click)="rechazar()" [disabled]="respondiendo()">
+          {{ textos.rechazar }}
+        </button>
+      } @else if (estaVencida(cotizacion)) {
+        <p class="aviso" role="status">{{ textos.vencida }}</p>
+      } @else {
+        <p class="aviso" role="status">{{ textos.respondida }}</p>
+      }
+    </div>
+  } @else {
+    <h1>{{ textos.titulo }}</h1>
+    <p class="intro">{{ textos.intro }}</p>
+    <p><a routerLink="/mi-cuenta">← Volver a mi cuenta</a></p>
+
+    @if (cargando()) {
+      <p class="estado-carga">{{ textos.cargando }}</p>
+    } @else if (error()) {
+      <p class="mensaje-error" role="alert">{{ textos.error }}</p>
+    } @else if (cotizaciones().length === 0) {
+      <p class="estado-vacio">{{ textos.vacio }}</p>
+    } @else {
+      <ul class="lista-cotizaciones">
+        @for (cotizacion of cotizaciones(); track cotizacion.id) {
+          <li class="tarjeta-cotizacion tarjeta-elevada">
+            <div>
+              <h2>{{ cotizacion.numero }}</h2>
+              <p class="monto">{{ formatearPesos(cotizacion.total) }}</p>
+              <p class="validez">
+                {{ textos.validaHasta }}: {{ formatearFecha(cotizacion.validaHasta) }}
+              </p>
+            </div>
+            <div class="tarjeta-cotizacion__lado">
+              <span class="etiqueta-estado">{{ etiquetasDeEstado[cotizacion.estado] }}</span>
+              <button type="button" class="boton boton-secundario" (click)="seleccionar(cotizacion)">
+                {{ textos.verDetalle }}
+              </button>
+            </div>
+          </li>
+        }
+      </ul>
+    }
+  }
+</section>

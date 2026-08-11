@@ -1,0 +1,40 @@
+.admin-encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-3);
+  margin-bottom: var(--espacio-3);
+}
+
+.enlace-volver {
+  color: var(--color-primario);
+}
+
+.aviso-lead {
+  background-color: var(--color-fondo);
+  border-left: 4px solid var(--color-acento);
+  padding: var(--espacio-2);
+}
+
+.formulario-cotizacion {
+  display: grid;
+  gap: 0.35rem;
+  max-width: 32rem;
+}
+
+.formulario-cotizacion label {
+  font-weight: 600;
+  margin-top: var(--espacio-2);
+}
+
+.formulario-cotizacion input {
+  padding: 0.5rem;
+  border: 1px solid color-mix(in srgb, var(--color-primario) 25%, white);
+  border-radius: var(--radio-borde);
+  font: inherit;
+}
+
+.formulario-cotizacion button {
+  margin-top: var(--espacio-3);
+  justify-self: start;
+}

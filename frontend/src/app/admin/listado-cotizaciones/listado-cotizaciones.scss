@@ -1,0 +1,78 @@
+.admin-encabezado {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-3);
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: var(--espacio-4);
+}
+
+.admin-encabezado__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-2);
+  align-items: center;
+}
+
+.filtro {
+  display: flex;
+  gap: var(--espacio-2);
+  align-items: center;
+  margin-bottom: var(--espacio-3);
+}
+
+.tabla-envoltorio {
+  overflow-x: auto;
+}
+
+.tabla-cotizaciones {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--color-blanco);
+}
+
+.tabla-cotizaciones th,
+.tabla-cotizaciones td {
+  text-align: left;
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-primario) 12%, white);
+}
+
+.tabla-cotizaciones thead th {
+  background-color: var(--color-fondo);
+}
+
+.etiqueta-estado {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background-color: var(--color-fondo);
+  border: 1px solid color-mix(in srgb, var(--color-primario) 25%, white);
+}
+
+// Colores de estado con contraste AA sobre su propio fondo claro.
+.etiqueta-estado[data-estado='ACEPTADA'] {
+  background-color: #e6f4ec;
+  border-color: #2e7d53;
+  color: #1b5e3a;
+}
+
+.etiqueta-estado[data-estado='RECHAZADA'],
+.etiqueta-estado[data-estado='VENCIDA'] {
+  background-color: #fdecea;
+  border-color: #b3261e;
+  color: #8c1d18;
+}
+
+.etiqueta-estado[data-estado='ENVIADA'] {
+  background-color: #e8f0fe;
+  border-color: #1a4f8a;
+  color: #14406f;
+}
+
+.estado-carga,
+.estado-vacio {
+  color: var(--color-texto-secundario);
+}

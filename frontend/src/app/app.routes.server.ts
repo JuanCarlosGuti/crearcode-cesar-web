@@ -44,8 +44,13 @@ export const serverRoutes: ServerRoute[] = [
     renderMode: RenderMode.Client,
   },
   {
-    // Area del cliente: detras de clienteGuard, sin valor SEO.
+    // Area del cliente: detras de clienteGuard, sin valor SEO. El
+    // comodin cubre tambien /mi-cuenta/cotizaciones (F11).
     path: 'mi-cuenta',
+    renderMode: RenderMode.Client,
+  },
+  {
+    path: 'mi-cuenta/**',
     renderMode: RenderMode.Client,
   },
   {

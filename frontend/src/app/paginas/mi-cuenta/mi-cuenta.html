@@ -6,6 +6,11 @@
     >.
   </p>
 
+  <nav class="pagina-cuenta__secciones" aria-label="Secciones de mi cuenta">
+    <a routerLink="/mi-cuenta/cotizaciones" class="boton boton-primario">Mis cotizaciones</a>
+    <a routerLink="/herramientas" class="boton boton-secundario">Centro de herramientas</a>
+  </nav>
+
   <button type="button" class="boton boton-secundario" (click)="cerrarSesion()">
     {{ textos.botonCerrarSesion }}
   </button>
