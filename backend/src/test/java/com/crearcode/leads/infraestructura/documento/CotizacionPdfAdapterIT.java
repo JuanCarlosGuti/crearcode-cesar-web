@@ -27,9 +27,16 @@ class CotizacionPdfAdapterIT {
 	private static final Instant AHORA = Instant.parse("2026-08-11T15:00:00Z");
 	private static final Instant EN_QUINCE_DIAS = Instant.parse("2026-08-26T15:00:00Z");
 
-	private final DatosDeLaEmpresa empresa = new DatosDeLaEmpresa("Crear Code Cesar S.A.S.", "",
-			"", "Valledupar, Cesar", "323 988 5883", "crearcodecesar@gmail.com", "crearcodecesar.com");
+	/** Los datos reales del certificado de Cámara de Comercio. */
+	private final DatosDeLaEmpresa empresa = new DatosDeLaEmpresa("Crear Code Cesar S.A.S.",
+			"901941017-0", "Calle 4B # 20-36, Oficina 303, Barrio Callejas", "Valledupar, Cesar",
+			"323 988 5883", "crearcodecesar@gmail.com", "crearcodecesar.com");
 	private final CotizacionPdfAdapter adapter = new CotizacionPdfAdapter(empresa);
+
+	/** Config incompleta: el PDF debe omitir las líneas, no inventarlas. */
+	private final CotizacionPdfAdapter adapterSinDatosFiscales = new CotizacionPdfAdapter(
+			new DatosDeLaEmpresa("Crear Code Cesar S.A.S.", "", "", "Valledupar, Cesar", "323 988 5883",
+					"crearcodecesar@gmail.com", "crearcodecesar.com"));
 
 	private Cotizacion cotizacionEnviada(Porcentaje impuesto) {
 		Cotizacion cotizacion = Cotizacion.abrirBorrador(
@@ -110,8 +117,17 @@ class CotizacionPdfAdapterIT {
 	}
 
 	@Test
-	void sinNitNiDireccionConfiguradosNoImprimeLineasVacias() throws Exception {
+	void imprimeElNitYLaDireccionFiscalDeLaEmpresa() throws Exception {
 		String texto = textoDe(adapter.generar(cotizacionEnviada(new Porcentaje(19))));
+
+		assertThat(texto).contains("NIT 901941017-0");
+		assertThat(texto).contains("Calle 4B # 20-36, Oficina 303, Barrio Callejas");
+		assertThat(texto).contains("Valledupar, Cesar");
+	}
+
+	@Test
+	void sinNitNiDireccionConfiguradosNoImprimeLineasVacias() throws Exception {
+		String texto = textoDe(adapterSinDatosFiscales.generar(cotizacionEnviada(new Porcentaje(19))));
 
 		assertThat(texto).doesNotContain("NIT ");
 	}

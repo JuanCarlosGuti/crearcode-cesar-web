@@ -44,10 +44,17 @@ migró el dominio propio (ADR-11) y quedó implementado el proveedor de
 imágenes con respaldo (ISS-137, Cloudflare Workers AI + Pollinations),
 verificado con credenciales reales.
 
-**Lo siguiente es la fase F11 — gestión comercial interna**
-(cotizaciones): documentada y descompuesta en ISS-138 a ISS-155 el 10
-ago 2026, **a la espera del OK explícito del usuario al plan** para
-arrancar la implementación.
+La fase F11 — **gestión comercial interna** (cotizaciones, ISS-138 a
+ISS-155) — está TERMINADA y APROBADA por el usuario (11 ago 2026): el
+pipeline lead → cotización → aceptada, con PDF generado por la app y
+respuesta del cliente desde su cuenta. Al descomponerla apareció que la
+"cuenta de cobro" no era viable para una S.A.S. (decisión 18), así que
+la fase se reenfocó en cotizaciones; el certificado de Cámara de
+Comercio que el usuario aportó lo confirma.
+
+**Con esto termina la Etapa 3.** Lo siguiente no es una fase nueva sino
+el pulido previo a las pruebas del MVP, con los pendientes listados
+abajo.
 
 La v1 está PUBLICADA en producción desde el 27 jul
 2026: Render (capa gratis) + Neon.**
@@ -176,12 +183,15 @@ variable de entorno en Render el día que se use — nunca en el repo.
   Pendiente solo del usuario: ingresar `CLOUDFLARE_ACCOUNT_ID` y
   `CLOUDFLARE_API_TOKEN` en Render para que el demo use Cloudflare
   (hasta entonces responde el respaldo de Pollinations).
-- [ ] **F11** — Gestión comercial interna (ISS-138 a ISS-155):
-  **implementada** (ISS-138 a ISS-154, 11 ago 2026) con las cuatro
-  suites en verde: 129 ITs de backend + ArchUnit, 244 specs de
-  frontend, 38 e2e con axe sin violaciones y Lighthouse 96-97/100/100/100
-  sobre el build de producción. Falta ISS-155: revisión manual en
-  navegador y el OK explícito del usuario para cerrar la fase.
+- [x] **F11** — Gestión comercial interna (ISS-138 a ISS-155):
+  terminada y aprobada por el usuario (11 ago 2026). Pipeline
+  lead → cotización → aceptada, cotización en PDF generada por la app y
+  respuesta del cliente desde `/mi-cuenta`. Cuatro suites en verde: 129
+  ITs de backend + ArchUnit, 244 specs de frontend, 38 e2e con axe sin
+  violaciones y Lighthouse 96-97/100/100/100 sobre el build de
+  producción, más revisión manual en 375 y 1280 px. **Sin documentos de
+  cobro ni DIAN** (decisión 18) y **sin roles internos** todavía
+  (decisión 19).
   Alcance: pipeline lead → cotización → aceptada, cotización en PDF
   generada por la app, y respuesta del cliente desde `/mi-cuenta`.
   **La "cuenta de cobro" salió del alcance** (decisión 18 de docs/10):
@@ -535,9 +545,12 @@ adentro, en pesos enteros.
 - **Frontend**: panel en `/admin/cotizaciones` (listado, apertura desde
   un lead con `?solicitud=`, detalle editable con totales en vivo) y
   `/mi-cuenta/cotizaciones` para que el cliente descargue y responda.
-- **Datos pendientes del usuario** (todo configurable, 0% de impuesto es
-  válido): NIT y dirección fiscal para el encabezado del PDF, si la
-  empresa es responsable de IVA, y la validez por defecto.
+- **Datos de la empresa** (defaults en `application.properties`, del
+  certificado de Cámara de Comercio del 16 jul 2026): NIT
+  **901941017-0**, Calle 4B # 20-36, Oficina 303, Barrio Callejas,
+  Valledupar. **Pendiente**: si la empresa es responsable de IVA — ese
+  dato está en el RUT de la DIAN, no en el certificado de Cámara —, la
+  validez por defecto (hoy 15 días) y las condiciones de pago del pie.
 
 ## SEO, rendimiento y accesibilidad (tras la fase F6)
 
@@ -646,7 +659,14 @@ cómputo, único costo fijo el dominio (aún no comprado).
 
 ## Pendientes que requieren input del usuario
 
-Al cierre de la fase F10 (10 ago 2026) quedan abiertos:
+Al cierre de la fase F11 (11 ago 2026) quedan abiertos:
+
+- **Condición de IVA de la empresa** (responsable o no, y el
+  porcentaje): define si las cotizaciones llevan IVA. El dato está en
+  el RUT de la DIAN, no en el certificado de Cámara de Comercio; hasta
+  confirmarlo el impuesto queda en 0.
+- **Validez por defecto de las cotizaciones** (hoy 15 días) y las
+  condiciones comerciales del pie del PDF (anticipo, forma de pago).
 
 - **Credenciales de Cloudflare en Render** (`CLOUDFLARE_ACCOUNT_ID` y
   `CLOUDFLARE_API_TOKEN`): sin ellas el demo de diseño responde con el

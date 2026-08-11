@@ -384,11 +384,17 @@ aprobada arranca por fa"), el mismo día de la publicación de la v1 en
 Render (backend y frontend en producción, flujo de contacto verificado
 extremo a extremo contra la base real de Neon).
 
-Estado de la Etapa 3 al 10 ago 2026: **F8, F8.5, F9 y F10 terminadas,
-aprobadas y publicadas**; el dominio propio (pendiente que arrastraba
-la Etapa 2) se compró y migró ese mismo día (ADR-11). Queda **F11 —
-gestión interna**, sin descomponer: se descompone al arrancarla, con
-el OK del usuario.
+Estado de la Etapa 3 al 11 ago 2026: **ETAPA COMPLETA**. F8, F8.5, F9,
+F10 y F11 terminadas y aprobadas; el dominio propio (pendiente que
+arrastraba la Etapa 2) se compró y migró el 10 ago 2026 (ADR-11).
+
+F11 cerró con el alcance reenfocado de la decisión 18 — cotizaciones
+sí, documentos de cobro no —, confirmado después por el certificado de
+existencia y representación legal que aportó el usuario: CREAR CODE
+CESAR S.A.S., NIT 901941017-0, persona jurídica y por tanto obligada a
+facturación electrónica. La integración con un proveedor autorizado
+(Alegra o similar) sigue siendo el camino documentado para cuando haya
+volumen que lo justifique.
 
 ## Fuentes consultadas (jul 2026)
 

@@ -469,7 +469,11 @@ issue según [[06-plan-de-pruebas]] §7.
 | ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
 |---|---|---|---|---|---|---|
 | ISS-154 ✅ | E2E del ciclo completo: el equipo crea desde un lead, envía, el cliente entra a su cuenta, descarga el PDF y acepta; el lead queda CONVERTIDO | HU-44..48 | Correo leído de Mailpit como en `cuentas-e2e`; axe sin violaciones | L | ISS-152 | E2E |
-| ISS-155 | Cierre de fase: suites en verde, ArchUnit, Lighthouse, revisión manual 375/1280, docs y CLAUDE.md al día, OK del usuario | HU-44..48 | Regla dura del proyecto | M | todo F11 | Checklist manual |
+| ISS-155 ✅ | Cierre de fase: suites en verde, ArchUnit, Lighthouse, revisión manual 375/1280, docs y CLAUDE.md al día, OK del usuario | HU-44..48 | Regla dura del proyecto | M | todo F11 | Checklist manual |
+
+**Fase F11 CERRADA el 11 ago 2026** con el OK explícito del usuario,
+cumplida la regla dura: suites en verde, ArchUnit en verde y aprobación
+para esa fase concreta.
 
 **Estado al 11 ago 2026**: ISS-138 a ISS-154 implementados. Verificación
 de las cuatro suites:
@@ -504,18 +508,35 @@ de las cuatro suites:
 corrigió el margen de las páginas nuevas del panel, que salían pegadas
 al borde por faltarles el `.contenedor` del resto del sitio.
 
-Pendiente para cerrar la fase: el **OK explícito del usuario**.
+**Datos de la empresa (recibidos el 11 ago 2026)**, tomados del
+certificado de existencia y representación legal de la Cámara de
+Comercio de Valledupar (matrícula 220369, expedido el 16 jul 2026) y
+ya cargados como defaults en `application.properties`:
 
-**Datos que hacen falta antes de emitir la primera cotización real**
-(no bloquean la implementación — todo es configurable, y el diseño
-admite 0% de impuesto):
+- **NIT 901941017-0** y razón social CREAR CODE CESAR S.A.S.
+- **Dirección fiscal**: Calle 4B # 20-36, Oficina 303, Barrio Callejas,
+  Valledupar, Cesar.
+- Contexto útil: microempresa, Grupo NIIF III, constituida el 10 mar
+  2025; representante legal Juan Carlos Gutiérrez Huérfano.
 
-- NIT de la empresa y dirección fiscal para el encabezado del PDF.
-- Si Crear Code Cesar es responsable de IVA y, en tal caso, el
-  porcentaje a aplicar.
-- Validez por defecto de una cotización (por ejemplo 15 o 30 días) y
-  las condiciones comerciales estándar (anticipo, forma de pago) que
-  van al pie del documento.
+El certificado **confirma la decisión 18**: es una persona jurídica
+(S.A.S.), luego obligada a factura electrónica — la cotización no puede
+hacer las veces de documento de cobro.
+
+**Sigue pendiente del usuario**:
+
+- **Si la empresa es responsable de IVA** y con qué porcentaje. Ese
+  dato **no está en el certificado de Cámara de Comercio**: vive en el
+  RUT de la DIAN (responsabilidad 48 "responsable de IVA" vs. 49 "no
+  responsable"). Mientras no se confirme, el impuesto queda en 0 y el
+  PDF no menciona IVA.
+- Validez por defecto (hoy 15 días) y condiciones comerciales estándar
+  (anticipo, forma de pago) para el pie del documento.
+- Datos de contacto del documento: el certificado registra
+  `juancgutierrezh@gmail.com` y los teléfonos 3015791952 / 3145408191,
+  mientras que el sitio usa `crearcodecesar@gmail.com` y el WhatsApp
+  323 988 5883. Se mantienen los del sitio (son los comerciales), pero
+  conviene decidir cuáles van en la cotización.
 
 **Nota de dependencia**: el correo de producción sigue pospuesto hasta
 las pruebas del MVP, así que HU-45 se verifica en local contra Mailpit;
