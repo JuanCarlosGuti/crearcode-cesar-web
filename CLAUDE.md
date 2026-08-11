@@ -647,15 +647,15 @@ cómputo, único costo fijo el dominio (aún no comprado).
 
 ## Decisiones ya resueltas por el usuario
 
-- Correo corporativo: **`admin@crearcodecesar.com`** en **Zoho Mail**
-  (11 ago 2026). Reemplaza al `crearcodecesar@gmail.com` temporal en
-  todo el sitio, el PDF de cotizaciones, el contexto del asistente y
-  las notificaciones internas. `MAIL_HOST=smtp.zoho.com` ya está en
-  `render.yaml`; falta crear el buzón, publicar SPF/DKIM en Cloudflare
-  y generar la contraseña de aplicación. **Ojo**: el plan gratuito de
-  Zoho restringe el acceso por cliente externo — si el envío falla con
-  error de autenticación, hace falta Mail Lite (~USD 1/mes) o un
-  servicio transaccional (ver docs/09 §7).
+- Correo (11 ago 2026): **se envía por Resend** y **se responde a
+  `contacto@crearcodecesar.com`**. El remitente de todos los correos es
+  `Crear Code Cesar <contacto@crearcodecesar.com>`, fijado explícito en
+  `RemitenteDeCorreo` porque el usuario SMTP de Resend es la palabra
+  literal `resend` y el servicio **rechaza con 422** cualquier
+  remitente fuera de un dominio verificado. `crearcodecesar.com` debe
+  estar verificado en Resend antes del primer envío. El correo
+  corporativo que muestra el sitio sigue siendo
+  `admin@crearcodecesar.com` (ver docs/09 §7).
 - **IVA de las cotizaciones: 19% por defecto** (11 ago 2026). Una
   S.A.S. es persona jurídica y por regla general responsable de IVA;
   cotizar sin él y descubrirlo después obliga a pedirle al cliente un

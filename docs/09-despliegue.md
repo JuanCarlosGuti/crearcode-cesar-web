@@ -239,9 +239,30 @@ usuario, 11 ago 2026), ya con el dominio propio. Sustituye al
 `crearcodecesar@gmail.com` temporal que se había elegido el 28 jul
 2026 mientras no existía dominio.
 
-**Proveedor elegido: Zoho Mail** (decisión del usuario, 11 ago 2026),
-con `MAIL_HOST=smtp.zoho.com` y puerto 587 ya declarados en
-`render.yaml`.
+**Envío por Resend** (decisión del usuario, 11 ago 2026), ya declarado
+en `render.yaml`. El buzón donde se *reciben* los correos es aparte
+(Zoho u otro): Resend solo envía.
+
+| Variable | Valor | Por qué |
+|---|---|---|
+| `MAIL_HOST` | `smtp.resend.com` | fija en `render.yaml` |
+| `MAIL_PORT` | `587` (STARTTLS) | fija |
+| `MAIL_USERNAME` | **`resend`** (la palabra literal) | fija — no es una dirección; le dice a su gateway que autentique con API key |
+| `MAIL_PASSWORD` | la API key (`re_…`) | `sync: false`, se ingresa en el dashboard |
+| `MAIL_FROM` | `Crear Code Cesar <contacto@crearcodecesar.com>` | fija |
+| `MAIL_REPLY_TO` | `contacto@crearcodecesar.com` | fija |
+
+**El remitente va explícito en el código** (`RemitenteDeCorreo`, leído
+por los tres adaptadores de correo). Antes no se fijaba y Spring usaba
+el usuario SMTP como remitente: con Resend eso habría puesto `resend`
+como dirección de origen y **el envío se habría rechazado con 422 "from
+address not allowed"**. Resend solo acepta remitentes de dominios
+verificados en su panel, así que `crearcodecesar.com` debe estar
+verificado ahí (con sus registros en Cloudflare) antes del primer envío.
+
+Cuidado con la ortografía: **`contacto@`** con o final. Y ese buzón
+debe existir de verdad para recibir: es la dirección a la que responden
+los clientes cuando contestan una cotización.
 
 **Advertencia importante antes de configurarlo**: el plan **Forever
 Free** de Zoho está pensado para usar el correo desde su webmail y su
@@ -270,11 +291,11 @@ environment variable* → **Save changes** (Render redespliega solo).
 |---|---|---|---|
 | `CLOUDFLARE_ACCOUNT_ID` | backend | el de la cuenta (32 caracteres) | Demo de diseño con Workers AI |
 | `CLOUDFLARE_API_TOKEN` | backend | token de la plantilla Workers AI | ídem |
-| `MAIL_USERNAME` | backend | `admin@crearcodecesar.com` | correos de cuenta y cotizaciones |
-| `MAIL_PASSWORD` | backend | **contraseña de aplicación** de Zoho | ídem |
+| `MAIL_PASSWORD` | backend | la **API key de Resend** (`re_…`) | correos de cuenta y cotizaciones |
 
 Las variables que ya vienen fijas en `render.yaml`
-(`DEMO_PROVEEDOR_IMAGENES=cloudflare`, `MAIL_HOST=smtp.zoho.com`,
+(`DEMO_PROVEEDOR_IMAGENES=cloudflare`, `MAIL_HOST=smtp.resend.com`,
+`MAIL_USERNAME=resend`, `MAIL_FROM`, `MAIL_REPLY_TO`,
 `HSTS_MAX_AGE`, `RATE_LIMIT_ASISTENTE_MAX_INTENTOS`,
 `COTIZACIONES_IMPUESTO`) se aplican **al aceptar el sync del
 Blueprint**: `dashboard.render.com` → **Blueprints** → el del repo →

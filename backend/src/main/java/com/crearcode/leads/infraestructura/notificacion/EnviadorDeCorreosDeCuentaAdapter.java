@@ -20,11 +20,13 @@ class EnviadorDeCorreosDeCuentaAdapter implements EnviadorDeCorreosDeCuenta {
 
 	private final JavaMailSender mailSender;
 	private final String frontendUrl;
+	private final RemitenteDeCorreo remitente;
 
 	EnviadorDeCorreosDeCuentaAdapter(JavaMailSender mailSender,
-			@Value("${app.frontend-url}") String frontendUrl) {
+			@Value("${app.frontend-url}") String frontendUrl, RemitenteDeCorreo remitente) {
 		this.mailSender = mailSender;
 		this.frontendUrl = frontendUrl;
+		this.remitente = remitente;
 	}
 
 	@Override
@@ -64,6 +66,8 @@ class EnviadorDeCorreosDeCuentaAdapter implements EnviadorDeCorreosDeCuenta {
 
 	private void enviar(Correo destino, String asunto, String cuerpo) {
 		SimpleMailMessage mensaje = new SimpleMailMessage();
+		mensaje.setFrom(remitente.remitente());
+		mensaje.setReplyTo(remitente.responderA());
 		mensaje.setTo(destino.valor());
 		mensaje.setSubject(asunto);
 		mensaje.setText(cuerpo);

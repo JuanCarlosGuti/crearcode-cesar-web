@@ -56,6 +56,18 @@ class EnviadorDeCorreosDeCuentaAdapterIT {
 				.contains("24 horas");
 	}
 
+	// El From explicito es lo que permite enviar por un servicio
+	// transaccional: su usuario SMTP no es una direccion del dominio.
+	@Test
+	void saleDelRemitenteDelDominioPropioYSeRespondeAlBuzonDeContacto() throws Exception {
+		enviador.enviarVerificacion(new Correo("cliente@correo-de-prueba.com"), "token-remitente");
+
+		MimeMessage recibido = GREEN_MAIL.getReceivedMessages()[GREEN_MAIL.getReceivedMessages().length - 1];
+		assertThat(recibido.getFrom()[0].toString())
+				.isEqualTo("Crear Code Cesar <contacto@crearcodecesar.com>");
+		assertThat(recibido.getReplyTo()[0].toString()).isEqualTo("contacto@crearcodecesar.com");
+	}
+
 	@Test
 	void elCorreoDeRecuperacionLlevaElEnlaceConElToken() throws Exception {
 		enviador.enviarRecuperacion(new Correo("cliente@correo-de-prueba.com"), "token-recuperacion-456");

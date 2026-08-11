@@ -41,25 +41,30 @@ services:
       # los correos enlazan al dominio canonico, no a onrender.com.
       - key: FRONTEND_URL
         value: https://crearcodecesar.com
-      # SMTP para los correos de cuenta (fase F8): Gmail con App
-      # Password (ver guia en docs/09-despliegue.md). MAIL_USERNAME es
-      # el Gmail completo; MAIL_PASSWORD es la App Password de 16
-      # caracteres — nunca la contrasena real de la cuenta.
-      # Buzon del dominio propio en Zoho Mail (decision del usuario, 11
-      # ago 2026). OJO: el plan Forever Free de Zoho restringe el acceso
-      # por cliente externo — si el envio falla con error de
-      # autenticacion, es que hace falta el plan Mail Lite (~USD 1 al
-      # mes) o un servicio transaccional. Ver docs/09-despliegue.md §7.
+      # Envio transaccional por Resend (11 ago 2026). Su usuario SMTP es
+      # la palabra literal "resend" y la contrasena es la API key; el
+      # remitente NO puede salir de ahi, por eso va explicito en
+      # MAIL_FROM. Resend rechaza con 422 cualquier remitente que no
+      # pertenezca a un dominio verificado en su panel.
       - key: MAIL_HOST
-        value: smtp.zoho.com
+        value: smtp.resend.com
+      - key: MAIL_USERNAME
+        value: resend
+      # Remitente y direccion de respuesta de todos los correos del
+      # sitio. contacto@ (con o final) debe existir como buzon real: es
+      # donde llegan las respuestas de los clientes.
+      - key: MAIL_FROM
+        value: Crear Code Cesar <contacto@crearcodecesar.com>
+      - key: MAIL_REPLY_TO
+        value: contacto@crearcodecesar.com
       - key: MAIL_PORT
         value: "587"
       - key: MAIL_SMTP_AUTH
         value: "true"
       - key: MAIL_SMTP_STARTTLS
         value: "true"
-      - key: MAIL_USERNAME
-        sync: false
+      # La API key de Resend (empieza por re_) hace de contrasena. Se
+      # ingresa en el dashboard, nunca en el repo.
       - key: MAIL_PASSWORD
         sync: false
       # Asistente IA (fase F9, ADR-10): la key de Groq se ingresa en el

@@ -14,16 +14,24 @@ class NotificadorEmailAdapter implements NotificadorPort {
 
 	private final JavaMailSender mailSender;
 	private final String correoDestino;
+	private final RemitenteDeCorreo remitente;
 
 	NotificadorEmailAdapter(JavaMailSender mailSender,
-			@Value("${app.notificaciones.correo-destino}") String correoDestino) {
+			@Value("${app.notificaciones.correo-destino}") String correoDestino,
+			RemitenteDeCorreo remitente) {
 		this.mailSender = mailSender;
 		this.correoDestino = correoDestino;
+		this.remitente = remitente;
 	}
 
 	@Override
 	public void notificarNuevaSolicitud(SolicitudDeContacto solicitud) {
 		SimpleMailMessage mensaje = new SimpleMailMessage();
+		mensaje.setFrom(remitente.remitente());
+		// Responder a este aviso escribe al buzón del sitio, no al
+		// visitante: sus datos están en el cuerpo y el flujo real de
+		// respuesta es el panel.
+		mensaje.setReplyTo(remitente.responderA());
 		mensaje.setTo(correoDestino);
 		mensaje.setSubject("Nueva solicitud de contacto - " + solicitud.servicioDeInteres());
 		mensaje.setText(construirCuerpo(solicitud));

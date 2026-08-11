@@ -78,6 +78,21 @@ class EnviadorDeCotizacionesAdapterIT {
 		assertThat(cuerpo).contains("Panaderia El Trigal");
 	}
 
+	// Resend y compañía rechazan con 422 cualquier remitente fuera del
+	// dominio verificado, y el usuario SMTP de esos servicios ni siquiera
+	// es una direccion: el From va explicito.
+	@Test
+	void saleDelRemitenteDelDominioPropioYSeRespondeAlBuzonDeContacto() throws Exception {
+		enviador.enviar(cotizacionEnviada());
+
+		assertThat(GREEN_MAIL.waitForIncomingEmail(5000, 1)).isTrue();
+		MimeMessage recibido = GREEN_MAIL.getReceivedMessages()[GREEN_MAIL.getReceivedMessages().length - 1];
+
+		assertThat(recibido.getFrom()[0].toString())
+				.isEqualTo("Crear Code Cesar <contacto@crearcodecesar.com>");
+		assertThat(recibido.getReplyTo()[0].toString()).isEqualTo("contacto@crearcodecesar.com");
+	}
+
 	// Lo que distingue a este correo del resto del sitio: lleva adjunto.
 	@Test
 	void elCorreoLlevaElPdfAdjuntoConElNumeroComoNombre() throws Exception {

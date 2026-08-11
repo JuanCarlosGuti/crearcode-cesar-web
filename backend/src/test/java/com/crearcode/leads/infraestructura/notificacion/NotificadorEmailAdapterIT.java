@@ -3,6 +3,7 @@ package com.crearcode.leads.infraestructura.notificacion;
 import java.time.Instant;
 
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -50,6 +51,14 @@ class NotificadorEmailAdapterIT {
 		GREEN_MAIL.stop();
 	}
 
+	// GreenMail acumula los mensajes de toda la clase: sin vaciar la
+	// bandeja, un test que cuenta correos depende de cuántos corrieron
+	// antes (y del orden, que JUnit no garantiza).
+	@BeforeEach
+	void vaciarBandeja() throws Exception {
+		GREEN_MAIL.purgeEmailFromAllMailboxes();
+	}
+
 	@Autowired
 	private NotificadorPort notificador;
 
@@ -69,6 +78,26 @@ class NotificadorEmailAdapterIT {
 		String cuerpo = (String) recibidos[0].getContent();
 		assertThat(cuerpo).contains("Juan Pérez", "nombre@empresa.com", "3001234567",
 				"Quiero automatizar mi negocio");
+	}
+
+	/**
+	 * El remitente se fija explícito: si se dejara al usuario SMTP, con un
+	 * servicio transaccional saldría una dirección que no pertenece al
+	 * dominio verificado y el envío se rechazaría con 422.
+	 */
+	@Test
+	void saleDelRemitenteDelDominioPropioYSeRespondeAlBuzonDeContacto() throws Exception {
+		SolicitudDeContacto solicitud = SolicitudDeContacto.registrar(
+				new DatosDeContacto("Ana", null, new Correo("ana@empresa.com"), new Telefono("3001234567")),
+				ServicioDeInteres.OTRO, "Hola",
+				new ConsentimientoDatos(true, Instant.now(), "v1"), Instant.now());
+
+		notificador.notificarNuevaSolicitud(solicitud);
+
+		MimeMessage recibido = GREEN_MAIL.getReceivedMessages()[GREEN_MAIL.getReceivedMessages().length - 1];
+		assertThat(recibido.getFrom()[0].toString())
+				.isEqualTo("Crear Code Cesar <contacto@crearcodecesar.com>");
+		assertThat(recibido.getReplyTo()[0].toString()).isEqualTo("contacto@crearcodecesar.com");
 	}
 
 }

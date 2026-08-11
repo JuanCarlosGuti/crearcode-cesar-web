@@ -29,12 +29,14 @@ class EnviadorDeCotizacionesAdapter implements EnviadorDeCotizaciones {
 	private final JavaMailSender mailSender;
 	private final GeneradorDeDocumento generadorDeDocumento;
 	private final String frontendUrl;
+	private final RemitenteDeCorreo remitente;
 
 	EnviadorDeCotizacionesAdapter(JavaMailSender mailSender, GeneradorDeDocumento generadorDeDocumento,
-			@Value("${app.frontend-url}") String frontendUrl) {
+			@Value("${app.frontend-url}") String frontendUrl, RemitenteDeCorreo remitente) {
 		this.mailSender = mailSender;
 		this.generadorDeDocumento = generadorDeDocumento;
 		this.frontendUrl = frontendUrl;
+		this.remitente = remitente;
 	}
 
 	@Override
@@ -45,6 +47,10 @@ class EnviadorDeCotizacionesAdapter implements EnviadorDeCotizaciones {
 		try {
 			MimeMessage mensaje = mailSender.createMimeMessage();
 			MimeMessageHelper helper = new MimeMessageHelper(mensaje, true, StandardCharsets.UTF_8.name());
+			helper.setFrom(remitente.remitente());
+			// El cliente responde su cotización por correo con frecuencia:
+			// que llegue a un buzón que alguien lee, no al del proveedor.
+			helper.setReplyTo(remitente.responderA());
 			helper.setTo(cotizacion.cliente().correo().valor());
 			helper.setSubject("Tu cotización " + numero + " · Crear Code Cesar");
 			helper.setText("""
