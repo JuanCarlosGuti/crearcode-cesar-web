@@ -270,11 +270,24 @@ proyecto vía `npx`/scripts de `package.json`.
    **Probar el build de producción localmente** (desde F12 el frontend
    es estático, ADR-12): `npm run build` y luego
    `npm run servir:estatico` (puerto 4300). Ese script replica lo que
-   hace Render: sirve el archivo si existe y, si no, cae a
-   `index.csr.html` para que el router tome las rutas de sesión. **Y
-   comprime con gzip** — sin eso Lighthouse cae ~15 puntos de
-   Performance por servir los bundles en crudo y parece una regresión
-   que no existe, porque el CDN de Render sí comprime.
+   hace Render **leyendo las reglas del `render.yaml` real**
+   (`scripts/rutas-de-render.mjs`), no una versión propia: sirve el
+   archivo si existe y, si no, aplica las reglas en orden. **Y comprime
+   con gzip** — sin eso Lighthouse cae ~15 puntos de Performance por
+   servir los bundles en crudo y parece una regresión que no existe,
+   porque el CDN de Render sí comprime.
+
+   `npm run verificar:rutas` (también en CI) comprueba que esas reglas
+   sirvan de verdad las 19 páginas prerenderizadas. Nació de un fallo
+   real (12 ago 2026): un único comodín `/* → /index.csr.html` hacía
+   que **todas** las páginas devolvieran el cascarón del SPA, porque
+   Render solo resuelve el índice de una carpeta con barra final
+   (`/contacto/` sí, `/contacto` no). Responden 200 y el navegador
+   pinta la página correcta, así que solo se ve mirando el HTML de la
+   primera respuesta — que es lo único que leen Google y las tarjetas
+   de WhatsApp/LinkedIn. Regla que dejó: **un replicador más generoso
+   que el original no verifica nada** (el servidor local resolvía él
+   mismo `/contacto`, y por eso en local todo se veía bien).
 
 Verificado manualmente end-to-end (16 jul 2026): los tres servicios
 levantados a la vez, `GET /actuator/health` respondió

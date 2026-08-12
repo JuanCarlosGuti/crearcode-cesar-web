@@ -428,9 +428,37 @@ frontend desde otro sitio sin rewrites, ahí sí habría que crear
 **Consecuencia**: el fallback de SPA apunta a `index.csr.html`, no a
 `index.html` — este último es la Home ya prerenderizada, y usarlo como
 comodín serviría el contenido de la Home bajo `/admin` antes de que el
-router lo corrija. Render no aplica rewrites a rutas donde existe un
-archivo, así que las 19 rutas prerenderizadas se siguen sirviendo tal
-cual.
+router lo corrija.
+
+**Corrección del 12 ago 2026 — el comodín se comía el sitio entero.**
+La primera versión de este ADR dio por bueno que «Render no aplica
+rewrites donde existe un archivo, así que las 19 rutas prerenderizadas
+se sirven tal cual». La regla existe, pero dice *resource exists at
+that path*, y `/contacto` **no es una ruta con archivo**: el archivo es
+`/contacto/index.html`. Render solo resuelve el índice de una carpeta
+cuando la URL trae barra final (`/contacto/` sí, `/contacto` no), así
+que con un único `rewrite /* → /index.csr.html` **las 18 páginas
+prerenderizadas respondían el cascarón vacío del SPA** — que es
+exactamente lo contrario de lo que motivó conservar el prerender.
+
+Es un fallo silencioso por partida doble: todas las URLs responden 200
+y el navegador termina pintando la página correcta con JavaScript, así
+que a simple vista el sitio funciona. Lo único que se rompe es el
+primer HTML, que es justo lo que leen Google y las tarjetas de
+WhatsApp/LinkedIn. Y no se detectó en local porque el replicador
+(`frontend/scripts/servir-estatico.mjs`) resolvía él mismo
+`/contacto → contacto/index.html`: **un replicador más generoso que el
+original no verifica nada**.
+
+Se corrige con reglas explícitas en `render.yaml` (las rutas de sesión
+al cascarón primero, luego `/:pagina → /:pagina/index.html` y su
+variante de dos niveles) y, para que no vuelva a pasar en silencio, con
+`frontend/scripts/verificar-rutas-estaticas.mjs`: lee el `render.yaml`
+real, recorre el `dist` real y falla si alguna página prerenderizada no
+se sirve a sí misma. Corre en CI y también sirve al servidor local, así
+que réplica, verificación y producción no pueden divergir. Se eliminó
+además el comodín final: una ruta inexistente ahora responde 404 de
+verdad en lugar de un 200 con el cascarón.
 
 ## 6. Seguridad (resumen, detalle en épica E3)
 

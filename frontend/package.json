@@ -10,10 +10,15 @@
     "test": "ng test",
     "e2e": "playwright test",
     "lighthouse": "node scripts/lighthouse-audit.mjs",
-    "servir:estatico": "node scripts/servir-estatico.mjs"
+    "servir:estatico": "node scripts/servir-estatico.mjs",
+    "verificar:rutas": "node scripts/verificar-rutas-estaticas.mjs"
   },
   "private": true,
   "packageManager": "npm@11.16.0",
+  "engines": {
+    "//": "La matriz exacta que exige Angular 22. No vale un '>=22' a secas: Node 24.14.1 lo cumpliria y el CLI lo rechaza.",
+    "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
+  },
   "dependencies": {
     "@angular/common": "^22.0.0",
     "@angular/compiler": "^22.0.0",

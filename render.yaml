@@ -115,6 +115,14 @@ services:
     rootDir: frontend
     buildCommand: npm ci && npm run build
     staticPublishPath: dist/frontend/browser
+    envVars:
+      # Render construye con Node 24.14.1 por defecto y Angular 22 exige
+      # 22.22.3, 24.15.0 o 26 — el build fallaba por 0.0.1 de diferencia.
+      # Antes no pasaba porque el frontend se construia dentro de Docker
+      # con su propio Node fijado; al quitar esa imagen (ADR-12) la
+      # version del entorno pasa a importar, asi que se declara aqui.
+      - key: NODE_VERSION
+        value: 24.15.0
     buildFilter:
       paths:
         - frontend/**
@@ -126,15 +134,47 @@ services:
       - type: rewrite
         source: /api/*
         destination: https://crearcodecesar-backend.onrender.com/api/*
-      # Fallback de SPA para las rutas de sesion (admin, mi-cuenta y las
-      # de token). Apunta a index.csr.html y NO a index.html: este
-      # ultimo es la Home ya prerenderizada, y servirla bajo /admin
-      # mostraria el contenido de la Home hasta que el router lo
-      # corrigiera. Render no aplica rewrites donde ya existe un
-      # archivo, asi que las 19 rutas prerenderizadas se sirven tal cual.
+      # Rutas de sesion (RenderMode.Client): no existen como archivo, se
+      # sirven con el cascaron del SPA. Es index.csr.html y NO
+      # index.html: este ultimo es la Home ya prerenderizada, y servirla
+      # bajo /admin mostraria el contenido de la Home hasta que el
+      # router lo corrigiera. Van ANTES que las reglas de abajo porque
+      # gana la primera regla que coincide.
       - type: rewrite
-        source: /*
+        source: /admin
         destination: /index.csr.html
+      - type: rewrite
+        source: /admin/*
+        destination: /index.csr.html
+      - type: rewrite
+        source: /mi-cuenta
+        destination: /index.csr.html
+      - type: rewrite
+        source: /mi-cuenta/*
+        destination: /index.csr.html
+      - type: rewrite
+        source: /verificar-correo
+        destination: /index.csr.html
+      - type: rewrite
+        source: /restablecer-contrasena
+        destination: /index.csr.html
+      # Paginas prerenderizadas pedidas sin barra final — que es como
+      # las publica el sitemap y como las enlaza todo el mundo.
+      # Render solo resuelve el index de una carpeta cuando la URL trae
+      # barra final: /contacto/ si, /contacto no. Sin estas dos reglas
+      # /contacto cae en el comodin del SPA y el primer html que ven
+      # Google y las tarjetas de WhatsApp/LinkedIn es el cascaron vacio,
+      # aunque el navegador termine pintando la pagina correcta (se
+      # detecto en produccion el 12 ago 2026; lo cubre
+      # frontend/scripts/verificar-rutas-estaticas.mjs, en CI).
+      # No hay comodin final a proposito: una ruta inexistente responde
+      # 404 de verdad en vez de un 200 con el cascaron.
+      - type: rewrite
+        source: /:pagina
+        destination: /:pagina/index.html
+      - type: rewrite
+        source: /:seccion/:pagina
+        destination: /:seccion/:pagina/index.html
     headers:
       # HSTS (ADR-11). Arranque conservador de 1 dia; la escalera
       # habitual es 86400 -> 604800 -> 2592000 -> 31536000, dejando unos

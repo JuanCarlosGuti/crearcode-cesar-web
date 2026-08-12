@@ -31,7 +31,10 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          # Misma version que Render usa para construir (NODE_VERSION en
+          # render.yaml): si CI valida con otra, un fallo de version del
+          # CLI aparece recien en el deploy. Al subirla alla, subirla aqui.
+          node-version: "24.15.0"
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
@@ -43,9 +46,17 @@ jobs:
         working-directory: frontend
         run: npm test -- --watch=false
 
-      - name: npm run build (SSR)
+      - name: npm run build (prerender estatico)
         working-directory: frontend
         run: npm run build
+
+      # Comprueba que las reglas de render.yaml sirvan de verdad las
+      # paginas prerenderizadas: sin esto, un comodin mal puesto deja
+      # todo el sitio respondiendo el cascaron del SPA con 200 y solo se
+      # nota mirando el html de la primera respuesta (ADR-12).
+      - name: Verificar rutas del Static Site (render.yaml)
+        working-directory: frontend
+        run: npm run verificar:rutas
 
   docker-build:
     # Solo el backend: desde ADR-12 el frontend se despliega como Static
@@ -97,7 +108,10 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          # Misma version que Render usa para construir (NODE_VERSION en
+          # render.yaml): si CI valida con otra, un fallo de version del
+          # CLI aparece recien en el deploy. Al subirla alla, subirla aqui.
+          node-version: "24.15.0"
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 

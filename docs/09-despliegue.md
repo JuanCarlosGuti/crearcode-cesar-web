@@ -218,11 +218,32 @@ corte:
    `/admin` y `/mi-cuenta` entren por el fallback de SPA, que
    `/sitemap.xml` y `/robots.txt` respondan, y que el formulario de
    contacto funcione (eso prueba el `rewrite` de `/api`).
+
+   No basta con que respondan 200: hay que mirar el **HTML de la
+   primera respuesta**, porque un error de reglas sirve el cascarón del
+   SPA y el navegador igual pinta la página correcta después (pasó el
+   12 ago 2026, ver ADR-12). Comprobación rápida — cada ruta debe traer
+   su propio `<title>`, no el genérico:
+
+   ```bash
+   for r in / /contacto /servicios/desarrollo-a-la-medida /herramientas /blog; do
+     echo "$r -> $(curl -s https://crearcodecesar-sitio.onrender.com$r \
+       | grep -o '<title>[^<]*</title>')"
+   done
+   ```
+
+   Lo mismo lo verifica en CI `frontend/scripts/verificar-rutas-estaticas.mjs`
+   (`npm run verificar:rutas`) sobre el `render.yaml` real.
 3. **Mover el dominio**: quitar `crearcodecesar.com` y `www` del
    servicio viejo y añadirlos al nuevo. Como el DNS ya apunta a
    Cloudflare y de ahí a Render, la propagación es cuestión de minutos.
 4. **Comprobar el dominio** ya en el sitio nuevo, incluida la cabecera
-   HSTS (`curl -sI https://crearcodecesar.com | grep -i strict`).
+   HSTS (`curl -sI https://crearcodecesar.com | grep -i strict`). Esta
+   comprobación **solo vale en el dominio propio**: sobre
+   `*.onrender.com` el borde de Render impone su propio HSTS
+   (`max-age=315360000; includeSubdomains; preload`, porque tiene su
+   dominio en la lista de precarga) y tapa el valor declarado en el
+   Blueprint.
 5. **Borrar el web service viejo** (`crearcodecesar-frontend`) y quitar
    su declaración del Blueprint. Hasta ese momento, volver atrás es
    devolverle el dominio.
