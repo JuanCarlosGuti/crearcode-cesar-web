@@ -1,0 +1,79 @@
+# Servidor del sitio estatico en el servidor propio.
+#
+# Traduce a Caddy las reglas que Render aplicaba como Static Site, con
+# una diferencia deliberada: aqui NO se proxya /api. En el servidor
+# propio eso lo enruta kamal-proxy antes de llegar a este contenedor
+# (comprobado el 12 ago 2026: dos apps de Kamal comparten host
+# repartiendose por prefijo de ruta), asi que el navegador sigue viendo
+# un solo origen y ADR-09 queda intacto sin CORS.
+#
+# La direccion es un puerto y NO un dominio a proposito: quien termina
+# TLS es kamal-proxy. Si Caddy viera un nombre de dominio intentaria
+# emitir su propio certificado y fallaria de una forma que no senala la
+# causa.
+:8080 {
+	root * /srv
+
+	# El CDN de Render comprimia por su cuenta; aqui no hay CDN. Sin esto
+	# los bundles viajan en crudo y la medicion de Lighthouse cae ~15
+	# puntos de Performance, que parece una regresion y no lo es.
+	encode zstd gzip
+
+	header {
+		# HSTS (ADR-11). Arranque conservador de 1 dia; la escalera
+		# habitual es 86400 -> 604800 -> 2592000 -> 31536000, dejando
+		# unos dias en cada escalon. "preload" NO se agrega: es
+		# practicamente irreversible.
+		Strict-Transport-Security "max-age=86400; includeSubDomains"
+		# Render la mandaba por su cuenta; aqui hay que declararla.
+		X-Content-Type-Options "nosniff"
+	}
+
+	# El Cache-Control va DENTRO de cada handle y no aqui arriba: con dos
+	# directivas `header` sobre el mismo campo gana la generica, no la
+	# especifica (comprobado — el matcher casa, pero el valor lo pisa la
+	# de arriba). Los `handle` son excluyentes, asi que cada respuesta
+	# recibe exactamente una.
+
+	# Healthcheck de kamal-proxy (su ruta por defecto es /up). Responder
+	# aqui evita depender de que exista una ruta de la aplicacion.
+	handle /up {
+		respond "OK" 200
+	}
+
+	# Reglas 2 a 7 del render.yaml: rutas de sesion (RenderMode.Client).
+	# No existen como archivo, se sirven con el cascaron del SPA. Es
+	# index.csr.html y NO index.html: este ultimo es la Home ya
+	# prerenderizada, y servirla bajo /admin mostraria el contenido de la
+	# Home hasta que el router lo corrigiera.
+	@sesion path /admin /admin/* /mi-cuenta /mi-cuenta/* /verificar-correo /restablecer-contrasena
+	handle @sesion {
+		header Cache-Control "no-cache"
+		rewrite * /index.csr.html
+		file_server
+	}
+
+	# Los bundles de Angular llevan hash en el nombre, asi que el
+	# contenido bajo una misma URL no cambia nunca. Es la unica cache
+	# larga del sitio: todo lo demas se revalida.
+	@hasheados path *.js *.css
+	handle @hasheados {
+		header Cache-Control "public, max-age=31536000, immutable"
+		file_server
+	}
+
+	# Reglas 8 y 9 del render.yaml: paginas prerenderizadas. Alla hacian
+	# falta dos reglas explicitas porque Render solo resuelve el index de
+	# una carpeta cuando la URL trae barra final (/contacto/ si,
+	# /contacto no). try_files cubre los dos casos de una vez.
+	#
+	# No hay comodin final a proposito: una ruta inexistente responde 404
+	# de verdad en vez de 200 con el cascaron del SPA.
+	handle {
+		# El HTML se revalida siempre: si no, un despliegue nuevo tarda
+		# en verse porque el navegador se queda con la copia vieja.
+		header Cache-Control "no-cache"
+		try_files {path} {path}/index.html
+		file_server
+	}
+}

@@ -460,6 +460,75 @@ que réplica, verificación y producción no pueden divergir. Se eliminó
 además el comodín final: una ruta inexistente ahora responde 404 de
 verdad en lugar de un 200 con el cascarón.
 
+### ADR-13 — Del hosting gestionado al servidor propio con Kamal (12 ago 2026)
+
+**Estado: en curso.** La decisión está tomada y verificada; el corte
+todavía no se ha hecho.
+
+**Decisión**: backend y sitio dejan Render y pasan a un VPS propio
+(Netcup, Virginia) que ya hospeda otros dos proyectos, desplegados con
+**Kamal 2** desde GitHub Actions. La base de datos deja Neon y pasa al
+PostgreSQL compartido de ese servidor, con rol y base propios.
+
+**Motivo**: costo y, sobre todo, el arranque en frío. En la capa gratis
+de Render los servicios se duermen a los 15 minutos y despertar llegó a
+tardar 152 s — con eso no se le puede enseñar el sitio a nadie, que es
+justo lo que hace falta ahora. El servidor ya está pagado y corriendo.
+
+**Lo que cambia de verdad**: `kamal-proxy` enruta por dominio y **no
+hace rewrites**, que era lo que Render aplicaba como Static Site. Así
+que el sitio deja de ser un montón de archivos y vuelve a viajar en una
+imagen, esta vez con **Caddy** dentro (`frontend/Dockerfile` +
+`frontend/Caddyfile`).
+
+**Cómo se preserva ADR-09 (un solo origen, sin CORS)**: no con un proxy
+en Caddy, sino **enrutando `/api` en kamal-proxy**. Dos aplicaciones de
+Kamal comparten el host `crearcodecesar.com`: el sitio se lleva todo, y
+el backend se lleva `/api` y `/actuator` vía `path_prefixes` con
+`strip_path_prefix: false`.
+
+Eso **no estaba documentado** en Kamal —el prefijo de ruta se describe
+dentro de una sola aplicación—, así que se probó a mano contra el
+kamal-proxy real antes de diseñar nada encima (12 ago 2026, host
+inventado `smoke.interno` y dos `traefik/whoami`):
+
+| Petición | Respondió |
+|---|---|
+| `/` y `/contacto` | el contenedor del sitio |
+| `/api/ping` y `/actuator/health` | el contenedor del backend |
+
+Y el backend recibió `GET /api/ping HTTP/1.1` —la ruta entera, no
+`/ping`— con el `Host` original intacto. Consecuencias:
+
+- **Un solo salto.** La IP real del visitante llega al backend, así que
+  `server.forward-headers-strategy=native` cierra ISS-136 de verdad. La
+  alternativa que se descartó (Caddy proxyando `/api` hacia la URL
+  pública) pasaba dos veces por kamal-proxy y aplanaba todas las IPs en
+  una: el mismo bug, reintroducido por la vía del despliegue.
+- **Cero cambios en Java.** `/actuator/health` sigue donde estaba, así
+  que el matcher literal de `SecurityConfig` sigue valiendo.
+- El 301 de `www` al dominio raíz lo hace `--canonical-host` de
+  kamal-proxy, no Caddy.
+
+**Lo que se pierde**: el CDN. Hoy Render sirve desde el borde de
+Cloudflare; el servidor propio responde directo desde Virginia (~57 ms
+desde Colombia). Para un sitio estático de empresa es asumible, y
+Cloudflare ya es el DNS del dominio, así que activar su proxy más
+adelante es un interruptor, no una migración.
+
+**Riesgo aceptado**: hoy **no hay copias de seguridad** del PostgreSQL
+compartido ni monitor de disponibilidad. No bloquea el corte porque
+todos los datos actuales son de prueba, pero ambas cosas tienen que
+existir **antes de que el sitio salga al mercado** — a partir de ahí hay
+leads con datos personales y una política de tratamiento publicada.
+
+**Verificación**: `frontend/scripts/verificar-rutas-servidas.mjs` pide
+cada ruta por HTTP y comprueba que la **primera respuesta** trae la
+página correcta, usando el `<link rel="canonical">` como marcador
+estable. Con dos URLs las compara lado a lado. La imagen con Caddy dio
+**29 rutas idénticas a las que sirve producción hoy**, incluido el 404
+de una ruta inexistente. Corre en CI sobre la imagen recién construida.
+
 ## 6. Seguridad (resumen, detalle en épica E3)
 
 - Panel admin protegido con Spring Security vía JWT (ver ADR-08):

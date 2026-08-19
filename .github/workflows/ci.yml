@@ -59,17 +59,38 @@ jobs:
         run: npm run verificar:rutas
 
   docker-build:
-    # Solo el backend: desde ADR-12 el frontend se despliega como Static
-    # Site en Render (sin Node en produccion), asi que ya no tiene imagen
-    # que construir. Su artefacto lo verifica el job "frontend" con
-    # npm run build.
-    name: Docker (verifica que la imagen del backend construya)
+    # El frontend vuelve a tener imagen (ADR-13): en el servidor propio
+    # kamal-proxy enruta por dominio pero no sirve archivos, asi que el
+    # sitio viaja con Caddy dentro. En Render, mientras siga vivo, se
+    # despliega como Static Site desde el mismo build.
+    name: Docker (verifica que las imagenes construyan)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - name: docker build backend
         run: docker build backend/
+
+      - name: docker build frontend (Caddy)
+        run: docker build -t sitio-ci frontend/
+
+      # Levanta la imagen recien construida y comprueba, ruta por ruta,
+      # que la PRIMERA respuesta trae la pagina prerenderizada y no el
+      # cascaron del SPA. Es la red que protege la traduccion de las
+      # reglas de Render al Caddyfile.
+      #
+      # La lista de rutas sale del propio artefacto (se copia /srv desde
+      # el contenedor), asi que no hay que reconstruir el sitio con npm
+      # ni mantener una lista a mano.
+      - name: Verificar las rutas que sirve la imagen
+        run: |
+          docker run -d --name sitio-ci -p 4310:8080 sitio-ci
+          for i in $(seq 1 20); do curl -sf http://localhost:4310/up && break; sleep 1; done
+          docker cp sitio-ci:/srv "$RUNNER_TEMP/browser"
+          mkdir -p frontend/dist/frontend
+          cp -r "$RUNNER_TEMP/browser" frontend/dist/frontend/browser
+          node frontend/scripts/verificar-rutas-servidas.mjs http://localhost:4310
+          docker rm -f sitio-ci
 
   e2e:
     name: E2E (Playwright, contacto + cuentas + asistente + accesibilidad axe-core)

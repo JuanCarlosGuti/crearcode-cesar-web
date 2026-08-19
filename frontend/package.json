@@ -11,7 +11,8 @@
     "e2e": "playwright test",
     "lighthouse": "node scripts/lighthouse-audit.mjs",
     "servir:estatico": "node scripts/servir-estatico.mjs",
-    "verificar:rutas": "node scripts/verificar-rutas-estaticas.mjs"
+    "verificar:rutas": "node scripts/verificar-rutas-estaticas.mjs",
+    "verificar:servido": "node scripts/verificar-rutas-servidas.mjs"
   },
   "private": true,
   "packageManager": "npm@11.16.0",
