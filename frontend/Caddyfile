@@ -41,6 +41,15 @@
 		respond "OK" 200
 	}
 
+	# 301 de www al dominio raiz, que hoy hace Render. Va aqui y no en
+	# kamal-proxy: su binario tiene --canonical-host, pero Kamal no
+	# expone esa clave en deploy.yml y regenera el `kamal-proxy deploy`
+	# en cada despliegue, asi que puesta a mano duraria hasta el
+	# siguiente push y desapareceria sin avisar. Aqui esta versionada.
+	# Funciona porque kamal-proxy preserva el Host original (comprobado).
+	@www host www.crearcodecesar.com
+	redir @www https://crearcodecesar.com{uri} permanent
+
 	# Reglas 2 a 7 del render.yaml: rutas de sesion (RenderMode.Client).
 	# No existen como archivo, se sirven con el cascaron del SPA. Es
 	# index.csr.html y NO index.html: este ultimo es la Home ya

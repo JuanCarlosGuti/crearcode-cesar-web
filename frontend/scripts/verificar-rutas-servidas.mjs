@@ -15,6 +15,7 @@
 //   node scripts/verificar-rutas-servidas.mjs http://localhost:4310 https://crearcodecesar.com
 
 import { existsSync, globSync } from 'node:fs';
+import { request } from 'node:http';
 import { join } from 'node:path';
 
 const RAIZ = join(import.meta.dirname, '..', 'dist', 'frontend', 'browser');
@@ -70,16 +71,44 @@ async function pedir(url) {
   }
 }
 
+/**
+ * Pide una ruta fingiendo otro `Host`, para comprobar el 301 de www sin
+ * necesitar DNS. Va con la API de bajo nivel a proposito: `fetch`
+ * ignora en silencio la cabecera Host (undici la prohibe) y responde
+ * 200 del host por defecto — un falso aprobado, que es peor que no
+ * probar nada. Solo aplica sobre HTTP plano (el contenedor local y CI);
+ * contra HTTPS el Host tendria que casar con el certificado.
+ */
+function pedirConHost(url, host) {
+  return new Promise((resolve) => {
+    const u = new URL(url);
+    const peticion = request(
+      { hostname: u.hostname, port: u.port, path: u.pathname, headers: { Host: host } },
+      (respuesta) => {
+        respuesta.resume();
+        resolve({ estado: respuesta.statusCode, destino: respuesta.headers.location ?? null });
+      },
+    );
+    peticion.on('error', (error) => resolve({ estado: 0, destino: null, error: error.code }));
+    peticion.end();
+  });
+}
+
 const resumen = (r) =>
   r.estado === 0 ? `sin conexion (${r.error})` : `${r.estado} ${r.canonical ?? r.titulo ?? r.tipo ?? ''}`.trim();
 
 const fallos = [];
 const anotar = (ruta, detalle) => fallos.push(`${ruta}\n    ${detalle}`);
+let canonicalDeLaHome = null;
 
 console.log(`Verificando ${base}${referencia ? `  (comparando con ${referencia})` : ''}\n`);
 
 for (const ruta of [...paginas, ...SESION, ...ARCHIVOS, INEXISTENTE]) {
   const r = await pedir(base + ruta);
+
+  if (ruta === '/') {
+    canonicalDeLaHome = r.canonical;
+  }
 
   if (paginas.includes(ruta)) {
     // Una pagina prerenderizada tiene que traer SU canonical. Si no hay
@@ -118,6 +147,22 @@ for (const ruta of [...paginas, ...SESION, ...ARCHIVOS, INEXISTENTE]) {
   }
 }
 
+// El 301 de www al dominio raiz. El dominio sale del canonical de la
+// Home y no de una constante: ADR-06, la URL base vive en un solo sitio.
+let comprobadoWww = false;
+if (base.startsWith('http://') && canonicalDeLaHome) {
+  const origen = new URL(canonicalDeLaHome).origin;
+  const esperado = `${origen}/contacto`;
+  const www = await pedirConHost(`${base}/contacto`, `www.${new URL(origen).hostname}`);
+  comprobadoWww = true;
+  if (www.estado !== 301 || www.destino !== esperado) {
+    anotar(
+      'www -> dominio raiz',
+      `esperaba 301 hacia ${esperado} y respondio ${www.estado} ${www.destino ?? www.error ?? ''}`.trim(),
+    );
+  }
+}
+
 if (fallos.length) {
   console.error(`\n${fallos.length} fallo(s) en ${base}:\n`);
   fallos.forEach((fallo, i) => console.error(`  ${i + 1}. ${fallo}`));
@@ -127,5 +172,6 @@ if (fallos.length) {
 
 console.log(
   `\nOK: ${paginas.length} paginas prerenderizadas con su canonical, ` +
-    `${SESION.length} rutas de sesion con el cascaron, ${ARCHIVOS.length} archivos y 404 real.`,
+    `${SESION.length} rutas de sesion con el cascaron, ${ARCHIVOS.length} archivos y 404 real` +
+    `${comprobadoWww ? ', mas el 301 de www' : ''}.`,
 );

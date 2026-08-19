@@ -507,8 +507,12 @@ Y el backend recibió `GET /api/ping HTTP/1.1` —la ruta entera, no
   una: el mismo bug, reintroducido por la vía del despliegue.
 - **Cero cambios en Java.** `/actuator/health` sigue donde estaba, así
   que el matcher literal de `SecurityConfig` sigue valiendo.
-- El 301 de `www` al dominio raíz lo hace `--canonical-host` de
-  kamal-proxy, no Caddy.
+- El 301 de `www` al dominio raíz lo hace **Caddy**. El binario de
+  kamal-proxy tiene un `--canonical-host` que serviría, pero Kamal no
+  expone esa clave en `deploy.yml` y **regenera el `kamal-proxy deploy`
+  en cada despliegue** a partir del YAML: puesta a mano, la redirección
+  duraría hasta el siguiente `git push` y desaparecería sin avisar. En
+  el `Caddyfile` está versionada y la cubre la verificación.
 
 **Lo que se pierde**: el CDN. Hoy Render sirve desde el borde de
 Cloudflare; el servidor propio responde directo desde Virginia (~57 ms
