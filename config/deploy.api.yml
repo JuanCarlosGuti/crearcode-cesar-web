@@ -21,12 +21,20 @@ ssh:
   user: deploy
 
 proxy:
-  ssl: true
-  # Explicito y no por omision a proposito. El valor por defecto de
-  # forward_headers depende de `ssl`: si algun dia alguien toca ssl, el
-  # comportamiento seguro se invertiria solo y sin ruido, y cualquiera
-  # podria falsificar su IP en la cabecera. Con esto, kamal-proxy
-  # descarta el X-Forwarded-For del cliente y escribe el suyo.
+  # NO lleva ssl: true, y no es un olvido. kamal-proxy rechaza el
+  # despliegue con "TLS settings must be specified on the root path
+  # service": el certificado del host lo pide el servicio que sirve la
+  # raiz (el sitio, config/deploy.web.yml) y este se cuelga de el.
+  # Comprobado el 19 ago 2026 contra el servidor real: con TLS aqui, el
+  # segundo despliegue falla; sin TLS, las dos rutas responden por
+  # HTTPS con un unico certificado de Let's Encrypt.
+  ssl: false
+  # Por eso mismo esta clave es OBLIGATORIA aqui, no una precaucion
+  # decorativa: el valor por omision de forward_headers es `true`
+  # cuando ssl es false, y entonces kamal-proxy conserva el
+  # X-Forwarded-For que mande el cliente. Medido: con el default, un
+  # `curl -H "X-Forwarded-For: 1.2.3.4"` llega como
+  # "1.2.3.4, <ip real>"; con false, llega solo la IP real.
   forward_headers: false
   host: crearcodecesar.com
   path_prefixes:

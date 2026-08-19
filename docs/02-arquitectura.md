@@ -505,6 +505,20 @@ Y el backend recibió `GET /api/ping HTTP/1.1` —la ruta entera, no
   alternativa que se descartó (Caddy proxyando `/api` hacia la URL
   pública) pasaba dos veces por kamal-proxy y aplanaba todas las IPs en
   una: el mismo bug, reintroducido por la vía del despliegue.
+- **El TLS lo declara solo el servicio de la raíz.** kamal-proxy rechaza
+  el despliegue de un servicio con prefijo de ruta que traiga TLS
+  (*"TLS settings must be specified on the root path service"*), así que
+  `deploy.api.yml` va con `ssl: false` y se cuelga del certificado que
+  pide el sitio. Un solo certificado de Let's Encrypt cubre las dos
+  rutas, verificado sobre un host de prueba real.
+- **Por eso `forward_headers: false` es obligatorio en la API**, no una
+  precaución de estilo: ese valor por omisión es `true` cuando `ssl` es
+  `false`, y entonces kamal-proxy conserva el `X-Forwarded-For` que
+  mande el cliente. Medido: con el default, `curl -H "X-Forwarded-For:
+  1.2.3.4"` llega como `1.2.3.4, <ip real>`; con `false`, llega solo la
+  IP real. Con `native`, Tomcat lee la cadena de derecha a izquierda y
+  en ambos casos aterrizaría en la IP real —el ataque directo no
+  prospera— pero un único valor no deja lugar a interpretaciones.
 - **Cero cambios en Java.** `/actuator/health` sigue donde estaba, así
   que el matcher literal de `SecurityConfig` sigue valiendo.
 - El 301 de `www` al dominio raíz lo hace **Caddy**. El binario de

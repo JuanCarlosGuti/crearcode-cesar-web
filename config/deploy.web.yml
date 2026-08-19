@@ -14,10 +14,15 @@ ssh:
   user: deploy
 
 proxy:
+  # El TLS del host lo pide ESTE servicio, el de la raiz: kamal-proxy
+  # solo lo acepta aqui y lo rechaza en el que lleva prefijo de ruta
+  # (ver config/deploy.api.yml). El certificado que emite cubre tambien
+  # las peticiones que acaban en el backend.
   ssl: true
-  # Declarado igual que en la API aunque aqui pese menos: si la clave
-  # apareciera en un archivo y no en el otro, el siguiente que los
-  # compare tendria que averiguar si la diferencia es intencional.
+  # Redundante con ssl: true, que ya lo deja en false. Se declara igual
+  # para que los dos archivos se lean iguales: en la API no es
+  # redundante sino imprescindible, y una clave que aparece en uno y no
+  # en otro obliga a averiguar si la diferencia es intencional.
   forward_headers: false
   hosts:
     - crearcodecesar.com
