@@ -3,6 +3,19 @@
 # Se lleva todo el host menos lo que empieza por /api y /actuator, que
 # kamal-proxy entrega al backend (config/deploy.api.yml). Este archivo
 # no declara prefijos justamente por eso: es el que recoge el resto.
+#
+# ESTE SE DESPLIEGA PRIMERO, siempre. El certificado del host solo lo
+# puede pedir el servicio de la raiz, que es este; si el backend fuera
+# primero contra un host vacio, su ruta quedaria registrada pero sin
+# quien pidiera el certificado, y /api se serviria sin HTTPS hasta que
+# llegara el sitio. Estrictamente solo importa en el primer despliegue,
+# pero se deja fijo para no tener que acordarse de cuando aplicaba.
+#
+# Ojo: es al reves que en UparYa, donde la API va primero porque su
+# frontend la necesita para renderizar. Aqui el sitio es estatico y no
+# llama a la API para pintarse, asi que manda la restriccion del TLS.
+# Copiar el orden de UparYa por inercia deja el primer despliegue sin
+# certificado.
 service: crearcodecesar-web
 image: juancarlosguti/crearcodecesar-web
 
