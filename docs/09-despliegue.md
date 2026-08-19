@@ -481,6 +481,113 @@ configurables por variables `RATE_LIMIT_*` (ver
 `application.properties`) — útiles para relajarlos al correr la suite
 e2e varias veces seguidas en local, nunca en producción.
 
+## 9. Corte al servidor propio (ADR-13)
+
+**El corte a Static Site de Render (§7 bis) queda cancelado**: su única
+razón era servir de respaldo durante una semana de convivencia, y esa
+semana no aplica aquí. El sitio no tiene visitantes todavía — solo lo
+ha usado el propio equipo—, así que se va directo al dominio real.
+
+Todo el código está listo y verificado. Lo que sigue son acciones que
+solo puede hacer el usuario, en este orden.
+
+### Paso 1 — Base de datos en el servidor
+
+Rol y base propios en el PostgreSQL compartido, **nunca el
+superusuario**, con el patrón del runbook de infraestructura. La
+contraseña se genera y se carga en el mismo comando: no pasa por
+ningún chat.
+
+Se comprueba antes de seguir que un contenedor de la red `kamal`
+autentica de verdad contra esa base.
+
+### Paso 2 — Los nueve secretos del repositorio
+
+En GitHub → Settings → Secrets and variables → Actions:
+
+| Secreto | De dónde sale |
+|---|---|
+| `SSH_PRIVATE_KEY` | La llave `id_crearcode`, la misma de los otros repos |
+| `DB_PASSWORD` | La generada en el paso 1 |
+| `ADMIN_USERNAME` | Correo válido, elegido por el usuario (ADR-08) |
+| `ADMIN_PASSWORD` | Generada, larga |
+| `JWT_SECRET` | Generado, mínimo 32 bytes |
+| `MAIL_PASSWORD` | API key de Resend — **rotar antes de cargarla** |
+| `GROQ_API_KEY` | **Rotar antes de cargarla** |
+| `CLOUDFLARE_ACCOUNT_ID` | Identificador, no se rota |
+| `CLOUDFLARE_API_TOKEN` | **Rotar antes de cargarlo** |
+
+`KAMAL_REGISTRY_PASSWORD` **no se crea**: el workflow lo toma de
+`${{ secrets.GITHUB_TOKEN }}`, que GitHub genera y caduca en cada
+ejecución. La línea sí tiene que estar en `.kamal/secrets`, porque es
+como Kamal resuelve el nombre.
+
+`ADMIN_USERNAME` y `ADMIN_PASSWORD` no son relleno: con la base vacía,
+`SembradorDeUsuarioAdmin` crea el usuario en el primer arranque con
+esos valores exactos. Son las credenciales reales del panel; se guardan
+en el gestor de contraseñas en el mismo momento en que se generan.
+
+### Paso 3 — DNS antes que despliegue
+
+El orden es este y no el contrario: `kamal-proxy` pide el certificado
+por validación HTTP, que **solo funciona cuando el DNS ya apunta al
+servidor**. Desplegar antes deja al proxy reintentando contra Let's
+Encrypt, que limita a **5 validaciones fallidas por hostname y hora** —
+se gasta la cuota justo antes de necesitarla.
+
+En Cloudflare, todo en **DNS only** (nube gris):
+
+| Nombre | Tipo | Valor |
+|---|---|---|
+| `@` | A | `159.195.235.225` (**hoy es un CNAME** a onrender.com: borrar y crear) |
+| `www` | A | `159.195.235.225` (**hoy es un CNAME**: borrar y crear) |
+
+Entre este paso y el siguiente el dominio da error: sin visitantes, es
+irrelevante.
+
+### Paso 4 — Activar el despliegue
+
+Crear la variable **`DESPLIEGUE_SERVIDOR_PROPIO` = `true`** (Settings →
+Secrets and variables → Actions → **Variables**, no Secrets) y relanzar
+el último workflow.
+
+Esa variable existe porque, sin ella, el job se habría activado en el
+mismo commit que lo introdujo: el despliegue del sitio no necesita más
+secreto que el `GITHUB_TOKEN`, así que habría funcionado y habría
+pedido certificado para un dominio que aún apuntaba a Render. Después
+del corte queda como freno de mano: borrarla detiene los despliegues
+sin tocar código.
+
+**El sitio se despliega antes que la API**, y el workflow ya lo hace en
+ese orden: el certificado del host solo lo puede pedir el servicio que
+sirve la raíz. Es al revés que en UparYa.
+
+### Paso 5 — Verificar
+
+1. `npm run verificar:servido https://crearcodecesar.com` — las 29
+   rutas, el 404 real y el 301 de `www`.
+2. Formulario de contacto de punta a punta: prueba el enrutado de
+   `/api` y que llegue el correo.
+3. `curl -sI https://crearcodecesar.com | grep -i strict` — HSTS.
+4. **ISS-136, la prueba que de verdad cierra el asunto**: agotar el
+   rate limit de un endpoint de `/api` desde un equipo y pedir el mismo
+   endpoint **desde otra red** (un teléfono con datos móviles, no el
+   mismo wifi). Si el segundo responde, cada visitante tiene su propia
+   IP. Si también está bloqueado, el `X-Forwarded-For` no está
+   llegando. No hace falta leer cabeceras ni logs.
+
+### Paso 6 — Apagar Render
+
+Solo cuando lo anterior esté verde. Y **antes de apagarlo**, revocar
+las credenciales viejas que se rotaron en el paso 2.
+
+Queda pendiente, y no bloquea el corte porque hoy todos los datos son
+de prueba: **copias de seguridad del PostgreSQL compartido** (hoy no
+existen, para ningún proyecto del servidor) y un **monitor de
+disponibilidad externo**. Ambas cosas tienen que estar antes de que el
+sitio salga al mercado, porque a partir de ahí hay datos personales de
+terceros y una política de tratamiento publicada.
+
 ## Fuentes consultadas (jul 2026)
 
 - [Render Pricing](https://render.com/pricing)
