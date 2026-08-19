@@ -1,0 +1,106 @@
+# Backend (Spring Boot) en el servidor propio — ADR-13.
+#
+# Comparte el host crearcodecesar.com con el sitio: kamal-proxy le
+# entrega lo que empieza por /api y /actuator, y el resto va al sitio.
+# Asi el navegador sigue viendo un solo origen y el proyecto sigue sin
+# necesitar CORS (ADR-09), pero con UN SOLO salto de proxy — que es lo
+# que hace que la IP real del visitante llegue hasta aca.
+#
+# Comprobado a mano contra el kamal-proxy real (12 ago 2026): dos apps
+# comparten host repartiendose por prefijo, la ruta llega entera, y
+# redesplegar una no toca las rutas de la otra.
+service: crearcodecesar-api
+image: juancarlosguti/crearcodecesar-api
+
+servers:
+  web:
+    - 159.195.235.225
+
+# El acceso por root esta deshabilitado en el servidor.
+ssh:
+  user: deploy
+
+proxy:
+  ssl: true
+  # Explicito y no por omision a proposito. El valor por defecto de
+  # forward_headers depende de `ssl`: si algun dia alguien toca ssl, el
+  # comportamiento seguro se invertiria solo y sin ruido, y cualquiera
+  # podria falsificar su IP en la cabecera. Con esto, kamal-proxy
+  # descarta el X-Forwarded-For del cliente y escribe el suyo.
+  forward_headers: false
+  host: crearcodecesar.com
+  path_prefixes:
+    - /api
+    - /actuator
+  # Por omision Kamal QUITA el prefijo, y /api/solicitudes llegaria al
+  # backend como /solicitudes.
+  strip_path_prefix: false
+  app_port: 8080
+  healthcheck:
+    # Sin prefijo: el healthcheck va contra el contenedor directamente y
+    # NO aplica path_prefixes (comprobado con control negativo). El
+    # actuator se queda donde siempre, asi que el matcher literal de
+    # SecurityConfig sigue valiendo y no se toca codigo.
+    path: /actuator/health
+    interval: 5
+    timeout: 10
+
+# Primer despliegue: arranque de JVM + contexto de Spring + Flyway sobre
+# una base vacia, en una maquina compartida. Despues del primero, leer
+# el tiempo real del log y dejarlo en unas tres veces eso: un timeout
+# alto solo sirve para tardar mas en enterarse de que algo esta roto.
+deploy_timeout: 300
+
+registry:
+  server: ghcr.io
+  username: juancarlosguti
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+builder:
+  arch: amd64
+  context: backend
+  dockerfile: backend/Dockerfile
+  cache:
+    type: registry
+    options: mode=max
+    image: juancarlosguti/crearcodecesar-api-build-cache
+
+env:
+  clear:
+    # PostgreSQL compartido del servidor, con base y rol propios. No
+    # esta publicado al host: solo se alcanza desde las redes de Docker.
+    DB_URL: jdbc:postgresql://postgres:5432/crearcodecesar
+    DB_USER: crearcodecesar
+    # Base de los enlaces de los correos de verificacion/recuperacion.
+    FRONTEND_URL: https://crearcodecesar.com
+    # Ahora que hay un solo salto de proxy, Tomcat puede reescribir la
+    # IP del cliente desde X-Forwarded-For y el rate limit vuelve a
+    # distinguir visitantes (ISS-136). Ver application.properties.
+    #
+    # Correo por Resend. 2587 y no 587 porque Render bloqueaba los
+    # puertos SMTP clasicos; se mantiene porque funciona en cualquier
+    # proveedor y Netcup tambien suele bloquearlos.
+    MAIL_HOST: smtp.resend.com
+    MAIL_USERNAME: resend
+    MAIL_PORT: "2587"
+    MAIL_FROM: Crear Code Cesar <contacto@crearcodecesar.com>
+    MAIL_REPLY_TO: contacto@crearcodecesar.com
+    MAIL_SMTP_AUTH: "true"
+    MAIL_SMTP_STARTTLS: "true"
+    # Demo de diseno: Cloudflare Workers AI con respaldo a Pollinations.
+    DEMO_PROVEEDOR_IMAGENES: cloudflare
+    # Techo anti-abuso global del asistente. Se puede bajar cuando
+    # ISS-136 este verificado en produccion y el limite vuelva a ser por
+    # IP real: este valor alto existia porque todos compartian la IP del
+    # proxy.
+    RATE_LIMIT_ASISTENTE_MAX_INTENTOS: "600"
+  secret:
+    - DB_PASSWORD
+    - ADMIN_USERNAME
+    - ADMIN_PASSWORD
+    - JWT_SECRET
+    - MAIL_PASSWORD
+    - GROQ_API_KEY
+    - CLOUDFLARE_ACCOUNT_ID
+    - CLOUDFLARE_API_TOKEN

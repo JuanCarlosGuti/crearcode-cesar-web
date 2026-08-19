@@ -1,0 +1,54 @@
+# Sitio (Angular prerenderizado servido por Caddy) — ADR-13.
+#
+# Se lleva todo el host menos lo que empieza por /api y /actuator, que
+# kamal-proxy entrega al backend (config/deploy.api.yml). Este archivo
+# no declara prefijos justamente por eso: es el que recoge el resto.
+service: crearcodecesar-web
+image: juancarlosguti/crearcodecesar-web
+
+servers:
+  web:
+    - 159.195.235.225
+
+ssh:
+  user: deploy
+
+proxy:
+  ssl: true
+  # Declarado igual que en la API aunque aqui pese menos: si la clave
+  # apareciera en un archivo y no en el otro, el siguiente que los
+  # compare tendria que averiguar si la diferencia es intencional.
+  forward_headers: false
+  hosts:
+    - crearcodecesar.com
+    - www.crearcodecesar.com
+  app_port: 8080
+  healthcheck:
+    # La responde el propio Caddyfile con un 200 fijo, para no depender
+    # de que exista una ruta de la aplicacion.
+    path: /up
+    interval: 5
+    timeout: 10
+
+# Caddy arranca en milisegundos; lo que tarda es descargar la imagen.
+deploy_timeout: 60
+
+registry:
+  server: ghcr.io
+  username: juancarlosguti
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+builder:
+  arch: amd64
+  context: frontend
+  dockerfile: frontend/Dockerfile
+  cache:
+    type: registry
+    options: mode=max
+    image: juancarlosguti/crearcodecesar-web-build-cache
+
+# Sin variables de entorno: el sitio es estatico y no habla con nadie.
+# La URL del backend no aparece por ningun lado porque el navegador pide
+# /api al mismo host (ADR-09) y de ahi en adelante es cosa de
+# kamal-proxy. El 301 de www al dominio raiz lo hace el Caddyfile.
