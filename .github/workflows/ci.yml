@@ -195,3 +195,123 @@ jobs:
       - name: Logs del backend (si el e2e falla)
         if: failure()
         run: cat /tmp/backend.log
+
+  desplegar:
+    name: Desplegar al servidor propio (Kamal)
+    # El gate: el despliegue cuelga de TODAS las pruebas. Por esto el
+    # despliegue vive en este workflow y no en uno aparte — `needs:` no
+    # cruza workflows, y partirlo obligaria a duplicar las pruebas o a
+    # dejar el despliegue sin condicion, que es la propiedad que menos
+    # conviene perder: no se nota hasta el dia que sale algo roto en
+    # verde.
+    needs: [backend, frontend, docker-build, e2e]
+    # La variable DESPLIEGUE_SERVIDOR_PROPIO es el interruptor del
+    # corte, y no sobra: sin ella este job se activaria en el mismo push
+    # que lo introduce. El despliegue del sitio no necesita mas secreto
+    # que el GITHUB_TOKEN de la ejecucion, asi que funcionaria — y
+    # registraria crearcodecesar.com en kamal-proxy pidiendo certificado
+    # para un dominio que todavia apunta a Render. Let's Encrypt limita
+    # a 5 validaciones fallidas por hostname y hora, asi que ese
+    # accidente no solo falla: gasta la cuota que hace falta el dia del
+    # corte de verdad.
+    #
+    # Se crea en Settings -> Secrets and variables -> Actions ->
+    # Variables, con valor "true", el dia que el DNS ya apunte al
+    # servidor. Mientras no exista, el job se salta (no falla). Y sirve
+    # despues como freno de mano: borrarla detiene los despliegues sin
+    # tocar codigo.
+    if: >-
+      github.event_name == 'push' && github.ref == 'refs/heads/master'
+      && vars.DESPLIEGUE_SERVIDOR_PROPIO == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # Para publicar las imagenes en GHCR con el GITHUB_TOKEN de la
+      # ejecucion. No hace falta crear ningun secreto para esto.
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Sin esto solo viene un commit y el diff de abajo falla.
+          fetch-depth: 0
+
+      - name: Detectar que cambio en este push
+        id: cambios
+        run: |
+          BASE="${{ github.event.before }}"
+
+          # Rama nueva, force-push o historial recortado: se despliega
+          # todo, que es el lado seguro.
+          if [ -z "$BASE" ] || ! git rev-parse --verify "$BASE^{commit}" >/dev/null 2>&1; then
+            echo "api=true" >> "$GITHUB_OUTPUT"
+            echo "web=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "Cambiaron:"
+          git diff --name-only "$BASE" "${{ github.sha }}"
+
+          # Por exclusion y no por lista de patrones: solo se OMITE un
+          # despliegue cuando TODOS los cambios caen dentro del otro
+          # proyecto. Lo ambiguo (la raiz, docs, config/, el propio
+          # workflow) despliega los dos.
+          #
+          # La direccion del fallo es lo que importa: con una lista de
+          # patrones, un archivo en una ruta que nadie listo no dispara
+          # nada, el servidor se queda con la version vieja y ningun
+          # paso sale en rojo. Un despliegue que no ocurre y no avisa es
+          # peor que uno de mas.
+          SOLO_FRONT=true
+          SOLO_BACK=true
+          while IFS= read -r archivo; do
+            case "$archivo" in
+              frontend/*) SOLO_BACK=false ;;
+              backend/*)  SOLO_FRONT=false ;;
+              *)          SOLO_FRONT=false; SOLO_BACK=false ;;
+            esac
+          done < <(git diff --name-only "$BASE" "${{ github.sha }}")
+
+          if [ "$SOLO_FRONT" = true ]; then echo "api=false" >> "$GITHUB_OUTPUT"; else echo "api=true" >> "$GITHUB_OUTPUT"; fi
+          if [ "$SOLO_BACK"  = true ]; then echo "web=false" >> "$GITHUB_OUTPUT"; else echo "web=true" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Preparar la llave del servidor
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          # Sin -H y solo ed25519: las entradas con hash y de varios
+          # tipos hacen que Net::SSH (el cliente Ruby de Kamal) falle
+          # con HostKeyMismatch.
+          ssh-keyscan -t ed25519 159.195.235.225 >> ~/.ssh/known_hosts
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+
+      - name: Instalar Kamal
+        run: gem install kamal -v "~> 2.0"
+
+      - uses: docker/setup-buildx-action@v3
+
+      # EL SITIO PRIMERO, siempre. El certificado del host solo lo puede
+      # pedir el servicio de la raiz — ver el comentario que encabeza
+      # config/deploy.web.yml. Es al reves que en UparYa.
+      - name: Desplegar el sitio
+        if: steps.cambios.outputs.web == 'true'
+        env:
+          KAMAL_REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+        run: kamal deploy -c config/deploy.web.yml
+
+      - name: Desplegar la API
+        if: steps.cambios.outputs.api == 'true'
+        env:
+          KAMAL_REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+          MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: kamal deploy -c config/deploy.api.yml
