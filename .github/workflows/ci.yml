@@ -217,9 +217,13 @@ jobs:
     #
     # Se crea en Settings -> Secrets and variables -> Actions ->
     # Variables, con valor "true", el dia que el DNS ya apunte al
-    # servidor. Mientras no exista, el job se salta (no falla). Y sirve
-    # despues como freno de mano: borrarla detiene los despliegues sin
-    # tocar codigo.
+    # servidor. Mientras no exista, el job se salta (no falla).
+    #
+    # ANDAMIO, NO ESTRUCTURA: cuando el sitio lleve unos dias estable,
+    # QUITAR estas dos lineas. Dejar la variable para siempre convierte
+    # un despliegue omitido en un run verde donde no paso nada, y quien
+    # mire de pasada asume que desplego. Para parar despliegues en
+    # caliente esta "Disable workflow", que se ve en la interfaz.
     if: >-
       github.event_name == 'push' && github.ref == 'refs/heads/master'
       && vars.DESPLIEGUE_SERVIDOR_PROPIO == 'true'

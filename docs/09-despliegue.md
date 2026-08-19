@@ -535,7 +535,11 @@ servidor**. Desplegar antes deja al proxy reintentando contra Let's
 Encrypt, que limita a **5 validaciones fallidas por hostname y hora** —
 se gasta la cuota justo antes de necesitarla.
 
-En Cloudflare, todo en **DNS only** (nube gris):
+El DNS de `crearcodecesar.com` está en **Cloudflare** — el de
+`uparya.co` está en Namecheap, así que son paneles distintos y buscar
+los registros en el equivocado es tiempo perdido.
+
+Todo en **DNS only** (nube gris):
 
 | Nombre | Tipo | Valor |
 |---|---|---|
@@ -554,9 +558,15 @@ el último workflow.
 Esa variable existe porque, sin ella, el job se habría activado en el
 mismo commit que lo introdujo: el despliegue del sitio no necesita más
 secreto que el `GITHUB_TOKEN`, así que habría funcionado y habría
-pedido certificado para un dominio que aún apuntaba a Render. Después
-del corte queda como freno de mano: borrarla detiene los despliegues
-sin tocar código.
+pedido certificado para un dominio que aún apuntaba a Render.
+
+**Es andamio, no estructura: cuando el sitio lleve unos días estable,
+se quita la condición del workflow** en vez de dejar la variable
+puesta para siempre. Un job que se salta por una variable ausente
+produce un run **verde en el que no pasó nada** — quien mire de pasada
+asume que desplegó. Para parar despliegues en caliente está *Actions →
+el workflow → Disable workflow*, que se ve en la interfaz y no deja
+estado escondido.
 
 **El sitio se despliega antes que la API**, y el workflow ya lo hace en
 ese orden: el certificado del host solo lo puede pedir el servicio que
@@ -576,10 +586,19 @@ sirve la raíz. Es al revés que en UparYa.
    IP. Si también está bloqueado, el `X-Forwarded-For` no está
    llegando. No hace falta leer cabeceras ni logs.
 
-### Paso 6 — Apagar Render
+### Paso 6 — Apagar Render y limpiar lo que queda muerto
 
 Solo cuando lo anterior esté verde. Y **antes de apagarlo**, revocar
 las credenciales viejas que se rotaron en el paso 2.
+
+Con Render apagado quedan dos cosas en el repo que ya no prueban nada y
+hay que quitar en el mismo cambio:
+
+- `render.yaml` y el paso de CI `npm run verificar:rutas`, que valida
+  sus reglas. Un test verde que no prueba nada es peor que no tenerlo:
+  la verificación real pasa a ser `verificar-rutas-servidas.mjs` sobre
+  la imagen con Caddy, que ya corre en el job de Docker.
+- La condición `DESPLIEGUE_SERVIDOR_PROPIO` del workflow (ver paso 4).
 
 Queda pendiente, y no bloquea el corte porque hoy todos los datos son
 de prueba: **copias de seguridad del PostgreSQL compartido** (hoy no
