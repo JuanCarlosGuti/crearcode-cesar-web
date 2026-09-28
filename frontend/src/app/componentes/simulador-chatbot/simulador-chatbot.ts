@@ -3,6 +3,9 @@ import { isPlatformBrowser } from '@angular/common';
 import { Component, PLATFORM_ID, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+import { mensajeWhatsappParaRuta } from '../../layout/mensaje-whatsapp-por-ruta';
+import { WhatsappCta } from '../whatsapp-cta/whatsapp-cta';
+
 import { SIMULADOR } from '../../../contenido/simulador';
 import { MensajeEnviado } from '../../api/asistente-api';
 import { SimuladorApi } from '../../api/simulador-api';
@@ -28,11 +31,14 @@ const MAXIMO_MENSAJES_ENVIADOS = 20;
   selector: 'app-simulador-chatbot',
   templateUrl: './simulador-chatbot.html',
   styleUrl: './simulador-chatbot.scss',
-  imports: [RouterLink],
+  imports: [RouterLink, WhatsappCta],
 })
 export class SimuladorChatbot {
   // Aviso de privacidad de la IA (auditoria 28 sep 2026, §11).
   protected readonly avisoIa = AVISO_IA;
+  // La salida humana cuando el simulador no responde: el texto ya la
+  // invitaba, pero no habia enlace donde pulsar (auditoria P0-1d).
+  protected readonly mensajeWhatsapp = mensajeWhatsappParaRuta('/herramientas');
   private readonly api = inject(SimuladorApi);
   private readonly esNavegador = isPlatformBrowser(inject(PLATFORM_ID));
 

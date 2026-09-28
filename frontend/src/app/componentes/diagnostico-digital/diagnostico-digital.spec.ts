@@ -132,6 +132,20 @@ describe('DiagnosticoDigital (F10c, HU-41)', () => {
     expect(el.textContent).toContain(DIAGNOSTICO.preguntas[0].pregunta);
     expect(el.textContent).toContain('1 de 6');
   });
+  it('cuando el proveedor se cae ofrece un enlace de WhatsApp, no solo la invitacion escrita (P0-1d)', async () => {
+    const { fixture, el } = await crear();
+    await responderTodo(fixture);
+
+    httpMock.expectOne('/api/asistente/diagnostico').flush('error', {
+      status: 503,
+      statusText: 'Service Unavailable',
+    });
+    await fixture.whenStable();
+
+    const aviso = el.querySelector('.diagnostico-aviso') as HTMLElement;
+    expect(aviso.querySelector('a[href^="https://wa.me/"]')).not.toBeNull();
+  });
+
   it('avisa que el texto se procesa con un proveedor de IA externo y no admite datos de clientes (auditoria §11)', async () => {
     const { el } = await crear();
     expect(el.textContent).toContain(AVISO_IA);

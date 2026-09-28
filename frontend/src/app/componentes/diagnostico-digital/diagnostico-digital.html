@@ -68,11 +68,13 @@
         <p>{{ textos.limiteRegistrado }}</p>
       } @else if (codigo === 'limite-global') {
         <p>{{ textos.cupoAgotado }}</p>
+        <app-whatsapp-cta [mensaje]="mensajeWhatsapp" [etiqueta]="textos.ctaWhatsapp" />
       } @else {
         <p>{{ textos.noDisponible }}</p>
         <button type="button" class="boton boton-primario diagnostico-reintentar" (click)="reintentar()">
           Reintentar
         </button>
+        <app-whatsapp-cta [mensaje]="mensajeWhatsapp" [etiqueta]="textos.ctaWhatsapp" />
       }
       <button type="button" class="diagnostico-reiniciar" (click)="reiniciar()">
         {{ textos.reiniciar }}

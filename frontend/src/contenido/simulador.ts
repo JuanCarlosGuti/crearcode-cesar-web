@@ -25,6 +25,7 @@ export const SIMULADOR = {
   limiteRegistrado: 'Ya usaste tus mensajes de hoy. Vuelve mañana y seguimos la conversación.',
   noDisponible:
     'El simulador no está respondiendo en este momento. No perdiste ningún mensaje ni te descuenta intentos. Escríbenos por WhatsApp y te contamos cómo sería tu bot.',
+  ctaWhatsapp: 'Escríbenos por WhatsApp',
   cupoAgotado:
     'Hoy ya se agotó el cupo del simulador. Vuelve mañana o escríbenos por WhatsApp y te contamos cómo sería tu bot.',
   notaDemo:
