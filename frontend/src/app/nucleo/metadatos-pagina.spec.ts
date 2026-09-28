@@ -35,6 +35,20 @@ describe('establecerMetadatosDePagina', () => {
     expect(meta.getTag('property="og:image"')?.content).toBe('https://crearcodecesar.com/imagenes/og-defecto.jpg');
   });
 
+  it('declara idioma, nombre del sitio y tarjeta de Twitter para que WhatsApp y LinkedIn previsualicen bien (auditoria SEO)', async () => {
+    const fixture = TestBed.createComponent(AnfitrionDePrueba);
+    fixture.componentInstance.datos.set({ titulo: 'Título', descripcion: 'Descripción', ruta: '/contacto' });
+    await fixture.whenStable();
+
+    const meta = TestBed.inject(Meta);
+    expect(meta.getTag('property="og:locale"')?.content).toBe('es_CO');
+    expect(meta.getTag('property="og:site_name"')?.content).toBe('Crear Code Cesar');
+    expect(meta.getTag('name="twitter:card"')?.content).toBe('summary_large_image');
+    expect(meta.getTag('name="twitter:title"')?.content).toBe('Título');
+    expect(meta.getTag('name="twitter:description"')?.content).toBe('Descripción');
+    expect(meta.getTag('name="twitter:image"')?.content).toBe('https://crearcodecesar.com/imagenes/og-defecto.jpg');
+  });
+
   it('emite el link canonical con el dominio canonico (ADR-11)', async () => {
     const fixture = TestBed.createComponent(AnfitrionDePrueba);
     fixture.componentInstance.datos.set({ titulo: 'Título', descripcion: 'Descripción', ruta: '/herramientas' });

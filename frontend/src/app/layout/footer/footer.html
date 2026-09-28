@@ -2,7 +2,8 @@
   <div class="contenedor pie__contenido">
     <div class="pie__columna">
       <h2 class="pie__titulo">{{ empresa.razonSocial }}</h2>
-      <p>{{ empresa.ciudad }}</p>
+      <p>NIT {{ empresa.nit }}</p>
+      <p>{{ empresa.direccion }}<br />{{ empresa.ciudad }}</p>
       <!-- Enlaces y no texto plano: en movil abren la app con un toque
            (QA11 de la auditoria). El de WhatsApp lleva el mismo mensaje
            contextual que el boton, para no partir la intencion en dos. -->

@@ -6,7 +6,7 @@
  */
 
 export const METADATOS_HOME = {
-  titulo: 'Crear Code Cesar — Software a la medida, IA y soluciones tecnológicas para pymes',
+  titulo: 'Crear Code Cesar — Software a la medida e IA para pymes',
   descripcion:
     'Desarrollo de software a la medida, automatización con inteligencia artificial y soluciones tecnológicas para pymes colombianas. Valledupar, Cesar — alcance nacional.',
 };

@@ -36,7 +36,17 @@ export function establecerMetadatosDePagina(datos: () => MetadatosDePagina | und
     meta.updateTag({ property: 'og:title', content: valores.titulo });
     meta.updateTag({ property: 'og:description', content: valores.descripcion });
     meta.updateTag({ property: 'og:url', content: `${BASE_URL}${valores.ruta}` });
-    meta.updateTag({ property: 'og:image', content: `${BASE_URL}${valores.imagen ?? IMAGEN_OG_DEFECTO}` });
+    const imagen = `${BASE_URL}${valores.imagen ?? IMAGEN_OG_DEFECTO}`;
+    meta.updateTag({ property: 'og:image', content: imagen });
+    // Idioma, nombre del sitio y tarjeta de Twitter: sin ellos WhatsApp
+    // y LinkedIn arman la previsualizacion con lo que adivinan
+    // (auditoria SEO del 28 sep 2026).
+    meta.updateTag({ property: 'og:locale', content: 'es_CO' });
+    meta.updateTag({ property: 'og:site_name', content: 'Crear Code Cesar' });
+    meta.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
+    meta.updateTag({ name: 'twitter:title', content: valores.titulo });
+    meta.updateTag({ name: 'twitter:description', content: valores.descripcion });
+    meta.updateTag({ name: 'twitter:image', content: imagen });
 
     // Canonical (ADR-11): Meta de Angular solo maneja <meta>, así que el
     // <link rel="canonical"> se crea/actualiza directo en el documento.

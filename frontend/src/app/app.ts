@@ -6,6 +6,7 @@ import { filter, map } from 'rxjs';
 import { ChatAsistente } from './componentes/chat-asistente/chat-asistente';
 import { Footer } from './layout/footer/footer';
 import { Header } from './layout/header/header';
+import { establecerDatosEstructuradosDeLaEmpresa } from './nucleo/datos-estructurados';
 
 @Component({
   selector: 'app-root',
@@ -27,4 +28,10 @@ export class App {
   // sitio publico: es una seccion distinta de la app, no una pagina de
   // contenido mas (ver ADR-08 en docs/02-arquitectura.md).
   protected readonly esRutaAdmin = computed(() => this.urlActual().startsWith('/admin'));
+
+  constructor() {
+    // Datos de la empresa para buscadores, una vez por documento: se
+    // hornean en el prerender de las 20 paginas publicas.
+    establecerDatosEstructuradosDeLaEmpresa();
+  }
 }

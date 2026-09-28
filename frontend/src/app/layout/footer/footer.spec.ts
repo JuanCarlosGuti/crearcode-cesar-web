@@ -30,6 +30,11 @@ describe('Footer', () => {
     expect(texto).toContain('Valledupar');
     expect(texto).toContain('323 988 5883');
     expect(texto).toContain(CORREO_CORPORATIVO);
+    // NAP completo (nombre, direccion, telefono) en el pie: hasta la
+    // auditoria del 28 sep 2026 la direccion y el NIT solo salian en el
+    // PDF de cotizaciones, y el SEO local los necesita en el sitio.
+    expect(texto).toContain('Calle 4B # 20-36');
+    expect(texto).toContain('NIT 901941017-0');
   });
 
   it('el numero de WhatsApp y el correo son enlaces, no texto plano (auditoria QA11)', async () => {
