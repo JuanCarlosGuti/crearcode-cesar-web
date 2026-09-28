@@ -1,8 +1,10 @@
 package com.crearcode.leads.infraestructura.rest;
 
 import com.crearcode.leads.dominio.ServicioDeInteres;
+import com.crearcode.leads.dominio.SolicitudDeContacto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import jakarta.validation.constraints.NotNull;
 
 public record SolicitudRequest(
@@ -11,7 +13,9 @@ public record SolicitudRequest(
 		@NotBlank(message = "El correo es obligatorio") String correo,
 		@NotBlank(message = "El teléfono es obligatorio") String telefono,
 		@NotNull(message = "El servicio de interés es obligatorio") ServicioDeInteres servicioDeInteres,
-		@NotBlank(message = "El mensaje es obligatorio") String mensaje,
+		@NotBlank(message = "El mensaje es obligatorio") @Size(max = SolicitudDeContacto.MAXIMO_CARACTERES_MENSAJE,
+				message = "El mensaje no puede superar los " + SolicitudDeContacto.MAXIMO_CARACTERES_MENSAJE
+						+ " caracteres") String mensaje,
 		boolean aceptaConsentimiento,
 		/**
 		 * Campo honeypot: oculto para personas en el formulario público, sin

@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { FormField, required, pattern, schema, form, validate } from '@angular/forms/signals';
+import { FormField, required, pattern, schema, form, validate, maxLength } from '@angular/forms/signals';
 
 import { SolicitudesApi } from '../../api/solicitudes-api';
 import { WhatsappCta } from '../../componentes/whatsapp-cta/whatsapp-cta';
@@ -35,6 +35,11 @@ export const MENSAJE_ERROR_CORREO = 'Escribe un correo válido, ej. nombre@empre
 export const MENSAJE_ERROR_TELEFONO = 'Escribe un número de celular colombiano válido, ej. 300 123 4567.';
 export const MENSAJE_ERROR_SERVICIO = 'Selecciona el servicio que te interesa.';
 export const MENSAJE_ERROR_MENSAJE = 'Cuéntanos brevemente qué necesitas, así podemos ayudarte mejor.';
+// Espeja SolicitudDeContacto.MAXIMO_CARACTERES_MENSAJE del backend: el
+// servidor rechaza con 400 lo que pase de aqui, asi que el formulario
+// lo dice antes de enviar (QA13 de la auditoria).
+export const MAXIMO_CARACTERES_MENSAJE = 2000;
+export const MENSAJE_ERROR_MENSAJE_LARGO = `El mensaje no puede superar los ${MAXIMO_CARACTERES_MENSAJE} caracteres.`;
 export const MENSAJE_ERROR_CONSENTIMIENTO = 'Necesitamos que aceptes el tratamiento de datos para poder contactarte.';
 
 const ESQUEMA_CONTACTO = schema<DatosFormularioContacto>((campo) => {
@@ -56,6 +61,9 @@ const ESQUEMA_CONTACTO = schema<DatosFormularioContacto>((campo) => {
 
   required(campo.servicioDeInteres, { message: MENSAJE_ERROR_SERVICIO });
   required(campo.mensaje, { message: MENSAJE_ERROR_MENSAJE });
+  // Signal Forms proyecta esta regla como atributo maxlength del textarea
+  // (por eso el template NO lo declara: [formField] lo prohibe).
+  maxLength(campo.mensaje, MAXIMO_CARACTERES_MENSAJE, { message: MENSAJE_ERROR_MENSAJE_LARGO });
   required(campo.aceptaConsentimiento, { message: MENSAJE_ERROR_CONSENTIMIENTO });
 });
 

@@ -60,6 +60,28 @@ class SolicitudDeContactoTest {
 	}
 
 	@Test
+	void aceptaUnMensajeJustoEnElMaximo() {
+		String mensaje = "a".repeat(SolicitudDeContacto.MAXIMO_CARACTERES_MENSAJE);
+
+		SolicitudDeContacto solicitud = SolicitudDeContacto.registrar(
+				DATOS, ServicioDeInteres.OTRO, mensaje, CONSENTIMIENTO_ACEPTADO, Instant.now());
+
+		assertThat(solicitud.mensaje()).hasSize(SolicitudDeContacto.MAXIMO_CARACTERES_MENSAJE);
+	}
+
+	@Test
+	void rechazaUnMensajeMasLargoQueElMaximo() {
+		// Sin tope, la columna TEXT acepta megabytes: un formulario publico
+		// no puede ser una via para llenar la base (QA13 de la auditoria).
+		String mensaje = "a".repeat(SolicitudDeContacto.MAXIMO_CARACTERES_MENSAJE + 1);
+
+		assertThatThrownBy(() -> SolicitudDeContacto.registrar(
+				DATOS, ServicioDeInteres.OTRO, mensaje, CONSENTIMIENTO_ACEPTADO, Instant.now()))
+				.isInstanceOf(DatosDeContactoInvalidosException.class)
+				.hasMessageContaining(String.valueOf(SolicitudDeContacto.MAXIMO_CARACTERES_MENSAJE));
+	}
+
+	@Test
 	void rechazaMensajeVacioOSoloEspacios() {
 		assertThatThrownBy(() -> SolicitudDeContacto.registrar(
 				DATOS, ServicioDeInteres.OTRO, "   ", CONSENTIMIENTO_ACEPTADO, Instant.now()))

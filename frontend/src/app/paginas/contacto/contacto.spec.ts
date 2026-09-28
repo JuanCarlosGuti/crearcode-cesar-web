@@ -120,6 +120,25 @@ describe('ContactoPage', () => {
     expect(el.textContent).toContain('Cuéntanos brevemente qué necesitas, así podemos ayudarte mejor.');
   });
 
+  it('bloquea el envio si el mensaje supera los 2000 caracteres, espejo del tope del dominio (QA13)', async () => {
+    const fixture = TestBed.createComponent(ContactoPage);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+    const textarea = el.querySelector('#mensaje') as HTMLTextAreaElement;
+    // El atributo frena al teclado; el validador frena al pegado y al
+    // envio programatico, que el atributo no cubre.
+    expect(textarea.getAttribute('maxlength')).toBe('2000');
+
+    llenarFormularioValido(el);
+    escribir(textarea, 'x'.repeat(2001));
+    (el.querySelector('form') as HTMLFormElement).requestSubmit();
+    await fixture.whenStable();
+
+    httpMock.expectNone('/api/solicitudes');
+    expect(textarea.getAttribute('aria-invalid')).toBe('true');
+    expect(el.textContent).toContain('2000');
+  });
+
   it('hace desaparecer el error cuando el campo corregido pasa a ser valido', async () => {
     const fixture = TestBed.createComponent(ContactoPage);
     await fixture.whenStable();

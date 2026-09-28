@@ -14,6 +14,14 @@ public final class SolicitudDeContacto {
 	private final SolicitudId id;
 	private final DatosDeContacto datosDeContacto;
 	private final ServicioDeInteres servicioDeInteres;
+	/**
+	 * Tope del mensaje del formulario. La columna es TEXT y sin esto un
+	 * formulario publico acepta megabytes (QA13 de la auditoria del 28
+	 * sep 2026). 2000 caracteres dan para describir un proyecto con
+	 * calma; el frontend espeja el mismo numero.
+	 */
+	public static final int MAXIMO_CARACTERES_MENSAJE = 2000;
+
 	private final String mensaje;
 	private EstadoSolicitud estado;
 	private final ConsentimientoDatos consentimiento;
@@ -42,6 +50,10 @@ public final class SolicitudDeContacto {
 		}
 		if (mensaje == null || mensaje.isBlank()) {
 			throw new DatosDeContactoInvalidosException("El mensaje no puede estar vacío");
+		}
+		if (mensaje.length() > MAXIMO_CARACTERES_MENSAJE) {
+			throw new DatosDeContactoInvalidosException(
+					"El mensaje no puede superar los " + MAXIMO_CARACTERES_MENSAJE + " caracteres");
 		}
 
 		return new SolicitudDeContacto(SolicitudId.nuevo(), datosDeContacto, servicioDeInteres,
