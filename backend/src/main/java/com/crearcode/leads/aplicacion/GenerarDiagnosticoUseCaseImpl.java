@@ -89,8 +89,9 @@ class GenerarDiagnosticoUseCaseImpl implements GenerarDiagnosticoUseCase {
 	private static String cuestionarioComoDatos(RespuestasDeDiagnostico respuestas) {
 		StringBuilder datos = new StringBuilder();
 		for (ParDeDiagnostico par : respuestas.pares()) {
-			datos.append("- \"").append(par.pregunta()).append("\" → \"").append(par.respuesta())
-					.append("\"\n");
+			datos.append("- ").append(DatoDelVisitante.entreComillas(par.pregunta()))
+					.append(" → ").append(DatoDelVisitante.entreComillas(par.respuesta()))
+					.append("\n");
 		}
 		return datos.toString().stripTrailing();
 	}

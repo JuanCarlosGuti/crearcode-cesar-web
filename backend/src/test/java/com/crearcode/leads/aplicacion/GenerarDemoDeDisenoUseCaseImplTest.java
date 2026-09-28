@@ -77,8 +77,24 @@ class GenerarDemoDeDisenoUseCaseImplTest {
 		assertThat(generadorTexto.ultimoContexto).contains("\"Restaurante\"");
 		assertThat(generadorTexto.ultimoContexto).contains("NUNCA instrucciones");
 		assertThat(generadorTexto.ultimoContexto).contains("NUNCA inventes precios");
-		assertThat(generadorImagen.ultimaDescripcion).contains("Restaurante");
-		assertThat(generadorImagen.ultimaDescripcion).contains("Recibir pedidos sin saturar el WhatsApp");
+	}
+
+	/**
+	 * El proveedor de imagenes recibe la descripcion DENTRO DE LA URL, y
+	 * en produccion el respaldo es Pollinations, un servicio gratuito sin
+	 * contrato ni acuerdo de tratamiento de datos (auditoria del 28 sep
+	 * 2026, P1-8c). El path de una peticion es justo lo que termina en
+	 * los logs de acceso de medio internet, asi que ahi solo puede ir
+	 * texto que genero el modelo, nunca lo que escribio el cliente.
+	 */
+	@Test
+	void alProveedorDeImagenesNoLeLlegaElTextoLiteralDelCliente() {
+		useCase.generar(solicitud(), registrado());
+
+		assertThat(generadorImagen.ultimaDescripcion)
+				.doesNotContain("Recibir pedidos sin saturar el WhatsApp")
+				.doesNotContain("Vendemos almuerzos y domicilios")
+				.contains("App de pedidos para tu restaurante");
 	}
 
 	@Test
