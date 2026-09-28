@@ -6,11 +6,9 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.JdkClientHttpRequestFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 
@@ -27,8 +25,13 @@ import com.crearcode.leads.dominio.RolDeMensaje;
  * la señal de escalamiento es el marcador {@code [ESCALAR]} al final
  * de la respuesta (se retira del texto y se expone como bandera).
  * La key viaja solo en el header Authorization — nunca se loguea.
+ *
+ * <p>
+ * No lo instancia Spring por anotación: lo arma
+ * {@link ConfiguracionDeGeneradorDeRespuestas}, que crea el primario y
+ * el respaldo con modelos distintos. Así hay un solo sitio que leer
+ * para saber qué modelo corre, igual que con las imágenes.
  */
-@Component
 class GroqGeneradorDeRespuestasAdapter implements GeneradorDeRespuestas {
 
 	private static final String MARCADOR_ESCALAMIENTO = "[ESCALAR]";
@@ -37,11 +40,7 @@ class GroqGeneradorDeRespuestasAdapter implements GeneradorDeRespuestas {
 	private final String modelo;
 	private final String promptDeSistema;
 
-	GroqGeneradorDeRespuestasAdapter(
-			@Value("${app.asistente.groq.url}") String urlBase,
-			@Value("${app.asistente.groq.key}") String apiKey,
-			@Value("${app.asistente.groq.modelo}") String modelo,
-			@Value("${app.asistente.groq.timeout-segundos}") long timeoutSegundos) {
+	GroqGeneradorDeRespuestasAdapter(String urlBase, String apiKey, String modelo, long timeoutSegundos) {
 		JdkClientHttpRequestFactory fabrica = new JdkClientHttpRequestFactory();
 		fabrica.setReadTimeout(Duration.ofSeconds(timeoutSegundos));
 		this.clienteHttp = RestClient.builder()

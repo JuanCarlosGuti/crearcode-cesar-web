@@ -96,6 +96,11 @@ env:
     MAIL_REPLY_TO: contacto@crearcodecesar.com
     MAIL_SMTP_AUTH: "true"
     MAIL_SMTP_STARTTLS: "true"
+    # Modelo de texto y su respaldo. El 28 sep 2026 Groq retiro el
+    # modelo configurado y las tres herramientas de texto quedaron
+    # caidas cuatro dias: con respaldo, el segundo modelo responde.
+    GROQ_MODELO: openai/gpt-oss-120b
+    GROQ_MODELO_RESPALDO: openai/gpt-oss-20b
     # Demo de diseno: Cloudflare Workers AI con respaldo a Pollinations.
     DEMO_PROVEEDOR_IMAGENES: cloudflare
     # Techo anti-abuso global del asistente. Se puede bajar cuando
