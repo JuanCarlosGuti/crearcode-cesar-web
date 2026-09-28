@@ -70,15 +70,24 @@ marcados con `[...]` cuando el dato aún no existe.
 > acceso anticipado). Los números espejan los defaults de las variables
 > de límites del backend.
 
-**Placeholders honestos (reemplazan a los testimonios ficticios de la
-v1 — regla de honestidad, decisión 13 de docs/10):**
-> **Casos reales de clientes** *(badge "Espacio reservado")*: "Este
-> espacio queda reservado para proyectos verificables, con nombre y
-> resultado autorizados por cada cliente. No publicamos cifras ni
-> testimonios que no podamos sustentar."
-> **El equipo** *(badge "Espacio reservado")*: "Fotos y roles del
-> equipo, con material real. Mientras llega, preferimos este aviso a
-> inventar perfiles."
+**Proyectos y quién está detrás (28 sep 2026).** Tercer estado de este
+espacio: primero fueron testimonios ficticios (v1), luego dos
+placeholders honestos que reservaban el sitio (F10e, decisión 13 de
+docs/10) y ahora contenido real, porque ya hay qué enseñar. El aviso de
+"espacio reservado" dejó de ser honesto el día que existió algo que
+mostrar.
+> **Lo que hemos construido** *(badge "Proyectos propios", enlaza a
+> `/casos`)*: "Todavía no mostramos trabajos de clientes: cuando los
+> haya, irán con su nombre y su permiso. Mientras tanto enseñamos lo
+> que sí se puede abrir y revisar — un directorio de negocios en
+> producción, una plataforma de alojamientos, una pasarela de pagos
+> cripto en desarrollo y una app para estudiar la lengua del pueblo
+> Wiwa."
+> **Juan Carlos Gutiérrez** *(badge "Quién está detrás", enlaza a
+> `/sobre-nosotros`)*: "Administrador de empresas e ingeniero de
+> software backend, con siete años como instructor del SENA. Esa mezcla es la
+> razón por la que aquí se habla de plazos, costos y riesgos, y no solo
+> de tecnología."
 
 **Cierre:**
 > **Cuéntanos qué te está quitando tiempo** — "Media hora por
@@ -364,9 +373,11 @@ verificable.
 > trabajo.
 
 **Perfil del fundador:**
-> Juan Carlos Gutiérrez es arquitecto de software senior y
-> administrador de empresas de la Universidad Nacional, con 7 años de
-> experiencia como instructor SENA. Esa combinación no es casualidad:
+> Juan Carlos Gutiérrez es administrador de empresas de la Universidad
+> Nacional y se formó como tecnólogo en Análisis y Desarrollo de
+> Software en el SENA. Fue instructor del SENA durante 7 años
+> —contabilidad, ofimática y Excel— y después trabajó como ingeniero
+> de software backend en empresas de desarrollo. Esa combinación no es casualidad:
 > significa que en Crear Code Cesar hablamos el idioma del negocio, no
 > solo el de la técnica. Entendemos tanto el código como los números,
 > las metas y las preocupaciones reales de quien dirige una empresa.
@@ -774,9 +785,11 @@ del texto de cada sub-fase se redacta al arrancarla siguiendo este tono.
   lo que cambia." — filas: bocetos con IA, diagnósticos, mensajes al
   chatbot, herramientas nuevas (acceso anticipado). Los números salen
   de las variables de límites, no se fijan en el copy.
-- **Placeholders honestos (Home)**: "Casos reales de clientes" y "El
-  equipo" marcados como espacio reservado: "No publicamos cifras ni
-  testimonios que no podamos sustentar."
+- **Proyectos y fundador (Home)**: reemplazaron a los dos placeholders
+  de espacio reservado el 28 sep 2026, cuando hubo proyectos públicos
+  que enseñar. La promesa se mantiene en la página de Proyectos:
+  "Todavía no mostramos trabajos de clientes: cuando los haya, irán con
+  su nombre y su permiso."
 - **Demo de diseño — 5 estados**:
   - Bloqueado: "Crea tu cuenta gratis para ver tu boceto. Generar un
     diseño con IA cuesta procesamiento, así que lo reservamos para

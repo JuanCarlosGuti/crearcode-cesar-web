@@ -10,23 +10,18 @@ correspondiente antes de seguir.
 **Etapa actual: Etapa 3 — Plataforma v2. La fase F8 (cuentas de
 cliente) está TERMINADA y APROBADA por el usuario (28 jul 2026;
 ISS-083 a ISS-100, suites backend/frontend/e2e en verde + verificación
-manual en navegador). Para que su correo funcione en producción faltan
-solo las variables `MAIL_USERNAME`/`MAIL_PASSWORD` en el dashboard de
-Render (App Password de Gmail, guía en
-[docs/09-despliegue.md](docs/09-despliegue.md) §7 — pausado a pedido
-del usuario). La fase F8.5 — rediseño visual y valor de la cuenta
+manual en navegador). *(Su correo quedó funcionando en producción el 11
+ago 2026, por Resend — ver §Decisiones ya resueltas.)* La fase F8.5 —
+rediseño visual y valor de la cuenta
 (ISS-101 a ISS-107) — está TERMINADA y APROBADA (28 jul 2026;
 Lighthouse 97-98/100/100/100, 21/21 e2e con axe, verificación manual).
 La fase F9 — asistente IA con Groq (ISS-108 a ISS-118) — está
 TERMINADA, APROBADA y PUBLICADA (28 jul 2026), verificada con Groq
 real en local (respuestas ancladas, sin inventar precios,
-escalamiento funcionando). La `GROQ_API_KEY` ya está en Render y el
-asistente quedó verificado EN PRODUCCIÓN (28 jul 2026: pregunta de
-precio respondida sin cifras inventadas y con escalamiento). Decisión
-del usuario (28 jul 2026): la configuración del correo de producción
-(`MAIL_USERNAME`/`MAIL_PASSWORD` en Render) queda **pospuesta hasta
-las pruebas del MVP** — antes de eso el usuario quiere pulir
-funcionalidad y estética.
+escalamiento funcionando). El asistente quedó verificado EN PRODUCCIÓN
+(28 jul 2026: pregunta de precio respondida sin cifras inventadas y con
+escalamiento), y su `GROQ_API_KEY` vive hoy como secreto del
+repositorio.
 
 La fase F10 — **Centro de herramientas con IA** (ISS-119 a ISS-137) —
 está TERMINADA, APROBADA por el usuario y PUBLICADA (10 ago 2026).
@@ -173,7 +168,7 @@ demo de diseño con IA → F11 gestión interna (cotizaciones/cuentas de
 cobro, sin DIAN al inicio). La v1 se publicó el 27 jul 2026 y el
 usuario aprobó el documento ese mismo día.
 La `GROQ_API_KEY` vive solo en el `.env` local (gitignored) y como
-variable de entorno en Render el día que se use — nunca en el repo.
+variable de entorno del servidor el día que se use — nunca en el repo.
 
 - [x] **F8** — Cuentas de cliente (ISS-083 a ISS-100): terminada,
   aprobada y en producción; su correo espera las variables `MAIL_*` en
@@ -182,7 +177,7 @@ variable de entorno en Render el día que se use — nunca en el repo.
   ISS-107): terminada y aprobada (28 jul 2026).
 - [x] **F9** — Asistente IA (Groq, ISS-108 a ISS-118): terminada,
   aprobada y publicada (28 jul 2026); su `GROQ_API_KEY` espera en el
-  dashboard de Render.
+  servidor propio (secretos del repositorio en GitHub).
 - [x] **F10** — Centro de herramientas con IA (ISS-119 a ISS-137):
   terminada, aprobada y publicada (10 ago 2026). F10a cotizador +
   /herramientas viva → F10b simulador de chatbot → F10c diagnóstico
@@ -190,9 +185,10 @@ variable de entorno en Render el día que se use — nunca en el repo.
   según el prototipo aprobado (decisiones 10-17 de docs/10). Los cinco
   niveles de prueba por issue (Unit, Component, Integration, API y
   E2E, docs/06 §7) se cumplieron; cierre verificado en ISS-132.
-  Pendiente solo del usuario: ingresar `CLOUDFLARE_ACCOUNT_ID` y
-  `CLOUDFLARE_API_TOKEN` en Render para que el demo use Cloudflare
-  (hasta entonces responde el respaldo de Pollinations).
+  `CLOUDFLARE_ACCOUNT_ID` y `CLOUDFLARE_API_TOKEN` ya están cargados
+  como secretos del repositorio, así que el demo usa Workers AI; si
+  fallaran, responde el respaldo de Pollinations sin que el visitante
+  lo note.
 - [x] **F11** — Gestión comercial interna (ISS-138 a ISS-155):
   terminada y aprobada por el usuario (11 ago 2026). Pipeline
   lead → cotización → aceptada, cotización en PDF generada por la app y
@@ -313,7 +309,7 @@ Desde F7, `docker-compose.yml` también define `backend` y `frontend`,
 construidos desde sus `Dockerfile` de producción (ISS-081) — pero
 quedan en el perfil `full`, así que **no afectan** el flujo normal de
 arriba (`docker compose up -d` sin perfil sigue levantando solo
-Postgres). Útil para probar el stack tal como corre en Render (mismas
+Postgres). Útil para probar el stack completo con Postgres real (mismas
 imágenes, proxy `/api` real) sin tener Java/Node instalados:
 
 ```
@@ -488,7 +484,7 @@ El puerto `GeneradorDeImagenes` tiene tres montajes, elegidos en un
 `DEMO_PROVEEDOR_IMAGENES`:
 
 - **`pollinations`** (default del código): gratis y sin key.
-- **`cloudflare`** (lo que declara `render.yaml` para producción):
+- **`cloudflare`** (lo que corre en producción):
   Workers AI como primario **con respaldo automático a Pollinations**
   (`GeneradorDeImagenesConRespaldo`) — si el primario falla, responde
   el respaldo y el visitante no se entera. Necesita
@@ -523,7 +519,9 @@ usuario (10 ago 2026). No cambia paleta ni tokens: los reutiliza.
   solo publica la intención; contador de aperturas + pregunta de un
   solo uso), tabla "visitante vs. con cuenta" (`TABLA_CUENTA`, espeja
   los defaults de los límites del backend), y **placeholders honestos**
-  de casos/equipo que reemplazan a los testimonios ficticios de la v1.
+  de casos/equipo que reemplazaron a los testimonios ficticios de la v1
+  (a su vez reemplazados por contenido real el 28 sep 2026, ver
+  §Proyectos).
 - **Servicios**: miga de pan, resumen corto, dos columnas con aside
   pegajoso que lleva al diagnóstico (`/herramientas#diagnostico`), y
   los títulos "Lo que resolvemos" / "Cómo trabajamos".
@@ -541,6 +539,66 @@ usuario (10 ago 2026). No cambia paleta ni tokens: los reutiliza.
 - Lighthouse tras el rediseño (build de producción, móvil): Performance
   97-98, Accesibilidad/Buenas Prácticas/SEO 100 en Home, servicio,
   `/herramientas` y Contacto.
+
+## Proyectos, antes "Casos de éxito" (28 sep 2026)
+
+La sección `/casos` dejó de llamarse "Casos de éxito" y pasa a
+**Proyectos**: emprendimientos propios y código abierto, **no encargos
+de clientes**. El nombre importa — bajo "casos de éxito" el lector
+asume un cliente que pagó y quedó satisfecho, que es la misma mentira
+de los testimonios ficticios que se quitaron en F10e, solo que más
+difícil de ver.
+
+Para una empresa que aún no ha vendido esto pesa más que un espacio
+reservado: uparya.co se puede abrir y el código se puede leer; un
+testimonio no se puede comprobar.
+
+Cuatro entradas en `contenido/casos.ts`, una por línea de negocio:
+**UparYa** (en producción), **Corpus Damana** (IA anclada a un corpus,
+el mismo patrón del asistente del sitio), **Pasarela de Pagos Cripto**
+(en desarrollo, y el texto lo dice) y **Cesar Travel**.
+
+**Regla de entrada, escrita como test** (`contenido/casos.spec.ts`, no
+en un documento que nadie relee): cada proyecto trae un enlace `https`
+que funciona, ninguno se describe con lenguaje de cliente y no quedan
+corchetes de plantilla. Por eso quedó fuera la app de monday: su
+backend no tiene cara pública y no se pudo comprobar la ficha del
+marketplace. Un enlace que el visitante abre y no encuentra hace más
+daño que la ausencia del proyecto.
+
+Se corrigió de paso la meta descripción de la página, que afirmaba
+"casos de éxito de pymes colombianas que ya trabajan con Crear Code
+Cesar" — falso, y era lo que mostraba Google. En la Home, los dos
+placeholders de espacio reservado cedieron el sitio a los proyectos y
+al perfil real del fundador.
+
+## Rediseño tech "Código + IA" (28 sep 2026, rama `rediseno-tech`)
+
+Tema oscuro con estética de terminal, a pedido del usuario. **Los
+nombres de las variables CSS se conservaron y solo cambiaron sus
+valores**, para no tocar 35 componentes uno a uno — con la consecuencia
+de que `--color-primario` ya no significa lo que su nombre sugiere.
+Regla de color: **verde `#3ddc97` = código, violeta `#9d8cff` = IA**, y
+el violeta nunca se usa para acciones genéricas. Tres tipografías
+(Space Grotesk, Figtree, JetBrains Mono) solo con los pesos que se
+usan. Valores completos en
+[docs/07-guia-de-estilo.md](docs/07-guia-de-estilo.md) §Rediseño tech.
+
+Dos detalles que conviene no perder:
+
+- **`--sombra-1` pasó de sombra difusa a un anillo de 1px.** Una sombra
+  oscura sobre fondo oscuro no existe: las tarjetas que se separaban
+  solo con sombra se habrían quedado sin borde visible y ningún test lo
+  habría dicho.
+- **El menú de Servicios es un `<details>/<summary>` nativo.** Teclado y
+  táctil salen gratis; un desplegable con hover y CSS pasaría axe igual
+  y sería inservible en un teléfono. Verificado interactuando, que es
+  lo único que axe no hace.
+
+Verificado sobre la imagen de producción: Lighthouse **97-98/100/100/100**
+(igual que antes del rediseño), axe sin violaciones en 12 páginas, 242
+specs en verde y sin desborde a 375 ni 1280 px. **Falta el OK del
+usuario y los e2e completos con backend** antes de fusionar a master.
 
 ## Cotizaciones (fase F11)
 
@@ -619,47 +677,45 @@ adentro, en pesos enteros.
   optimizar algo que no existe (ver
   [docs/07-guia-de-estilo.md](docs/07-guia-de-estilo.md) §Imágenes).
 
-## Despliegue (tras ISS-079 a ISS-081 de la fase F7 — ISS-082 pendiente)
+## Despliegue (servidor propio con Kamal 2 — ADR-13)
 
-Hosting elegido por el usuario tras comparar costos en
-[docs/09-despliegue.md](docs/09-despliegue.md): **Render (backend +
-frontend, capa gratis) + Neon (PostgreSQL, capa gratis)** — $0/mes de
-cómputo, único costo fijo el dominio (aún no comprado).
+Desde el 19 ago 2026 todo corre en un **VPS propio** (Netcup,
+Virginia), desplegado con **Kamal 2 desde GitHub Actions**. Antes fue
+Render + Neon; el historial de esa etapa está en
+[docs/09-despliegue.md](docs/09-despliegue.md) §§1-8, y el
+procedimiento del corte en §9.
 
-- **`backend/Dockerfile`** y **`frontend/Dockerfile`** (multi-stage,
-  nuevos en F7): Render los construye directo desde el repo, sin
-  necesidad de un registry propio. CI (`docker-build` en
-  `.github/workflows/ci.yml`) verifica que ambos construyan en cada
-  push/PR.
-- **Sin CORS** (ver ADR-09 en
-  [docs/02-arquitectura.md](docs/02-arquitectura.md)): el servidor SSR
-  del frontend (`frontend/src/server.ts`) reenvía todo `/api/**` al
-  backend real vía `http-proxy-middleware` — el navegador solo ve un
-  origen. `SolicitudesApi`/`AuthApi` no cambiaron (siguen con rutas
-  relativas `/api/...`).
-- **`render.yaml`** (Blueprint de Render, raíz del repo): declara los
-  dos web services (capa gratis, región Virginia) con sus variables —
-  secretos como `sync: false` (se ingresan en el dashboard de Render,
-  nunca en el repo) y `JWT_SECRET` autogenerado por Render.
-- **Variables de entorno nuevas para producción**:
-  - `DB_URL` (backend): URL JDBC completa hacia Neon (con
-    `sslmode=require`, que Neon exige). Sin setearla, se arma desde
-    `DB_HOST`/`DB_PORT`/`DB_NAME` como siempre en local.
-  - `PORT` (backend): ya estándar — Render la inyecta sola y se lee vía
-    `server.port=${PORT:8080}`.
-  - El frontend ya **no tiene variables de entorno**: desde ADR-12 es un
-    Static Site. La URL del backend vive en el `rewrite` de
-    `render.yaml`, el HSTS en sus `headers`, y `NG_ALLOWED_HOSTS`
-    desapareció con el servidor Node (era la protección SSRF de Angular
-    SSR). En desarrollo, `/api` lo sigue redirigiendo
-    `proxy.conf.json` de `ng serve`.
-- **Verificado extremo a extremo** (no solo `docker build`): ambas
-  imágenes corridas juntas en una red Docker con Postgres real
-  confirmaron que el proxy reenvía correctamente login y registro de
-  solicitudes; la suite e2e completa
-  (`contacto-e2e.spec.ts`, `accesibilidad-e2e.spec.ts`) corrida contra
-  el build de producción con el proxy activo pasa sin modificar ningún
-  test existente.
+- **Dos apps de Kamal comparten el host `crearcodecesar.com`**:
+  `config/deploy.web.yml` (el sitio) se lleva todo, y
+  `config/deploy.api.yml` (el backend) se lleva `/api` y `/actuator`
+  vía `path_prefixes` con `strip_path_prefix: false`. Así el navegador
+  sigue viendo un solo origen y **el proyecto sigue sin CORS**
+  (ADR-09), pero con un único salto de proxy: la IP real del visitante
+  llega al backend.
+- **El sitio se despliega antes que la API, siempre.** kamal-proxy solo
+  acepta la configuración de TLS en el servicio que sirve la raíz, así
+  que el backend va con `ssl: false` y se cuelga de su certificado. Es
+  **al revés que en UparYa**, donde la API va primero.
+- **`forward_headers: false` explícito en los dos.** No es estilo: con
+  `ssl: false` su valor por omisión es `true`, y entonces kamal-proxy
+  conserva el `X-Forwarded-For` que mande el cliente.
+- **`frontend/Dockerfile`** construye Angular y lo sirve con **Caddy**
+  (`frontend/Caddyfile`), que traduce las reglas que antes aplicaba
+  Render y hace el 301 de `www`. **`backend/Dockerfile`** no cambió.
+- **Los secretos son secretos del repositorio en GitHub**, referenciados
+  por nombre en `.kamal/secrets` — nunca valores en el repo.
+  `KAMAL_REGISTRY_PASSWORD` es la excepción: sale del `GITHUB_TOKEN` de
+  cada ejecución y no hay que crearlo.
+- **El despliegue cuelga de las pruebas** (`needs:` de los cuatro jobs)
+  y por eso vive en el mismo workflow que ellas: `needs:` no cruza
+  workflows. Un filtro por rutas evita que un commit de documentación
+  reconstruya una imagen con Maven dentro.
+- **Base de datos**: PostgreSQL compartido del servidor, rol y base
+  `crearcodecesar`, alcanzable solo desde las redes de Docker.
+- **Verificación del sitio**: `npm run verificar:servido <url>`
+  comprueba que la primera respuesta de cada ruta traiga la página
+  correcta. Corre en CI sobre la imagen recién construida y sirve igual
+  contra el dominio.
 - **Pendiente (ISS-082)**: comprar el dominio, decidir registrador
   (ver [docs/09-despliegue.md](docs/09-despliegue.md) §4, sin
   decisión todavía), y el visto bueno explícito del usuario para
@@ -686,8 +742,16 @@ cómputo, único costo fijo el dominio (aún no comprado).
   19% extra sobre algo que ya aceptó. Se baja por cotización o con
   `COTIZACIONES_IMPUESTO` si el contador confirma que no aplica.
 - LinkedIn del fundador: https://www.linkedin.com/in/juan-carlos-gutierrez-huerfano369582/
-- Paleta oficial del sitio: **Opción C — "Minimal Corporativo"** (ver
-  [docs/07-guia-de-estilo.md](docs/07-guia-de-estilo.md)).
+- Paleta del sitio: nació como **Opción C, "Minimal Corporativo"**
+  (clara) y desde el **rediseño tech del 28 sep 2026 es oscura** —
+  fondo `#071115`, verde menta `#3ddc97` para todo lo que es código y
+  violeta `#9d8cff` para todo lo que es IA. Los nombres de las
+  variables CSS no cambiaron, solo sus valores, así que
+  **`--color-primario` ya no es el azul de marca sino la tinta clara de
+  los títulos**: leer un componente viejo suponiendo lo contrario
+  confunde. Valores y reglas en
+  [docs/07-guia-de-estilo.md](docs/07-guia-de-estilo.md) §Rediseño
+  tech.
 - Backend en **Spring Boot 4.1.x** (no 3.x): la última versión 3.x
   (3.5.16) quedó sin soporte OSS el 30 jun 2026, justo antes de iniciar
   la Etapa 2 (ver ADR-07 en [docs/02-arquitectura.md](docs/02-arquitectura.md)).
@@ -698,24 +762,26 @@ Con la Etapa 3 completa (11 ago 2026), lo que queda es puesta a punto
 para las pruebas del MVP. **Nada de esto bloquea el código: todo son
 acciones del usuario en paneles externos, o decisiones suyas.**
 
-**Configuración en Render** (ver el checklist con rutas exactas en
-[docs/09-despliegue.md](docs/09-despliegue.md) §7):
+**~~Configuración en Render~~ — sección cerrada.** El sitio corre en
+servidor propio desde el 19 ago 2026 (ADR-13) y `render.yaml` se borró
+del repo el 28 sep. Las variables que aquí se pedían viven hoy como
+secretos del repositorio en GitHub, cargadas antes del corte; el
+procedimiento completo está en
+[docs/09-despliegue.md](docs/09-despliegue.md) §9. Lo que sí quedó
+pendiente del corte:
 
-- `CLOUDFLARE_ACCOUNT_ID` y `CLOUDFLARE_API_TOKEN` — sin ellas el demo
-  de diseño responde con el respaldo de Pollinations en vez de Workers
-  AI.
-- ~~`MAIL_PASSWORD` con la API key de Resend y el dominio verificado~~
-  **hecho el 11 ago 2026**: dominio verificado en Resend (us-east-1),
-  DKIM/SPF/MX de `send` publicados en Cloudflare sin tocar la recepción
-  de Zoho, y la API key ya en Render restringida a este dominio. El
-  detalle y la comprobación DNS están en docs/09 §7.
-- **Aceptar el sync del Blueprint**, que es lo que activa lo ya escrito
-  en `render.yaml` y hoy inactivo en producción: HSTS, el proveedor de
-  imágenes en Cloudflare, el techo del rate limit del asistente, el IVA
-  y toda la configuración de Resend.
-- ~~Que `contacto@crearcodecesar.com` exista como buzón real~~ **hecho**:
-  es alias del buzón `admin@` en Zoho (junto con `contact@` sin la o,
-  por si alguien la escribe mal), así que el Reply-To no rebota.
+- **Apagar los servicios de Render**, que siguen encendidos sin dominio
+  apuntándoles.
+- **Revocar las credenciales viejas** de Resend, Groq y Cloudflare,
+  rotadas antes del corte.
+- **La prueba de ISS-136**: agotar el rate limit de un endpoint de
+  `/api` desde un equipo y pedir el mismo desde otra red (datos
+  móviles). Hasta hacerla, el límite por IP real está implementado pero
+  no verificado.
+- **Copias de seguridad del PostgreSQL y un monitor de
+  disponibilidad**: hoy no existen para ningún proyecto del servidor.
+  No duele mientras los datos sean de prueba; tienen que estar antes de
+  salir al mercado.
 
 **Decisiones del usuario**:
 
@@ -726,10 +792,18 @@ acciones del usuario en paneles externos, o decisiones suyas.**
 - **Validez por defecto** (hoy 15 días) y condiciones comerciales del
   pie del PDF (anticipo, forma de pago).
 - **Revisar el eslogan del hero** ("Tecnología que trabaja para tu
-  negocio, no al revés.") — pendiente desde el 29 jul 2026.
+  negocio, no al revés.") — pendiente desde el 29 jul 2026. Sigue
+  siendo el titular del rediseño, ahora con "no al revés" resaltado.
+- **Aprobar el rediseño tech** de la rama `rediseno-tech` para
+  fusionarlo a master.
+- **Una foto real del fundador** para `/sobre-nosotros`: es lo único
+  inventado que queda en esa página, y hoy simplemente no hay imagen.
+  Cuadrada o 4:5, mínimo 800×800 px. Una horizontal de la misma sesión
+  serviría para la tarjeta que se ve al compartir el sitio, hoy
+  genérica.
 
-**Higiene de secretos**: rotar los que circularon por el chat de
-desarrollo (token de Cloudflare, credenciales del correo, contraseña de
-Neon, `GROQ_API_KEY`). Todos viven solo en el `.env` local (gitignored)
-y en Render, así que rotar es pegar el valor nuevo en dos sitios; la
-tabla de dónde se rota cada uno está en docs/09 §7.
+**Higiene de secretos**: la rotación se hizo el 19 ago 2026 al cargar
+los secretos del repositorio para el corte al servidor propio (Resend,
+Groq y el token de Cloudflare; `CLOUDFLARE_ACCOUNT_ID` no se rota
+porque es un identificador, y la contraseña de Neon dejó de importar al
+abandonar Neon). **Falta revocar las viejas**, que siguen vivas.

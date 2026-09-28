@@ -450,15 +450,20 @@ WhatsApp/LinkedIn. Y no se detectó en local porque el replicador
 `/contacto → contacto/index.html`: **un replicador más generoso que el
 original no verifica nada**.
 
-Se corrige con reglas explícitas en `render.yaml` (las rutas de sesión
+Se corrigió con reglas explícitas en `render.yaml` (las rutas de sesión
 al cascarón primero, luego `/:pagina → /:pagina/index.html` y su
-variante de dos niveles) y, para que no vuelva a pasar en silencio, con
-`frontend/scripts/verificar-rutas-estaticas.mjs`: lee el `render.yaml`
-real, recorre el `dist` real y falla si alguna página prerenderizada no
-se sirve a sí misma. Corre en CI y también sirve al servidor local, así
-que réplica, verificación y producción no pueden divergir. Se eliminó
-además el comodín final: una ruta inexistente ahora responde 404 de
-verdad en lugar de un 200 con el cascarón.
+variante de dos niveles) y con un verificador que leía ese archivo y el
+`dist` real, y fallaba si alguna página prerenderizada no se servía a
+sí misma. Se eliminó además el comodín final: una ruta inexistente
+responde 404 de verdad en lugar de un 200 con el cascarón.
+
+> **Nota del 28 sep 2026**: `render.yaml` y
+> `verificar-rutas-estaticas.mjs` se borraron al apagar Render
+> (ADR-13). Las mismas reglas viven hoy en `frontend/Caddyfile` y la
+> verificación es `verificar-rutas-servidas.mjs`, que no lee
+> configuración: pide cada ruta por HTTP y mira lo que sale por el
+> cable, así que sirve contra cualquier servidor. La lección de fondo
+> no caducó — **un 200 no prueba que la página sea la correcta**.
 
 ### ADR-13 — Del hosting gestionado al servidor propio con Kamal (12 ago 2026)
 
