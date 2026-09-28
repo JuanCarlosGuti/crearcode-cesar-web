@@ -1,7 +1,6 @@
 package com.crearcode.leads.aplicacion;
 
 import java.time.Clock;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,12 +61,7 @@ class GenerarDemoDeDisenoUseCaseImpl implements GenerarDemoDeDisenoUseCase {
 
 	private final GeneradorDeRespuestas generadorTexto;
 	private final GeneradorDeImagenes generadorImagenes;
-	private final Clock reloj;
-	private final int limiteGlobalDiario;
-	private final int limiteDiarioRegistrado;
-
-	private final ContadorDiario contadorGlobal = new ContadorDiario();
-	private final ContadorDiario contadorPorIdentidad = new ContadorDiario();
+	private final CupoDeIa cupo;
 
 	GenerarDemoDeDisenoUseCaseImpl(GeneradorDeRespuestas generadorTexto, GeneradorDeImagenes generadorImagenes,
 			Clock reloj,
@@ -75,9 +69,10 @@ class GenerarDemoDeDisenoUseCaseImpl implements GenerarDemoDeDisenoUseCase {
 			@Value("${app.demo.limite-diario-registrado}") int limiteDiarioRegistrado) {
 		this.generadorTexto = generadorTexto;
 		this.generadorImagenes = generadorImagenes;
-		this.reloj = reloj;
-		this.limiteGlobalDiario = limiteGlobalDiario;
-		this.limiteDiarioRegistrado = limiteDiarioRegistrado;
+		// Sin cupo anonimo: el demo corta antes con
+		// DemoSoloParaRegistradosException, asi que ese limite no se
+		// alcanza nunca.
+		this.cupo = new CupoDeIa(reloj, limiteGlobalDiario, limiteDiarioRegistrado, 0);
 	}
 
 	@Override
@@ -85,20 +80,7 @@ class GenerarDemoDeDisenoUseCaseImpl implements GenerarDemoDeDisenoUseCase {
 		if (!identidad.registrada()) {
 			throw new DemoSoloParaRegistradosException();
 		}
-		LocalDate hoy = LocalDate.now(reloj);
-
-		// Reserva atomica antes de llamar; se devuelve si no se usa (ver
-		// ContadorDiario.reservar y ResponderAlVisitanteUseCaseImpl).
-		if (contadorGlobal.reservar(hoy, "global") > limiteGlobalDiario) {
-			contadorGlobal.liberar(hoy, "global");
-			throw new LimiteGlobalAlcanzadoException();
-		}
-		if (contadorPorIdentidad.reservar(hoy, identidad.clave()) > limiteDiarioRegistrado) {
-			contadorPorIdentidad.liberar(hoy, identidad.clave());
-			contadorGlobal.liberar(hoy, "global");
-			throw new LimiteDeUsoAlcanzadoException(true);
-		}
-		try {
+		return cupo.ejecutar(identidad, () -> {
 			String contexto = PLANTILLA_TEXTO.formatted(solicitud.sector(), solicitud.queHace(),
 					solicitud.queNecesita());
 			ConversacionDeAsistente conversacion = new ConversacionDeAsistente(
@@ -109,11 +91,7 @@ class GenerarDemoDeDisenoUseCaseImpl implements GenerarDemoDeDisenoUseCase {
 
 			ImagenGenerada imagen = generadorImagenes.generar(descripcionDeImagen(solicitud, propuesta.titulo()));
 			return new BocetoDeDemo(propuesta.titulo(), propuesta.funcionalidades(), imagen);
-		} catch (RuntimeException fallo) {
-			contadorPorIdentidad.liberar(hoy, identidad.clave());
-			contadorGlobal.liberar(hoy, "global");
-			throw fallo;
-		}
+		});
 	}
 
 	/**

@@ -1,7 +1,6 @@
 package com.crearcode.leads.aplicacion;
 
 import java.time.Clock;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,54 +62,26 @@ class GenerarDiagnosticoUseCaseImpl implements GenerarDiagnosticoUseCase {
 	private static final String INSTRUCCION_DE_USUARIO = "Genera mi radiografía digital.";
 
 	private final GeneradorDeRespuestas generador;
-	private final Clock reloj;
-	private final int limiteGlobalDiario;
-	private final int limiteDiarioRegistrado;
-	private final int limiteDiarioAnonimo;
-
-	private final ContadorDiario contadorGlobal = new ContadorDiario();
-	private final ContadorDiario contadorPorIdentidad = new ContadorDiario();
+	private final CupoDeIa cupo;
 
 	GenerarDiagnosticoUseCaseImpl(GeneradorDeRespuestas generador, Clock reloj,
 			@Value("${app.diagnostico.limite-global-diario}") int limiteGlobalDiario,
 			@Value("${app.diagnostico.limite-diario-registrado}") int limiteDiarioRegistrado,
 			@Value("${app.diagnostico.limite-diario-anonimo}") int limiteDiarioAnonimo) {
 		this.generador = generador;
-		this.reloj = reloj;
-		this.limiteGlobalDiario = limiteGlobalDiario;
-		this.limiteDiarioRegistrado = limiteDiarioRegistrado;
-		this.limiteDiarioAnonimo = limiteDiarioAnonimo;
+		this.cupo = new CupoDeIa(reloj, limiteGlobalDiario, limiteDiarioRegistrado, limiteDiarioAnonimo);
 	}
 
 	@Override
 	public InformeDeDiagnostico generar(RespuestasDeDiagnostico respuestas, IdentidadDelVisitante identidad) {
-		LocalDate hoy = LocalDate.now(reloj);
-
-		int limitePersonal = identidad.registrada() ? limiteDiarioRegistrado : limiteDiarioAnonimo;
-
-		// Reserva atomica antes de llamar; se devuelve si no se usa (ver
-		// ContadorDiario.reservar y ResponderAlVisitanteUseCaseImpl).
-		if (contadorGlobal.reservar(hoy, "global") > limiteGlobalDiario) {
-			contadorGlobal.liberar(hoy, "global");
-			throw new LimiteGlobalAlcanzadoException();
-		}
-		if (contadorPorIdentidad.reservar(hoy, identidad.clave()) > limitePersonal) {
-			contadorPorIdentidad.liberar(hoy, identidad.clave());
-			contadorGlobal.liberar(hoy, "global");
-			throw new LimiteDeUsoAlcanzadoException(identidad.registrada());
-		}
-		try {
+		return cupo.ejecutar(identidad, () -> {
 			String contexto = PLANTILLA.formatted(cuestionarioComoDatos(respuestas));
 			ConversacionDeAsistente conversacion = new ConversacionDeAsistente(
 					List.of(new MensajeDeChat(RolDeMensaje.USUARIO, INSTRUCCION_DE_USUARIO)));
 
 			RespuestaDelAsistente respuesta = generador.responder(contexto, conversacion);
 			return parsear(respuesta.texto());
-		} catch (RuntimeException fallo) {
-			contadorPorIdentidad.liberar(hoy, identidad.clave());
-			contadorGlobal.liberar(hoy, "global");
-			throw fallo;
-		}
+		});
 	}
 
 	private static String cuestionarioComoDatos(RespuestasDeDiagnostico respuestas) {
