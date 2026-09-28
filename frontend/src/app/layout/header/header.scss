@@ -173,7 +173,8 @@
 }
 
 @media (min-width: 60rem) {
-  .cabecera__boton-menu {
+  .cabecera__boton-menu,
+  .cabecera__whatsapp {
     display: none;
   }
 

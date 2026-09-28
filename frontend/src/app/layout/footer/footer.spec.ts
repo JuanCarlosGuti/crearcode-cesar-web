@@ -32,6 +32,22 @@ describe('Footer', () => {
     expect(texto).toContain(CORREO_CORPORATIVO);
   });
 
+  it('el numero de WhatsApp y el correo son enlaces, no texto plano (auditoria QA11)', async () => {
+    // En movil un numero en texto plano obliga a copiarlo a mano; con
+    // wa.me y mailto: se abre la app con un toque.
+    const fixture = TestBed.createComponent(Footer);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+
+    const correo = el.querySelector<HTMLAnchorElement>(`a[href="mailto:${CORREO_CORPORATIVO}"]`);
+    expect(correo?.textContent).toContain(CORREO_CORPORATIVO);
+
+    const numero = Array.from(el.querySelectorAll<HTMLAnchorElement>('a[href^="https://wa.me/573239885883"]')).find(
+      (enlace) => enlace.textContent?.includes('323 988 5883'),
+    );
+    expect(numero, 'el numero visible debe ser un enlace a wa.me').toBeTruthy();
+  });
+
   it('incluye los enlaces legales', async () => {
     const fixture = TestBed.createComponent(Footer);
     await fixture.whenStable();

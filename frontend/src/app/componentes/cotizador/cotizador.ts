@@ -51,6 +51,15 @@ export class Cotizador {
     this.indice.update((i) => i + 1);
   }
 
+  protected readonly puedeRetroceder = computed(() => this.indice() > 0);
+
+  // Vuelve un paso sin borrar lo elegido: si el visitante cambia una
+  // respuesta, la nueva pisa a la vieja al elegir de nuevo (QA4 de la
+  // auditoria: antes solo existia "Empezar de nuevo", al final).
+  protected retroceder(): void {
+    this.indice.update((i) => Math.max(0, i - 1));
+  }
+
   protected reiniciar(): void {
     this.indice.set(0);
     this.respuestas.set({});

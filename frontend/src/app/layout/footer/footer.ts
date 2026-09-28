@@ -3,7 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter, map } from 'rxjs';
 
-import { EMPRESA } from '../../../contenido/empresa';
+import { EMPRESA, urlWhatsapp } from '../../../contenido/empresa';
 import { WhatsappCta } from '../../componentes/whatsapp-cta/whatsapp-cta';
 import { mensajeWhatsappParaRuta } from '../mensaje-whatsapp-por-ruta';
 
@@ -25,5 +25,6 @@ export class Footer {
 
   protected readonly empresa = EMPRESA;
   protected readonly mensajeWhatsapp = computed(() => mensajeWhatsappParaRuta(this.urlActual()));
+  protected readonly urlWhatsappNumero = computed(() => urlWhatsapp(this.mensajeWhatsapp()));
   protected readonly anioActual = new Date().getFullYear();
 }

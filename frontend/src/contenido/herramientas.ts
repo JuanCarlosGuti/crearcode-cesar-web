@@ -8,6 +8,8 @@ export interface TarjetaDeHerramienta {
   readonly descripcion: string;
   readonly nota: string;
   readonly activa: boolean;
+  /** Id de la seccion de /herramientas donde vive; sin ancla = vive fuera de la pagina (el asistente flotante). */
+  readonly ancla?: string;
 }
 
 export const HERRAMIENTAS = {
@@ -26,30 +28,34 @@ export const HERRAMIENTAS = {
     {
       titulo: 'Cotizador de proyectos',
       descripcion:
-        'Tres preguntas y te damos un rango orientativo para tu proyecto, sin compromiso. Está aquí abajo.',
+        'Tres preguntas y te damos un rango orientativo para tu proyecto, sin compromiso.',
       nota: 'Sin registro · ilimitado',
       activa: true,
+      ancla: 'cotizador',
     },
     {
       titulo: 'Chatbot para tu negocio',
       descripcion:
-        'Escribe el nombre y el rubro de tu empresa y conversa con el bot que podrías tener atendiendo a tus clientes. Está aquí abajo.',
+        'Escribe el nombre y el rubro de tu empresa y conversa con el bot que podrías tener atendiendo a tus clientes.',
       nota: 'Sin registro · 10 mensajes al día',
       activa: true,
+      ancla: 'simulador',
     },
     {
       titulo: 'Diagnóstico digital',
       descripcion:
-        'Seis preguntas sobre cómo opera tu negocio y una radiografía con tres oportunidades de automatización. Está aquí abajo.',
+        'Seis preguntas sobre cómo opera tu negocio y una radiografía con tres oportunidades de automatización.',
       nota: 'Sin registro · 2 al día, 10 con cuenta',
       activa: true,
+      ancla: 'diagnostico',
     },
     {
       titulo: 'Demo de diseño con IA',
       descripcion:
-        'Describe tu negocio y recibe un boceto visual de tu futura app o web, con funcionalidades sugeridas. Está aquí abajo.',
+        'Describe tu negocio y recibe un boceto visual de tu futura app o web, con funcionalidades sugeridas.',
       nota: 'Para cuentas gratis · 3 bocetos al día',
       activa: true,
+      ancla: 'demo-diseno',
     },
   ] as readonly TarjetaDeHerramienta[],
   cuenta: {

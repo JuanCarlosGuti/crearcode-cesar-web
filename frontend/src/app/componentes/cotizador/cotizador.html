@@ -20,6 +20,9 @@
           </button>
         }
       </div>
+      @if (puedeRetroceder()) {
+        <button type="button" class="cotizador-atras" (click)="retroceder()">{{ textos.atras }}</button>
+      }
     </div>
   } @else {
     <div class="cotizador-resultado" aria-live="polite">
@@ -30,6 +33,7 @@
       <div class="cotizador-ctas">
         <a routerLink="/contacto" class="boton boton-primario">{{ textos.ctaContacto }}</a>
         <app-whatsapp-cta [mensaje]="mensajeWhatsapp()" [etiqueta]="textos.ctaWhatsapp" />
+        <button type="button" class="cotizador-atras" (click)="retroceder()">{{ textos.atras }}</button>
         <button type="button" class="cotizador-reiniciar" (click)="reiniciar()">
           {{ textos.reiniciar }}
         </button>

@@ -14,6 +14,14 @@
           </div>
           <p>{{ tarjeta.descripcion }}</p>
           <p class="herramienta-tarjeta__nota">{{ tarjeta.nota }}</p>
+          @if (tarjeta.ancla) {
+            <!-- routerLink + fragment y NO href="#id": con <base href="/">
+                 un ancla pelada navega a la raiz. anchorScrolling ya esta
+                 activo en el router (F10e). -->
+            <a class="herramienta-tarjeta__ir" routerLink="/herramientas" [fragment]="tarjeta.ancla"
+              >Ir a la herramienta →</a
+            >
+          }
         </article>
       }
     </div>

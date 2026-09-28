@@ -17,8 +17,15 @@
       [attr.aria-expanded]="menuAbierto()"
       aria-controls="menu-principal"
     >
-      <span class="sr-only">Abrir menú</span>
-      <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" focusable="false"><line x1="4" y1="7" x2="20" y2="7" /><line x1="4" y1="12" x2="20" y2="12" /><line x1="4" y1="17" x2="14" y2="17" /></svg>
+      <!-- El icono y el nombre accesible siguen al estado: con el menu
+           abierto se ve una X y el lector oye "Cerrar menu" (QA15). -->
+      @if (menuAbierto()) {
+        <span class="sr-only">Cerrar menú</span>
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" focusable="false"><line x1="5" y1="5" x2="19" y2="19" /><line x1="19" y1="5" x2="5" y2="19" /></svg>
+      } @else {
+        <span class="sr-only">Abrir menú</span>
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" focusable="false"><line x1="4" y1="7" x2="20" y2="7" /><line x1="4" y1="12" x2="20" y2="12" /><line x1="4" y1="17" x2="14" y2="17" /></svg>
+      }
     </button>
 
     <nav id="menu-principal" class="cabecera__nav" [class.cabecera__nav--abierto]="menuAbierto()">
@@ -62,6 +69,11 @@
            a la hidratacion como el enlace Ingresar. -->
       <div class="cabecera__cta cta-doble">
         <a routerLink="/contacto" class="boton boton-primario" (click)="cerrarMenu()">Agenda tu consulta</a>
+        <!-- Solo en el menu movil: en escritorio WhatsApp salio de la
+             cabecera a proposito en F10e (sigue en hero, cierre y pie). -->
+        <span class="cabecera__whatsapp">
+          <app-whatsapp-cta [mensaje]="mensajeWhatsapp()" etiqueta="Escríbenos por WhatsApp" />
+        </span>
         @if (hidratado()) {
           @if (sesion.estaAutenticado()) {
             <a [routerLink]="enlaceCuenta()" class="boton boton-secundario" (click)="cerrarMenu()">{{

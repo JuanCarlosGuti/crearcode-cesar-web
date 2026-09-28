@@ -1,14 +1,18 @@
 import { Component, afterNextRender, computed, inject, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { filter, map } from 'rxjs';
 
 import { CUENTA } from '../../../contenido/cuenta';
 import { EMPRESA } from '../../../contenido/empresa';
 import { SERVICIOS } from '../../../contenido/servicios';
+import { WhatsappCta } from '../../componentes/whatsapp-cta/whatsapp-cta';
 import { SesionService } from '../../nucleo/sesion';
+import { mensajeWhatsappParaRuta } from '../mensaje-whatsapp-por-ruta';
 
 @Component({
   selector: 'app-header',
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, WhatsappCta],
   templateUrl: './header.html',
   styleUrl: './header.scss',
 })
@@ -16,6 +20,16 @@ export class Header {
   protected readonly servicios = SERVICIOS;
   protected readonly nombreEmpresa = EMPRESA.razonSocial;
   protected readonly menuAbierto = signal(false);
+
+  private readonly router = inject(Router);
+  private readonly urlActual = toSignal(
+    this.router.events.pipe(
+      filter((evento) => evento instanceof NavigationEnd),
+      map(() => this.router.url),
+    ),
+    { initialValue: this.router.url },
+  );
+  protected readonly mensajeWhatsapp = computed(() => mensajeWhatsappParaRuta(this.urlActual()));
 
   protected readonly sesion = inject(SesionService);
   protected readonly textosCuenta = CUENTA.header;

@@ -3,8 +3,16 @@
     <div class="pie__columna">
       <h2 class="pie__titulo">{{ empresa.razonSocial }}</h2>
       <p>{{ empresa.ciudad }}</p>
-      <p>WhatsApp: {{ empresa.whatsappNumero }}</p>
-      <p>Correo: {{ empresa.correo }}</p>
+      <!-- Enlaces y no texto plano: en movil abren la app con un toque
+           (QA11 de la auditoria). El de WhatsApp lleva el mismo mensaje
+           contextual que el boton, para no partir la intencion en dos. -->
+      <p>
+        WhatsApp:
+        <a [href]="urlWhatsappNumero()" target="_blank" rel="noopener">{{ empresa.whatsappNumero }}</a>
+      </p>
+      <p>
+        Correo: <a [href]="'mailto:' + empresa.correo">{{ empresa.correo }}</a>
+      </p>
     </div>
 
     <nav class="pie__columna pie__nav" aria-label="Enlaces del pie de página">

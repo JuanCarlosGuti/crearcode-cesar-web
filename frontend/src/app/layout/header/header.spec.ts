@@ -47,7 +47,30 @@ describe('Header', () => {
 
     expect(cta.querySelector('a[href="/contacto"]')?.textContent).toContain('Agenda tu consulta');
     expect(cta.querySelector('a[href="/registro"]')?.textContent).toContain('Crear cuenta');
-    expect(fixture.nativeElement.querySelector('a[href^="https://wa.me/"]')).toBeNull();
+    // F10e saco WhatsApp de la barra de escritorio; la auditoria (QA15)
+    // lo devolvio SOLO al menu movil. Cualquier wa.me del header tiene
+    // que vivir dentro del envoltorio que el CSS oculta en escritorio.
+    const raiz = fixture.nativeElement as HTMLElement;
+    const enlacesWhatsapp = Array.from(raiz.querySelectorAll<HTMLAnchorElement>('a[href^="https://wa.me/"]'));
+    expect(enlacesWhatsapp.length).toBeGreaterThan(0);
+    expect(enlacesWhatsapp.every((enlace) => enlace.closest('.cabecera__whatsapp') !== null)).toBe(true);
+  });
+
+  it('el boton del menu movil cambia su nombre accesible al abrir y el menu trae WhatsApp (auditoria QA15)', async () => {
+    const fixture = TestBed.createComponent(Header);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+    const boton = el.querySelector('.cabecera__boton-menu') as HTMLButtonElement;
+    expect(boton.textContent).toContain('Abrir menú');
+
+    boton.click();
+    await fixture.whenStable();
+
+    // El icono pasa a una X y el lector de pantalla oye "Cerrar menu":
+    // un boton que siempre dice "abrir" con el menu abierto desorienta.
+    expect(boton.textContent).toContain('Cerrar menú');
+    expect(boton.textContent).not.toContain('Abrir menú');
+    expect(el.querySelector('#menu-principal a[href^="https://wa.me/"]'), 'WhatsApp en el menu movil').toBeTruthy();
   });
 
   it('alterna el menu movil al hacer click en el boton', async () => {

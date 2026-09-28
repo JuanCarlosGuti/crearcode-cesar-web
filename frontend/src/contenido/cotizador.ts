@@ -61,5 +61,6 @@ export const COTIZADOR = {
   },
   ctaContacto: 'Agenda tu consulta gratuita',
   ctaWhatsapp: 'WhatsApp',
+  atras: '← Atrás',
   reiniciar: 'Empezar de nuevo',
 } as const;

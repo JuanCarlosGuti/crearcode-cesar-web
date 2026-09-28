@@ -81,3 +81,16 @@
 .herramientas-cuenta .boton {
   flex-shrink: 0;
 }
+
+.herramienta-tarjeta__ir {
+  margin-top: auto;
+  align-self: flex-start;
+  font-weight: 600;
+  color: var(--color-acento);
+  text-decoration: none;
+}
+
+.herramienta-tarjeta__ir:hover,
+.herramienta-tarjeta__ir:focus-visible {
+  text-decoration: underline;
+}

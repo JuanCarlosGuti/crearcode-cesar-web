@@ -65,6 +65,47 @@ describe('Cotizador (wizard de 3 pasos, HU-39)', () => {
     expect(decodeURIComponent(whatsapp.href)).toContain('Sistema interno a la medida');
   });
 
+  it('en el paso 1 no hay boton Atras', async () => {
+    const { el } = await crear();
+    expect(el.querySelector('.cotizador-atras')).toBeNull();
+  });
+
+  it('Atras vuelve al paso anterior sin perder lo ya elegido (auditoria QA4)', async () => {
+    const { fixture, el } = await crear();
+    await elegir(fixture, 'Automatización con IA');
+    expect(el.textContent).toContain('2 de 3');
+
+    (el.querySelector('.cotizador-atras') as HTMLButtonElement).click();
+    await fixture.whenStable();
+
+    expect(el.textContent).toContain(COTIZADOR.pasos[0].titulo);
+    expect(el.textContent).toContain('1 de 3');
+
+    // Cambiar de opinion en el paso 1 y seguir: el resumen refleja la
+    // eleccion nueva, no la vieja.
+    await elegir(fixture, 'Página web o tienda en línea');
+    await elegir(fixture, 'Algo puntual, una sola función');
+    await elegir(fixture, 'Sin afán, en los próximos meses');
+    const resumen = el.querySelector('.cotizador-resumen')!.textContent!;
+    expect(resumen).toContain('Página web o tienda en línea');
+    expect(resumen).not.toContain('Automatización con IA');
+  });
+
+  it('desde el resultado, Atras vuelve al ultimo paso', async () => {
+    const { fixture, el } = await crear();
+    await elegir(fixture, 'Automatización con IA');
+    await elegir(fixture, 'Varias funciones conectadas');
+    await elegir(fixture, 'En 4 a 8 semanas');
+    expect(el.textContent).toContain('COP');
+
+    (el.querySelector('.cotizador-atras') as HTMLButtonElement).click();
+    await fixture.whenStable();
+
+    expect(el.textContent).toContain(COTIZADOR.pasos[2].titulo);
+    expect(el.textContent).toContain('3 de 3');
+    expect(el.textContent).not.toContain('COP');
+  });
+
   it('empezar de nuevo limpia todo y vuelve al paso 1', async () => {
     const { fixture, el } = await crear();
     await elegir(fixture, 'Página web o tienda en línea');
