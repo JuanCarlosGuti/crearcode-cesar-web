@@ -28,6 +28,16 @@ import jakarta.servlet.http.HttpServletResponse;
  * lleva su propio umbral configurable (ver application.properties) para
  * poder ajustarlo sin recompilar y para que las pruebas de este propio
  * mecanismo no dependan del valor de producción.
+ *
+ * <p>
+ * El contador en memoria guarda una entrada por IP y por regla, y hasta
+ * la auditoría del 28 sep 2026 no soltaba ninguna: el proceso acumulaba
+ * una entrada por cada IP que hubiera tocado el sitio desde el último
+ * despliegue. No se nota en un sitio de pyme hasta que un escáner
+ * recorre el rango de un proveedor. Ahora cada regla suelta sus
+ * ventanas vencidas cuando su mapa pasa de
+ * {@value Regla#VENTANAS_ANTES_DE_PURGAR} entradas — amortizado, no en
+ * cada petición, que costaría un recorrido completo por request.
  */
 @Component
 class RateLimitingFilter extends OncePerRequestFilter {
@@ -75,6 +85,16 @@ class RateLimitingFilter extends OncePerRequestFilter {
 						Duration.ofMinutes(ventanaAsistenteMinutos)));
 	}
 
+	/**
+	 * Cuántas ventanas hay vivas ahora mismo, sumando todas las reglas.
+	 * Existe para que la purga sea comprobable: el invariante que
+	 * interesa —la memoria no crece para siempre— no se puede afirmar
+	 * desde fuera de otra forma.
+	 */
+	int ventanasEnMemoria() {
+		return reglas.stream().mapToInt(regla -> regla.ventanasPorIp.size()).sum();
+	}
+
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 			FilterChain filterChain) throws ServletException, IOException {
@@ -88,6 +108,13 @@ class RateLimitingFilter extends OncePerRequestFilter {
 	}
 
 	private static final class Regla {
+
+		/**
+		 * A partir de aquí se recorre el mapa soltando lo vencido. Alto a
+		 * propósito: purgar en cada petición sería un recorrido completo
+		 * por request para ahorrar unos kilobytes.
+		 */
+		private static final int VENTANAS_ANTES_DE_PURGAR = 1000;
 
 		private final String metodo;
 		private final String ruta;
@@ -108,6 +135,9 @@ class RateLimitingFilter extends OncePerRequestFilter {
 
 		private boolean superoElLimite(String ip, Clock reloj) {
 			Instant ahora = Instant.now(reloj);
+			if (ventanasPorIp.size() > VENTANAS_ANTES_DE_PURGAR) {
+				soltarVencidas(ahora);
+			}
 			VentanaDeSolicitudes ventana = ventanasPorIp.computeIfAbsent(ip, clave -> new VentanaDeSolicitudes(ahora));
 
 			synchronized (ventana) {
@@ -118,6 +148,20 @@ class RateLimitingFilter extends OncePerRequestFilter {
 				ventana.contador++;
 				return ventana.contador > maxSolicitudesPorVentana;
 			}
+		}
+
+		/**
+		 * Una ventana vencida no significa nada: al volver a pedir desde
+		 * esa IP se crearía igual de cero. Si una petición estuviera
+		 * contando justo sobre una que se suelta, lo peor que pasa es que
+		 * esa IP empieza ventana nueva — lo mismo que iba a ocurrir.
+		 */
+		private void soltarVencidas(Instant ahora) {
+			ventanasPorIp.values().removeIf(ventana -> {
+				synchronized (ventana) {
+					return Duration.between(ventana.inicio, ahora).compareTo(duracionVentana) > 0;
+				}
+			});
 		}
 	}
 
