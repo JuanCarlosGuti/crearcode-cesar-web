@@ -139,6 +139,10 @@ for (const ruta of [...paginas, ...SESION, ...ARCHIVOS, INEXISTENTE]) {
     }
   } else if (r.estado !== 404) {
     anotar(ruta, `una ruta inexistente debe responder 404, no ${resumen(r)}`);
+  } else if (!(r.titulo ?? '').toLowerCase().includes('no encontrada')) {
+    // 404 real Y con pagina: el cuerpo vacio era correcto para Google y
+    // un callejon sin salida para una persona (QA6).
+    anotar(ruta, `el 404 debe traer la pagina "no encontrada", no ${r.titulo ?? 'un cuerpo vacio'}`);
   }
 
   if (referencia) {

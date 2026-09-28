@@ -20,13 +20,36 @@
 	encode zstd gzip
 
 	header {
-		# HSTS (ADR-11). Arranque conservador de 1 dia; la escalera
-		# habitual es 86400 -> 604800 -> 2592000 -> 31536000, dejando
-		# unos dias en cada escalon. "preload" NO se agrega: es
-		# practicamente irreversible.
-		Strict-Transport-Security "max-age=86400; includeSubDomains"
+		# HSTS (ADR-11). Arranco con 1 dia el 19 ago 2026 y paso a un ano
+		# el 28 sep, tras seis semanas estable: era el final de la
+		# escalera prevista (86400 -> ... -> 31536000). "preload" NO se
+		# agrega: es practicamente irreversible.
+		# includeSubDomains obliga a que cualquier subdominio nuevo nazca
+		# con TLS; kamal-proxy lo emite solo, asi que es asumible.
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
 		# Render la mandaba por su cuenta; aqui hay que declararla.
 		X-Content-Type-Options "nosniff"
+		# El sitio no se embebe en ningun otro (clickjacking).
+		X-Frame-Options "DENY"
+		# Al salir a otro dominio solo viaja el origen, no la ruta.
+		Referrer-Policy "strict-origin-when-cross-origin"
+		# Ninguna pagina usa camara, microfono ni ubicacion.
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		# CSP pendiente: Angular inyecta estilos en linea y el demo carga
+		# imagenes de terceros; una politica mal calibrada rompe el sitio
+		# en silencio. Se hara con Report-Only primero.
+	}
+
+	# 404 con cara: sin esto la respuesta era correcta (404 real) pero
+	# con el cuerpo vacio, y una persona no sabe a donde ir (QA6). El
+	# estado sigue siendo 404: file_server dentro de handle_errors lo
+	# conserva.
+	handle_errors {
+		@noEncontrado expression {err.status_code} == 404
+		handle @noEncontrado {
+			rewrite * /404.html
+			file_server
+		}
 	}
 
 	# El Cache-Control va DENTRO de cada handle y no aqui arriba: con dos
