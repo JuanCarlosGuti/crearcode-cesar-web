@@ -59,5 +59,7 @@ export const DIAGNOSTICO = {
   ctaCrearCuenta: 'Crear mi cuenta',
   limiteRegistrado: 'Ya usaste tus diagnósticos de hoy. Vuelve mañana y seguimos.',
   noDisponible:
-    'El asistente está descansando. Este intento no te descuenta diagnósticos. Si prefieres, escríbenos por WhatsApp y lo hacemos en persona.',
+    'El diagnóstico no está respondiendo en este momento. Este intento no te descuenta nada. Escríbenos por WhatsApp y lo hacemos en persona.',
+  cupoAgotado:
+    'Hoy ya se agotó el cupo de diagnósticos. Vuelve mañana o escríbenos por WhatsApp y lo hacemos en persona.',
 } as const;

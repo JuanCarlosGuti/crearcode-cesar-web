@@ -10,7 +10,11 @@ export interface MensajeDeConversacion {
   escalar?: boolean;
 }
 
-export type ErrorDeAsistente = 'limite-anonimo' | 'limite-registrado' | 'no-disponible';
+export type ErrorDeAsistente =
+  | 'limite-anonimo'
+  | 'limite-registrado'
+  | 'limite-global'
+  | 'no-disponible';
 
 const CLAVE_SESION_ANONIMA = 'crearcode-asistente-sesion';
 // El backend acepta máximo 20 mensajes por petición: se envía la cola
@@ -60,10 +64,17 @@ export class ConversacionService {
     });
   }
 
+  /**
+   * El 503 de cupo global agotado (vuelve manana solo) y el de
+   * proveedor caido (averia) compartian codigo hasta la auditoria del
+   * 28 sep 2026, y el visitante leia lo mismo en los dos casos.
+   * Cualquier codigo desconocido cae en 'no-disponible', que es la
+   * respuesta prudente.
+   */
   private codigoDesde(error: unknown): ErrorDeAsistente {
     if (error instanceof HttpErrorResponse) {
       const codigo = (error.error as { codigo?: string } | null)?.codigo;
-      if (codigo === 'limite-anonimo' || codigo === 'limite-registrado') {
+      if (codigo === 'limite-anonimo' || codigo === 'limite-registrado' || codigo === 'limite-global') {
         return codigo;
       }
     }

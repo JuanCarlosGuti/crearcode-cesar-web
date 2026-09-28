@@ -66,6 +66,8 @@
         <a routerLink="/registro" class="boton boton-primario">{{ textos.ctaCrearCuenta }}</a>
       } @else if (codigo === 'limite-registrado') {
         <p>{{ textos.limiteRegistrado }}</p>
+      } @else if (codigo === 'limite-global') {
+        <p>{{ textos.cupoAgotado }}</p>
       } @else {
         <p>{{ textos.noDisponible }}</p>
         <button type="button" class="boton boton-primario diagnostico-reintentar" (click)="reintentar()">

@@ -139,30 +139,44 @@ class GlobalExceptionHandler {
 				.body(new ErrorAsistenteResponse(excepcion.getMessage(), codigo));
 	}
 
-	/**
-	 * El límite global agotado y el fallo del proveedor son lo mismo para
-	 * el visitante: asistente no disponible, con la alternativa humana
-	 * (invariante 3 del contexto asistente).
-	 */
 	@ExceptionHandler(DemoSoloParaRegistradosException.class)
 	ResponseEntity<ErrorAsistenteResponse> demoSoloParaRegistrados(DemoSoloParaRegistradosException excepcion) {
 		return ResponseEntity.status(HttpStatus.FORBIDDEN)
 				.body(new ErrorAsistenteResponse(excepcion.getMessage(), "solo-registrados"));
 	}
 
-	@ExceptionHandler({ LimiteGlobalAlcanzadoException.class, AsistenteNoDisponibleException.class })
-	ResponseEntity<ErrorAsistenteResponse> asistenteNoDisponible(RuntimeException excepcion) {
-		// Un solo 503 para el visitante, pero la causa real al log: el
-		// 28 sep 2026 Groq retiro el modelo configurado, las tres
-		// herramientas de IA respondieron 503 durante dias y no habia ni
-		// una linea que lo dijera. Se registra la excepcion y su causa
-		// (estado HTTP y cuerpo del proveedor), nunca la conversacion.
+	/**
+	 * Cupo diario de la casa agotado: no es una avería, es el techo de la
+	 * capa gratis del proveedor. Vuelve solo al día siguiente, así que va
+	 * a INFO y con su propio código — un monitor que alerte sobre
+	 * {@code proveedor-caido} no debe despertar a nadie por esto.
+	 */
+	@ExceptionHandler(LimiteGlobalAlcanzadoException.class)
+	ResponseEntity<ErrorAsistenteResponse> limiteGlobalAlcanzado(LimiteGlobalAlcanzadoException excepcion) {
+		LOG.info("Cupo global diario de IA agotado: {}", excepcion.getMessage());
+		return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+				.body(new ErrorAsistenteResponse("El cupo de hoy para esta herramienta ya se agotó",
+						"limite-global"));
+	}
+
+	/**
+	 * El proveedor de IA falló: esto SÍ es una avería. El 28 sep 2026
+	 * Groq retiró el modelo configurado, las tres herramientas
+	 * respondieron 503 durante días, y como el cupo agotado y el
+	 * proveedor caído compartían código y no había ni una línea de log,
+	 * desde fuera era indistinguible de un día de mucho tráfico. Se
+	 * registra la excepción y su causa (estado HTTP y cuerpo del
+	 * proveedor, que es lo que trae RestClientException), nunca la
+	 * conversación del visitante.
+	 */
+	@ExceptionHandler(AsistenteNoDisponibleException.class)
+	ResponseEntity<ErrorAsistenteResponse> proveedorDeIaCaido(AsistenteNoDisponibleException excepcion) {
 		Throwable causa = excepcion.getCause();
-		LOG.warn("Asistente no disponible — {}: {}{}", excepcion.getClass().getSimpleName(), excepcion.getMessage(),
-				causa == null ? "" : " | causa: " + causa.getMessage());
+		LOG.warn("Proveedor de IA caído — {}: {}{}", excepcion.getClass().getSimpleName(),
+				excepcion.getMessage(), causa == null ? "" : " | causa: " + causa.getMessage());
 		return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
 				.body(new ErrorAsistenteResponse("El asistente no está disponible en este momento",
-						"no-disponible"));
+						"proveedor-caido"));
 	}
 
 }

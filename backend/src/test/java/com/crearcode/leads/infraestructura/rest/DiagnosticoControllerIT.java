@@ -146,7 +146,7 @@ class DiagnosticoControllerIT {
 				conSesionAnonima(cuestionario(), "diag-roto"), String.class);
 
 		assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
-		assertThat(respuesta.getBody()).contains("no-disponible");
+		assertThat(respuesta.getBody()).contains("proveedor-caido");
 	}
 
 }

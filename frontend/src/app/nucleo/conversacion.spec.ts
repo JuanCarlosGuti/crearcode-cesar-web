@@ -78,6 +78,29 @@ describe('ConversacionService', () => {
     expect(servicio.error()).toBe('no-disponible');
   });
 
+  it('el cupo global agotado no se confunde con un proveedor caido', () => {
+    // Son dos 503 con causas opuestas: uno vuelve manana solo, el otro
+    // es una averia. Hasta la auditoria del 28 sep 2026 compartian
+    // codigo y el visitante recibia el mismo mensaje en los dos casos.
+    servicio.enviar('hola');
+    httpMock.expectOne('/api/asistente/mensajes').flush(
+      { mensaje: 'cupo agotado', codigo: 'limite-global' },
+      { status: 503, statusText: 'Service Unavailable' },
+    );
+
+    expect(servicio.error()).toBe('limite-global');
+  });
+
+  it('un proveedor caido queda como no-disponible', () => {
+    servicio.enviar('hola');
+    httpMock.expectOne('/api/asistente/mensajes').flush(
+      { mensaje: 'no disponible', codigo: 'proveedor-caido' },
+      { status: 503, statusText: 'Service Unavailable' },
+    );
+
+    expect(servicio.error()).toBe('no-disponible');
+  });
+
   it('un envio nuevo limpia el error anterior', () => {
     servicio.enviar('hola');
     httpMock.expectOne('/api/asistente/mensajes').flush('error', {

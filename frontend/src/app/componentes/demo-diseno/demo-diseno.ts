@@ -9,7 +9,7 @@ import { mensajeWhatsappParaRuta } from '../../layout/mensaje-whatsapp-por-ruta'
 import { WhatsappCta } from '../whatsapp-cta/whatsapp-cta';
 import { AVISO_IA } from '../../../contenido/legales';
 
-type ErrorDeDemo = 'limite' | 'no-disponible' | null;
+type ErrorDeDemo = 'limite' | 'limite-global' | 'no-disponible' | null;
 
 /**
  * Demo de diseño con IA (F10d, HU-42), inline en /herramientas. SOLO
@@ -119,6 +119,9 @@ export class DemoDiseno {
       const codigo = (error.error as { codigo?: string } | null)?.codigo;
       if (codigo === 'limite-registrado' || codigo === 'limite-anonimo') {
         return 'limite';
+      }
+      if (codigo === 'limite-global') {
+        return 'limite-global';
       }
     }
     return 'no-disponible';

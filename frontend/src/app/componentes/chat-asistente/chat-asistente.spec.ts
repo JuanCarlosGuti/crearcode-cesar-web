@@ -6,6 +6,7 @@ import { provideRouter } from '@angular/router';
 import { AsistenteUiService } from '../../nucleo/asistente-ui';
 import { ChatAsistente } from './chat-asistente';
 import { AVISO_IA } from '../../../contenido/legales';
+import { ASISTENTE } from '../../../contenido/asistente';
 
 async function crearWidget() {
   const fixture = TestBed.createComponent(ChatAsistente);
@@ -192,7 +193,7 @@ describe('ChatAsistente', () => {
     await fixture.whenStable();
 
     const aviso = el.querySelector('.chat-aviso') as HTMLElement;
-    expect(aviso.textContent).toContain('descansando un momento');
+    expect(aviso.textContent).toContain(ASISTENTE.noDisponible);
     expect(aviso.querySelector('a[href^="https://wa.me/"]')).not.toBeNull();
   });
   it('el panel avisa que el texto se procesa con un proveedor de IA externo (auditoria §11)', async () => {

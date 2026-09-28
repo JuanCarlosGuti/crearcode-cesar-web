@@ -58,6 +58,9 @@
           } @else if (error === 'limite-registrado') {
             <p>{{ textos.limiteRegistrado }}</p>
             <app-whatsapp-cta [mensaje]="mensajeWhatsapp()" etiqueta="WhatsApp" />
+          } @else if (error === 'limite-global') {
+            <p>{{ textos.cupoAgotado }}</p>
+            <app-whatsapp-cta [mensaje]="mensajeWhatsapp()" etiqueta="WhatsApp" />
           } @else {
             <p>{{ textos.noDisponible }}</p>
             <app-whatsapp-cta [mensaje]="mensajeWhatsapp()" etiqueta="WhatsApp" />

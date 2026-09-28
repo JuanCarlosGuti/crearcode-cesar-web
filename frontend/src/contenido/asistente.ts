@@ -16,7 +16,9 @@ export const ASISTENTE = {
     'Para darte una respuesta exacta, mejor hablemos: escríbenos por WhatsApp o déjanos tus datos en el formulario de contacto.',
   enlaceContacto: 'formulario de contacto',
   noDisponible:
-    'El asistente está descansando un momento. Escríbenos por WhatsApp y te respondemos en persona.',
+    'El asistente no está respondiendo en este momento. Escríbenos por WhatsApp y te contestamos en persona.',
+  cupoAgotado:
+    'Hoy ya se agotó el cupo de consultas de la casa. Vuelve mañana o escríbenos por WhatsApp y seguimos ahora mismo.',
   limiteAnonimo:
     'Alcanzaste tus consultas gratis de hoy. Crea tu cuenta (gratis, toma un minuto) y obtén más consultas por día.',
   limiteRegistrado:

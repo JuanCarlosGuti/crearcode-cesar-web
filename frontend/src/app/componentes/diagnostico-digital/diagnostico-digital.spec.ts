@@ -110,7 +110,7 @@ describe('DiagnosticoDigital (F10c, HU-41)', () => {
     });
     await fixture.whenStable();
 
-    expect(el.textContent).toContain('no te descuenta diagnósticos');
+    expect(el.textContent).toContain(DIAGNOSTICO.noDisponible);
 
     (el.querySelector('.diagnostico-reintentar') as HTMLButtonElement).click();
     await fixture.whenStable();

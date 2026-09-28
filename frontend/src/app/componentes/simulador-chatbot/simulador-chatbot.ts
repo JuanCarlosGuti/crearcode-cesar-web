@@ -8,7 +8,12 @@ import { MensajeEnviado } from '../../api/asistente-api';
 import { SimuladorApi } from '../../api/simulador-api';
 import { AVISO_IA } from '../../../contenido/legales';
 
-type ErrorDeSimulador = 'limite-anonimo' | 'limite-registrado' | 'no-disponible' | null;
+type ErrorDeSimulador =
+  | 'limite-anonimo'
+  | 'limite-registrado'
+  | 'limite-global'
+  | 'no-disponible'
+  | null;
 
 const CLAVE_SESION_ANONIMA = 'crearcode-asistente-sesion';
 const MAXIMO_MENSAJES_ENVIADOS = 20;
@@ -93,7 +98,7 @@ export class SimuladorChatbot {
   private codigoDesde(error: unknown): ErrorDeSimulador {
     if (error instanceof HttpErrorResponse) {
       const codigo = (error.error as { codigo?: string } | null)?.codigo;
-      if (codigo === 'limite-anonimo' || codigo === 'limite-registrado') {
+      if (codigo === 'limite-anonimo' || codigo === 'limite-registrado' || codigo === 'limite-global') {
         return codigo;
       }
     }
