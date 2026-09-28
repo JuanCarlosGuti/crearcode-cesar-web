@@ -1,0 +1,19 @@
+// Enlace de salto al contenido: fuera de la pantalla hasta que recibe
+// el foco, momento en el que aparece arriba a la izquierda. No se usa
+// .sr-only porque ese oculta tambien al enfocarlo.
+.salto-al-contenido {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  padding: var(--espacio-2) var(--espacio-3);
+  background-color: var(--color-superficie);
+  color: var(--color-texto);
+  border: 2px solid var(--color-acento);
+  border-radius: 0 0 var(--radio-borde) 0;
+  transform: translateY(-120%);
+}
+
+.salto-al-contenido:focus-visible {
+  transform: translateY(0);
+}
