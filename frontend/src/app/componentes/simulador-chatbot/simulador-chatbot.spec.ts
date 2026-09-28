@@ -5,6 +5,7 @@ import { provideRouter } from '@angular/router';
 
 import { SIMULADOR } from '../../../contenido/simulador';
 import { SimuladorChatbot } from './simulador-chatbot';
+import { AVISO_IA } from '../../../contenido/legales';
 
 async function crear() {
   const fixture = TestBed.createComponent(SimuladorChatbot);
@@ -112,5 +113,9 @@ describe('SimuladorChatbot (F10b, HU-40)', () => {
 
     expect(el.textContent).toContain('No perdiste ningún mensaje');
     expect(el.textContent).toContain('hola');
+  });
+  it('avisa que el texto se procesa con un proveedor de IA externo y no admite datos de clientes (auditoria §11)', async () => {
+    const { el } = await crear();
+    expect(el.textContent).toContain(AVISO_IA);
   });
 });

@@ -11,6 +11,7 @@ import {
   ParDeDiagnostico,
 } from '../../api/diagnostico-api';
 import { WhatsappCta } from '../whatsapp-cta/whatsapp-cta';
+import { AVISO_IA } from '../../../contenido/legales';
 
 type ErrorDeDiagnostico = 'limite-anonimo' | 'limite-registrado' | 'no-disponible' | null;
 
@@ -29,6 +30,8 @@ const CLAVE_SESION_ANONIMA = 'crearcode-asistente-sesion';
   imports: [RouterLink, WhatsappCta],
 })
 export class DiagnosticoDigital {
+  // Aviso de privacidad de la IA (auditoria 28 sep 2026, §11).
+  protected readonly avisoIa = AVISO_IA;
   private readonly api = inject(DiagnosticoApi);
   private readonly esNavegador = isPlatformBrowser(inject(PLATFORM_ID));
 

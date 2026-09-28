@@ -6,6 +6,7 @@ import { RouterLink } from '@angular/router';
 import { SIMULADOR } from '../../../contenido/simulador';
 import { MensajeEnviado } from '../../api/asistente-api';
 import { SimuladorApi } from '../../api/simulador-api';
+import { AVISO_IA } from '../../../contenido/legales';
 
 type ErrorDeSimulador = 'limite-anonimo' | 'limite-registrado' | 'no-disponible' | null;
 
@@ -25,6 +26,8 @@ const MAXIMO_MENSAJES_ENVIADOS = 20;
   imports: [RouterLink],
 })
 export class SimuladorChatbot {
+  // Aviso de privacidad de la IA (auditoria 28 sep 2026, §11).
+  protected readonly avisoIa = AVISO_IA;
   private readonly api = inject(SimuladorApi);
   private readonly esNavegador = isPlatformBrowser(inject(PLATFORM_ID));
 

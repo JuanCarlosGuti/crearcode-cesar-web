@@ -7,6 +7,7 @@ import { BocetoDeDemo, DemoApi } from '../../api/demo-api';
 import { SesionService } from '../../nucleo/sesion';
 import { mensajeWhatsappParaRuta } from '../../layout/mensaje-whatsapp-por-ruta';
 import { WhatsappCta } from '../whatsapp-cta/whatsapp-cta';
+import { AVISO_IA } from '../../../contenido/legales';
 
 type ErrorDeDemo = 'limite' | 'no-disponible' | null;
 
@@ -23,6 +24,8 @@ type ErrorDeDemo = 'limite' | 'no-disponible' | null;
   imports: [RouterLink, WhatsappCta],
 })
 export class DemoDiseno {
+  // Aviso de privacidad de la IA (auditoria 28 sep 2026, §11).
+  protected readonly avisoIa = AVISO_IA;
   private readonly api = inject(DemoApi);
   protected readonly sesion = inject(SesionService);
 

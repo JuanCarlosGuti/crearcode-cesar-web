@@ -5,6 +5,7 @@ import { provideRouter } from '@angular/router';
 
 import { DIAGNOSTICO } from '../../../contenido/diagnostico';
 import { DiagnosticoDigital } from './diagnostico-digital';
+import { AVISO_IA } from '../../../contenido/legales';
 
 const INFORME = {
   veredicto: 'Tu negocio tiene un problema de tiempo, no de ventas.',
@@ -130,5 +131,9 @@ describe('DiagnosticoDigital (F10c, HU-41)', () => {
 
     expect(el.textContent).toContain(DIAGNOSTICO.preguntas[0].pregunta);
     expect(el.textContent).toContain('1 de 6');
+  });
+  it('avisa que el texto se procesa con un proveedor de IA externo y no admite datos de clientes (auditoria §11)', async () => {
+    const { el } = await crear();
+    expect(el.textContent).toContain(AVISO_IA);
   });
 });

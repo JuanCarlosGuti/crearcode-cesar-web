@@ -5,6 +5,7 @@ import { provideRouter } from '@angular/router';
 
 import { DEMO_DISENO } from '../../../contenido/demo-diseno';
 import { DemoDiseno } from './demo-diseno';
+import { AVISO_IA } from '../../../contenido/legales';
 
 const BOCETO = {
   titulo: 'App de pedidos para tu restaurante',
@@ -147,5 +148,9 @@ describe('DemoDiseno (F10d, HU-42)', () => {
 
     expect(el.textContent).toContain('No perdiste ningún boceto');
     expect(el.querySelector('.demo-reintentar')).toBeTruthy();
+  });
+  it('avisa que el texto se procesa con un proveedor de IA externo y no admite datos de clientes (auditoria §11)', async () => {
+    const { el } = await crear();
+    expect(el.textContent).toContain(AVISO_IA);
   });
 });

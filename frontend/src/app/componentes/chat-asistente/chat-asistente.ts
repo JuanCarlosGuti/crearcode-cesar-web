@@ -4,6 +4,7 @@ import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { filter, map } from 'rxjs';
 
 import { ASISTENTE } from '../../../contenido/asistente';
+import { AVISO_IA } from '../../../contenido/legales';
 import { AsistenteUiService } from '../../nucleo/asistente-ui';
 import { ConversacionService } from '../../nucleo/conversacion';
 import { SesionService } from '../../nucleo/sesion';
@@ -35,6 +36,8 @@ export class ChatAsistente {
   protected readonly conversacion = inject(ConversacionService);
   protected readonly sesion = inject(SesionService);
   protected readonly textos = ASISTENTE;
+  // Aviso de privacidad de la IA (auditoria 28 sep 2026, §11).
+  protected readonly avisoIa = AVISO_IA;
   protected readonly abierto = signal(false);
   protected readonly mensajeWhatsapp = computed(() => mensajeWhatsappParaRuta(this.urlActual()));
 

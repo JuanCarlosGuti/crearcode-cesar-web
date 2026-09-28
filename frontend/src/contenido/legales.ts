@@ -4,6 +4,16 @@ export const CORREO_CORPORATIVO = 'admin@crearcodecesar.com';
 export const WHATSAPP_NUMERO = '323 988 5883';
 export const WHATSAPP_NUMERO_INTERNACIONAL = '573239885883';
 
+/**
+ * Aviso que acompana a cada herramienta de IA. Lo que el visitante
+ * escribe sale a un proveedor externo (Groq en EE. UU.; en el demo de
+ * diseno tambien Cloudflare Workers AI), y un dueno de consultorio o de
+ * comercio puede pegar datos de sus clientes sin pensarlo — datos que la
+ * Ley 1581 de 2012 considera sensibles. Auditoria del 28 sep 2026, §11.
+ */
+export const AVISO_IA =
+  'No escribas datos personales de tus clientes: lo que escribes se procesa con un proveedor de IA externo.';
+
 export const POLITICA_DE_DATOS = {
   titulo: 'Política de tratamiento de datos personales',
   metaDescripcion:
