@@ -27,6 +27,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class ResponderAlVisitanteUseCaseTest {
 
+	// El techo por red se prueba aparte en CupoDeIaTest: aqui se deja
+	// holgado para no enmascarar el limite que cada test mide.
+	private static final int TECHO_DE_RED_HOLGADO = 10_000;
+
+
 	private static final int LIMITE_ANONIMO = 2;
 	private static final int LIMITE_REGISTRADO = 4;
 	private static final int LIMITE_GLOBAL = 6;
@@ -84,7 +89,7 @@ class ResponderAlVisitanteUseCaseTest {
 		reloj = new RelojDePruebas();
 		generador = new FakeGeneradorDeRespuestas();
 		useCase = new ResponderAlVisitanteUseCaseImpl(generador, reloj,
-				LIMITE_GLOBAL, LIMITE_REGISTRADO, LIMITE_ANONIMO);
+				LIMITE_GLOBAL, LIMITE_REGISTRADO, LIMITE_ANONIMO, TECHO_DE_RED_HOLGADO);
 	}
 
 	private static ConversacionDeAsistente pregunta(String texto) {
@@ -178,7 +183,7 @@ class ResponderAlVisitanteUseCaseTest {
 		// varias veces antes de que el contador se enterara.
 		GeneradorLento lento = new GeneradorLento();
 		ResponderAlVisitanteUseCaseImpl concurrente = new ResponderAlVisitanteUseCaseImpl(lento, reloj,
-				LIMITE_GLOBAL, 100, 100);
+				LIMITE_GLOBAL, 100, 100, TECHO_DE_RED_HOLGADO);
 		int peticiones = LIMITE_GLOBAL * 3;
 		CountDownLatch listos = new CountDownLatch(peticiones);
 		CountDownLatch salida = new CountDownLatch(1);

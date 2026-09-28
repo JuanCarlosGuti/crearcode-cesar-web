@@ -22,6 +22,11 @@ import com.crearcode.leads.dominio.RespuestasDeDiagnostico;
 
 class GenerarDiagnosticoUseCaseImplTest {
 
+	// El techo por red se prueba aparte en CupoDeIaTest: aqui se deja
+	// holgado para no enmascarar el limite que cada test mide.
+	private static final int TECHO_DE_RED_HOLGADO = 10_000;
+
+
 	private static final Clock RELOJ = Clock.fixed(Instant.parse("2026-08-10T10:00:00Z"), ZoneOffset.UTC);
 
 	private static final String RESPUESTA_BIEN_FORMADA = """
@@ -37,7 +42,7 @@ class GenerarDiagnosticoUseCaseImplTest {
 	@BeforeEach
 	void preparar() {
 		generador = new GeneradorFake();
-		useCase = new GenerarDiagnosticoUseCaseImpl(generador, RELOJ, 100, 5, 2);
+		useCase = new GenerarDiagnosticoUseCaseImpl(generador, RELOJ, 100, 5, 2, TECHO_DE_RED_HOLGADO);
 	}
 
 	private static RespuestasDeDiagnostico respuestas() {
@@ -94,7 +99,7 @@ class GenerarDiagnosticoUseCaseImplTest {
 
 	@Test
 	void alcanzadoElTechoGlobalNadieMasGeneraDiagnosticos() {
-		useCase = new GenerarDiagnosticoUseCaseImpl(generador, RELOJ, 1, 5, 2);
+		useCase = new GenerarDiagnosticoUseCaseImpl(generador, RELOJ, 1, 5, 2, TECHO_DE_RED_HOLGADO);
 		useCase.generar(respuestas(), IdentidadDelVisitante.anonima("d1"));
 
 		assertThatThrownBy(() -> useCase.generar(respuestas(), IdentidadDelVisitante.anonima("d2")))

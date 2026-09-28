@@ -32,14 +32,14 @@ class CupoDeIaTest {
 
 	@Test
 	void dejaPasarMientrasHayaCupoYDevuelveLoQueProduceElTrabajo() {
-		CupoDeIa cupo = new CupoDeIa(RELOJ, 10, 5, 2);
+		CupoDeIa cupo = new CupoDeIa(RELOJ, 10, 5, 2, 1000);
 
 		assertThat(cupo.ejecutar(anonimo, () -> "respuesta")).isEqualTo("respuesta");
 	}
 
 	@Test
 	void unRegistradoTieneMasCupoQueUnAnonimo() {
-		CupoDeIa cupo = new CupoDeIa(RELOJ, 100, 3, 1);
+		CupoDeIa cupo = new CupoDeIa(RELOJ, 100, 3, 1, 1000);
 
 		cupo.ejecutar(anonimo, () -> "ok");
 		assertThatThrownBy(() -> cupo.ejecutar(anonimo, () -> "ok"))
@@ -54,7 +54,7 @@ class CupoDeIaTest {
 
 	@Test
 	void elLimiteGlobalMandaSobreElPersonal() {
-		CupoDeIa cupo = new CupoDeIa(RELOJ, 1, 50, 50);
+		CupoDeIa cupo = new CupoDeIa(RELOJ, 1, 50, 50, 1000);
 
 		cupo.ejecutar(anonimo, () -> "ok");
 
@@ -64,7 +64,7 @@ class CupoDeIaTest {
 
 	@Test
 	void elCupoSeDevuelveCuandoElTrabajoFalla() {
-		CupoDeIa cupo = new CupoDeIa(RELOJ, 100, 5, 1);
+		CupoDeIa cupo = new CupoDeIa(RELOJ, 100, 5, 1, 1000);
 
 		assertThatThrownBy(() -> cupo.ejecutar(anonimo, () -> {
 			throw new IllegalStateException("el proveedor se cayó");
@@ -76,7 +76,7 @@ class CupoDeIaTest {
 
 	@Test
 	void superarElLimitePersonalNoConsumeCupoGlobal() {
-		CupoDeIa cupo = new CupoDeIa(RELOJ, 2, 50, 1);
+		CupoDeIa cupo = new CupoDeIa(RELOJ, 2, 50, 1, 1000);
 
 		cupo.ejecutar(anonimo, () -> "ok");
 		assertThatThrownBy(() -> cupo.ejecutar(anonimo, () -> "ok"))
@@ -84,6 +84,47 @@ class CupoDeIaTest {
 
 		// Al global le debe quedar 1, no 0.
 		assertThat(cupo.ejecutar(registrado, () -> "ok")).isEqualTo("ok");
+	}
+
+	/**
+	 * Borrar sessionStorage devolvia el cupo anonimo entero, cuantas
+	 * veces se quisiera (auditoria P0-2a). El techo por red lo corta sin
+	 * castigar a una oficina o a una red movil, que comparten IP y
+	 * seguirian teniendo su cupo personal cada uno.
+	 */
+	@Test
+	void cambiarDeSesionAnonimaNoDevuelveElCupoPorqueLaRedTieneSuPropioTecho() {
+		CupoDeIa cupo = new CupoDeIa(RELOJ, 100, 50, 1, 3);
+		IdentidadDelVisitante primera = IdentidadDelVisitante.anonima("sesion-1", "red-a");
+		IdentidadDelVisitante segunda = IdentidadDelVisitante.anonima("sesion-2", "red-a");
+		IdentidadDelVisitante tercera = IdentidadDelVisitante.anonima("sesion-3", "red-a");
+		IdentidadDelVisitante cuarta = IdentidadDelVisitante.anonima("sesion-4", "red-a");
+
+		cupo.ejecutar(primera, () -> "ok");
+		cupo.ejecutar(segunda, () -> "ok");
+		cupo.ejecutar(tercera, () -> "ok");
+
+		assertThatThrownBy(() -> cupo.ejecutar(cuarta, () -> "ok"))
+				.isInstanceOf(LimiteDeUsoAlcanzadoException.class);
+	}
+
+	@Test
+	void otraRedNoPagaElTechoDeLaPrimera() {
+		CupoDeIa cupo = new CupoDeIa(RELOJ, 100, 50, 1, 1);
+		cupo.ejecutar(IdentidadDelVisitante.anonima("sesion-1", "red-a"), () -> "ok");
+
+		assertThat(cupo.ejecutar(IdentidadDelVisitante.anonima("sesion-2", "red-b"), () -> "ok"))
+				.isEqualTo("ok");
+	}
+
+	/** Quien tiene cuenta ya esta identificado: la red no le aplica. */
+	@Test
+	void elTechoDeRedNoAlcanzaAQuienTieneCuenta() {
+		CupoDeIa cupo = new CupoDeIa(RELOJ, 100, 50, 1, 1);
+		cupo.ejecutar(IdentidadDelVisitante.anonima("sesion-1", "red-a"), () -> "ok");
+
+		assertThat(cupo.ejecutar(IdentidadDelVisitante.registrada("cliente@correo.com"), () -> "ok"))
+				.isEqualTo("ok");
 	}
 
 	/** El trabajo tarda: sin eso no hay solapamiento que probar. */
@@ -101,7 +142,7 @@ class CupoDeIaTest {
 	 */
 	@Test
 	void unaRafagaSimultaneaNoSuperaElCupoGlobal() throws InterruptedException {
-		CupoDeIa cupo = new CupoDeIa(RELOJ, 6, 100, 100);
+		CupoDeIa cupo = new CupoDeIa(RELOJ, 6, 100, 100, 1000);
 		AtomicInteger ejecutados = new AtomicInteger();
 		CountDownLatch salida = new CountDownLatch(1);
 		int peticiones = 18;

@@ -26,9 +26,11 @@ class ResponderAlVisitanteUseCaseImpl implements ResponderAlVisitanteUseCase {
 	ResponderAlVisitanteUseCaseImpl(GeneradorDeRespuestas generador, Clock reloj,
 			@Value("${app.asistente.limite-global-diario}") int limiteGlobalDiario,
 			@Value("${app.asistente.limite-diario-registrado}") int limiteDiarioRegistrado,
-			@Value("${app.asistente.limite-diario-anonimo}") int limiteDiarioAnonimo) {
+			@Value("${app.asistente.limite-diario-anonimo}") int limiteDiarioAnonimo,
+			@Value("${app.asistente.limite-diario-por-red}") int limiteDiarioPorRed) {
 		this.generador = generador;
-		this.cupo = new CupoDeIa(reloj, limiteGlobalDiario, limiteDiarioRegistrado, limiteDiarioAnonimo);
+		this.cupo = new CupoDeIa(reloj, limiteGlobalDiario, limiteDiarioRegistrado, limiteDiarioAnonimo,
+				limiteDiarioPorRed);
 	}
 
 	@Override

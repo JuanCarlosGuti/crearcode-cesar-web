@@ -72,7 +72,7 @@ class GenerarDemoDeDisenoUseCaseImpl implements GenerarDemoDeDisenoUseCase {
 		// Sin cupo anonimo: el demo corta antes con
 		// DemoSoloParaRegistradosException, asi que ese limite no se
 		// alcanza nunca.
-		this.cupo = new CupoDeIa(reloj, limiteGlobalDiario, limiteDiarioRegistrado, 0);
+		this.cupo = new CupoDeIa(reloj, limiteGlobalDiario, limiteDiarioRegistrado, 0, 0);
 	}
 
 	@Override

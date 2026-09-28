@@ -8,9 +8,10 @@ import com.crearcode.leads.dominio.IdentidadDelVisitante;
 
 /**
  * Los cupos diarios de una herramienta de IA: el global (el techo de
- * la capa gratis del proveedor) y el personal, mayor para quien tiene
- * cuenta (HU-38). Contadores en memoria por día — suficiente para la
- * instancia única de v1, igual que el rate limiting por IP.
+ * la capa gratis del proveedor), el personal —mayor para quien tiene
+ * cuenta, HU-38— y el de la red, que solo alcanza a los anónimos.
+ * Contadores en memoria por día — suficiente para la instancia única
+ * de v1, igual que el rate limiting por IP.
  *
  * <p>
  * Las cuatro herramientas repetían esta regla palabra por palabra, con
@@ -35,15 +36,19 @@ final class CupoDeIa {
 	private final int limiteGlobalDiario;
 	private final int limiteDiarioRegistrado;
 	private final int limiteDiarioAnonimo;
+	private final int limiteDiarioPorRed;
 
 	private final ContadorDiario contadorGlobal = new ContadorDiario();
 	private final ContadorDiario contadorPorIdentidad = new ContadorDiario();
+	private final ContadorDiario contadorPorRed = new ContadorDiario();
 
-	CupoDeIa(Clock reloj, int limiteGlobalDiario, int limiteDiarioRegistrado, int limiteDiarioAnonimo) {
+	CupoDeIa(Clock reloj, int limiteGlobalDiario, int limiteDiarioRegistrado, int limiteDiarioAnonimo,
+			int limiteDiarioPorRed) {
 		this.reloj = reloj;
 		this.limiteGlobalDiario = limiteGlobalDiario;
 		this.limiteDiarioRegistrado = limiteDiarioRegistrado;
 		this.limiteDiarioAnonimo = limiteDiarioAnonimo;
+		this.limiteDiarioPorRed = limiteDiarioPorRed;
 	}
 
 	/**
@@ -67,6 +72,13 @@ final class CupoDeIa {
 			liberarTodo(hoy, identidad);
 			throw new LimiteDeUsoAlcanzadoException(identidad.registrada());
 		}
+		// El techo por red solo alcanza a los anonimos: quien tiene
+		// cuenta ya esta identificado y responde por su propio cupo.
+		if (!identidad.registrada()
+				&& contadorPorRed.reservar(hoy, identidad.huellaDeRed()) > limiteDiarioPorRed) {
+			liberarTodo(hoy, identidad);
+			throw new LimiteDeUsoAlcanzadoException(false);
+		}
 		try {
 			return trabajo.get();
 		} catch (RuntimeException fallo) {
@@ -76,6 +88,9 @@ final class CupoDeIa {
 	}
 
 	private void liberarTodo(LocalDate hoy, IdentidadDelVisitante identidad) {
+		if (!identidad.registrada()) {
+			contadorPorRed.liberar(hoy, identidad.huellaDeRed());
+		}
 		contadorPorIdentidad.liberar(hoy, identidad.clave());
 		contadorGlobal.liberar(hoy, CLAVE_GLOBAL);
 	}

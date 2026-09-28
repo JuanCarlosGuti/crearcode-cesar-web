@@ -54,9 +54,11 @@ class SimularChatbotUseCaseImpl implements SimularChatbotUseCase {
 	SimularChatbotUseCaseImpl(GeneradorDeRespuestas generador, Clock reloj,
 			@Value("${app.simulador.limite-global-diario}") int limiteGlobalDiario,
 			@Value("${app.simulador.limite-diario-registrado}") int limiteDiarioRegistrado,
-			@Value("${app.simulador.limite-diario-anonimo}") int limiteDiarioAnonimo) {
+			@Value("${app.simulador.limite-diario-anonimo}") int limiteDiarioAnonimo,
+			@Value("${app.simulador.limite-diario-por-red}") int limiteDiarioPorRed) {
 		this.generador = generador;
-		this.cupo = new CupoDeIa(reloj, limiteGlobalDiario, limiteDiarioRegistrado, limiteDiarioAnonimo);
+		this.cupo = new CupoDeIa(reloj, limiteGlobalDiario, limiteDiarioRegistrado, limiteDiarioAnonimo,
+				limiteDiarioPorRed);
 	}
 
 	@Override

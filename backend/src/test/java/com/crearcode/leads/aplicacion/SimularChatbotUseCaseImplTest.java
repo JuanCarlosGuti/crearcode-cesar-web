@@ -22,6 +22,11 @@ import com.crearcode.leads.dominio.RolDeMensaje;
 
 class SimularChatbotUseCaseImplTest {
 
+	// El techo por red se prueba aparte en CupoDeIaTest: aqui se deja
+	// holgado para no enmascarar el limite que cada test mide.
+	private static final int TECHO_DE_RED_HOLGADO = 10_000;
+
+
 	private static final Clock RELOJ = Clock.fixed(Instant.parse("2026-08-10T10:00:00Z"), ZoneOffset.UTC);
 
 	private GeneradorFake generador;
@@ -30,7 +35,7 @@ class SimularChatbotUseCaseImplTest {
 	@BeforeEach
 	void preparar() {
 		generador = new GeneradorFake();
-		useCase = new SimularChatbotUseCaseImpl(generador, RELOJ, 100, 5, 2);
+		useCase = new SimularChatbotUseCaseImpl(generador, RELOJ, 100, 5, 2, TECHO_DE_RED_HOLGADO);
 	}
 
 	private static ConversacionDeAsistente conversacion(String texto) {
@@ -94,7 +99,7 @@ class SimularChatbotUseCaseImplTest {
 
 	@Test
 	void alcanzadoElTechoGlobalNadieMasUsaElSimulador() {
-		useCase = new SimularChatbotUseCaseImpl(generador, RELOJ, 1, 5, 2);
+		useCase = new SimularChatbotUseCaseImpl(generador, RELOJ, 1, 5, 2, TECHO_DE_RED_HOLGADO);
 		useCase.simular(negocio(), conversacion("1"), IdentidadDelVisitante.anonima("s1"));
 
 		assertThatThrownBy(

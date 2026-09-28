@@ -67,9 +67,11 @@ class GenerarDiagnosticoUseCaseImpl implements GenerarDiagnosticoUseCase {
 	GenerarDiagnosticoUseCaseImpl(GeneradorDeRespuestas generador, Clock reloj,
 			@Value("${app.diagnostico.limite-global-diario}") int limiteGlobalDiario,
 			@Value("${app.diagnostico.limite-diario-registrado}") int limiteDiarioRegistrado,
-			@Value("${app.diagnostico.limite-diario-anonimo}") int limiteDiarioAnonimo) {
+			@Value("${app.diagnostico.limite-diario-anonimo}") int limiteDiarioAnonimo,
+			@Value("${app.diagnostico.limite-diario-por-red}") int limiteDiarioPorRed) {
 		this.generador = generador;
-		this.cupo = new CupoDeIa(reloj, limiteGlobalDiario, limiteDiarioRegistrado, limiteDiarioAnonimo);
+		this.cupo = new CupoDeIa(reloj, limiteGlobalDiario, limiteDiarioRegistrado, limiteDiarioAnonimo,
+				limiteDiarioPorRed);
 	}
 
 	@Override
