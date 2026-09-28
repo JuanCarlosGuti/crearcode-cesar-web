@@ -5,7 +5,10 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.Clock;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -139,6 +142,68 @@ class ResponderAlVisitanteUseCaseTest {
 		assertThatThrownBy(() -> useCase.responder(pregunta("otra"), IdentidadDelVisitante.anonima("sesion-nueva")))
 				.isInstanceOf(LimiteGlobalAlcanzadoException.class);
 		assertThat(generador.llamadas).isEqualTo(LIMITE_GLOBAL);
+	}
+
+
+	/**
+	 * Proveedor que se toma su tiempo, como el real: es lo que abre la
+	 * ventana en la que varias peticiones leen "hay cupo" antes de que
+	 * ninguna lo haya consumido.
+	 */
+	private static final class GeneradorLento implements GeneradorDeRespuestas {
+		private final AtomicInteger llamadas = new AtomicInteger();
+
+		@Override
+		public RespuestaDelAsistente responder(ConversacionDeAsistente conversacion) {
+			llamadas.incrementAndGet();
+			try {
+				Thread.sleep(80);
+			} catch (InterruptedException excepcion) {
+				Thread.currentThread().interrupt();
+			}
+			return new RespuestaDelAsistente("ok", false);
+		}
+
+		@Override
+		public RespuestaDelAsistente responder(String contextoDeSistema, ConversacionDeAsistente conversacion) {
+			return responder(conversacion);
+		}
+	}
+
+	@Test
+	void elCupoGlobalSeReservaAntesDeLlamarAlProveedorYNoSeSuperaConPeticionesSimultaneas() throws Exception {
+		// Auditoria del 28 sep 2026, seccion 10: leer el contador, llamar al
+		// proveedor y recien despues incrementar deja pasar a todos los que
+		// llegan a la vez. Un solo script en rafaga agotaba el cupo global
+		// varias veces antes de que el contador se enterara.
+		GeneradorLento lento = new GeneradorLento();
+		ResponderAlVisitanteUseCaseImpl concurrente = new ResponderAlVisitanteUseCaseImpl(lento, reloj,
+				LIMITE_GLOBAL, 100, 100);
+		int peticiones = LIMITE_GLOBAL * 3;
+		CountDownLatch listos = new CountDownLatch(peticiones);
+		CountDownLatch salida = new CountDownLatch(1);
+		List<Thread> hilos = new ArrayList<>();
+		for (int i = 0; i < peticiones; i++) {
+			String sesion = "sesion-" + i;
+			Thread hilo = new Thread(() -> {
+				listos.countDown();
+				try {
+					salida.await();
+					concurrente.responder(pregunta("hola"), IdentidadDelVisitante.anonima(sesion));
+				} catch (LimiteGlobalAlcanzadoException | InterruptedException esperada) {
+					// el exceso debe rebotar aqui, no llegar al proveedor
+				}
+			});
+			hilos.add(hilo);
+			hilo.start();
+		}
+		listos.await();
+		salida.countDown();
+		for (Thread hilo : hilos) {
+			hilo.join();
+		}
+
+		assertThat(lento.llamadas.get()).isEqualTo(LIMITE_GLOBAL);
 	}
 
 	@Test

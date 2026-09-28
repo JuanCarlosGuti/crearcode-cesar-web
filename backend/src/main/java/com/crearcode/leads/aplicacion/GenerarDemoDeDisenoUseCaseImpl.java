@@ -87,27 +87,33 @@ class GenerarDemoDeDisenoUseCaseImpl implements GenerarDemoDeDisenoUseCase {
 		}
 		LocalDate hoy = LocalDate.now(reloj);
 
-		if (contadorGlobal.valor(hoy, "global") >= limiteGlobalDiario) {
+		// Reserva atomica antes de llamar; se devuelve si no se usa (ver
+		// ContadorDiario.reservar y ResponderAlVisitanteUseCaseImpl).
+		if (contadorGlobal.reservar(hoy, "global") > limiteGlobalDiario) {
+			contadorGlobal.liberar(hoy, "global");
 			throw new LimiteGlobalAlcanzadoException();
 		}
-		if (contadorPorIdentidad.valor(hoy, identidad.clave()) >= limiteDiarioRegistrado) {
+		if (contadorPorIdentidad.reservar(hoy, identidad.clave()) > limiteDiarioRegistrado) {
+			contadorPorIdentidad.liberar(hoy, identidad.clave());
+			contadorGlobal.liberar(hoy, "global");
 			throw new LimiteDeUsoAlcanzadoException(true);
 		}
+		try {
+			String contexto = PLANTILLA_TEXTO.formatted(solicitud.sector(), solicitud.queHace(),
+					solicitud.queNecesita());
+			ConversacionDeAsistente conversacion = new ConversacionDeAsistente(
+					List.of(new MensajeDeChat(RolDeMensaje.USUARIO, INSTRUCCION_DE_USUARIO)));
 
-		String contexto = PLANTILLA_TEXTO.formatted(solicitud.sector(), solicitud.queHace(),
-				solicitud.queNecesita());
-		ConversacionDeAsistente conversacion = new ConversacionDeAsistente(
-				List.of(new MensajeDeChat(RolDeMensaje.USUARIO, INSTRUCCION_DE_USUARIO)));
+			RespuestaDelAsistente respuesta = generadorTexto.responder(contexto, conversacion);
+			PropuestaParseada propuesta = parsear(respuesta.texto());
 
-		RespuestaDelAsistente respuesta = generadorTexto.responder(contexto, conversacion);
-		PropuestaParseada propuesta = parsear(respuesta.texto());
-
-		ImagenGenerada imagen = generadorImagenes.generar(descripcionDeImagen(solicitud, propuesta.titulo()));
-		BocetoDeDemo boceto = new BocetoDeDemo(propuesta.titulo(), propuesta.funcionalidades(), imagen);
-
-		contadorGlobal.incrementar(hoy, "global");
-		contadorPorIdentidad.incrementar(hoy, identidad.clave());
-		return boceto;
+			ImagenGenerada imagen = generadorImagenes.generar(descripcionDeImagen(solicitud, propuesta.titulo()));
+			return new BocetoDeDemo(propuesta.titulo(), propuesta.funcionalidades(), imagen);
+		} catch (RuntimeException fallo) {
+			contadorPorIdentidad.liberar(hoy, identidad.clave());
+			contadorGlobal.liberar(hoy, "global");
+			throw fallo;
+		}
 	}
 
 	/**

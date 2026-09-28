@@ -86,24 +86,31 @@ class GenerarDiagnosticoUseCaseImpl implements GenerarDiagnosticoUseCase {
 	public InformeDeDiagnostico generar(RespuestasDeDiagnostico respuestas, IdentidadDelVisitante identidad) {
 		LocalDate hoy = LocalDate.now(reloj);
 
-		if (contadorGlobal.valor(hoy, "global") >= limiteGlobalDiario) {
+		int limitePersonal = identidad.registrada() ? limiteDiarioRegistrado : limiteDiarioAnonimo;
+
+		// Reserva atomica antes de llamar; se devuelve si no se usa (ver
+		// ContadorDiario.reservar y ResponderAlVisitanteUseCaseImpl).
+		if (contadorGlobal.reservar(hoy, "global") > limiteGlobalDiario) {
+			contadorGlobal.liberar(hoy, "global");
 			throw new LimiteGlobalAlcanzadoException();
 		}
-		int limitePersonal = identidad.registrada() ? limiteDiarioRegistrado : limiteDiarioAnonimo;
-		if (contadorPorIdentidad.valor(hoy, identidad.clave()) >= limitePersonal) {
+		if (contadorPorIdentidad.reservar(hoy, identidad.clave()) > limitePersonal) {
+			contadorPorIdentidad.liberar(hoy, identidad.clave());
+			contadorGlobal.liberar(hoy, "global");
 			throw new LimiteDeUsoAlcanzadoException(identidad.registrada());
 		}
+		try {
+			String contexto = PLANTILLA.formatted(cuestionarioComoDatos(respuestas));
+			ConversacionDeAsistente conversacion = new ConversacionDeAsistente(
+					List.of(new MensajeDeChat(RolDeMensaje.USUARIO, INSTRUCCION_DE_USUARIO)));
 
-		String contexto = PLANTILLA.formatted(cuestionarioComoDatos(respuestas));
-		ConversacionDeAsistente conversacion = new ConversacionDeAsistente(
-				List.of(new MensajeDeChat(RolDeMensaje.USUARIO, INSTRUCCION_DE_USUARIO)));
-
-		RespuestaDelAsistente respuesta = generador.responder(contexto, conversacion);
-		InformeDeDiagnostico informe = parsear(respuesta.texto());
-
-		contadorGlobal.incrementar(hoy, "global");
-		contadorPorIdentidad.incrementar(hoy, identidad.clave());
-		return informe;
+			RespuestaDelAsistente respuesta = generador.responder(contexto, conversacion);
+			return parsear(respuesta.texto());
+		} catch (RuntimeException fallo) {
+			contadorPorIdentidad.liberar(hoy, identidad.clave());
+			contadorGlobal.liberar(hoy, "global");
+			throw fallo;
+		}
 	}
 
 	private static String cuestionarioComoDatos(RespuestasDeDiagnostico respuestas) {

@@ -23,15 +23,24 @@ final class ContadorDiario {
 		}
 	}
 
-	int valor(LocalDate hoy, String clave) {
+	/**
+	 * Incrementa y devuelve el valor nuevo en UNA sola operacion. Leer
+	 * primero y sumar despues dejaba pasar a todos los que llegaban a la
+	 * vez (auditoria del 28 sep 2026): con 6 de cupo, 18 peticiones
+	 * simultaneas llegaban las 18 al proveedor.
+	 */
+	int reservar(LocalDate hoy, String clave) {
 		reiniciarSiCambioElDia(hoy);
-		AtomicInteger contador = contadores.get(clave);
-		return contador == null ? 0 : contador.get();
+		return contadores.computeIfAbsent(clave, ignorada -> new AtomicInteger()).incrementAndGet();
 	}
 
-	void incrementar(LocalDate hoy, String clave) {
+	/** Devuelve una reserva que no se uso: limite superado o proveedor caido. Nunca baja de cero. */
+	void liberar(LocalDate hoy, String clave) {
 		reiniciarSiCambioElDia(hoy);
-		contadores.computeIfAbsent(clave, ignorada -> new AtomicInteger()).incrementAndGet();
+		AtomicInteger contador = contadores.get(clave);
+		if (contador != null) {
+			contador.updateAndGet(valor -> Math.max(0, valor - 1));
+		}
 	}
 
 }

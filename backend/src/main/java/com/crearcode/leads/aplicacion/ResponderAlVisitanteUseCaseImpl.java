@@ -46,19 +46,28 @@ class ResponderAlVisitanteUseCaseImpl implements ResponderAlVisitanteUseCase {
 	public RespuestaDelAsistente responder(ConversacionDeAsistente conversacion, IdentidadDelVisitante identidad) {
 		LocalDate hoy = LocalDate.now(reloj);
 
-		if (contadorGlobal.valor(hoy, "global") >= limiteGlobalDiario) {
+		int limitePersonal = identidad.registrada() ? limiteDiarioRegistrado : limiteDiarioAnonimo;
+
+		// Se reserva ANTES de llamar al proveedor y se devuelve si no se
+		// uso: es lo unico que impide que una rafaga simultanea pase entera
+		// (ver ContadorDiario.reservar).
+		if (contadorGlobal.reservar(hoy, "global") > limiteGlobalDiario) {
+			contadorGlobal.liberar(hoy, "global");
 			throw new LimiteGlobalAlcanzadoException();
 		}
-		int limitePersonal = identidad.registrada() ? limiteDiarioRegistrado : limiteDiarioAnonimo;
-		if (contadorPorIdentidad.valor(hoy, identidad.clave()) >= limitePersonal) {
+		if (contadorPorIdentidad.reservar(hoy, identidad.clave()) > limitePersonal) {
+			contadorPorIdentidad.liberar(hoy, identidad.clave());
+			contadorGlobal.liberar(hoy, "global");
 			throw new LimiteDeUsoAlcanzadoException(identidad.registrada());
 		}
-
-		RespuestaDelAsistente respuesta = generador.responder(conversacion);
-
-		contadorGlobal.incrementar(hoy, "global");
-		contadorPorIdentidad.incrementar(hoy, identidad.clave());
-		return respuesta;
+		try {
+			return generador.responder(conversacion);
+		} catch (RuntimeException fallo) {
+			// Un fallo del proveedor no consume cupo.
+			contadorPorIdentidad.liberar(hoy, identidad.clave());
+			contadorGlobal.liberar(hoy, "global");
+			throw fallo;
+		}
 	}
 
 }

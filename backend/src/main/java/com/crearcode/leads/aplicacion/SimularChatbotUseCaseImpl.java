@@ -75,20 +75,27 @@ class SimularChatbotUseCaseImpl implements SimularChatbotUseCase {
 			IdentidadDelVisitante identidad) {
 		LocalDate hoy = LocalDate.now(reloj);
 
-		if (contadorGlobal.valor(hoy, "global") >= limiteGlobalDiario) {
+		int limitePersonal = identidad.registrada() ? limiteDiarioRegistrado : limiteDiarioAnonimo;
+
+		// Reserva atomica antes de llamar; se devuelve si no se usa (ver
+		// ContadorDiario.reservar y ResponderAlVisitanteUseCaseImpl).
+		if (contadorGlobal.reservar(hoy, "global") > limiteGlobalDiario) {
+			contadorGlobal.liberar(hoy, "global");
 			throw new LimiteGlobalAlcanzadoException();
 		}
-		int limitePersonal = identidad.registrada() ? limiteDiarioRegistrado : limiteDiarioAnonimo;
-		if (contadorPorIdentidad.valor(hoy, identidad.clave()) >= limitePersonal) {
+		if (contadorPorIdentidad.reservar(hoy, identidad.clave()) > limitePersonal) {
+			contadorPorIdentidad.liberar(hoy, identidad.clave());
+			contadorGlobal.liberar(hoy, "global");
 			throw new LimiteDeUsoAlcanzadoException(identidad.registrada());
 		}
-
-		String contexto = PLANTILLA.formatted(negocio.nombre(), negocio.rubro());
-		RespuestaDelAsistente respuesta = generador.responder(contexto, conversacion);
-
-		contadorGlobal.incrementar(hoy, "global");
-		contadorPorIdentidad.incrementar(hoy, identidad.clave());
-		return respuesta;
+		try {
+			String contexto = PLANTILLA.formatted(negocio.nombre(), negocio.rubro());
+			return generador.responder(contexto, conversacion);
+		} catch (RuntimeException fallo) {
+			contadorPorIdentidad.liberar(hoy, identidad.clave());
+			contadorGlobal.liberar(hoy, "global");
+			throw fallo;
+		}
 	}
 
 }
