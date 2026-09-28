@@ -6,7 +6,7 @@ export const SOBRE_NOSOTROS = {
   fundador: {
     nombre: 'Juan Carlos Gutiérrez',
     perfil:
-      'Juan Carlos Gutiérrez es arquitecto de software senior y administrador de empresas de la Universidad Nacional, con 7 años de experiencia como instructor SENA. Esa combinación no es casualidad: significa que en Crear Code Cesar hablamos el idioma del negocio, no solo el de la técnica. Entendemos tanto el código como los números, las metas y las preocupaciones reales de quien dirige una empresa.',
+      'Juan Carlos Gutiérrez es administrador de empresas de la Universidad Nacional y se formó como tecnólogo en Análisis y Desarrollo de Software en el SENA. Fue instructor del SENA durante 7 años —contabilidad, ofimática y Excel— y después trabajó como ingeniero de software backend en empresas de desarrollo. Esa combinación no es casualidad: significa que en Crear Code Cesar hablamos el idioma del negocio, no solo el de la técnica. Entendemos tanto el código como los números, las metas y las preocupaciones reales de quien dirige una empresa.',
     linkedinUrl: 'https://www.linkedin.com/in/juan-carlos-gutierrez-huerfano369582/',
   },
   formaDeTrabajar:

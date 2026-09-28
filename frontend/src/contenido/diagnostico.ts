@@ -49,7 +49,7 @@ export const DIAGNOSTICO = {
   prefijoBeneficio: 'Beneficio: ',
   cierreTitulo: '¿Hablamos de cuál te conviene primero?',
   cierreTexto:
-    '30 minutos con alguien del equipo, sin costo y sin compromiso. Si no te sirve, te lo decimos.',
+    '30 minutos con el fundador, sin costo y sin compromiso. Si no te sirve, te lo decimos.',
   ctaContacto: 'Agenda tu consulta gratuita',
   ctaWhatsapp: 'WhatsApp',
   reiniciar: 'Volver a empezar',

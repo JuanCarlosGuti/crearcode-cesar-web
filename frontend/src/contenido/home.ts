@@ -67,7 +67,7 @@ export const HOME = {
     etiqueta: 'Quién está detrás',
     titulo: 'Juan Carlos Gutiérrez',
     texto:
-      'Arquitecto de software y administrador de empresas, con siete años como instructor del SENA. Esa mezcla es la razón por la que aquí se habla de plazos, costos y riesgos, y no solo de tecnología.',
+      'Administrador de empresas e ingeniero de software backend, con siete años como instructor del SENA. Esa mezcla es la razón por la que aquí se habla de plazos, costos y riesgos, y no solo de tecnología.',
     enlace: 'Cómo trabajamos',
   },
   cierre: {

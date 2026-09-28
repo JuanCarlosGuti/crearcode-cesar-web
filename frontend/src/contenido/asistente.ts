@@ -23,5 +23,5 @@ export const ASISTENTE = {
     'Alcanzaste tus consultas de hoy. Vuelve mañana o escríbenos por WhatsApp y seguimos la conversación en persona.',
   ctaCrearCuenta: 'Crear mi cuenta',
   notaAlPie:
-    'Respuestas generadas con IA a partir del contenido de este sitio. Pueden contener errores — para decisiones importantes, confírmalo con nuestro equipo.',
+    'Respuestas generadas con IA a partir del contenido de este sitio. Pueden contener errores — para decisiones importantes, confírmalo con nosotros.',
 } as const;

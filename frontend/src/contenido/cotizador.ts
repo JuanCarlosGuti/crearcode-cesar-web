@@ -42,7 +42,7 @@ export const COTIZADOR = {
     {
       clave: 'urgencia',
       titulo: '¿Para cuándo lo necesitas?',
-      ayuda: 'La urgencia cambia el equipo asignado.',
+      ayuda: 'La urgencia cambia cómo se planea el trabajo.',
       opciones: ['Sin afán, en los próximos meses', 'En 4 a 8 semanas', 'Lo antes posible'],
     },
   ] as readonly PasoDeCotizador[],
