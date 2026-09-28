@@ -57,14 +57,24 @@ el pulido previo a las pruebas del MVP, con los pendientes listados
 abajo.
 
 La v1 está PUBLICADA en producción desde el 27 jul
-2026: Render (capa gratis) + Neon.**
+2026, y desde el 19 ago 2026 corre en **servidor propio** (VPS de
+Netcup en Virginia, desplegado con Kamal 2 desde GitHub Actions), no en
+Render — ver ADR-13.**
 
-URLs de producción:
-- **Dominio canónico: https://crearcodecesar.com** (comprado el 10 ago
-  2026, Cloudflare como DNS/proxy, ver ADR-11; www redirige 301)
-- Frontend (origen del servicio): https://crearcodecesar-frontend.onrender.com
-- Backend: https://crearcodecesar-backend.onrender.com (API detrás
-  del proxy `/api` del frontend, ver ADR-09)
+Producción:
+- **Todo vive en https://crearcodecesar.com**, un solo host. Caddy
+  sirve el sitio prerenderizado; `kamal-proxy` entrega `/api` y
+  `/actuator` al backend por prefijo de ruta. El navegador ve un solo
+  origen, así que el proyecto sigue sin CORS (ADR-09). `www` redirige
+  301 al dominio raíz desde el `Caddyfile`.
+- La base de datos es el **PostgreSQL compartido del servidor** (rol y
+  base `crearcodecesar`), no Neon.
+- Cloudflare es solo el DNS del dominio — no hay proxy delante, así que
+  tampoco hay CDN. El TLS lo emite Let's Encrypt vía kamal-proxy.
+
+Los servicios de Render siguen encendidos sin dominio apuntándoles,
+como vuelta atrás; se apagan cuando el usuario lo decida (ver
+[docs/09-despliegue.md](docs/09-despliegue.md) §9 paso 6).
 
 El usuario aprobó la documentación el 16 jul 2026 con la frase
 "APRUEBO LA DOCUMENTACIÓN, ARRANCA LA FASE 1". Regla dura: no se avanza
@@ -267,27 +277,30 @@ proyecto vía `npx`/scripts de `package.json`.
    real sigue en 20/10 min y el e2e de contacto falla en la tercera
    corrida sin decir por qué.
 
-   **Probar el build de producción localmente** (desde F12 el frontend
-   es estático, ADR-12): `npm run build` y luego
-   `npm run servir:estatico` (puerto 4300). Ese script replica lo que
-   hace Render **leyendo las reglas del `render.yaml` real**
-   (`scripts/rutas-de-render.mjs`), no una versión propia: sirve el
-   archivo si existe y, si no, aplica las reglas en orden. **Y comprime
-   con gzip** — sin eso Lighthouse cae ~15 puntos de Performance por
-   servir los bundles en crudo y parece una regresión que no existe,
-   porque el CDN de Render sí comprime.
+   **Probar el build de producción localmente**: `npm run
+   servir:estatico` (puerto 4300) construye la imagen del sitio y la
+   levanta. No es una réplica de producción: **es la misma imagen**
+   —Angular prerenderizado servido por Caddy— que corre en el servidor
+   (ADR-13). Ahí apunta también `npm run lighthouse`.
 
-   `npm run verificar:rutas` (también en CI) comprueba que esas reglas
-   sirvan de verdad las 19 páginas prerenderizadas. Nació de un fallo
-   real (12 ago 2026): un único comodín `/* → /index.csr.html` hacía
-   que **todas** las páginas devolvieran el cascarón del SPA, porque
-   Render solo resuelve el índice de una carpeta con barra final
-   (`/contacto/` sí, `/contacto` no). Responden 200 y el navegador
-   pinta la página correcta, así que solo se ve mirando el HTML de la
-   primera respuesta — que es lo único que leen Google y las tarjetas
-   de WhatsApp/LinkedIn. Regla que dejó: **un replicador más generoso
-   que el original no verifica nada** (el servidor local resolvía él
-   mismo `/contacto`, y por eso en local todo se veía bien).
+   `npm run verificar:servido <url>` comprueba que la **primera
+   respuesta** de cada ruta traiga la página correcta, con el `<link
+   rel="canonical">` como marcador. Funciona contra la imagen local o
+   contra el dominio, y con dos URLs las compara lado a lado. En CI
+   corre sobre la imagen recién construida.
+
+   Nació de un fallo real (12 ago 2026, cuando el sitio aún estaba en
+   Render): un único comodín `/* → /index.csr.html` hacía que **todas**
+   las páginas devolvieran el cascarón del SPA, porque Render solo
+   resuelve el índice de una carpeta con barra final (`/contacto/` sí,
+   `/contacto` no). Responden 200 y el navegador pinta la página
+   correcta, así que solo se ve mirando el HTML de la primera respuesta
+   — que es lo único que leen Google y las tarjetas de
+   WhatsApp/LinkedIn. Dos reglas dejó: **un replicador más generoso que
+   el original no verifica nada** (el servidor local de entonces
+   resolvía él mismo `/contacto`, y por eso en local todo se veía
+   bien), y por eso hoy se prueba la imagen de verdad y no una
+   imitación.
 
 Verificado manualmente end-to-end (16 jul 2026): los tres servicios
 levantados a la vez, `GET /actuator/health` respondió

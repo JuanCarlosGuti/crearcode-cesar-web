@@ -10,8 +10,7 @@
     "test": "ng test",
     "e2e": "playwright test",
     "lighthouse": "node scripts/lighthouse-audit.mjs",
-    "servir:estatico": "node scripts/servir-estatico.mjs",
-    "verificar:rutas": "node scripts/verificar-rutas-estaticas.mjs",
+    "servir:estatico": "docker build -t crearcode-sitio . && docker run --rm -p 4300:8080 crearcode-sitio",
     "verificar:servido": "node scripts/verificar-rutas-servidas.mjs"
   },
   "private": true,

@@ -50,14 +50,6 @@ jobs:
         working-directory: frontend
         run: npm run build
 
-      # Comprueba que las reglas de render.yaml sirvan de verdad las
-      # paginas prerenderizadas: sin esto, un comodin mal puesto deja
-      # todo el sitio respondiendo el cascaron del SPA con 200 y solo se
-      # nota mirando el html de la primera respuesta (ADR-12).
-      - name: Verificar rutas del Static Site (render.yaml)
-        working-directory: frontend
-        run: npm run verificar:rutas
-
   docker-build:
     # El frontend vuelve a tener imagen (ADR-13): en el servidor propio
     # kamal-proxy enruta por dominio pero no sirve archivos, asi que el
@@ -205,28 +197,15 @@ jobs:
     # conviene perder: no se nota hasta el dia que sale algo roto en
     # verde.
     needs: [backend, frontend, docker-build, e2e]
-    # La variable DESPLIEGUE_SERVIDOR_PROPIO es el interruptor del
-    # corte, y no sobra: sin ella este job se activaria en el mismo push
-    # que lo introduce. El despliegue del sitio no necesita mas secreto
-    # que el GITHUB_TOKEN de la ejecucion, asi que funcionaria — y
-    # registraria crearcodecesar.com en kamal-proxy pidiendo certificado
-    # para un dominio que todavia apunta a Render. Let's Encrypt limita
-    # a 5 validaciones fallidas por hostname y hora, asi que ese
-    # accidente no solo falla: gasta la cuota que hace falta el dia del
-    # corte de verdad.
-    #
-    # Se crea en Settings -> Secrets and variables -> Actions ->
-    # Variables, con valor "true", el dia que el DNS ya apunte al
-    # servidor. Mientras no exista, el job se salta (no falla).
-    #
-    # ANDAMIO, NO ESTRUCTURA: cuando el sitio lleve unos dias estable,
-    # QUITAR estas dos lineas. Dejar la variable para siempre convierte
-    # un despliegue omitido en un run verde donde no paso nada, y quien
-    # mire de pasada asume que desplego. Para parar despliegues en
-    # caliente esta "Disable workflow", que se ve en la interfaz.
-    if: >-
-      github.event_name == 'push' && github.ref == 'refs/heads/master'
-      && vars.DESPLIEGUE_SERVIDOR_PROPIO == 'true'
+    # Hubo aqui una condicion extra, `vars.DESPLIEGUE_SERVIDOR_PROPIO`,
+    # que protegia la ventana entre introducir este job y mover el DNS:
+    # sin ella el job se habria activado en su propio commit y habria
+    # pedido certificado para un dominio que aun apuntaba a Render,
+    # gastando la cuota de Let's Encrypt. Cumplido el corte (19 ago
+    # 2026) se retiro: era andamio. Dejarla puesta convertiria un
+    # despliegue omitido en un run verde donde no paso nada. Para parar
+    # despliegues en caliente esta "Disable workflow", que se ve.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     permissions:
       contents: read

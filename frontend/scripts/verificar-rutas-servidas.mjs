@@ -1,10 +1,14 @@
 // Verifica un sitio ya servido: pide cada ruta por HTTP y comprueba que
 // la PRIMERA respuesta trae la pagina correcta — no que responda 200.
 //
-// Es la variante de verificar-rutas-estaticas.mjs para cuando el
-// servidor ya no es Render: aquella lee las reglas de render.yaml, esta
-// no sabe nada de reglas y solo mira lo que sale por el cable. Sirve
-// igual para Caddy, para Render o para produccion.
+// No sabe nada de reglas ni de configuracion: solo mira lo que sale por
+// el cable. Por eso sirve igual contra la imagen con Caddy, contra el
+// dominio en produccion o contra cualquier cosa que sirva el sitio.
+//
+// Reemplazo a verificar-rutas-estaticas.mjs, que leia las reglas del
+// render.yaml. Aquel se borro con Render: un test que valida un archivo
+// que ya no gobierna nada es peor que no tenerlo, porque sigue en
+// verde.
 //
 // Con dos URLs compara lado a lado y muestra en que se desvia la
 // primera de la segunda, ruta por ruta. Eso es lo util al migrar: no

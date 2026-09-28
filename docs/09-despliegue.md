@@ -588,17 +588,32 @@ sirve la raíz. Es al revés que en UparYa.
 
 ### Paso 6 — Apagar Render y limpiar lo que queda muerto
 
-Solo cuando lo anterior esté verde. Y **antes de apagarlo**, revocar
-las credenciales viejas que se rotaron en el paso 2.
+**El corte se hizo el 19 ago 2026** y quedó verificado en producción:
+las 19 páginas con su canonical, las 7 rutas de sesión con el cascarón,
+404 real, `www` con su 301, HSTS, y `/actuator/health` respondiendo
+`UP` **a través del dominio** — que es la prueba de que el enrutado por
+prefijo de ruta funciona.
 
-Con Render apagado quedan dos cosas en el repo que ya no prueban nada y
-hay que quitar en el mismo cambio:
+La limpieza del repo se hizo el 28 sep 2026: se borraron `render.yaml`,
+`scripts/rutas-de-render.mjs` y `scripts/verificar-rutas-estaticas.mjs`
+con su paso de CI, y se retiró la condición `DESPLIEGUE_SERVIDOR_PROPIO`
+del workflow. Un test verde que valida un archivo que ya no gobierna
+nada es peor que no tenerlo; la verificación real es
+`verificar-rutas-servidas.mjs` sobre la imagen con Caddy, que corre en
+CI. Y `npm run servir:estatico` dejó de replicar nada: ahora construye
+y levanta **la misma imagen** que corre en producción.
 
-- `render.yaml` y el paso de CI `npm run verificar:rutas`, que valida
-  sus reglas. Un test verde que no prueba nada es peor que no tenerlo:
-  la verificación real pasa a ser `verificar-rutas-servidas.mjs` sobre
-  la imagen con Caddy, que ya corre en el job de Docker.
-- La condición `DESPLIEGUE_SERVIDOR_PROPIO` del workflow (ver paso 4).
+**Lo que sigue pendiente del usuario:**
+
+- **Apagar los servicios de Render.** Siguen encendidos, sin dominio
+  apuntándoles, como vuelta atrás. Mientras existan, cada push les
+  dispara un build que ya no sirve para nada.
+- **Revocar las credenciales viejas** de Resend, Groq y Cloudflare, que
+  se rotaron antes del corte y siguen vivas.
+- **La prueba de ISS-136**: agotar el rate limit de un endpoint de
+  `/api` desde un equipo y pedir el mismo endpoint desde otra red (un
+  teléfono con datos móviles). Hasta hacerla, el límite por IP real
+  está implementado pero no verificado.
 
 Queda pendiente, y no bloquea el corte porque hoy todos los datos son
 de prueba: **copias de seguridad del PostgreSQL compartido** (hoy no
