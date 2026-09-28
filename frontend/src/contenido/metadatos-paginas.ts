@@ -18,7 +18,7 @@ export const METADATOS_HOME = {
 export const METADATOS_CASOS_LISTADO = {
   titulo: 'Proyectos — Crear Code Cesar',
   descripcion:
-    'Proyectos propios y de código abierto de Crear Code Cesar: un directorio de negocios en producción, una app para estudiar la lengua del pueblo Wiwa y una librería de facturación electrónica de la DIAN.',
+    'Proyectos propios y de código abierto de Crear Code Cesar: un directorio de negocios en producción, una plataforma de alojamientos, una pasarela de pagos cripto en desarrollo y una app para estudiar la lengua del pueblo Wiwa.',
 };
 
 export const METADATOS_SOBRE_NOSOTROS = {

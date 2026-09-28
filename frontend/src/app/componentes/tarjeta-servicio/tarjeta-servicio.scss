@@ -3,8 +3,8 @@
   flex-direction: column;
   gap: var(--espacio-2);
   padding: var(--espacio-3);
-  background-color: var(--color-blanco);
-  border: 1px solid color-mix(in srgb, var(--color-primario) 12%, white);
+  background-color: var(--color-superficie);
+  border: 1px solid color-mix(in srgb, var(--color-primario) 12%, var(--color-superficie));
   border-radius: var(--radio-borde-grande);
   box-shadow: var(--sombra-1);
   text-decoration: none;
@@ -36,6 +36,22 @@
   color: var(--color-acento);
   font-weight: 600;
   margin-top: auto;
+}
+
+// La linea de IA se distingue en violeta (regla de color: violeta = IA).
+.tarjeta-servicio--ia {
+  border-color: #3b3470;
+  box-shadow: var(--sombra-ia);
+}
+
+.tarjeta-servicio--ia:hover,
+.tarjeta-servicio--ia:focus-visible {
+  border-color: var(--color-ia);
+  box-shadow: var(--sombra-ia);
+}
+
+.tarjeta-servicio--ia .tarjeta-servicio__enlace {
+  color: var(--color-ia-claro);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -33,6 +33,12 @@ export class HomePage {
   protected readonly tablaCuenta = TABLA_CUENTA;
   protected readonly sugerencias = ASISTENTE.sugerencias;
 
+  // El titular se parte en la ultima coma para resaltar el remate
+  // ("no al reves.") en el color de acento. El texto completo del <h1>
+  // no cambia: se concatena igual, sin espacios extra.
+  protected readonly titularInicio = HOME.headline.slice(0, HOME.headline.lastIndexOf(',') + 2);
+  protected readonly titularResaltado = HOME.headline.slice(HOME.headline.lastIndexOf(',') + 2);
+
   constructor() {
     establecerMetadatosDePagina(() => ({ ...METADATOS_HOME, ruta: '/' }));
   }

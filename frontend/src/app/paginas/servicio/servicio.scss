@@ -104,7 +104,7 @@
   height: 2rem;
   border-radius: 50%;
   background-color: var(--color-acento);
-  color: var(--color-blanco);
+  color: var(--color-sobre-acento);
   font-weight: 700;
 }
 
@@ -115,5 +115,5 @@
 
 .pagina-servicio__cta {
   padding-top: var(--espacio-3);
-  border-top: 1px solid color-mix(in srgb, var(--color-primario) 12%, white);
+  border-top: 1px solid color-mix(in srgb, var(--color-primario) 12%, var(--color-superficie));
 }

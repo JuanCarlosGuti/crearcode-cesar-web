@@ -241,6 +241,76 @@ que quedan como convención del sitio:
   4 kB ya no describe una página real del sitio; el presupuesto sigue
   existiendo para atrapar crecimiento descontrolado.
 
+### Rediseño tech "Código + IA" (28 sep 2026) — BORRADOR, pendiente de aprobación
+
+Pedido del usuario: un aire más tecnológico, con colores asociados a
+desarrollo e inteligencia artificial. Prototipo aprobado en el lienzo de
+diseño (versión 2, oscura). Rama `rediseno-tech`.
+
+**Tema oscuro.** Se conservan los nombres de las variables CSS para no
+tocar los 35 componentes uno a uno; cambian sus valores y se agregan
+variables nuevas. Consecuencia a recordar: `--color-primario` ya no es
+el azul de marca sino la tinta clara de títulos y bordes.
+
+| Variable | Valor | Uso |
+|---|---|---|
+| `--color-fondo` | `#071115` | Fondo de página |
+| `--color-superficie` / `-2` | `#0d1b21` / `#112730` | Tarjetas, cabecera, tablas (antes `--color-blanco` como fondo) |
+| `--color-borde` | `#1e3640` | Bordes y separadores |
+| `--color-primario` | `#e8f1f2` | Títulos y texto fuerte |
+| `--color-texto-secundario` | `#9fb3b9` | Párrafos (8.1:1 sobre superficie) |
+| `--color-acento` | `#3ddc97` | Verde menta: botones principales y todo lo que es **desarrollo** |
+| `--color-ia` | `#9d8cff` | Violeta: todo lo que es **inteligencia artificial** (asistente, demo de diseño, simulador, tarjeta de la línea IA) |
+| `--color-sobre-acento` / `--color-sobre-ia` | `#04130c` / `#120e2b` | Texto sobre botones verdes/violetas (el blanco daría 1.7:1) |
+| `--color-alerta` / `--color-error` | `#f2b33d` / `#ff7a70` | Aclarados para leerse sobre oscuro |
+
+Regla de color: **verde = código, violeta = IA**. El violeta nunca se usa
+para acciones genéricas, para que el visitante distinga a simple vista
+qué es IA.
+
+**Tipografía.** Títulos en Space Grotesk (500/700), texto en Figtree
+(400/500/600) y detalles en JetBrains Mono (400/600): etiquetas de
+sección tipo código (`01 — servicios`), el demo con aspecto de terminal
+y la tabla de la cuenta. Solo se cargan esos pesos.
+
+**Patrones nuevos.**
+- `--rejilla-codigo`: cuadrícula tenue de fondo hecha con gradientes
+  CSS (sin imágenes) en el hero y el cierre.
+- `.etiqueta-codigo` (y `--ia`): rótulo decorativo sobre los `h2`,
+  siempre con `aria-hidden="true"`.
+- Cabecera en una sola línea en escritorio: los tres servicios se
+  agrupan en un `<details>` nativo ("Servicios") y el enlace "Inicio" se
+  oculta en escritorio (el logo lleva al inicio). En móvil no cambia.
+- Logo: símbolo `< >` verde sobre superficie oscura; es el mismo del
+  favicon (`favicon.svg`, `favicon.ico`, `apple-touch-icon.png`).
+- Tintes: `color-mix(..., white)` pasa a `color-mix(..., var(--color-superficie))`.
+
+**Verificación.** 242 specs de Vitest en verde (incluye uno nuevo para
+el titular resaltado) y axe (WCAG 2.1 AA) sin violaciones en Home,
+Proyectos, Herramientas, Contacto, Servicio, Sobre nosotros, Blog,
+Registro e Ingreso, a 1280 y 390 px.
+
+Revisión del 28 sep 2026 **sobre la imagen de producción**, no sobre el
+servidor de desarrollo:
+
+- **Lighthouse 97-98 / 100 / 100 / 100** en Home, servicio,
+  `/herramientas` y Contacto — exactamente lo mismo que antes del
+  rediseño. Las tres familias tipográficas no costaron rendimiento.
+- **axe sin violaciones en 12 páginas**, incluidas las dos de detalle
+  (`/casos/uparya`, un artículo del blog) y las legales.
+- Sin desborde horizontal a 375 ni a 1280 px.
+- El `<details>` de Servicios abre con clic, **cierra con Enter** y
+  navega; el menú móvil abre al tocar y alterna `aria-expanded`. Eso no
+  lo puede comprobar axe, que no interactúa.
+
+Detalle que conviene no perder: `--sombra-1` dejó de ser una sombra
+difusa y pasó a ser un **anillo de 1px** (`rgb(30 54 64) 0 0 0 1px`).
+Una sombra oscura sobre fondo oscuro no existe, así que las tarjetas
+que se separaban solo con sombra —las de la Home— se habrían quedado
+sin borde visible sin que ningún test lo dijera.
+
+Falta: e2e completos con backend y revisión manual del usuario.
+
 ### Imágenes (convención para cuando existan imágenes de contenido)
 
 Al cierre de la fase F6 el sitio no tiene ninguna imagen de contenido

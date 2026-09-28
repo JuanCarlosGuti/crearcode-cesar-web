@@ -24,9 +24,9 @@ label {
 input {
   font: inherit;
   padding: 0.65rem 0.85rem;
-  border: 2px solid color-mix(in srgb, var(--color-primario) 20%, white);
+  border: 2px solid color-mix(in srgb, var(--color-primario) 20%, var(--color-superficie));
   border-radius: var(--radio-borde);
-  background-color: var(--color-blanco);
+  background-color: var(--color-superficie);
   color: var(--color-texto);
 }
 
@@ -49,10 +49,10 @@ input[aria-invalid='true'] {
   margin-top: var(--espacio-3);
   padding: var(--espacio-2) var(--espacio-3);
   border-radius: var(--radio-borde);
-  background-color: color-mix(in srgb, var(--color-error) 10%, white);
+  background-color: color-mix(in srgb, var(--color-error) 10%, var(--color-superficie));
   /* Mismo ajuste de contraste AA que .pagina-cuenta__error (ISS-099):
      el rojo puro sobre este fondo da 4.27:1, bajo el minimo de 4.5:1. */
-  color: color-mix(in srgb, var(--color-error) 80%, black);
+  color: color-mix(in srgb, var(--color-error) 80%, var(--color-texto));
 }
 
 button[type='submit']:disabled {

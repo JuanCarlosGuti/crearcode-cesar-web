@@ -14,7 +14,7 @@
   padding: 0.15rem 0.6rem;
   border-radius: 999px;
   color: var(--color-primario);
-  background-color: color-mix(in srgb, var(--color-primario) 8%, white);
+  background-color: color-mix(in srgb, var(--color-primario) 8%, var(--color-superficie));
 }
 
 .caso-detalle__stack {

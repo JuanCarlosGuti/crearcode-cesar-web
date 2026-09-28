@@ -25,8 +25,8 @@
   flex-direction: column;
   gap: var(--espacio-2);
   padding: var(--espacio-3);
-  background-color: var(--color-blanco);
-  border: 1px solid color-mix(in srgb, var(--color-primario) 12%, white);
+  background-color: var(--color-superficie);
+  border: 1px solid color-mix(in srgb, var(--color-primario) 12%, var(--color-superficie));
   border-radius: var(--radio-borde);
   transition: border-color 0.2s ease;
 }
@@ -58,7 +58,7 @@
   padding: 0.15rem 0.6rem;
   border-radius: 999px;
   color: var(--color-primario);
-  background-color: color-mix(in srgb, var(--color-primario) 8%, white);
+  background-color: color-mix(in srgb, var(--color-primario) 8%, var(--color-superficie));
 }
 
 .tarjeta-caso__stack {

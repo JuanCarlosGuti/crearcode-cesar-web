@@ -47,7 +47,7 @@
 .item-editable {
   display: grid;
   gap: 0.35rem;
-  border: 1px solid color-mix(in srgb, var(--color-primario) 15%, white);
+  border: 1px solid color-mix(in srgb, var(--color-primario) 15%, var(--color-superficie));
   border-radius: var(--radio-borde);
   padding: var(--espacio-2);
 }
@@ -67,7 +67,7 @@ textarea,
 .item-editable input {
   width: 100%;
   padding: 0.5rem;
-  border: 1px solid color-mix(in srgb, var(--color-primario) 25%, white);
+  border: 1px solid color-mix(in srgb, var(--color-primario) 25%, var(--color-superficie));
   border-radius: var(--radio-borde);
   font: inherit;
 }
@@ -81,7 +81,7 @@ textarea,
 .tabla-items td {
   text-align: left;
   padding: 0.5rem 0.75rem;
-  border-bottom: 1px solid color-mix(in srgb, var(--color-primario) 12%, white);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-primario) 12%, var(--color-superficie));
 }
 
 .totales {

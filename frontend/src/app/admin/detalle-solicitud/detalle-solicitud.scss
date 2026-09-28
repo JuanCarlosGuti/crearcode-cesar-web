@@ -35,7 +35,7 @@
 
 .pagina-detalle__mensaje {
   white-space: pre-wrap;
-  background-color: var(--color-blanco);
+  background-color: var(--color-superficie);
   padding: var(--espacio-3);
   border-radius: var(--radio-borde);
 }
@@ -44,7 +44,7 @@
   margin-top: var(--espacio-3);
   padding: var(--espacio-2) var(--espacio-3);
   border-radius: var(--radio-borde);
-  background-color: color-mix(in srgb, var(--color-error) 10%, white);
+  background-color: color-mix(in srgb, var(--color-error) 10%, var(--color-superficie));
   color: var(--color-error);
 }
 
@@ -63,7 +63,7 @@
   margin-top: var(--espacio-3);
   padding: var(--espacio-3);
   border-radius: var(--radio-borde);
-  background-color: color-mix(in srgb, var(--color-primario) 6%, white);
+  background-color: color-mix(in srgb, var(--color-primario) 6%, var(--color-superficie));
 
   p {
     flex-basis: 100%;

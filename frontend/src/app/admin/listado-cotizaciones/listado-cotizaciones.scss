@@ -32,14 +32,14 @@
 .tabla-cotizaciones {
   width: 100%;
   border-collapse: collapse;
-  background-color: var(--color-blanco);
+  background-color: var(--color-superficie);
 }
 
 .tabla-cotizaciones th,
 .tabla-cotizaciones td {
   text-align: left;
   padding: 0.65rem 1rem;
-  border-bottom: 1px solid color-mix(in srgb, var(--color-primario) 12%, white);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-primario) 12%, var(--color-superficie));
 }
 
 .tabla-cotizaciones thead th {
@@ -53,7 +53,7 @@
   font-size: 0.85rem;
   font-weight: 600;
   background-color: var(--color-fondo);
-  border: 1px solid color-mix(in srgb, var(--color-primario) 25%, white);
+  border: 1px solid color-mix(in srgb, var(--color-primario) 25%, var(--color-superficie));
 }
 
 // Colores de estado con contraste AA sobre su propio fondo claro.

@@ -8,7 +8,7 @@ import { Caso } from './tipos';
  * regla que saco los testimonios ficticios en F10e. Para una empresa
  * que todavia no ha vendido, esto pesa mas que un espacio reservado —
  * un visitante puede entrar a uparya.co, abrir la app de damana o leer
- * el codigo de la libreria de facturacion. Un testimonio no se puede
+ * el codigo de la pasarela de pagos. Un testimonio no se puede
  * comprobar; esto si.
  *
  * Regla de entrada: cada proyecto trae un enlace que funciona. El que
@@ -45,18 +45,18 @@ export const CASOS: readonly Caso[] = [
       'Corpus Damana: app de estudio del damana, lengua del pueblo Wiwa, con traducción por IA anclada a un corpus real. Proyecto propio de Crear Code Cesar.',
   },
   {
-    slug: 'dian-ubl',
-    titulo: 'dian-ubl — facturación electrónica de la DIAN, en Rust',
+    slug: 'pasarela-cripto',
+    titulo: 'Pasarela de Pagos Cripto — cobrar en cripto, recibir pesos',
     linea: 'Soluciones tecnológicas',
-    reto: 'Facturar electrónicamente en Colombia obliga a construir un XML UBL 2.1 exacto. Un decimal mal redondeado o un CUFE mal calculado hace que la DIAN rechace la factura, y el rechazo no dice dónde está el error.',
+    reto: 'Muchos colombianos tienen saldo en criptomonedas, pero casi ningún comercio lo acepta: nadie quiere volatilidad, contabilidad cripto ni riesgo legal.',
     solucion:
-      'Librería y línea de comandos con modelo de dominio tipado, aritmética monetaria en enteros escalados (ni un flotante cerca del dinero), dígito de verificación del NIT, CUFE con SHA-384, serialización determinista, y un validador que reporta todos los problemas de una vez —cada uno anclado a la ruta del campo— en lugar de parar en el primero.',
+      'El comercio cobra con un QR y recibe pesos colombianos en su cuenta. La plataforma nunca custodia fondos: solo orquesta el pago, y la conversión y el KYC los hace un proveedor de rampa ya regulado. Backend en arquitectura hexagonal con reglas verificadas por ArchUnit, webhooks idempotentes y pruebas con Testcontainers.',
     resultado:
-      'Versión 1 implementada y en verde, con fixtures de entrada y un golden normativo que fija el XML esperado.',
-    stack: 'Rust',
-    enlace: { url: 'https://github.com/JuanCarlosGuti/dian-ubl', etiqueta: 'Ver el código' },
+      'En desarrollo, con el código abierto para revisar: backend y frontend en repositorios públicos.',
+    stack: 'Java 25 · Spring Boot · PostgreSQL · Angular 22',
+    enlace: { url: 'https://github.com/JuanCarlosGuti/pasarela-Cripto', etiqueta: 'Ver el código' },
     metaDescripcion:
-      'dian-ubl: librería en Rust que construye y valida facturas electrónicas UBL 2.1 de la DIAN, con CUFE, dígito del NIT y aritmética monetaria exacta. Código abierto.',
+      'Pasarela de Pagos Cripto: el comercio cobra en criptomonedas y recibe pesos colombianos, sin custodia de fondos. Proyecto propio de Crear Code Cesar, en desarrollo.',
   },
   {
     slug: 'cesar-travel',

@@ -1,6 +1,8 @@
 .cabecera {
-  background-color: var(--color-blanco);
-  border-bottom: 1px solid color-mix(in srgb, var(--color-primario) 12%, white);
+  // Translúcido con desenfoque: el contenido se intuye al hacer scroll.
+  background-color: rgb(7 17 21 / 88%);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-primario) 12%, var(--color-superficie));
   position: sticky;
   top: 0;
   z-index: 20;
@@ -16,20 +18,63 @@
 }
 
 .cabecera__marca {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-family: var(--fuente-titulos);
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
   color: var(--color-primario);
   text-decoration: none;
 }
 
+.cabecera__marca:hover {
+  color: var(--color-primario);
+}
+
+.cabecera__logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.6rem;
+  background-color: var(--color-superficie);
+  border: 1px solid #2a5a4a;
+}
+
+.cabecera__logo svg {
+  fill: none;
+  stroke: var(--color-acento);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cabecera__nombre-acento {
+  color: var(--color-acento);
+}
+
 .cabecera__boton-menu {
-  background: none;
-  border: 2px solid var(--color-primario);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
   border-radius: var(--radio-borde);
-  padding: 0.4rem 0.7rem;
-  font-size: 1.2rem;
   cursor: pointer;
   color: var(--color-primario);
+}
+
+.cabecera__boton-menu svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
 }
 
 .cabecera__nav {
@@ -49,10 +94,66 @@
 // <nav> del menu movil), y con "a" a secas ganaba por especificidad sobre
 // el color blanco de .boton-primario (contraste 1.28:1, hallado por axe).
 .cabecera__nav > a {
-  color: var(--color-texto);
+  color: var(--color-primario-claro);
   text-decoration: none;
   font-weight: 500;
   padding: 0.35rem 0;
+}
+
+.cabecera__nav > a:hover {
+  color: var(--color-primario);
+}
+
+.cabecera__servicios summary {
+  cursor: pointer;
+  color: var(--color-primario-claro);
+  font-weight: 500;
+  padding: 0.35rem 0;
+  list-style: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.cabecera__servicios summary::-webkit-details-marker {
+  display: none;
+}
+
+// Flecha del desplegable, dibujada con bordes (sin icono extra).
+.cabecera__servicios summary::after {
+  content: '';
+  width: 0.4rem;
+  height: 0.4rem;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform var(--transicion-estandar);
+}
+
+.cabecera__servicios[open] summary::after {
+  transform: translateY(1px) rotate(-135deg);
+}
+
+.cabecera__servicios summary:hover {
+  color: var(--color-primario);
+}
+
+.cabecera__submenu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.5rem 0 0 1rem;
+}
+
+.cabecera__submenu a {
+  color: var(--color-primario-claro);
+  text-decoration: none;
+  padding: 0.5rem 0;
+}
+
+.cabecera__submenu a:hover,
+.cabecera__submenu a.activo {
+  color: var(--color-acento);
 }
 
 .cabecera__nav > a.activo {
@@ -61,7 +162,7 @@
 
 .cabecera__cta {
   padding-top: var(--espacio-2);
-  border-top: 1px solid color-mix(in srgb, var(--color-primario) 12%, white);
+  border-top: 1px solid color-mix(in srgb, var(--color-primario) 12%, var(--color-superficie));
   width: 100%;
 }
 
@@ -88,6 +189,48 @@
 
   .cabecera__nav a {
     white-space: nowrap;
+  }
+
+  // Una sola línea en escritorio: antes el menú ocupaba tres filas.
+  .cabecera__barra {
+    flex-wrap: nowrap;
+    padding-block: 0.75rem;
+  }
+
+  .cabecera__nav {
+    flex-wrap: nowrap;
+    column-gap: 1.15rem;
+    font-size: 0.9rem;
+  }
+
+  // En escritorio el logo ya lleva al inicio.
+  .cabecera__inicio {
+    display: none;
+  }
+
+  .cabecera__servicios {
+    position: relative;
+  }
+
+  .cabecera__submenu {
+    position: absolute;
+    top: calc(100% + 0.75rem);
+    left: -1rem;
+    min-width: 17rem;
+    padding: 0.5rem;
+    background-color: var(--color-superficie);
+    border: 1px solid var(--color-borde);
+    border-radius: var(--radio-borde);
+    box-shadow: var(--sombra-2);
+  }
+
+  .cabecera__submenu a {
+    padding: 0.6rem 0.75rem;
+    border-radius: 0.4rem;
+  }
+
+  .cabecera__submenu a:hover {
+    background-color: var(--color-superficie-2);
   }
 
   .cabecera__cta {

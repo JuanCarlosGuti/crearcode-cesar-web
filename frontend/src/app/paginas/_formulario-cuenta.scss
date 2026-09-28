@@ -38,9 +38,9 @@ label {
 input:not([type='checkbox']) {
   font: inherit;
   padding: 0.65rem 0.85rem;
-  border: 2px solid color-mix(in srgb, var(--color-primario) 20%, white);
+  border: 2px solid color-mix(in srgb, var(--color-primario) 20%, var(--color-superficie));
   border-radius: var(--radio-borde);
-  background-color: var(--color-blanco);
+  background-color: var(--color-superficie);
   color: var(--color-texto);
 }
 
@@ -64,10 +64,10 @@ input[aria-invalid='true'] {
   margin-top: var(--espacio-3);
   padding: var(--espacio-2) var(--espacio-3);
   border-radius: var(--radio-borde);
-  background-color: color-mix(in srgb, var(--color-error) 10%, white);
+  background-color: color-mix(in srgb, var(--color-error) 10%, var(--color-superficie));
   /* Oscurecido sobre el fondo rosado: el rojo puro da 4.27:1, bajo el
      minimo AA de 4.5:1 (lo encontro axe en ISS-099). */
-  color: color-mix(in srgb, var(--color-error) 80%, black);
+  color: color-mix(in srgb, var(--color-error) 80%, var(--color-texto));
 }
 
 .pagina-cuenta__error a {
@@ -79,7 +79,7 @@ input[aria-invalid='true'] {
   margin-top: var(--espacio-3);
   padding: var(--espacio-2) var(--espacio-3);
   border-radius: var(--radio-borde);
-  background-color: color-mix(in srgb, var(--color-exito) 12%, white);
+  background-color: color-mix(in srgb, var(--color-exito) 12%, var(--color-superficie));
   color: var(--color-texto);
 }
 

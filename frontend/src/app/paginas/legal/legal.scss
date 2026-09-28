@@ -6,7 +6,7 @@
 .pagina-legal__nota {
   margin-top: var(--espacio-4);
   padding: var(--espacio-2) var(--espacio-3);
-  background-color: color-mix(in srgb, var(--color-alerta) 12%, white);
+  background-color: color-mix(in srgb, var(--color-alerta) 12%, var(--color-superficie));
   border-left: 4px solid var(--color-alerta);
   font-size: 0.9rem;
 }

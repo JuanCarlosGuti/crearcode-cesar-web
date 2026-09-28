@@ -1,5 +1,5 @@
 .diagnostico {
-  background-color: var(--color-blanco);
+  background-color: var(--color-superficie);
   border-radius: var(--radio-borde-grande);
   padding: var(--espacio-3);
 }
@@ -30,7 +30,7 @@
 .diagnostico-barra {
   height: 4px;
   border-radius: 999px;
-  background-color: color-mix(in srgb, var(--color-primario) 10%, white);
+  background-color: color-mix(in srgb, var(--color-primario) 10%, var(--color-superficie));
   overflow: hidden;
   margin-bottom: var(--espacio-2);
 }
@@ -59,7 +59,7 @@
   cursor: pointer;
   color: var(--color-texto);
   background-color: var(--color-fondo);
-  border: 1px solid color-mix(in srgb, var(--color-primario) 12%, white);
+  border: 1px solid color-mix(in srgb, var(--color-primario) 12%, var(--color-superficie));
   border-radius: var(--radio-borde);
   padding: 0.85rem 1rem;
   transition: border-color var(--transicion-estandar), background-color var(--transicion-estandar);
@@ -68,7 +68,7 @@
 .diagnostico-opcion:hover,
 .diagnostico-opcion:focus-visible {
   border-color: var(--color-acento);
-  background-color: color-mix(in srgb, var(--color-acento) 6%, white);
+  background-color: color-mix(in srgb, var(--color-acento) 6%, var(--color-superficie));
 }
 
 .diagnostico-analizando {
@@ -172,8 +172,8 @@
 }
 
 .diagnostico-aviso {
-  border: 1px solid color-mix(in srgb, var(--color-acento) 30%, white);
-  background-color: color-mix(in srgb, var(--color-acento) 8%, white);
+  border: 1px solid color-mix(in srgb, var(--color-acento) 30%, var(--color-superficie));
+  background-color: color-mix(in srgb, var(--color-acento) 8%, var(--color-superficie));
   border-radius: var(--radio-borde);
   padding: var(--espacio-2);
   display: flex;

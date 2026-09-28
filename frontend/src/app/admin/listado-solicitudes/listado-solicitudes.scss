@@ -28,9 +28,9 @@
   select {
     font: inherit;
     padding: 0.5rem 0.75rem;
-    border: 2px solid color-mix(in srgb, var(--color-primario) 20%, white);
+    border: 2px solid color-mix(in srgb, var(--color-primario) 20%, var(--color-superficie));
     border-radius: var(--radio-borde);
-    background-color: var(--color-blanco);
+    background-color: var(--color-superficie);
   }
 }
 
@@ -48,7 +48,7 @@
   td {
     text-align: left;
     padding: var(--espacio-2);
-    border-bottom: 1px solid color-mix(in srgb, var(--color-primario) 12%, white);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-primario) 12%, var(--color-superficie));
   }
 
   th {

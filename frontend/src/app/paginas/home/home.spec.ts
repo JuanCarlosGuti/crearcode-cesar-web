@@ -22,6 +22,14 @@ describe('HomePage', () => {
     expect(fixture.nativeElement.querySelector('h1')?.textContent).toBe(HOME.headline);
   });
 
+  it('resalta el remate del titular sin alterar su texto', async () => {
+    const fixture = TestBed.createComponent(HomePage);
+    await fixture.whenStable();
+    const resaltado = fixture.nativeElement.querySelector('h1 .resaltado');
+    expect(resaltado?.textContent).toBe('no al revés.');
+    expect(fixture.nativeElement.querySelector('h1')?.textContent).toBe(HOME.headline);
+  });
+
   it('muestra una tarjeta por cada servicio', async () => {
     const fixture = TestBed.createComponent(HomePage);
     await fixture.whenStable();

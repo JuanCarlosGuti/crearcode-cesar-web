@@ -1,4 +1,5 @@
-<a [routerLink]="['/servicios', servicio().slug]" class="tarjeta-servicio">
+<a [routerLink]="['/servicios', servicio().slug]" class="tarjeta-servicio"
+  [class.tarjeta-servicio--ia]="servicio().slug === 'ia-y-automatizacion'">
   <h3>{{ servicio().nombre }}</h3>
   <p>{{ servicio().resumenCorto }}</p>
   <span class="tarjeta-servicio__enlace" aria-hidden="true">Conocer más →</span>

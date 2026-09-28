@@ -33,7 +33,7 @@
 
 .formulario-cotizacion input {
   padding: 0.5rem;
-  border: 1px solid color-mix(in srgb, var(--color-primario) 25%, white);
+  border: 1px solid color-mix(in srgb, var(--color-primario) 25%, var(--color-superficie));
   border-radius: var(--radio-borde);
   font: inherit;
 }

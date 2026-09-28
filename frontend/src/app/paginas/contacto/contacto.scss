@@ -31,9 +31,9 @@ select,
 textarea {
   font: inherit;
   padding: 0.65rem 0.85rem;
-  border: 2px solid color-mix(in srgb, var(--color-primario) 20%, white);
+  border: 2px solid color-mix(in srgb, var(--color-primario) 20%, var(--color-superficie));
   border-radius: var(--radio-borde);
-  background-color: var(--color-blanco);
+  background-color: var(--color-superficie);
   color: var(--color-texto);
 }
 
@@ -84,11 +84,11 @@ textarea[aria-invalid='true'] {
 }
 
 .pagina-contacto__confirmacion {
-  background-color: color-mix(in srgb, var(--color-exito) 12%, white);
+  background-color: color-mix(in srgb, var(--color-exito) 12%, var(--color-superficie));
 }
 
 .pagina-contacto__error {
-  background-color: color-mix(in srgb, var(--color-error) 10%, white);
+  background-color: color-mix(in srgb, var(--color-error) 10%, var(--color-superficie));
 }
 
 button[type='submit']:disabled {

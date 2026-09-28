@@ -1,6 +1,14 @@
 <header class="cabecera">
   <div class="contenedor cabecera__barra">
-    <a routerLink="/" class="cabecera__marca" (click)="cerrarMenu()">{{ nombreEmpresa }}</a>
+    <a routerLink="/" class="cabecera__marca" (click)="cerrarMenu()" [attr.aria-label]="nombreEmpresa + ', inicio'">
+      <span class="cabecera__logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="20" height="20" focusable="false">
+          <polyline points="9 6 3 12 9 18" />
+          <polyline points="15 6 21 12 15 18" />
+        </svg>
+      </span>
+      <span class="cabecera__nombre">Crear Code <span class="cabecera__nombre-acento">Cesar</span></span>
+    </a>
 
     <button
       type="button"
@@ -10,18 +18,34 @@
       aria-controls="menu-principal"
     >
       <span class="sr-only">Abrir menú</span>
-      <span aria-hidden="true">☰</span>
+      <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" focusable="false"><line x1="4" y1="7" x2="20" y2="7" /><line x1="4" y1="12" x2="20" y2="12" /><line x1="4" y1="17" x2="14" y2="17" /></svg>
     </button>
 
     <nav id="menu-principal" class="cabecera__nav" [class.cabecera__nav--abierto]="menuAbierto()">
-      <a routerLink="/" routerLinkActive="activo" [routerLinkActiveOptions]="{ exact: true }" (click)="cerrarMenu()"
+      <a
+        routerLink="/"
+        class="cabecera__inicio"
+        routerLinkActive="activo"
+        [routerLinkActiveOptions]="{ exact: true }"
+        (click)="cerrarMenu()"
         >Inicio</a
       >
-      @for (servicio of servicios; track servicio.slug) {
-        <a [routerLink]="['/servicios', servicio.slug]" routerLinkActive="activo" (click)="cerrarMenu()">{{
-          servicio.nombre
-        }}</a>
-      }
+      <!-- Los tres servicios se agrupan en un desplegable nativo (<details>)
+           para que el menu de escritorio quepa en una sola linea. Sin JS
+           extra: el navegador maneja el abrir/cerrar y el teclado. -->
+      <details #menuServicios class="cabecera__servicios">
+        <summary>Servicios</summary>
+        <div class="cabecera__submenu">
+          @for (servicio of servicios; track servicio.slug) {
+            <a
+              [routerLink]="['/servicios', servicio.slug]"
+              routerLinkActive="activo"
+              (click)="cerrarMenu(); menuServicios.open = false"
+              >{{ servicio.nombre }}</a
+            >
+          }
+        </div>
+      </details>
       <a routerLink="/herramientas" routerLinkActive="activo" (click)="cerrarMenu()">Herramientas</a>
       <a routerLink="/casos" routerLinkActive="activo" (click)="cerrarMenu()">Proyectos</a>
       <a routerLink="/sobre-nosotros" routerLinkActive="activo" (click)="cerrarMenu()">Sobre nosotros</a>

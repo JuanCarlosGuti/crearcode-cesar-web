@@ -1,21 +1,46 @@
-// Paleta "Minimal Corporativo" (Opción C elegida — ver docs/07-guia-de-estilo.md)
+// Paleta "Código + IA" (rediseño tech, sep 2026 — ver docs/07-guia-de-estilo.md
+// §Rediseño tech). Tema oscuro: los NOMBRES de las variables se conservan para
+// que los 35 componentes sigan funcionando; cambian sus valores y se agregan
+// variables nuevas (superficie, borde, IA, mono).
+//
+// Regla de color: verde = código/desarrollo; violeta = inteligencia artificial.
+// Contrastes verificados sobre --color-superficie (#0d1b21):
+// texto 15.6:1 · texto-secundario 8.1:1 · acento 10.6:1 · ia 6.7:1.
 :root {
-  --color-primario: #22303f;
-  --color-primario-claro: #4c5f73;
-  // Verde crecimiento oscurecido frente al original (#3c9d6e, contraste 3.36:1 como texto): usado también como texto sobre blanco, necesita el mínimo AA (4.5:1).
-  --color-acento: #2e7d53;
-  --color-fondo: #f7f8fa;
+  color-scheme: dark;
+
+  // Texto principal claro. Antes era el azul oscuro de marca; en el tema
+  // oscuro "primario" es la tinta de títulos y bordes.
+  --color-primario: #e8f1f2;
+  --color-primario-claro: #b7c8cc;
+  // Verde menta: acciones principales y todo lo que es "desarrollo".
+  --color-acento: #3ddc97;
+  --color-fondo: #071115;
+  --color-fondo-profundo: #040b0e;
+  --color-superficie: #0d1b21;
+  --color-superficie-2: #112730;
+  --color-borde: #1e3640;
+  // --color-blanco se mantiene blanco: se usa como texto sobre fondos oscuros.
   --color-blanco: #ffffff;
-  --color-texto: #171b1f;
-  --color-texto-secundario: #5a6472;
-  --color-exito: #2e7d53;
-  // Ámbar oscurecido frente al original (#D98E04, contraste 2.33:1 como texto del badge "NUEVA"): necesita el mínimo AA (4.5:1).
-  --color-alerta: #8f5c08;
-  --color-error: #c4453a;
-  // Verde WhatsApp oficial (#25d366) oscurecido: con texto blanco encima daba 1.98:1, bajo el mínimo AA (4.5:1).
+  --color-texto: #e8f1f2;
+  --color-texto-secundario: #9fb3b9;
+  // Texto sobre botones verdes/violetas (el blanco daría 1.7:1).
+  --color-sobre-acento: #04130c;
+  --color-exito: #3ddc97;
+  --color-alerta: #f2b33d;
+  --color-error: #ff7a70;
+  // Verde WhatsApp oscurecido: con texto blanco encima cumple AA (4.5:1).
   --color-whatsapp: #158542;
 
-  --fuente-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  // Violeta: todo lo que es inteligencia artificial (asistente, demo,
+  // simulador). Nunca para acciones genéricas.
+  --color-ia: #9d8cff;
+  --color-ia-claro: #b6a9ff;
+  --color-sobre-ia: #120e2b;
+
+  --fuente-base: 'Figtree', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --fuente-titulos: 'Space Grotesk', var(--fuente-base);
+  --fuente-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   --espacio-1: 0.5rem;
   --espacio-2: 1rem;
@@ -24,18 +49,20 @@
   --espacio-5: 3rem;
   --espacio-6: 4rem;
 
-  --ancho-contenido: 72rem;
-  --radio-borde: 0.5rem;
+  --ancho-contenido: 76rem;
+  --radio-borde: 0.625rem;
 
-  // Evolución visual F8.5 (valores documentados en docs/07-guia-de-estilo.md
-  // §Evolución visual — ese documento es la fuente de verdad).
-  --gradiente-marca: linear-gradient(135deg, #22303f 0%, #14424d 100%);
-  // Solo detalles decorativos (subrayados, íconos, bordes en hover) —
-  // NUNCA como color de texto: para texto sigue valiendo --color-acento.
-  --color-acento-luminoso: #4cc38a;
-  --sombra-1: 0 1px 3px rgb(23 27 31 / 8%);
-  --sombra-2: 0 4px 12px rgb(23 27 31 / 10%);
-  --sombra-3: 0 12px 32px rgb(23 27 31 / 14%);
+  --gradiente-marca: linear-gradient(160deg, #0b1e25 0%, #071115 100%);
+  --gradiente-ia: linear-gradient(135deg, #221d45 0%, #13253a 100%);
+  // Cuadrícula tipo editor de código para fondos de sección (sin imágenes).
+  --rejilla-codigo: linear-gradient(rgb(61 220 151 / 6%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(61 220 151 / 6%) 1px, transparent 1px);
+  // Solo decorativo (bordes en hover, brillos).
+  --color-acento-luminoso: #7bebb9;
+  --sombra-1: 0 0 0 1px var(--color-borde);
+  --sombra-2: 0 0 0 1px var(--color-borde), 0 8px 24px rgb(0 0 0 / 35%);
+  --sombra-3: 0 0 0 1px #2a5a4a, 0 0 48px rgb(61 220 151 / 14%), 0 16px 40px rgb(0 0 0 / 45%);
+  --sombra-ia: 0 0 0 1px #3b3470, 0 0 60px rgb(157 140 255 / 20%), 0 24px 48px rgb(0 0 0 / 45%);
   --transicion-estandar: 180ms ease-out;
   --radio-borde-grande: 16px;
 }
@@ -66,17 +93,22 @@ h2,
 h3,
 h4 {
   color: var(--color-primario);
-  line-height: 1.2;
-  font-weight: 600;
+  font-family: var(--fuente-titulos);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  font-weight: 700;
   margin: 0 0 var(--espacio-2);
 }
 
 h1 {
-  font-size: clamp(1.9rem, 1.5rem + 1.8vw, 3rem);
+  font-size: clamp(2.3rem, 1.6rem + 3vw, 4.25rem);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
 }
 
 h2 {
-  font-size: clamp(1.5rem, 1.3rem + 0.9vw, 2.1rem);
+  font-size: clamp(1.7rem, 1.3rem + 1.6vw, 2.9rem);
+  line-height: 1.05;
 }
 
 h3 {
@@ -89,7 +121,34 @@ p {
 }
 
 a {
-  color: var(--color-primario-claro);
+  color: var(--color-acento);
+}
+
+a:hover {
+  color: var(--color-acento-luminoso);
+}
+
+::selection {
+  background-color: rgb(61 220 151 / 30%);
+}
+
+// Etiqueta de sección estilo código ("01 — servicios"). Decorativa.
+.etiqueta-codigo {
+  display: inline-block;
+  font-family: var(--fuente-mono);
+  font-size: 0.85rem;
+  color: var(--color-acento);
+  margin-bottom: var(--espacio-1);
+}
+
+.etiqueta-codigo--ia {
+  color: var(--color-ia-claro);
+}
+
+.fondo-rejilla {
+  background-color: var(--color-fondo);
+  background-image: var(--rejilla-codigo);
+  background-size: 48px 48px;
 }
 
 img {
@@ -126,12 +185,13 @@ img {
   border-radius: var(--radio-borde);
   font-weight: 600;
   text-decoration: none;
-  border: 2px solid transparent;
+  border: 1px solid transparent;
+  min-height: 2.75rem;
   cursor: pointer;
   font-size: 1rem;
   white-space: nowrap;
   flex-shrink: 0;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .boton:focus-visible {
@@ -140,12 +200,14 @@ img {
 }
 
 .boton-primario {
-  background-color: var(--color-primario);
-  color: var(--color-blanco);
+  background-color: var(--color-acento);
+  color: var(--color-sobre-acento);
 }
 
 .boton-primario:hover {
-  background-color: var(--color-primario-claro);
+  background-color: var(--color-acento-luminoso);
+  color: var(--color-sobre-acento);
+  box-shadow: 0 0 24px rgb(61 220 151 / 35%);
 }
 
 .boton-whatsapp {
@@ -154,23 +216,25 @@ img {
 }
 
 .boton-whatsapp:hover {
+  color: var(--color-blanco);
   background-color: color-mix(in srgb, var(--color-whatsapp) 85%, black);
 }
 
 .boton-secundario {
-  background-color: transparent;
+  background-color: var(--color-superficie);
   color: var(--color-primario);
-  border-color: var(--color-primario);
+  border-color: #2a4a55;
 }
 
 .boton-secundario:hover {
-  background-color: color-mix(in srgb, var(--color-primario) 8%, transparent);
+  border-color: var(--color-acento);
+  color: var(--color-primario);
 }
 
 // Para usar sobre fondos oscuros (ej. el pie de página, con el mismo
 // --color-primario de fondo): un boton-primario ahi seria invisible.
 .boton-claro {
-  background-color: transparent;
+  background-color: var(--color-superficie);
   color: var(--color-blanco);
   border-color: var(--color-blanco);
 }
@@ -201,12 +265,12 @@ img {
 }
 
 .badge-nueva {
-  background-color: color-mix(in srgb, var(--color-alerta) 15%, white);
+  background-color: color-mix(in srgb, var(--color-alerta) 15%, var(--color-superficie));
   color: var(--color-alerta);
 }
 
 .badge-contactada {
-  background-color: color-mix(in srgb, var(--color-primario-claro) 15%, white);
+  background-color: color-mix(in srgb, var(--color-primario-claro) 15%, var(--color-superficie));
   color: var(--color-primario-claro);
 }
 
@@ -215,12 +279,12 @@ img {
 // (ISS-154), la primera vez que el panel mostro una solicitud
 // CONVERTIDA. Se oscurece solo el texto; el fondo no cambia.
 .badge-convertida {
-  background-color: color-mix(in srgb, var(--color-exito) 15%, white);
-  color: #1b5e3a;
+  background-color: color-mix(in srgb, var(--color-exito) 15%, var(--color-superficie));
+  color: var(--color-exito);
 }
 
 .badge-descartada {
-  background-color: color-mix(in srgb, var(--color-texto-secundario) 15%, white);
+  background-color: color-mix(in srgb, var(--color-texto-secundario) 15%, var(--color-superficie));
   color: var(--color-texto-secundario);
 }
 
@@ -228,15 +292,15 @@ img {
 // tintado: el acento puro da 4.19:1, bajo el minimo AA de 4.5:1
 // (lo encontro axe en ISS-107).
 .badge-muy-pronto {
-  background-color: color-mix(in srgb, var(--color-acento) 14%, white);
-  color: color-mix(in srgb, var(--color-acento) 78%, black);
+  background-color: color-mix(in srgb, var(--color-acento) 14%, var(--color-superficie));
+  color: color-mix(in srgb, var(--color-acento) 78%, var(--color-texto));
 }
 
 // ----- Evolución visual F8.5 -----
 
 // Tarjeta elevada: base de las tarjetas de servicios/beneficios.
 .tarjeta-elevada {
-  background-color: var(--color-blanco);
+  background-color: var(--color-superficie);
   border-radius: var(--radio-borde-grande);
   box-shadow: var(--sombra-1);
   transition: box-shadow var(--transicion-estandar), transform var(--transicion-estandar);

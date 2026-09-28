@@ -15,8 +15,8 @@
   border-radius: 999px;
   border: none;
   cursor: pointer;
-  background: var(--gradiente-marca);
-  color: var(--color-blanco);
+  background: var(--color-ia);
+  color: var(--color-sobre-ia);
   font-size: 1.5rem;
   box-shadow: var(--sombra-3);
   transition: transform var(--transicion-estandar);
@@ -40,7 +40,7 @@
   max-height: min(32rem, calc(100vh - 8rem));
   display: flex;
   flex-direction: column;
-  background-color: var(--color-blanco);
+  background-color: var(--color-superficie);
   border-radius: var(--radio-borde-grande);
   box-shadow: var(--sombra-3);
   overflow: hidden;
@@ -52,7 +52,7 @@
   justify-content: space-between;
   gap: var(--espacio-2);
   padding: var(--espacio-2) var(--espacio-3);
-  background: var(--gradiente-marca);
+  background: var(--gradiente-ia);
 }
 
 .chat-panel__encabezado h2 {
@@ -62,7 +62,7 @@
 }
 
 .chat-panel__encabezado p {
-  color: var(--color-fondo);
+  color: var(--color-texto-secundario);
   font-size: 0.85rem;
   margin: 0;
 }
@@ -103,8 +103,8 @@
 }
 
 .chat-mensaje--usuario p {
-  background-color: var(--color-primario);
-  color: var(--color-blanco);
+  background-color: var(--color-ia);
+  color: var(--color-sobre-ia);
   margin-left: auto;
 }
 
@@ -113,8 +113,8 @@
   margin-top: var(--espacio-1);
   padding: var(--espacio-2);
   border-radius: var(--radio-borde);
-  border: 1px solid color-mix(in srgb, var(--color-acento) 30%, white);
-  background-color: color-mix(in srgb, var(--color-acento) 8%, white);
+  border: 1px solid color-mix(in srgb, var(--color-acento) 30%, var(--color-superficie));
+  background-color: color-mix(in srgb, var(--color-acento) 8%, var(--color-superficie));
   display: flex;
   flex-direction: column;
   gap: var(--espacio-1);
@@ -144,8 +144,8 @@
 }
 
 .chat-sugerencia {
-  border: 1px solid color-mix(in srgb, var(--color-primario) 25%, white);
-  background-color: var(--color-blanco);
+  border: 1px solid color-mix(in srgb, var(--color-primario) 25%, var(--color-superficie));
+  background-color: var(--color-superficie);
   color: var(--color-primario);
   border-radius: 999px;
   padding: 0.4rem 0.8rem;
@@ -157,21 +157,21 @@
 .chat-sugerencia:hover,
 .chat-sugerencia:focus-visible {
   border-color: var(--color-acento);
-  background-color: color-mix(in srgb, var(--color-acento) 8%, white);
+  background-color: color-mix(in srgb, var(--color-acento) 8%, var(--color-superficie));
 }
 
 .chat-formulario {
   display: flex;
   gap: var(--espacio-1);
   padding: var(--espacio-2) var(--espacio-3);
-  border-top: 1px solid color-mix(in srgb, var(--color-primario) 10%, white);
+  border-top: 1px solid color-mix(in srgb, var(--color-primario) 10%, var(--color-superficie));
 }
 
 .chat-formulario input {
   flex: 1;
   font: inherit;
   padding: 0.5rem 0.75rem;
-  border: 2px solid color-mix(in srgb, var(--color-primario) 20%, white);
+  border: 2px solid color-mix(in srgb, var(--color-primario) 20%, var(--color-superficie));
   border-radius: var(--radio-borde);
   min-width: 0;
 }

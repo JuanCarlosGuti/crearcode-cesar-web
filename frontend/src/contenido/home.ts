@@ -60,7 +60,7 @@ export const HOME = {
     etiqueta: 'Proyectos propios',
     titulo: 'Lo que hemos construido',
     texto:
-      'Todavía no mostramos trabajos de clientes: cuando los haya, irán con su nombre y su permiso. Mientras tanto enseñamos lo que sí se puede abrir y revisar — un directorio de negocios en producción, una app para estudiar la lengua del pueblo Wiwa y una librería de facturación electrónica de la DIAN.',
+      'Todavía no mostramos trabajos de clientes: cuando los haya, irán con su nombre y su permiso. Mientras tanto enseñamos lo que sí se puede abrir y revisar — un directorio de negocios en producción, una plataforma de alojamientos, una pasarela de pagos cripto en desarrollo y una app para estudiar la lengua del pueblo Wiwa.',
     enlace: 'Ver los proyectos',
   },
   fundador: {

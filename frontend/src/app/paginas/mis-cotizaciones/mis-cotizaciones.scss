@@ -66,7 +66,7 @@
   font-size: 0.85rem;
   font-weight: 600;
   background-color: var(--color-fondo);
-  border: 1px solid color-mix(in srgb, var(--color-primario) 25%, white);
+  border: 1px solid color-mix(in srgb, var(--color-primario) 25%, var(--color-superficie));
 }
 
 .tabla-items {
@@ -79,7 +79,7 @@
 .tabla-items td {
   text-align: left;
   padding: 0.5rem 0.75rem;
-  border-bottom: 1px solid color-mix(in srgb, var(--color-primario) 12%, white);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-primario) 12%, var(--color-superficie));
 }
 
 .totales {

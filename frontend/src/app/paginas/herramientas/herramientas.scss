@@ -12,7 +12,7 @@
 }
 
 .herramienta-tarjeta {
-  background-color: var(--color-blanco);
+  background-color: var(--color-superficie);
   border-radius: var(--radio-borde-grande);
   padding: var(--espacio-3);
   display: flex;
@@ -48,7 +48,7 @@
 }
 
 .herramientas-cotizador {
-  background-color: color-mix(in srgb, var(--color-primario) 4%, white);
+  background-color: color-mix(in srgb, var(--color-primario) 4%, var(--color-superficie));
 }
 
 .contenedor--angosto {
@@ -74,7 +74,7 @@
 
 .herramientas-cuenta p {
   margin: 0;
-  color: var(--color-fondo);
+  color: var(--color-texto-secundario);
   max-width: 34rem;
 }
 
