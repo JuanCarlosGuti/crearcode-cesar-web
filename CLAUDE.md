@@ -783,6 +783,16 @@ pendiente del corte:
   No duele mientras los datos sean de prueba; tienen que estar antes de
   salir al mercado.
 
+**De la auditoría integral del 28 sep 2026** (ISS-161 a ISS-178 en
+[docs/05-backlog-issues.md](docs/05-backlog-issues.md)): lo técnico ya
+está hecho — asistente restaurado, cupos atómicos, cabeceras, 404,
+SEO, aviso de privacidad. Lo que espera al usuario, en orden de
+impacto: la **política de datos definitiva** (hoy dice "borrador" en
+público), **analítica** (no se mide nada), la **prueba de ISS-136**
+que destraba bajar el rate limit de 600, los **números del cotizador**
+por tipo de proyecto, y las decisiones de producto (header, hero,
+landings por sector, calendario).
+
 **Decisiones del usuario**:
 
 - **Condición de IVA**: hoy las cotizaciones salen con **19%** por

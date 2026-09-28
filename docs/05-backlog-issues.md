@@ -597,6 +597,59 @@ que exige la propia HU.
 
 ---
 
+## Auditoría integral del 28 sep 2026 — ISS-161 a ISS-178
+
+Auditoría externa (documento "Auditoría integral — Crear Code Cesar",
+25 secciones: QA, UX, CRO, copy, SEO, seguridad, privacidad,
+herramientas de IA, funnel y roadmap). Su hallazgo de fondo no era
+técnico: *"un escaparate de ingeniería que hoy no convierte, y su gancho
+principal está caído"*. Lo técnico se atacó de inmediato; lo comercial
+son decisiones del usuario y quedan abajo sin ✅.
+
+### Hecho el mismo día
+
+| ID | Descripción | Hallazgo | Definición de hecho | Est. | Depende de | Tests |
+|---|---|---|---|---|---|---|
+| ISS-161 ✅ | Asistente caído: Groq retiró `llama-3.3-70b-versatile` (404 `model_not_found`). Modelo por defecto → `openai/gpt-oss-120b`; el 503 deja un `WARN` con la causa, nunca la conversación | C1, C2 | Las tres herramientas responden 200 en producción; el IT exige el log | S | — | IT del controlador (log capturado) + IT del adaptador |
+| ISS-162 ✅ | Fricción: `mailto:`/`wa.me` en el pie, tarjetas de herramientas enlazadas a su ancla, botón Atrás en el cotizador, menú móvil con X y WhatsApp | QA4, QA5, QA11, QA15 | 4 specs nuevos; WhatsApp solo dentro del envoltorio que el CSS oculta en escritorio (F10e se conserva) | M | — | Component |
+| ISS-163 ✅ | Cabeceras `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`; HSTS a un año; página 404 con salidas servida por Caddy con estado 404 | QA6, §10 | La verificación de rutas exige el título "no encontrada" | S | ADR-13 | `verificar-rutas-servidas` en CI |
+| ISS-164 ✅ | Tope de 2000 caracteres al mensaje de contacto en dominio, DTO (`@Size`) y formulario (`maxLength` de Signal Forms) | QA13 | 400 con mensaje claro; el textarea lo proyecta como `maxlength` | S | — | Unit (dominio) + IT (REST) + Component |
+| ISS-165 ✅ | Reserva atómica del cupo de IA: `ContadorDiario.reservar()` antes de llamar al proveedor y `liberar()` si sobra o falla, en los cuatro casos de uso | §10 (alta) | Test de concurrencia: 18 peticiones simultáneas con cupo 6 → 6 llamadas (antes 18) | M | — | Unit (concurrencia) + suites de los 4 casos de uso |
+| ISS-166 ✅ | SEO: JSON-LD `ProfessionalService` con NAP, NIT y fundador (desde constantes, ADR-06); `og:locale`, `og:site_name`, `twitter:*`; NIT y dirección en el pie; título de la Home de 80 a 55 caracteres | §7 | Comprobado en el HTML prerenderizado de la imagen | M | — | Unit (`datos-estructurados`, `metadatos-pagina`) + Component (footer) |
+| ISS-167 ✅ | Aviso "no escribas datos personales de tus clientes" en las cuatro herramientas de IA (`AVISO_IA`) y WhatsApp en los mensajes de caída | §11, §12 | Un solo texto en `contenido/legales.ts`; 4 specs | S | — | Component |
+| ISS-168 ✅ | README y AGENTS.md sin Render, Neon ni Gmail; AGENTS.md pasa a puntero a CLAUDE.md | §18 | `monday-app-association.json` NO se borra: lo exige monday para board-checkup | S | — | — |
+
+### Pendiente — necesita una decisión o una acción del usuario
+
+| ID | Descripción | Hallazgo | Qué falta del usuario | Est. |
+|---|---|---|---|---|
+| ISS-169 | Política de datos definitiva: quitar "borrador", nombrar encargados (Groq, Cloudflare, Pollinations, Resend, Netcup, Google Fonts), transferencia internacional, retención de conversaciones, derechos ARCO | C3, §11 | Revisión legal del texto que se redacte; decidir si aplica el RNBD de la SIC | M |
+| ISS-170 | Analítica: GA4 + Clarity con los eventos de §13 (`whatsapp_click`, `tool_complete`, `lead_captured`…) y banner de consentimiento | C4 | Crear las propiedades (IDs de GA4/Clarity) y aprobar el banner | M |
+| ISS-171 | Bajar `RATE_LIMIT_ASISTENTE_MAX_INTENTOS` de 600 a ~30 e identificar al anónimo por IP con hash y sal diaria | C5 | Hacer primero la prueba de ISS-136 desde dos redes: sin IP real por visitante, bajar el límite tumba las herramientas para todos | S |
+| ISS-172 | Cotizador: que el tipo de proyecto y la urgencia cambien el rango; rangos separados para web y para sistema; producto de entrada barato | QA3, §5 | Los números — el sitio no publica precios inventados | M |
+| ISS-173 | Teléfono del formulario: aceptar fijos e internacionales además del celular colombiano | QA12 | Decidir si se quieren leads fuera de Colombia y fijos | S |
+| ISS-174 | Corpus Damana: moverlo al servidor propio (mismo patrón Kamal) o advertir la espera de Render en la tarjeta | C6, QA7 | Decidir cuál | S/M |
+| ISS-175 | Enviar el correo del lead nuevo fuera de la transacción (tras commit, asíncrono) para que un Resend lento no retenga la respuesta hasta 10 s | QA14 | — (solo prioridad) | S |
+| ISS-176 | Monitor externo de disponibilidad (home + endpoint sintético de IA) con alerta | C2, §19 | Elegir servicio (UptimeRobot / Better Stack) y crear la cuenta | S |
+| ISS-177 | Copias de seguridad diarias del PostgreSQL compartido fuera del VPS | C7 | Decidir destino (R2 ya existe para UparYa) — antes de salir al mercado | M |
+| ISS-178 | CSP en modo Report-Only y luego en firme | §10 | — | M |
+
+**Decisiones de producto que la auditoría propone y que no son código
+hasta que el usuario decida**: quitar "Crear cuenta" del header y la
+tabla de cupos de la Home; sacar el demo de diseño del hero; nombrar
+los servicios por resultado en vez de por categoría; landings por
+sector con precio "desde"; captura de WhatsApp al final del diagnóstico
+y del cotizador; calendario real para la consulta; "el mismo día hábil"
+en vez de "pronto"; foto del fundador; Google Business Profile; activar
+el proxy de Cloudflare; apagar Render y revocar las llaves rotadas.
+
+**Estado al 28 sep 2026**: backend 57 tests en las suites afectadas
+(incluida ArchUnit) y 256 specs de frontend en verde; producción
+verificada tras cada despliegue (asistente 200 en ~1,6 s, cabeceras,
+404, JSON-LD).
+
+---
+
 ## Resumen de cobertura
 
 Todas las HU de [[04-historias-de-usuario]] (29 de la Etapa 2, HU-30 a
