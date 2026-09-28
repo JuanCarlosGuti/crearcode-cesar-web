@@ -1,9 +1,14 @@
 <article class="contenedor pagina-legal">
   <h1>{{ documento().titulo }}</h1>
 
-  @for (parrafo of documento().parrafos; track parrafo) {
-    <p>{{ parrafo }}</p>
+  @for (seccion of documento().secciones; track seccion.titulo) {
+    <h2>{{ seccion.titulo }}</h2>
+    @for (parrafo of seccion.parrafos; track parrafo) {
+      <p>{{ parrafo }}</p>
+    }
   }
 
-  <p class="pagina-legal__nota">{{ documento().notaBorrador }}</p>
+  <p class="pagina-legal__vigencia">
+    Versión {{ documento().version }} — vigente desde el {{ vigenteDesde }}.
+  </p>
 </article>

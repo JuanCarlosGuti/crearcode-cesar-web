@@ -61,9 +61,18 @@ export interface ValorEmpresa {
   readonly descripcion: string;
 }
 
+export interface SeccionLegal {
+  readonly titulo: string;
+  readonly parrafos: readonly string[];
+}
+
 export interface DocumentoLegal {
   readonly titulo: string;
   readonly metaDescripcion: string;
-  readonly parrafos: readonly string[];
-  readonly notaBorrador: string;
+  /**
+   * Version del documento, visible al pie: la politica promete que la
+   * fecha de la version vigente se indica ahi (auditoria P0-3).
+   */
+  readonly version: string;
+  readonly secciones: readonly SeccionLegal[];
 }
