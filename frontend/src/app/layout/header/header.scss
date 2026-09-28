@@ -192,15 +192,36 @@
   }
 
   // Una sola línea en escritorio: antes el menú ocupaba tres filas.
+  // Lo consigue agrupar los servicios en el <details>, NO un
+  // `flex-wrap: nowrap` — que estuvo aquí y rompía el zoom de texto al
+  // 200%: con el texto al doble la cabecera mide 1602px en un viewport
+  // de 1280 y, sin poder reacomodarse, saca scroll horizontal en TODAS
+  // las páginas (WCAG 1.4.4).
+  //
+  // Ojo con la trampa que lo hace poco evidente: los `rem` de una media
+  // query se miden contra el tamaño inicial de la raíz, no contra el
+  // que impone el zoom de texto. El breakpoint sigue en 960px, así que
+  // a 1280 se aplica esta cabecera de escritorio aunque el texto ocupe
+  // el doble. `wrap` da una línea igual cuando cabe, y una salida
+  // cuando no.
   .cabecera__barra {
+    // La barra sí se mantiene en una línea: logo a un lado, nav al
+    // otro. Lo que no puede ser `nowrap` es el nav, que es quien tiene
+    // que poder repartirse en varias filas cuando el texto crece.
     flex-wrap: nowrap;
     padding-block: 0.75rem;
   }
 
   .cabecera__nav {
-    flex-wrap: nowrap;
-    column-gap: 1.15rem;
+    column-gap: 0.85rem;
     font-size: 0.9rem;
+  }
+
+  // Sin esto el par de botones se comporta como un bloque indivisible
+  // de ~700px: es un item flexible que pide su ancho natural y nadie se
+  // lo limita, asi que su `flex-wrap` nunca llega a actuar.
+  .cabecera__cta {
+    max-width: 100%;
   }
 
   // En escritorio el logo ya lleva al inicio.

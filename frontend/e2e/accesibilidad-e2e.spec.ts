@@ -67,9 +67,15 @@ for (const { nombre, ruta } of PAGINAS_PUBLICAS) {
   test(`${nombre}: usable con zoom de texto al 200% sin overflow horizontal`, async ({ page }) => {
     await page.goto(ruta);
     // Se simula el zoom de texto (no de pagina completa) escalando el
-    // font-size raiz — el sitio usa rem tanto en tipografia como en los
-    // media queries de layout, asi que esto tambien desplaza los breakpoints
-    // como lo haria un zoom de texto real del navegador.
+    // font-size raiz.
+    //
+    // OJO, esto decia que asi "tambien se desplazan los breakpoints" y
+    // es falso: los `rem` de una media query se miden SIEMPRE contra el
+    // tamano inicial de la raiz, no contra el que se acaba de imponer.
+    // El layout de escritorio sigue aplicandose con el texto al doble,
+    // que es justo lo que hace dificil este caso — y lo que rompio la
+    // cabecera del rediseno (28 sep 2026). Es tambien lo que hace el
+    // navegador de verdad al subir solo el tamano de letra.
     await page.evaluate(() => {
       document.documentElement.style.fontSize = '200%';
     });

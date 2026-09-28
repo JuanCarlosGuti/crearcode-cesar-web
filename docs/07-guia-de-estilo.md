@@ -309,6 +309,34 @@ Una sombra oscura sobre fondo oscuro no existe, así que las tarjetas
 que se separaban solo con sombra —las de la Home— se habrían quedado
 sin borde visible sin que ningún test lo dijera.
 
+**Corrección del 28 sep 2026 — la cabecera rompía el zoom de texto.**
+El e2e de zoom al 200% falló en *todas* las páginas públicas tras el
+rediseño: la cabecera medía 1602 px dentro de un viewport de 1280 y
+sacaba scroll horizontal (WCAG 1.4.4). La causa era un
+`flex-wrap: nowrap` puesto en `.cabecera__barra` y `.cabecera__nav`
+para forzar la línea única.
+
+Lo que lo hacía difícil de ver: **los `rem` de una media query se miden
+contra el tamaño inicial de la raíz, no contra el que impone el zoom de
+texto**. El breakpoint sigue en 960 px, así que a 1280 se aplica la
+cabecera de escritorio aunque el texto ocupe el doble — no hay ningún
+punto en el que el navegador "cambie a móvil" y rescate el layout. El
+comentario del propio test afirmaba lo contrario y se corrigió.
+
+El arreglo no es quitar el `nowrap` sin más —eso parte la barra en dos
+filas a 1280—, sino repartirlo: la **barra** se queda en una línea y el
+**nav** puede envolver por dentro. Más `max-width: 100%` en
+`.cabecera__cta`, porque un item flexible al que nadie limita el ancho
+pide su tamaño natural y su propio `flex-wrap` no llega a actuar nunca.
+Con `column-gap` de 0.85rem la cabecera vuelve a caber en una fila
+(76 px de alto a 1280) y no desborda a 1280, 1440 ni 1600.
+
+**Pendiente conocido**: a **1024 px con el texto al 200%** sí queda
+desborde, y ya no por la cabecera sino por la decoración SVG del hero,
+las tarjetas de servicio y el badge del demo. CI prueba a 1280 (el
+viewport por defecto de Playwright), así que no lo atrapa. Es deuda
+real de accesibilidad, anotada para resolver aparte.
+
 Falta: e2e completos con backend y revisión manual del usuario.
 
 ### Imágenes (convención para cuando existan imágenes de contenido)
