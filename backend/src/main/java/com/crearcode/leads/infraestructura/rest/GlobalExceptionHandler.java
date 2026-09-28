@@ -2,6 +2,8 @@ package com.crearcode.leads.infraestructura.rest;
 
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -38,6 +40,8 @@ import com.crearcode.leads.dominio.TransicionDeEstadoInvalidaException;
  */
 @RestControllerAdvice
 class GlobalExceptionHandler {
+
+	private static final Logger LOG = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
 	/**
 	 * Maneja explícitamente los fallos de Bean Validation en vez de dejar
@@ -148,6 +152,14 @@ class GlobalExceptionHandler {
 
 	@ExceptionHandler({ LimiteGlobalAlcanzadoException.class, AsistenteNoDisponibleException.class })
 	ResponseEntity<ErrorAsistenteResponse> asistenteNoDisponible(RuntimeException excepcion) {
+		// Un solo 503 para el visitante, pero la causa real al log: el
+		// 28 sep 2026 Groq retiro el modelo configurado, las tres
+		// herramientas de IA respondieron 503 durante dias y no habia ni
+		// una linea que lo dijera. Se registra la excepcion y su causa
+		// (estado HTTP y cuerpo del proveedor), nunca la conversacion.
+		Throwable causa = excepcion.getCause();
+		LOG.warn("Asistente no disponible — {}: {}{}", excepcion.getClass().getSimpleName(), excepcion.getMessage(),
+				causa == null ? "" : " | causa: " + causa.getMessage());
 		return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
 				.body(new ErrorAsistenteResponse("El asistente no está disponible en este momento",
 						"no-disponible"));

@@ -11,6 +11,12 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -167,6 +173,42 @@ class AsistenteControllerIT {
 
 		assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
 		assertThat(respuesta.getBody()).contains("no-disponible");
+	}
+
+	/**
+	 * El 503 es el mismo para el visitante sea cual sea la causa, y eso
+	 * esta bien; lo que no puede pasar es que la causa no quede en ningun
+	 * sitio. El 28 sep 2026 Groq retiro el modelo configurado, las tres
+	 * herramientas de IA respondieron 503 durante dias y el log no tenia
+	 * ni una linea que lo explicara.
+	 */
+	@Test
+	void siElProveedorFallaLaCausaQuedaEnElLogSinElMensajeDelVisitante() {
+		Logger logRaiz = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+		ListAppender<ILoggingEvent> appender = new ListAppender<>();
+		appender.start();
+		logRaiz.addAppender(appender);
+		try {
+			statusDelStub.set(500);
+
+			restTemplate.postForEntity("/api/asistente/mensajes",
+					conSesionAnonima(conversacion("mi negocio se llama Ferreteria La 16"), "sesion-caida-log"),
+					String.class);
+
+			List<String> avisos = appender.list.stream()
+					.filter(evento -> evento.getLevel() == Level.WARN
+							&& evento.getLoggerName().endsWith("GlobalExceptionHandler"))
+					.map(ILoggingEvent::getFormattedMessage)
+					.toList();
+
+			assertThat(avisos).as("un WARN del manejador con la causa").hasSize(1);
+			// La causa real: el estado que devolvio el proveedor.
+			assertThat(avisos.getFirst()).contains("500");
+			// Nunca el contenido de la conversacion: es dato personal.
+			assertThat(avisos.getFirst()).doesNotContain("Ferreteria La 16");
+		} finally {
+			logRaiz.detachAppender(appender);
+		}
 	}
 
 }

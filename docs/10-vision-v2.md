@@ -176,6 +176,14 @@ también se evaluó). Validada el 20 jul 2026 contra la API real:
 `llama-3.3-70b-versatile` (contexto 131K) responde en español fluido y
 rápido.
 
+> **28 sep 2026**: Groq retiró ese modelo (`404 model_not_found`) y las
+> tres herramientas de IA quedaron respondiendo 503 sin que ningún log
+> lo dijera. El modelo por defecto pasó a **`openai/gpt-oss-120b`**
+> (131K, ~0,6 s, respeta el marcador `[ESCALAR]`), configurable con
+> `GROQ_MODELO`; el 503 ahora deja un `WARN` con la causa. Lección: un
+> proveedor gratuito rota su catálogo sin avisar, y el nombre del modelo
+> es configuración que caduca — no una constante.
+
 **Capa gratis de Groq** (jul 2026): ~30 peticiones/minuto y ~1.000
 peticiones/día en el modelo 70B (14.400/día en modelos menores como
 `llama-3.1-8b-instant`). Más que suficiente para el arranque; si el

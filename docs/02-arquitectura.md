@@ -299,7 +299,7 @@ frontend queda como único punto de entrada público de la API.
 hexagonal del resto del backend: el dominio define el puerto
 `GeneradorDeRespuestas` (y los VOs de la conversación); la
 infraestructura implementa el adaptador de Groq (API compatible con
-OpenAI, modelo `llama-3.3-70b-versatile`), con la URL base y la key
+OpenAI, modelo `openai/gpt-oss-120b`), con la URL base y la key
 por variables de entorno (`GROQ_API_KEY`, nunca en el repo ni en el
 navegador — el flujo es navegador → proxy `/api` del frontend (ADR-09)
 → backend → Groq). El **prompt de sistema se ancla al contenido real

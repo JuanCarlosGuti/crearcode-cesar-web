@@ -349,7 +349,7 @@ banners de error, también en el login del admin).
 
 Contexto `asistente` hexagonal (ADR-10): puerto `GeneradorDeRespuestas`
 implementado por `GroqGeneradorDeRespuestasAdapter`
-(chat/completions, modelo `llama-3.3-70b-versatile`, `GROQ_API_KEY`
+(chat/completions, modelo `openai/gpt-oss-120b`, `GROQ_API_KEY`
 solo por entorno — flujo navegador → proxy `/api` → backend → Groq).
 Prompt de sistema anclado a
 `backend/src/main/resources/asistente-contexto.md` (mantenido a mano

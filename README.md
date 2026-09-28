@@ -18,7 +18,7 @@ system has a reason next to it in the code.
 | Backend | Java 25 · Spring Boot 4.1 · Spring Security · JWT (HS256) |
 | Frontend | Angular 22 · TypeScript · SSR · SCSS |
 | Database | PostgreSQL 18 (Neon serverless in production) |
-| AI | Groq · `llama-3.3-70b-versatile` |
+| AI | Groq · `openai/gpt-oss-120b` |
 | Mail | SMTP (Mailpit locally · Gmail App Password in production) |
 | Infrastructure | Docker · Docker Compose · Render (Blueprint as code) |
 | CI | GitHub Actions |
