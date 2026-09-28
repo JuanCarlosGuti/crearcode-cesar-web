@@ -1,32 +1,75 @@
 import { Caso } from './tipos';
 
 /**
- * Casos placeholder — reemplazar por casos reales antes de publicar el
- * sitio (ver docs/08-contenido.md).
+ * Proyectos propios y de codigo abierto (28 sep 2026). Reemplazan a los
+ * tres casos placeholder.
+ *
+ * No son trabajos de clientes y el texto no finge que lo sean: la misma
+ * regla que saco los testimonios ficticios en F10e. Para una empresa
+ * que todavia no ha vendido, esto pesa mas que un espacio reservado —
+ * un visitante puede entrar a uparya.co, abrir la app de damana o leer
+ * el codigo de la libreria de facturacion. Un testimonio no se puede
+ * comprobar; esto si.
+ *
+ * Regla de entrada: cada proyecto trae un enlace que funciona. El que
+ * no lo tenga, no entra (por eso quedo fuera la app de monday, cuyo
+ * backend no tiene cara publica).
  */
 export const CASOS: readonly Caso[] = [
   {
-    slug: 'caso-placeholder-1',
-    titulo: '[Nombre de la empresa o "Comercio local"]',
-    reto: '[Descripción breve del problema que tenía el cliente antes de trabajar con Crear Code Cesar].',
-    solucion: '[Qué se construyó o implementó].',
-    resultado: '[Resultado concreto, con cifra si es posible — ej. "redujo el tiempo de respuesta a clientes de X a Y"].',
-    metaDescripcion: 'Caso de éxito de un cliente de Crear Code Cesar — contenido en preparación.',
+    slug: 'uparya',
+    titulo: 'UparYa — directorio de negocios de Valledupar',
+    linea: 'Desarrollo a la medida',
+    reto: 'Los negocios de Valledupar se anuncian en grupos de WhatsApp y publicaciones que se pierden en un día. Quien busca un servicio no tiene dónde comparar, y quien lo presta no tiene dónde quedarse visible.',
+    solucion:
+      'Directorio local con ficha por negocio (fotos, ubicación y botón de WhatsApp), buscador que tolera tildes, reseñas verificadas por correo, cola de moderación y planes Gratis/Pro/Premium con límites parametrizables. Las herramientas de IA comprueban el cupo del plan antes de llamar al proveedor, con un presupuesto diario global como freno de costo.',
+    resultado:
+      'En producción, con las 28 historias obligatorias cerradas y 653 pruebas automatizadas: 389 unitarias, 107 de aceptación HTTP, 26 de integración contra PostgreSQL real y 131 de componente.',
+    stack: 'NestJS 11 · Angular 22 SSR · Prisma · PostgreSQL · Cloudflare R2',
+    enlace: { url: 'https://uparya.co', etiqueta: 'Visitar uparya.co' },
+    metaDescripcion:
+      'UparYa, directorio de negocios de Valledupar: planes, moderación, reseñas y herramientas de IA con cupo por plan. Emprendimiento propio de Crear Code Cesar, en producción.',
   },
   {
-    slug: 'caso-placeholder-2',
-    titulo: '[Nombre de la empresa o "Pyme de servicios"]',
-    reto: '[Descripción breve].',
-    solucion: '[Qué se construyó o implementó].',
-    resultado: '[Resultado concreto].',
-    metaDescripcion: 'Caso de éxito de un cliente de Crear Code Cesar — contenido en preparación.',
+    slug: 'corpus-damana',
+    titulo: 'Corpus Damana — estudiar la lengua del pueblo Wiwa',
+    linea: 'IA y automatización',
+    reto: 'El damana (dʉmʉna), lengua del pueblo Wiwa de la Sierra Nevada, tiene pocos hablantes y casi ningún material digital de estudio. Un traductor de IA genérico se inventa palabras que no existen, que es peor que no traducir.',
+    solucion:
+      'Aplicación de estudio construida sobre un corpus real: concordancias, diccionario de frecuencias, tarjetas con repetición espaciada y traducción asistida por IA anclada al corpus — el modelo responde con lo que está documentado o dice que no lo sabe.',
+    resultado:
+      'En producción. Es el mismo patrón de anclaje que usa el asistente de este sitio, que por eso tampoco inventa precios.',
+    stack: 'NestJS · Angular · Groq',
+    enlace: { url: 'https://corpus-damana.onrender.com', etiqueta: 'Abrir la aplicación' },
+    metaDescripcion:
+      'Corpus Damana: app de estudio del damana, lengua del pueblo Wiwa, con traducción por IA anclada a un corpus real. Proyecto propio de Crear Code Cesar.',
   },
   {
-    slug: 'caso-placeholder-3',
-    titulo: '[Nombre de la empresa o "Negocio de comercio"]',
-    reto: '[Descripción breve].',
-    solucion: '[Qué se construyó o implementó].',
-    resultado: '[Resultado concreto].',
-    metaDescripcion: 'Caso de éxito de un cliente de Crear Code Cesar — contenido en preparación.',
+    slug: 'dian-ubl',
+    titulo: 'dian-ubl — facturación electrónica de la DIAN, en Rust',
+    linea: 'Soluciones tecnológicas',
+    reto: 'Facturar electrónicamente en Colombia obliga a construir un XML UBL 2.1 exacto. Un decimal mal redondeado o un CUFE mal calculado hace que la DIAN rechace la factura, y el rechazo no dice dónde está el error.',
+    solucion:
+      'Librería y línea de comandos con modelo de dominio tipado, aritmética monetaria en enteros escalados (ni un flotante cerca del dinero), dígito de verificación del NIT, CUFE con SHA-384, serialización determinista, y un validador que reporta todos los problemas de una vez —cada uno anclado a la ruta del campo— en lugar de parar en el primero.',
+    resultado:
+      'Versión 1 implementada y en verde, con fixtures de entrada y un golden normativo que fija el XML esperado.',
+    stack: 'Rust',
+    enlace: { url: 'https://github.com/JuanCarlosGuti/dian-ubl', etiqueta: 'Ver el código' },
+    metaDescripcion:
+      'dian-ubl: librería en Rust que construye y valida facturas electrónicas UBL 2.1 de la DIAN, con CUFE, dígito del NIT y aritmética monetaria exacta. Código abierto.',
+  },
+  {
+    slug: 'cesar-travel',
+    titulo: 'Cesar Travel — alojamientos del Cesar y La Guajira',
+    linea: 'Desarrollo a la medida',
+    reto: 'Una plataforma de alojamientos necesita catálogo por municipio, disponibilidad por fechas, reservas, reseñas y conversación entre viajero y anfitrión, sin que ninguna de esas piezas se pise con las demás.',
+    solucion:
+      'La misma plataforma construida dos veces a propósito: un monolito NestJS + Angular que corre donde haya Node, y una versión en microservicios —seis servicios Java 25 con Spring Boot 4, MySQL y React— pensada para infraestructura propia.',
+    resultado:
+      'Las dos versiones públicas y ejecutables. Sirve para enseñar el criterio con el que trabajamos: la arquitectura se elige por el despliegue que toca, no por moda.',
+    stack: 'NestJS · Angular · Java 25 · Spring Boot 4 · MySQL · React',
+    enlace: { url: 'https://github.com/JuanCarlosGuti/cesar-travel', etiqueta: 'Ver el código' },
+    metaDescripcion:
+      'Cesar Travel: plataforma de alojamientos del Cesar y La Guajira, construida como monolito NestJS y como microservicios en Java 25. Código abierto de Crear Code Cesar.',
   },
 ];

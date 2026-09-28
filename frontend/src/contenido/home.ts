@@ -56,18 +56,19 @@ export const HOME = {
       'Está en la burbuja de abajo a la derecha, en todas las páginas. Responde en segundos sobre plazos, forma de trabajo y qué se puede automatizar en tu rubro.',
     invitacion: 'Prueba con una de estas:',
   },
-  placeholders: {
-    etiqueta: 'Espacio reservado',
-    casos: {
-      titulo: 'Casos reales de clientes',
-      texto:
-        'Este espacio queda reservado para proyectos verificables, con nombre y resultado autorizados por cada cliente. No publicamos cifras ni testimonios que no podamos sustentar.',
-    },
-    equipo: {
-      titulo: 'El equipo',
-      texto:
-        'Fotos y roles del equipo, con material real. Mientras llega, preferimos este aviso a inventar perfiles.',
-    },
+  proyectos: {
+    etiqueta: 'Proyectos propios',
+    titulo: 'Lo que hemos construido',
+    texto:
+      'Todavía no mostramos trabajos de clientes: cuando los haya, irán con su nombre y su permiso. Mientras tanto enseñamos lo que sí se puede abrir y revisar — un directorio de negocios en producción, una app para estudiar la lengua del pueblo Wiwa y una librería de facturación electrónica de la DIAN.',
+    enlace: 'Ver los proyectos',
+  },
+  fundador: {
+    etiqueta: 'Quién está detrás',
+    titulo: 'Juan Carlos Gutiérrez',
+    texto:
+      'Arquitecto de software y administrador de empresas, con siete años como instructor del SENA. Esa mezcla es la razón por la que aquí se habla de plazos, costos y riesgos, y no solo de tecnología.',
+    enlace: 'Cómo trabajamos',
   },
   cierre: {
     titulo: 'Cuéntanos qué te está quitando tiempo',

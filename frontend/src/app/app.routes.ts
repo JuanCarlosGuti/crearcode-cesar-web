@@ -18,7 +18,7 @@ export const routes: Routes = [
   {
     path: 'casos',
     loadComponent: () => import('./paginas/casos-listado/casos-listado').then((m) => m.CasosListadoPage),
-    title: 'Casos de éxito — Crear Code Cesar',
+    title: 'Proyectos — Crear Code Cesar',
   },
   {
     path: 'casos/:slug',

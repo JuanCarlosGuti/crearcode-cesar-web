@@ -49,7 +49,7 @@ criterios con los que mediremos si el sitio cumple su función.
 | Desarrollo a la medida | Tu negocio tiene procesos que ningún software genérico resuelve bien; te lo construimos a tu medida y sin sorpresas | Generar interés + confianza en el proceso |
 | IA y automatización para pymes | Puedes automatizar atención, cotizaciones, conciliaciones y reportes sin ser una empresa "tech" | Desmitificar la IA, mostrar casos concretos de uso diario |
 | Soluciones tecnológicas / cobro digital | Modernizar o integrar pagos no tiene que ser un proyecto de meses ni un riesgo | Transmitir seguridad y rapidez de implementación |
-| Casos / Portafolio | Esto ya lo hicimos, así de bien salió | Prueba social concreta (aunque v1 use placeholders) |
+| Proyectos | Esto ya lo hicimos, y lo puedes abrir | Prueba concreta: proyectos propios y de código abierto, cada uno con su enlace. Los trabajos de clientes entrarán cuando existan |
 | Sobre nosotros | Un arquitecto senior que también sabe de negocios y que enseña — no es "un programador más" | Diferenciación y confianza personal |
 | Blog / Recursos | Te enseñamos, no solo te vendemos | Educación como marketing, SEO de cola larga |
 | Contacto | Hablar con nosotros es fácil, rápido y sin compromiso | Conversión (formulario o WhatsApp) |

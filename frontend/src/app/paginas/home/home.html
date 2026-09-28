@@ -134,18 +134,20 @@
   </div>
 </section>
 
-<section class="contenedor seccion-placeholders" aria-labelledby="titulo-placeholders" aparecerAlVer>
-  <h2 id="titulo-placeholders" class="sr-only">Casos y equipo</h2>
-  <div class="rejilla-placeholders">
-    <article class="tarjeta-placeholder">
-      <span class="badge-placeholder">{{ home.placeholders.etiqueta }}</span>
-      <h3>{{ home.placeholders.casos.titulo }}</h3>
-      <p>{{ home.placeholders.casos.texto }}</p>
+<section class="contenedor seccion-destacados" aria-labelledby="titulo-destacados" aparecerAlVer>
+  <h2 id="titulo-destacados" class="sr-only">Proyectos y quién está detrás</h2>
+  <div class="rejilla-destacados">
+    <article class="tarjeta-destacado">
+      <span class="badge-destacado">{{ home.proyectos.etiqueta }}</span>
+      <h3>{{ home.proyectos.titulo }}</h3>
+      <p>{{ home.proyectos.texto }}</p>
+      <a routerLink="/casos" class="enlace-flecha">{{ home.proyectos.enlace }} →</a>
     </article>
-    <article class="tarjeta-placeholder">
-      <span class="badge-placeholder">{{ home.placeholders.etiqueta }}</span>
-      <h3>{{ home.placeholders.equipo.titulo }}</h3>
-      <p>{{ home.placeholders.equipo.texto }}</p>
+    <article class="tarjeta-destacado">
+      <span class="badge-destacado">{{ home.fundador.etiqueta }}</span>
+      <h3>{{ home.fundador.titulo }}</h3>
+      <p>{{ home.fundador.texto }}</p>
+      <a routerLink="/sobre-nosotros" class="enlace-flecha">{{ home.fundador.enlace }} →</a>
     </article>
   </div>
 </section>

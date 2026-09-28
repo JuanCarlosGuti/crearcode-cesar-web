@@ -125,16 +125,19 @@ describe('HomePage', () => {
     expect(el.querySelectorAll('.tabla-cuenta__destacado').length).toBe(TABLA_CUENTA.filas.length);
   });
 
-  it('en vez de testimonios ficticios muestra los dos placeholders honestos', async () => {
+  it('en el espacio que tuvieron los testimonios muestra proyectos reales y quien esta detras', async () => {
+    // Paso por tres estados: testimonios ficticios (v1), placeholders
+    // honestos (F10e) y, desde que hay proyectos publicos que enseñar,
+    // los proyectos de verdad con su enlace.
     const fixture = TestBed.createComponent(HomePage);
     await fixture.whenStable();
     const el = fixture.nativeElement as HTMLElement;
 
-    const placeholders = el.querySelectorAll('.tarjeta-placeholder');
-    expect(placeholders.length).toBe(2);
-    expect(el.textContent).toContain(HOME.placeholders.casos.titulo);
-    expect(el.textContent).toContain(HOME.placeholders.equipo.titulo);
-    expect(el.textContent).not.toContain('placeholder]');
+    expect(el.textContent).toContain(HOME.proyectos.titulo);
+    expect(el.textContent).toContain(HOME.fundador.titulo);
+    expect(el.querySelector('a[href="/casos"]')).not.toBeNull();
+    expect(el.querySelector('a[href="/sobre-nosotros"]')).not.toBeNull();
+    expect(el.querySelector('.tarjeta-placeholder')).toBeNull();
   });
 
   it('cierra con el CTA de agenda y WhatsApp', async () => {

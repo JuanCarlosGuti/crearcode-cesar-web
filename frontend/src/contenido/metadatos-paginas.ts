@@ -11,10 +11,14 @@ export const METADATOS_HOME = {
     'Desarrollo de software a la medida, automatización con inteligencia artificial y soluciones tecnológicas para pymes colombianas. Valledupar, Cesar — alcance nacional.',
 };
 
+// Decia "casos de exito de pymes colombianas que ya trabajan con
+// Crear Code Cesar", que era falso — y por ser la meta descripcion, era
+// lo que Google mostraba. Lo que hay son proyectos propios y de codigo
+// abierto, que es lo que dice ahora.
 export const METADATOS_CASOS_LISTADO = {
-  titulo: 'Casos de éxito — Crear Code Cesar',
+  titulo: 'Proyectos — Crear Code Cesar',
   descripcion:
-    'Casos de éxito de pymes colombianas que ya trabajan con Crear Code Cesar: software a la medida, automatización y soluciones tecnológicas.',
+    'Proyectos propios y de código abierto de Crear Code Cesar: un directorio de negocios en producción, una app para estudiar la lengua del pueblo Wiwa y una librería de facturación electrónica de la DIAN.',
 };
 
 export const METADATOS_SOBRE_NOSOTROS = {

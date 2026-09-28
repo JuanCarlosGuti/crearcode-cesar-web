@@ -26,12 +26,25 @@ export interface Servicio {
   readonly mensajeWhatsapp: string;
 }
 
+/**
+ * Un proyecto del portafolio. Se llamaba Caso cuando la seccion era
+ * "casos de exito"; lo que se muestra son emprendimientos propios y
+ * codigo abierto, no encargos de clientes (ver docs/08 §Proyectos).
+ *
+ * `enlace` no es opcional a proposito: un proyecto que el visitante no
+ * puede abrir es una afirmacion, y afirmaciones sin respaldo son justo
+ * lo que esta seccion existe para no tener.
+ */
 export interface Caso {
   readonly slug: string;
   readonly titulo: string;
+  /** La linea de negocio que ilustra, tal como se llama en servicios. */
+  readonly linea: string;
   readonly reto: string;
   readonly solucion: string;
   readonly resultado: string;
+  readonly stack: string;
+  readonly enlace: { readonly url: string; readonly etiqueta: string };
   readonly metaDescripcion: string;
 }
 

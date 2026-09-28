@@ -1,16 +1,28 @@
 <section class="contenedor pagina-casos">
-  <h1>Casos de éxito</h1>
+  <h1>Proyectos</h1>
   <p class="pagina-casos__intro">
-    Los siguientes casos son ejemplos de referencia y se irán reemplazando por casos reales.
+    Proyectos propios y de código abierto. Todavía no mostramos trabajos de clientes: cuando los
+    haya, irán con su nombre y su permiso. Mientras tanto preferimos enseñar lo que sí podemos
+    abrir entero — todo lo de abajo se puede visitar, usar o leer.
   </p>
 
   <div class="pagina-casos__rejilla" aparecerAlVer>
     @for (caso of casos; track caso.slug) {
-      <a [routerLink]="['/casos', caso.slug]" class="tarjeta-caso">
-        <h2>{{ caso.titulo }}</h2>
+      <article class="tarjeta-caso">
+        <span class="tarjeta-caso__linea">{{ caso.linea }}</span>
+        <h2>
+          <a [routerLink]="['/casos', caso.slug]">{{ caso.titulo }}</a>
+        </h2>
         <p>{{ caso.reto }}</p>
-        <span class="tarjeta-caso__enlace" aria-hidden="true">Ver caso completo →</span>
-      </a>
+        <p class="tarjeta-caso__stack">{{ caso.stack }}</p>
+        <a
+          class="tarjeta-caso__externo"
+          [href]="caso.enlace.url"
+          target="_blank"
+          rel="noopener noreferrer"
+          >{{ caso.enlace.etiqueta }}</a
+        >
+      </article>
     }
   </div>
 </section>

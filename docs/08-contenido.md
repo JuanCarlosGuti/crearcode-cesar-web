@@ -249,28 +249,106 @@ incluye", "Qué te entregamos" y las FAQ se mantienen.
 
 ---
 
-## Casos / Portafolio (placeholder — 3 casos de ejemplo)
+## Proyectos (28 sep 2026 — reemplazan a los casos placeholder)
 
-> Los siguientes casos son **ejemplos placeholder** para mostrar la
-> estructura. Deben reemplazarse por casos reales antes de publicar el
-> sitio.
+**Decisión de encuadre.** La sección dejó de llamarse "Casos de éxito"
+y pasó a llamarse **Proyectos**. El motivo es el mismo por el que en
+F10e se quitaron los testimonios ficticios: lo que hay para mostrar son
+**emprendimientos propios y trabajo de código abierto**, no encargos de
+clientes. Presentarlos bajo "casos de éxito" haría que el lector
+asumiera que hubo un cliente que pagó y quedó satisfecho — una mentira
+por omisión, más sutil que un testimonio inventado pero del mismo tipo.
 
-### Caso placeholder 1 — [Nombre de la empresa o "Comercio local"]
-- **Reto**: [Descripción breve del problema que tenía el cliente antes
-  de trabajar con Crear Code Cesar].
-- **Solución**: [Qué se construyó o implementó].
-- **Resultado**: [Resultado concreto, con cifra si es posible — ej.
-  "redujo el tiempo de respuesta a clientes de X a Y"].
+Para una empresa que todavía no ha vendido, esto es **más fuerte** que
+un espacio reservado: un cliente puede entrar a `uparya.co`, abrir la
+app de damana o leer el código de la librería de facturación. Eso no se
+puede fingir, y un testimonio sí.
 
-### Caso placeholder 2 — [Nombre de la empresa o "Pyme de servicios"]
-- **Reto**: [Descripción breve].
-- **Solución**: [Qué se construyó o implementó].
-- **Resultado**: [Resultado concreto].
+Regla: cada proyecto lleva un enlace que **funciona y se puede
+comprobar**. El que no lo tenga, no entra. Cuando haya trabajos de
+clientes, irán con su nombre y su permiso, en una sección aparte.
 
-### Caso placeholder 3 — [Nombre de la empresa o "Negocio de comercio"]
-- **Reto**: [Descripción breve].
-- **Solución**: [Qué se construyó o implementó].
-- **Resultado**: [Resultado concreto].
+**Intro de la página**:
+
+> Proyectos propios y de código abierto. Todavía no mostramos trabajos
+> de clientes: cuando los haya, irán con su nombre y su permiso.
+> Mientras tanto preferimos enseñar lo que sí podemos abrir entero —
+> todo lo de abajo se puede visitar, usar o leer.
+
+### UparYa — Desarrollo a la medida
+- **Enlace**: https://uparya.co (emprendimiento propio, en producción)
+- **Reto**: los negocios de Valledupar se anuncian en grupos de
+  WhatsApp y publicaciones que se pierden en un día. Quien busca un
+  servicio no tiene dónde comparar; quien lo presta no tiene dónde
+  quedarse visible.
+- **Solución**: directorio local con ficha por negocio (fotos,
+  ubicación, WhatsApp), buscador que tolera tildes, reseñas verificadas
+  por correo, cola de moderación y planes Gratis/Pro/Premium con
+  límites parametrizables. Las herramientas de IA comprueban el cupo
+  del plan **antes** de llamar al proveedor, con un presupuesto diario
+  global como freno de costo.
+- **Resultado**: en producción, con las 28 historias obligatorias
+  cerradas y 653 pruebas automatizadas (389 unitarias, 107 de
+  aceptación HTTP, 26 de integración contra Postgres real y 131 de
+  componente).
+- **Stack**: NestJS 11 + Angular 22 SSR, Prisma, PostgreSQL,
+  Cloudflare R2.
+
+### Corpus Damana — IA y automatización
+- **Enlace**: https://corpus-damana.onrender.com
+- **Reto**: el damana (dʉmʉna), lengua del pueblo Wiwa de la Sierra
+  Nevada, tiene pocos hablantes y casi ningún material digital de
+  estudio. Un traductor de IA genérico se inventa palabras que no
+  existen, que es peor que no traducir.
+- **Solución**: aplicación de estudio construida sobre un corpus real —
+  concordancias, diccionario de frecuencias, tarjetas con repetición
+  espaciada y traducción asistida por IA **anclada al corpus**: el
+  modelo responde con lo que está documentado o dice que no lo sabe.
+- **Resultado**: en producción. Es el mismo patrón de anclaje que usa
+  el asistente de este sitio, que tampoco inventa precios.
+- **Stack**: NestJS + Angular, Groq.
+
+### dian-ubl — Soluciones tecnológicas
+- **Enlace**: https://github.com/JuanCarlosGuti/dian-ubl (código
+  abierto)
+- **Reto**: facturar electrónicamente en Colombia obliga a construir un
+  XML UBL 2.1 exacto. Un decimal mal redondeado o un CUFE mal calculado
+  hace que la DIAN rechace la factura, y el rechazo no dice dónde está
+  el error.
+- **Solución**: librería y CLI en Rust con modelo de dominio tipado,
+  aritmética monetaria en enteros escalados (ni un flotante cerca del
+  dinero), dígito de verificación del NIT, CUFE con SHA-384,
+  serialización determinista, y un validador que reporta **todos** los
+  problemas de una vez, cada uno anclado a la ruta del campo, en lugar
+  de parar en el primero.
+- **Resultado**: v1 implementada y en verde, con fixtures de entrada y
+  golden normativo.
+- **Stack**: Rust.
+
+### Cesar Travel — Desarrollo a la medida
+- **Enlace**: https://github.com/JuanCarlosGuti/cesar-travel (código
+  abierto)
+- **Reto**: alojamientos del Cesar y La Guajira, con catálogo por
+  municipio, disponibilidad por fechas, reservas, reseñas y chat entre
+  viajero y anfitrión.
+- **Solución**: la misma plataforma construida dos veces a propósito —
+  un monolito NestJS + Angular que corre donde haya Node, y una versión
+  en microservicios (6 servicios Java 25 / Spring Boot 4 con MySQL y
+  React) pensada para infraestructura propia.
+- **Resultado**: las dos versiones públicas y ejecutables. Sirve para
+  enseñar el criterio: la arquitectura se elige por el despliegue que
+  toca, no por moda.
+- **Stack**: NestJS + Angular · Java 25 + Spring Boot 4.
+
+### Qué quedó fuera, y por qué
+
+**Board Checkup**, la app de monday.com, no entra: su backend no tiene
+página pública (`app.crearcodecesar.com` es una API, la raíz responde
+404) y no se pudo comprobar una ficha en el marketplace — la URL
+candidata devuelve el cascarón del marketplace, sin mención de la app.
+Un enlace que el visitante abre y no encuentra hace más daño que la
+ausencia del proyecto. Entra el día que tenga una cara pública
+verificable.
 
 ---
 
@@ -820,7 +898,7 @@ texto de este documento — se mantienen como pendiente en
 
 | Dato | Placeholder usado | Aparece en |
 |---|---|---|
-| Casos de éxito reales | `[Nombre de la empresa]`, `[Reto]`, `[Solución]`, `[Resultado]` | Casos/Portafolio |
+| Trabajos de clientes | La sección muestra proyectos propios y de código abierto (28 sep 2026). Los encargos de clientes entran cuando existan, con nombre y permiso | Proyectos |
 | Foto del fundador | Placeholder visual | Sobre nosotros |
 
 Ver también el resumen de pendientes en [[01-vision-y-alcance]] §7.

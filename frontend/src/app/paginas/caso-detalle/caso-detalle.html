@@ -1,6 +1,8 @@
 @if (caso(); as c) {
   <article class="contenedor caso-detalle">
+    <span class="caso-detalle__linea">{{ c.linea }}</span>
     <h1>{{ c.titulo }}</h1>
+    <p class="caso-detalle__stack">{{ c.stack }}</p>
 
     <section>
       <h2>El reto</h2>
@@ -18,9 +20,13 @@
     </section>
 
     <div class="cta-doble">
-      <a routerLink="/contacto" class="boton boton-primario">Agenda tu consulta gratuita</a>
-      <a routerLink="/casos" class="boton boton-secundario">Ver más casos</a>
+      <a [href]="c.enlace.url" target="_blank" rel="noopener noreferrer" class="boton boton-primario">{{
+        c.enlace.etiqueta
+      }}</a>
+      <a routerLink="/contacto" class="boton boton-secundario">Agenda tu consulta gratuita</a>
     </div>
+
+    <p class="caso-detalle__volver"><a routerLink="/casos">← Ver los demás proyectos</a></p>
   </article>
 } @else {
   <section class="contenedor caso-detalle">

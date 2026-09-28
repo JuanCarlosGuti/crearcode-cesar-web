@@ -6,3 +6,23 @@
 .caso-detalle section {
   margin-bottom: var(--espacio-4);
 }
+
+.caso-detalle__linea {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  color: var(--color-primario);
+  background-color: color-mix(in srgb, var(--color-primario) 8%, white);
+}
+
+.caso-detalle__stack {
+  margin-top: var(--espacio-1);
+  font-size: 0.9rem;
+  color: var(--color-texto-secundario);
+}
+
+.caso-detalle__volver {
+  margin-top: var(--espacio-3);
+}

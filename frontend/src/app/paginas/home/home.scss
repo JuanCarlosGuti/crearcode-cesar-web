@@ -358,35 +358,59 @@
   color: var(--color-primario);
 }
 
-.seccion-placeholders {
+.seccion-destacados {
   padding-block: var(--espacio-6);
 }
 
-.rejilla-placeholders {
+.rejilla-destacados {
   display: grid;
   gap: var(--espacio-3);
   grid-template-columns: 1fr;
 }
 
-// Estetica deliberada de "espacio reservado": borde discontinuo, sin
-// pretender ser contenido real (regla de honestidad, docs/10 decision 13).
-.tarjeta-placeholder {
-  border: 2px dashed color-mix(in srgb, var(--color-primario) 30%, white);
+// Fueron tarjetas de "espacio reservado", con borde discontinuo a
+// proposito. Desde que el contenido es real —proyectos publicos y el
+// perfil del fundador— el borde discontinuo mentiria al reves: haria
+// parecer pendiente algo que ya esta.
+.tarjeta-destacado {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   border-radius: var(--radio-borde-grande);
   padding: var(--espacio-3);
   background-color: var(--color-blanco);
+  box-shadow: var(--sombra-1);
+  transition: box-shadow var(--transicion-estandar), transform var(--transicion-estandar);
 }
 
-.tarjeta-placeholder h3 {
+.tarjeta-destacado:hover,
+.tarjeta-destacado:focus-within {
+  box-shadow: var(--sombra-3);
+  transform: translateY(-3px);
+}
+
+.tarjeta-destacado h3 {
   margin-bottom: var(--espacio-1);
 }
 
-.tarjeta-placeholder p {
-  margin-bottom: 0;
+.tarjeta-destacado p {
+  margin-bottom: var(--espacio-2);
   color: var(--color-texto-secundario);
 }
 
-.badge-placeholder {
+.tarjeta-destacado .enlace-flecha {
+  margin-top: auto;
+  font-weight: 600;
+  color: var(--color-primario);
+  text-decoration: none;
+}
+
+.tarjeta-destacado .enlace-flecha:hover,
+.tarjeta-destacado .enlace-flecha:focus-visible {
+  text-decoration: underline;
+}
+
+.badge-destacado {
   display: inline-block;
   font-size: 0.8rem;
   font-weight: 600;
@@ -398,7 +422,7 @@
 }
 
 @media (min-width: 48rem) {
-  .rejilla-placeholders {
+  .rejilla-destacados {
     grid-template-columns: repeat(2, 1fr);
   }
 }
