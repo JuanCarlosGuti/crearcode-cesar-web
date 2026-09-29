@@ -5,6 +5,7 @@ const tseslint = require('typescript-eslint');
 const angular = require('angular-eslint');
 
 module.exports = defineConfig([
+
   {
     files: ['**/*.ts'],
     extends: [
@@ -37,5 +38,13 @@ module.exports = defineConfig([
     files: ['**/*.html'],
     extends: [angular.configs.templateRecommended, angular.configs.templateAccessibility],
     rules: {},
+  },
+  {
+    // En los tests un callback vacio es el punto: un observador que no
+    // hace nada al recibir el error es lo que se esta comprobando.
+    files: ['**/*.spec.ts'],
+    rules: {
+      '@typescript-eslint/no-empty-function': 'off',
+    },
   },
 ]);

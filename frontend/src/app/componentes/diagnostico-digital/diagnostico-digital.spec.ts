@@ -24,7 +24,8 @@ async function crear() {
 
 async function responderTodo(fixture: Awaited<ReturnType<typeof crear>>['fixture']) {
   const el = fixture.nativeElement as HTMLElement;
-  for (let i = 0; i < DIAGNOSTICO.preguntas.length; i++) {
+  for (const pregunta of DIAGNOSTICO.preguntas) {
+    expect(el.textContent, `falta la pregunta "${pregunta.pregunta}"`).toContain(pregunta.pregunta);
     (el.querySelector('.diagnostico-opcion') as HTMLButtonElement).click();
     await fixture.whenStable();
   }
