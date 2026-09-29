@@ -700,26 +700,46 @@ De los seis `[CONFIRMAR]` del documento:
 | Ley 2300 (horarios de contacto comercial) | La política se remite a la ley sin transcribir el horario; hay que cumplirlo desde el primer envío comercial |
 | Plazo de 15 días hábiles para reportar incidentes | Se publica como compromiso; falta confirmar el plazo exacto |
 
-**Checklist del documento que sigue pendiente** (cada uno toca código
-u operación, y ninguno estaba en el alcance de la auditoría técnica):
+**Checklist del documento — qué se hizo** (ISS-198 a ISS-202):
 
-- [ ] **Casilla comercial separada** de la obligatoria en el formulario
-  (la política, sección 13, ya la promete). Es campo nuevo en el
-  dominio, migración y DTO. **Bloquea el primer envío comercial**, no
-  el despliegue: hoy no se envía ninguno.
-- [ ] Botón "Eliminar mi cuenta" en `/mi-cuenta`. Hoy se pide por
-  correo, que es lo que dice la política.
-- [ ] Tarea programada que borre solicitudes de más de 24 meses y
-  cuentas con 24 meses sin uso (la política fija esos plazos).
-- [ ] Copias de seguridad de PostgreSQL — y entonces añadir su línea a
-  la sección 12.
-- [ ] Evaluación de impacto de las herramientas de IA (Circular 002 de
-  2024): documento corto de riesgos, datos, proveedores y medidas, a
-  revisar una vez al año. La política ya lo promete.
-- [ ] Procedimiento interno de una página para responder consultas y
-  reclamos dentro de los plazos y registrar incidentes.
+- [x] **Casilla comercial separada** de la obligatoria (ISS-198). Campo
+  propio en el value object, migración V7 con `DEFAULT FALSE`, y
+  visible en el detalle del panel: sin eso el dato no serviría de nada.
+  El dominio impide autorizar lo comercial sin autorizar el
+  tratamiento.
+- [x] **Botón "Eliminar mi cuenta"** en `/mi-cuenta` (ISS-199).
+  `DELETE /api/mi-cuenta` toma el correo del token, arrastra los tokens
+  de esa cuenta y **no** borra cotizaciones ni solicitudes: son
+  registros comerciales con su propio plazo. Las cuentas de
+  administrador no se eliminan desde ahí.
+- [x] **Retención automática** a 24 meses (ISS-200), en la aplicación y
+  no en un cron del servidor: la regla es de dominio — un `DELETE` en
+  un crontab no sabe que un lead `CONVERTIDA` es un cliente cuyos datos
+  hay que conservar diez años.
+- [x] **Evaluación de impacto de IA y procedimiento de derechos**
+  (ISS-201): [docs/11-datos-personales.md](11-datos-personales.md).
+- [x] **Autoalojar las fuentes** (ISS-202, era P2-6 de la auditoría).
+  Eran tres archivos y no siete —las tres familias son variables—, 74
+  KB, subset latin. Google sale de la política salvo que se active la
+  analítica.
+
+**Checklist del documento que sigue pendiente:**
+
+- [ ] **Copias de seguridad** de PostgreSQL. El script y el cron están
+  propuestos en [docs/09](09-despliegue.md) §10 pero **sin instalar**:
+  es una acción en el servidor. Mientras no existan, la sección 12 de
+  la política **no** las menciona. Falta además sacarlas del servidor
+  (una copia en la misma máquina no es una copia) y probar una
+  restauración.
+- [ ] Borrar las **cuentas con 24 meses sin uso**, que la política
+  también promete. La retención automática solo cubre solicitudes
+  todavía: hace falta una fecha de último acceso en `usuarios`, que hoy
+  no se guarda.
 - [ ] **RNBD**: obligatorio solo por encima de 100.000 UVT de activos
   (Decreto 090 de 2018) — confirmar con el contador.
+- [ ] Los tres `[CONFIRMAR]` del abogado: plazo de reporte de
+  incidentes, horarios de la Ley 2300 y términos de API de Groq y
+  Cloudflare.
 - [ ] Seguimiento al Proyecto de Ley 282 de 2026 Cámara.
 
 **Lo que sigue esperando al usuario**: los ids de GA4 y Clarity

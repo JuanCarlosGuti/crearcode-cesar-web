@@ -801,9 +801,17 @@ alcance; los números llevan `TODO dueño`), pasar la **CSP** de
 Report-Only a firme, y las decisiones de producto (header, hero,
 landings por sector, calendario).
 
-Quedó sin hacer, a propósito: **autoalojar las fuentes** (P2-6 de la
-auditoría) — son siete `.woff2` que hay que descargar y versionar, y
-antes hay que decidir si se quedan las tres familias.
+La **política de datos v2** que aportó el usuario está publicada en
+`contenido/legales.ts`, con las promesas que hace ya cumplidas en
+código: casilla comercial separada, botón de eliminar cuenta y
+retención automática a 24 meses. La evaluación de impacto de IA y el
+procedimiento de derechos están en
+[docs/11-datos-personales.md](docs/11-datos-personales.md).
+
+Sigue sin hacerse, y es lo más urgente de lo que queda: **las copias de
+seguridad de PostgreSQL**. El script está propuesto en
+[docs/09](docs/09-despliegue.md) §10 pero sin instalar, y por eso la
+política deliberadamente **no** promete respaldos.
 
 **Decisiones del usuario**:
 
