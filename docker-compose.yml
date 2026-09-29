@@ -65,13 +65,19 @@ services:
       context: ./frontend
     container_name: crearcode-leads-frontend
     profiles: ["full"]
-    environment:
-      # "backend", el nombre del servicio de arriba: Docker Compose lo
-      # resuelve via DNS interno, sin depender de puertos publicados al host.
-      BACKEND_URL: http://backend:8080
-      NG_ALLOWED_HOSTS: localhost
+    # Sin variables de entorno: desde ADR-13 la imagen es Angular
+    # prerenderizado servido por Caddy, no un servidor de Node.
+    # BACKEND_URL y NG_ALLOWED_HOSTS eran del servidor SSR que ya no
+    # existe, y el puerto publicado seguia apuntando al 4000, que
+    # tampoco — Caddy escucha en 8080. Con eso, este perfil llevaba
+    # roto desde el corte al servidor propio (auditoria P3-e).
+    #
+    # OJO: aqui /api NO se proxya al backend. El Caddyfile sirve solo
+    # archivos; en produccion es kamal-proxy quien entrega /api por
+    # prefijo de ruta. Para probar el formulario de punta a punta,
+    # sigue el flujo nativo del README (npm start con proxy.conf.json).
     ports:
-      - "${FRONTEND_PORT:-4300}:4000"
+      - "${FRONTEND_PORT:-4300}:8080"
     depends_on:
       - backend
 

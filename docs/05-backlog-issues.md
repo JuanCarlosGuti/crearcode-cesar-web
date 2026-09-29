@@ -623,16 +623,68 @@ son decisiones del usuario y quedan abajo sin ✅.
 
 | ID | Descripción | Hallazgo | Qué falta del usuario | Est. |
 |---|---|---|---|---|
-| ISS-169 | Política de datos definitiva: quitar "borrador", nombrar encargados (Groq, Cloudflare, Pollinations, Resend, Netcup, Google Fonts), transferencia internacional, retención de conversaciones, derechos ARCO | C3, §11 | Revisión legal del texto que se redacte; decidir si aplica el RNBD de la SIC | M |
-| ISS-170 | Analítica: GA4 + Clarity con los eventos de §13 (`whatsapp_click`, `tool_complete`, `lead_captured`…) y banner de consentimiento | C4 | Crear las propiedades (IDs de GA4/Clarity) y aprobar el banner | M |
-| ISS-171 | Bajar `RATE_LIMIT_ASISTENTE_MAX_INTENTOS` de 600 a ~30 e identificar al anónimo por IP con hash y sal diaria | C5 | Hacer primero la prueba de ISS-136 desde dos redes: sin IP real por visitante, bajar el límite tumba las herramientas para todos | S |
-| ISS-172 | Cotizador: que el tipo de proyecto y la urgencia cambien el rango; rangos separados para web y para sistema; producto de entrada barato | QA3, §5 | Los números — el sitio no publica precios inventados | M |
+| ISS-169 ✅(código) | Política de datos definitiva: quitar "borrador", nombrar encargados (Groq, Cloudflare, Pollinations, Resend, Netcup, Google Fonts), transferencia internacional, retención de conversaciones, derechos ARCO | C3, §11 | Revisión legal del texto que se redacte; decidir si aplica el RNBD de la SIC | M |
+| ISS-170 ✅(código) | Analítica: GA4 + Clarity con los eventos de §13 (`whatsapp_click`, `tool_complete`, `lead_captured`…) y banner de consentimiento | C4 | Crear las propiedades (IDs de GA4/Clarity) y aprobar el banner | M |
+| ISS-171 ◐ | Bajar `RATE_LIMIT_ASISTENTE_MAX_INTENTOS` de 600 a ~30 e identificar al anónimo por IP con hash y sal diaria | C5 | Hacer primero la prueba de ISS-136 desde dos redes: sin IP real por visitante, bajar el límite tumba las herramientas para todos | S |
+| ISS-172 ◐ | Cotizador: que el tipo de proyecto y la urgencia cambien el rango; rangos separados para web y para sistema; producto de entrada barato | QA3, §5 | Los números — el sitio no publica precios inventados | M |
 | ISS-173 | Teléfono del formulario: aceptar fijos e internacionales además del celular colombiano | QA12 | Decidir si se quieren leads fuera de Colombia y fijos | S |
 | ISS-174 | Corpus Damana: moverlo al servidor propio (mismo patrón Kamal) o advertir la espera de Render en la tarjeta | C6, QA7 | Decidir cuál | S/M |
-| ISS-175 | Enviar el correo del lead nuevo fuera de la transacción (tras commit, asíncrono) para que un Resend lento no retenga la respuesta hasta 10 s | QA14 | — (solo prioridad) | S |
+| ISS-175 ✅ | Enviar el correo del lead nuevo fuera de la transacción (tras commit, asíncrono) para que un Resend lento no retenga la respuesta hasta 10 s | QA14 | — (solo prioridad) | S |
 | ISS-176 | Monitor externo de disponibilidad (home + endpoint sintético de IA) con alerta | C2, §19 | Elegir servicio (UptimeRobot / Better Stack) y crear la cuenta | S |
 | ISS-177 | Copias de seguridad diarias del PostgreSQL compartido fuera del VPS | C7 | Decidir destino (R2 ya existe para UparYa) — antes de salir al mercado | M |
-| ISS-178 | CSP en modo Report-Only y luego en firme | §10 | — | M |
+| ISS-178 ◐ | CSP en modo Report-Only y luego en firme | §10 | Recorrer el sitio sin avisos en consola y pasarla a firme | M |
+
+### Segunda tanda — rama `fix/auditoria-sep-2026` (28 sep 2026)
+
+El usuario pidió implementar el listado priorizado completo de la
+auditoría (P0 a P3). Antes de tocar nada se verificó cada hallazgo
+contra el código: de 48 sub-hallazgos, **10 ya estaban hechos** en la
+primera tanda, **1 no aplicaba** y el resto se corrigió aquí. Un
+commit por identificador de la auditoría.
+
+| ID auditoría | Qué se hizo | ISS |
+|---|---|---|
+| P0-1a | El 503 de cupo agotado y el de proveedor caído dejan de compartir código: `limite-global` (INFO, vuelve mañana) y `proveedor-caido` (WARN, avería). **Cambia una decisión documentada** — la invariante 3 decía que para el visitante eran lo mismo | ISS-179 |
+| P0-1c | `GeneradorDeRespuestasConRespaldo`: si el modelo primario falla, responde `GROQ_MODELO_RESPALDO`. Es lo que faltó el día de la caída — el demo, que sí tenía respaldo, siguió funcionando con el mismo proveedor roto | ISS-180 |
+| P0-1d | El CTA de WhatsApp existe de verdad en los tres mensajes de caída; ISS-167 cambió el texto pero no añadió enlace | ISS-181 |
+| P0-2a | El cupo anónimo ya no se resetea borrando `sessionStorage`: techo por red con `SHA-256(sal del día + IP)`, nunca la IP. Se cuentan las dos cosas para no castigar a una oficina con NAT | ISS-182 |
+| P0-2d | `CupoDeIa`: las ~20 líneas de cupos duplicadas en los 4 casos de uso (y sus 8 mapas) pasan a un componente con su prueba de concurrencia | ISS-183 |
+| P0-2e | El rate limiter suelta las ventanas vencidas; acumulaba una entrada por IP y regla desde el último despliegue | ISS-184 |
+| P0-3 | Política de datos completa (9 secciones, seis encargados nombrados, transferencia internacional, retención, ARCO) y sin el aviso de borrador. Marcada `REVISAR CON ABOGADO` | ISS-169 |
+| P0-4 | La app no arranca en producción con `ADMIN_PASSWORD`/`JWT_SECRET` por defecto (`PERMITIR_CREDENCIALES_DE_DESARROLLO=false` en `deploy.api.yml`). Bandera explícita porque el proyecto no usa perfiles de Spring | ISS-185 |
+| P1-1 | Analítica detrás de consentimiento: no carga nada antes de aceptar, no mide en desarrollo, ningún dato personal en los eventos. Banner que pregunta sin bloquear | ISS-170 |
+| P1-2a | Matriz de rango por tipo × alcance (12 cifras, todas con `TODO dueño`) y nota por urgencia; antes las 36 combinaciones daban 3 resultados | ISS-172 |
+| P1-3 | El WhatsApp del cierre del diagnóstico lleva las tres oportunidades | ISS-186 |
+| P1-4 | Botón flotante de WhatsApp bajo 60rem, apilado sobre la burbuja del asistente | ISS-187 |
+| P1-6b/c/d/e | `Article` y `BreadcrumbList`, `og:type=article`, `lastmod` solo donde hay fecha real, título de la Home con "Valledupar" en 49 caracteres | ISS-188 |
+| P1-7 | NAP visible en el cuerpo de `/contacto` | ISS-188 |
+| P1-8 | Inyección: la conversación debe alternar (corta el bloque de turnos falsos), `DatoDelVisitante` escapa lo que el visitante escribe en los tres prompts, y al proveedor de imágenes solo le llega el título generado | ISS-189 |
+| P2-1 | CSP en `Report-Only` | ISS-178 |
+| P2-2b/c/d | El formulario espeja los máximos del dominio, muestra el motivo real del 400 y enfoca el primer campo inválido | ISS-190 |
+| P2-2e | El correo del lead sale tras el commit y fuera de la petición (`AFTER_COMMIT` + `@Async` sobre hilos virtuales) | ISS-175 |
+| P2-2f | "Te respondemos el mismo día hábil". **Es una promesa**: se revierte en una línea | ISS-191 |
+| P2-5a | Enlace "Saltar al contenido"; axe no lo delataba porque `bypass` se satisface con `<main>` | ISS-192 |
+| P2-7 | La sesión se cierra al vencer el token, en vez de esperar al 401 | ISS-193 |
+| P3-a | Señuelo de BCrypt cuando el correo no existe: la diferencia de tiempo delataba qué correos tienen cuenta | ISS-194 |
+| P3-b | `USER` sin privilegios en las dos imágenes | ISS-195 |
+| P3-c | ESLint con las reglas de Angular, corriendo en CI antes de los tests | ISS-196 |
+| P3-e | `docker-compose.yml` (el perfil `full` estaba roto: publicaba el 4000 y Caddy escucha en 8080), `ci.yml`, `sitio.ts`, `docs/02`, `README`, `asistente-contexto.md` | ISS-197 |
+
+**Verificado, no corregido** (el hallazgo no aplica):
+
+- **P3-d, código muerto.** Ni el adaptador de Gemini —rama viva del
+  switch con `DEMO_PROVEEDOR_IMAGENES=gemini`, documentada— ni
+  `monday-app-association.json`, que exige el marketplace de monday.
+  Lo único real era la línea de `docs/02` que decía que lo servía
+  Express; corregida en P3-e.
+
+**Lo que sigue esperando al usuario**: los ids de GA4 y Clarity
+(ISS-170), la revisión legal de la política (ISS-169), las doce cifras
+del cotizador (ISS-172), la prueba de ISS-136 antes de bajar el límite
+de 600 (ISS-171), pasar la CSP de Report-Only a firme (ISS-178), y
+P2-6 —autoalojar las fuentes— que quedó sin hacer: son siete archivos
+`.woff2` que hay que descargar y versionar, y es una decisión sobre
+qué tipografías se quedan.
 
 **Decisiones de producto que la auditoría propone y que no son código
 hasta que el usuario decida**: quitar "Crear cuenta" del header y la
@@ -643,10 +695,11 @@ y del cotizador; calendario real para la consulta; "el mismo día hábil"
 en vez de "pronto"; foto del fundador; Google Business Profile; activar
 el proxy de Cloudflare; apagar Render y revocar las llaves rotadas.
 
-**Estado al 28 sep 2026**: backend 57 tests en las suites afectadas
-(incluida ArchUnit) y 256 specs de frontend en verde; producción
-verificada tras cada despliegue (asistente 200 en ~1,6 s, cabeceras,
-404, JSON-LD).
+**Estado al cierre de la segunda tanda (28 sep 2026)**: backend con
+`mvn verify` completo en verde (138 tests, ArchUnit y los ITs con
+Testcontainers) y **296 specs de frontend**, ESLint limpio. La rama
+`fix/auditoria-sep-2026` NO está desplegada: falta el OK del usuario y
+los e2e completos con backend.
 
 ---
 

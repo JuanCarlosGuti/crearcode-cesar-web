@@ -1,14 +1,15 @@
 /**
- * `baseUrl` pendiente del dominio definitivo (ver docs/01-vision-y-alcance.md
- * §7 y ADR-06 en docs/02-arquitectura.md): placeholder con el TLD
- * `.example`, reservado por IANA específicamente para documentación/
- * pruebas, hasta que se compre el dominio real en la fase F7. Actualizar
- * este único valor ese día — nada más en el sitio debe hardcodear el
- * dominio (ADR-06).
- */
-// Dominio canónico (ADR-11, comprado el 10 ago 2026): sin www; el www
-// redirige 301 en Cloudflare. Constante y no variable de entorno
-// porque las metas se hornean en el prerender.
+ * Dominio canónico del sitio (ADR-06): el único lugar donde vive. Nada
+ * más en el frontend debe escribir el dominio a mano — las metas, el
+ * canonical, el sitemap y el JSON-LD salen todos de aquí.
+ *
+ * Es una constante y no una variable de entorno porque el sitio se
+ * prerenderiza: para cuando algo podría leer el entorno, el HTML ya
+ * está escrito.
+ *
+ * Comprado el 10 ago 2026 (ADR-11). Sin `www`: el `www` redirige 301
+ * desde el Caddyfile, no desde Cloudflare — Cloudflare es solo el DNS
+ * desde el corte al servidor propio (ADR-13).
 export const BASE_URL = 'https://crearcodecesar.com';
 
 export const IMAGEN_OG_DEFECTO = '/imagenes/og-defecto.jpg';

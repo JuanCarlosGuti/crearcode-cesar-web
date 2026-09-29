@@ -379,12 +379,14 @@ reenvía por dentro; agregar una allowlist de orígenes sería
 configuración muerta. Si algún día el navegador llamara al backend
 directo, ahí se crea `app.cors.allowed-origins` por variable de
 entorno.
-**Consecuencia**: `render.yaml` agrega los dominios a
-`NG_ALLOWED_HOSTS` (sin esto, Angular SSR respondería 400 al dominio
-nuevo — protección SSRF) y fija `FRONTEND_URL`; el archivo estático
+**Consecuencia**: `render.yaml` agregaba los dominios a
+`NG_ALLOWED_HOSTS` (sin esto, Angular SSR respondía 400 al dominio
+nuevo — protección SSRF) y fijaba `FRONTEND_URL`. Nada de eso aplica
+desde ADR-13: no hay Render, ni servidor Node, ni `render.yaml` (se
+borró del repo el 28 sep 2026). El archivo estático
 `/monday-app-association.json` (requisito del marketplace de
-monday.com) vive en `frontend/public/` y lo sirve Express antes del
-router de Angular, sin autenticación.
+monday.com) sigue en `frontend/public/`, pero hoy lo copia el build de
+Angular al output y lo sirve Caddy desde `/srv`, sin autenticación.
 
 ### ADR-12 — El frontend pasa de web service con SSR a Static Site (11 ago 2026)
 

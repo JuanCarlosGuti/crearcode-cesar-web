@@ -783,15 +783,26 @@ pendiente del corte:
   No duele mientras los datos sean de prueba; tienen que estar antes de
   salir al mercado.
 
-**De la auditoría integral del 28 sep 2026** (ISS-161 a ISS-178 en
-[docs/05-backlog-issues.md](docs/05-backlog-issues.md)): lo técnico ya
-está hecho — asistente restaurado, cupos atómicos, cabeceras, 404,
-SEO, aviso de privacidad. Lo que espera al usuario, en orden de
-impacto: la **política de datos definitiva** (hoy dice "borrador" en
-público), **analítica** (no se mide nada), la **prueba de ISS-136**
-que destraba bajar el rate limit de 600, los **números del cotizador**
-por tipo de proyecto, y las decisiones de producto (header, hero,
+**De la auditoría integral del 28 sep 2026** (ISS-161 a ISS-197 en
+[docs/05-backlog-issues.md](docs/05-backlog-issues.md)): el listado
+priorizado completo (P0 a P3) está implementado en la rama
+`fix/auditoria-sep-2026`, **sin desplegar y sin el OK del usuario**.
+De 48 sub-hallazgos verificados contra el código, 10 ya estaban hechos
+en la primera tanda, 1 no aplicaba y el resto se corrigió allí.
+
+Lo que sigue esperando al usuario, en orden de impacto: **revisión
+legal** de la política de datos (el texto ya está completo y marcado
+`REVISAR CON ABOGADO`), los **ids de GA4 y Clarity** (la analítica está
+construida pero apagada mientras `contenido/analitica.ts` esté vacío),
+la **prueba de ISS-136** que destraba bajar el rate limit de 600, las
+**doce cifras del cotizador** (la estructura ya distingue tipo y
+alcance; los números llevan `TODO dueño`), pasar la **CSP** de
+Report-Only a firme, y las decisiones de producto (header, hero,
 landings por sector, calendario).
+
+Quedó sin hacer, a propósito: **autoalojar las fuentes** (P2-6 de la
+auditoría) — son siete `.woff2` que hay que descargar y versionar, y
+antes hay que decidir si se quedan las tres familias.
 
 **Decisiones del usuario**:
 

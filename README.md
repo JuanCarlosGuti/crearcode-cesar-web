@@ -17,7 +17,7 @@ system has a reason next to it in the code.
 |---|---|
 | Backend | Java 25 · Spring Boot 4.1 · Spring Security · JWT (HS256) |
 | Frontend | Angular 22 · TypeScript · SSR · SCSS |
-| Database | PostgreSQL 17 (shared instance on the company VPS) |
+| Database | PostgreSQL 18 (shared instance on the company VPS) |
 | AI | Groq · `openai/gpt-oss-120b` |
 | Mail | SMTP (Mailpit locally · Resend in production) |
 | Infrastructure | Docker · Kamal 2 on a Netcup VPS · Caddy for the static site |
@@ -118,7 +118,8 @@ the flows that are easy to break and expensive to get wrong:
   actual link out of the Mailpit inbox over its REST API rather than mocking the email away.
 - **AI assistant** — driven against a local Groq stub, so the suite is deterministic and costs
   nothing to run.
-- **Accessibility** — `axe` assertions on the assistant widget.
+- **Accessibility** — `axe` assertions across 12 pages, including the
+  authenticated admin panel.
 
 ---
 
