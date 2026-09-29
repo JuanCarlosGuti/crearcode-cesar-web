@@ -578,7 +578,7 @@ Guías: [pasos de habilitación](https://ayuda.alegra.com/col/pasos-habilitacion
   porcentaje por defecto de las cotizaciones. El impuesto ya es
   configurable **por cotización** (se elige al abrirla), así que el
   sistema soporta los dos escenarios sin tocar código.
-- Validez por defecto (hoy 15 días) y condiciones comerciales estándar
+- ~~Validez por defecto~~: **decidida en 15 días** (29 sep 2026). Faltan las condiciones comerciales del pie
   (anticipo, forma de pago) para el pie del documento.
 - Datos de contacto del documento: desde el 11 ago 2026 el correo
   corporativo es **`admin@crearcodecesar.com`** (dominio propio), y es

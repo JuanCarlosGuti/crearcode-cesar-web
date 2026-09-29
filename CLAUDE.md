@@ -637,7 +637,8 @@ adentro, en pesos enteros.
   **901941017-0**, Calle 4B # 20-36, Oficina 303, Barrio Callejas,
   Valledupar. **Pendiente**: si la empresa es responsable de IVA — ese
   dato está en el RUT de la DIAN, no en el certificado de Cámara —, la
-  validez por defecto (hoy 15 días) y las condiciones de pago del pie.
+  y las condiciones de pago del pie. La validez ya está decidida: 15
+  días (29 sep 2026).
 
 ## SEO, rendimiento y accesibilidad (tras la fase F6)
 
@@ -742,6 +743,11 @@ procedimiento del corte en §9.
   cotizar sin él y descubrirlo después obliga a pedirle al cliente un
   19% extra sobre algo que ya aceptó. Se baja por cotización o con
   `COTIZACIONES_IMPUESTO` si el contador confirma que no aplica.
+- **Validez de las cotizaciones: 15 días** (29 sep 2026). Es cuánto
+  tiempo se sostiene un precio ya cotizado: más corto protege de que
+  suban los costos, más largo le da aire a un cliente que consulta con
+  su socio o espera el cierre de mes. Se cambia con
+  `COTIZACIONES_DIAS_VALIDEZ` sin tocar código.
 - LinkedIn del fundador: https://www.linkedin.com/in/juan-carlos-gutierrez-huerfano369582/
 - Paleta del sitio: nació como **Opción C, "Minimal Corporativo"**
   (clara) y desde el **rediseño tech del 28 sep 2026 es oscura** —
@@ -819,8 +825,13 @@ política deliberadamente **no** promete respaldos.
   defecto, porque una S.A.S. es persona jurídica y por regla general
   responsable. Confirmar con el contador (casilla 53 del RUT) y, si no
   aplica, bajarlo con `COTIZACIONES_IMPUESTO`.
-- **Validez por defecto** (hoy 15 días) y condiciones comerciales del
-  pie del PDF (anticipo, forma de pago).
+- **Condiciones comerciales del pie del PDF**: anticipo, forma de pago
+  y qué pasa con los cambios de alcance a mitad del proyecto. Hoy el
+  pie solo aclara que el documento es una cotización y no una factura,
+  así que esas condiciones se explican a mano por WhatsApp y no quedan
+  en el documento que el cliente guarda. **Lo tiene que redactar el
+  usuario**: es un compromiso comercial, y si se inventa y no es lo que
+  cobra, el problema lo tiene con el primer cliente que lo lea.
 - **Revisar el eslogan del hero** ("Tecnología que trabaja para tu
   negocio, no al revés.") — pendiente desde el 29 jul 2026. Sigue
   siendo el titular del rediseño, ahora con "no al revés" resaltado.
