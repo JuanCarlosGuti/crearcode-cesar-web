@@ -146,6 +146,7 @@ Detalle completo, diagrama y ADRs en
 | [08-contenido.md](docs/08-contenido.md) | Todos los textos del sitio en borrador |
 | [09-despliegue.md](docs/09-despliegue.md) | Opciones de hosting y dominio comparadas con costos, recomendación, checklist técnico pendiente (fase F7) |
 | [10-vision-v2.md](docs/10-vision-v2.md) | Visión v2 / Etapa 3 (fases F8-F11): cuentas de cliente, asistente IA (Groq), demo de diseño, gestión interna — pendiente de aprobación explícita |
+| [11-datos-personales.md](docs/11-datos-personales.md) | Evaluación de impacto de las herramientas de IA (Circular 002 de 2024 de la SIC) y procedimiento para consultas, reclamos e incidentes |
 
 ## Checklist de fases (Etapa 2 — actualizar a medida que avance)
 

@@ -39,4 +39,9 @@ class SolicitudRepositorioJpaAdapter implements SolicitudRepositorio {
 		return jpaRepository.findByEstado(estado).stream().map(SolicitudMapper::aDominio).toList();
 	}
 
+	@Override
+	public void eliminar(SolicitudId id) {
+		jpaRepository.deleteById(id.valor());
+	}
+
 }
