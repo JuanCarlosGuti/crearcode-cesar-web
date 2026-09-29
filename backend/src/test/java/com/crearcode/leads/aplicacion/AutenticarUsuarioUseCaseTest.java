@@ -33,6 +33,24 @@ class AutenticarUsuarioUseCaseTest {
 		repositorio.guardar(Usuario.crear(new Correo(correo), cifrador.hash(contrasenaEnClaro), Rol.ADMIN));
 	}
 
+	/**
+	 * Con un correo que no existe se salia sin verificar nada, y
+	 * verificar un hash de BCrypt cuesta ~100 ms: la diferencia de
+	 * tiempo entre "este correo no existe" y "existe pero la clave esta
+	 * mal" se mide desde fuera con un cronometro, asi que la respuesta
+	 * generica no ocultaba nada (auditoria del 28 sep 2026, P3-a).
+	 */
+	@Test
+	void unCorreoQueNoExisteGastaElMismoTrabajoQueUnoQueSi() {
+		registrarUsuario("existe@correo.com", "clave-correcta");
+		cifrador.verificaciones = 0;
+
+		assertThatThrownBy(() -> useCase.autenticar("noexiste@correo.com", "lo-que-sea"))
+				.isInstanceOf(CredencialesInvalidasException.class);
+
+		assertThat(cifrador.verificaciones).isEqualTo(1);
+	}
+
 	@Test
 	void autenticarConCredencialesCorrectasDevuelveUnaSesion() {
 		registrarUsuario("admin@crearcode-cesar.local", "clave-correcta");

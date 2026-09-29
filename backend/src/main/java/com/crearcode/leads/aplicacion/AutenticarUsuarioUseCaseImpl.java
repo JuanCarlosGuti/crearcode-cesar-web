@@ -22,6 +22,15 @@ class AutenticarUsuarioUseCaseImpl implements AutenticarUsuarioUseCase {
 	private final CifradorDeContrasenas cifrador;
 	private final GeneradorDeToken generadorDeToken;
 	private final Clock reloj;
+	/**
+	 * Hash de un valor cualquiera, calculado una vez al arrancar. Con
+	 * un correo que no existe se salia sin verificar nada, y verificar
+	 * un hash de BCrypt cuesta del orden de 100 ms: la diferencia de
+	 * tiempo entre «este correo no existe» y «existe pero la clave está
+	 * mal» se mide desde fuera con un cronómetro, así que la respuesta
+	 * genérica no ocultaba nada (auditoría del 28 sep 2026, P3-a).
+	 */
+	private final String hashSenuelo;
 
 	AutenticarUsuarioUseCaseImpl(UsuarioRepositorio repositorio, CifradorDeContrasenas cifrador,
 			GeneradorDeToken generadorDeToken, Clock reloj) {
@@ -29,11 +38,20 @@ class AutenticarUsuarioUseCaseImpl implements AutenticarUsuarioUseCase {
 		this.cifrador = cifrador;
 		this.generadorDeToken = generadorDeToken;
 		this.reloj = reloj;
+		this.hashSenuelo = cifrador.hash("contrasena-que-nadie-usa-senuelo-anti-timing");
 	}
 
 	@Override
 	public SesionAutenticada autenticar(String correo, String contrasenaEnClaro) {
-		Usuario usuario = buscarPorCorreo(correo).orElseThrow(CredencialesInvalidasException::new);
+		Optional<Usuario> encontrado = buscarPorCorreo(correo);
+		if (encontrado.isEmpty()) {
+			// Se verifica igual, contra el señuelo, para gastar el mismo
+			// tiempo que si el correo existiera. El resultado se ignora a
+			// propósito.
+			cifrador.verificar(contrasenaEnClaro, hashSenuelo);
+			throw new CredencialesInvalidasException();
+		}
+		Usuario usuario = encontrado.get();
 
 		if (!cifrador.verificar(contrasenaEnClaro, usuario.contrasenaHash())) {
 			throw new CredencialesInvalidasException();
