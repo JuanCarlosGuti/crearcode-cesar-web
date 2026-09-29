@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { marked } from 'marked';
 
 import { ARTICULOS } from '../../../contenido/blog';
+import { establecerDatosEstructuradosDePagina } from '../../nucleo/datos-estructurados';
 import { establecerMetadatosDePagina } from '../../nucleo/metadatos-pagina';
 
 @Component({
@@ -30,6 +31,22 @@ export class BlogArticuloPage {
             ruta: `/blog/${a.slug}`,
             tipo: 'article' as const,
             publicadoEn: a.fecha,
+          }
+        : undefined;
+    });
+
+    // Article y miga de pan: sin esto Google anuncia el articulo como
+    // una pagina cualquiera y pinta la URL cruda en el resultado
+    // (auditoria P1-6b).
+    establecerDatosEstructuradosDePagina(() => {
+      const a = this.articulo();
+      return a
+        ? {
+            migas: [
+              { nombre: 'Inicio', ruta: '/' },
+              { nombre: 'Blog', ruta: '/blog' },
+            ],
+            articulo: { titulo: a.titulo, resumen: a.resumen, fecha: a.fecha, ruta: `/blog/${a.slug}` },
           }
         : undefined;
     });

@@ -3,7 +3,10 @@ import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
 import { BASE_URL } from '../../contenido/sitio';
-import { establecerDatosEstructuradosDeLaEmpresa } from './datos-estructurados';
+import {
+  establecerDatosEstructuradosDeLaEmpresa,
+  establecerDatosEstructuradosDePagina,
+} from './datos-estructurados';
 
 @Component({ template: '' })
 class AnfitrionDePrueba {
@@ -60,5 +63,93 @@ describe('establecerDatosEstructuradosDeLaEmpresa', () => {
 
     const scripts = TestBed.inject(DOCUMENT).head.querySelectorAll('script[type="application/ld+json"]');
     expect(scripts).toHaveLength(1);
+  });
+});
+
+/**
+ * Article y BreadcrumbList: no existia ninguno de los dos (auditoria
+ * del 28 sep 2026, P1-6b). La miga importa aunque la pagina ya la
+ * muestre: es lo que hace que Google pinte "Inicio > Blog > Articulo"
+ * en el resultado en vez de la URL cruda.
+ */
+describe('establecerDatosEstructuradosDePagina', () => {
+  @Component({ template: '' })
+  class SoloMigas {
+    constructor() {
+      establecerDatosEstructuradosDePagina(() => ({
+        migas: [
+          { nombre: 'Inicio', ruta: '/' },
+          { nombre: 'Blog', ruta: '/blog' },
+        ],
+      }));
+    }
+  }
+
+  @Component({ template: '' })
+  class ArticuloCompleto {
+    constructor() {
+      establecerDatosEstructuradosDePagina(() => ({
+        migas: [
+          { nombre: 'Inicio', ruta: '/' },
+          { nombre: 'Blog', ruta: '/blog' },
+        ],
+        articulo: {
+          titulo: 'Señales de que toca automatizar',
+          resumen: 'Cuándo deja de compensar hacerlo a mano.',
+          fecha: '2026-06-15',
+          ruta: '/blog/senales',
+        },
+      }));
+    }
+  }
+
+  function leerGrafo(): Record<string, unknown>[] {
+    const script = TestBed.inject(DOCUMENT).head.querySelector('#datos-estructurados-pagina');
+    expect(script, 'debe existir el ld+json de la pagina').toBeTruthy();
+    const contenido = JSON.parse(script!.textContent ?? '{}');
+    return Array.isArray(contenido) ? contenido : [contenido];
+  }
+
+  afterEach(() => {
+    TestBed.inject(DOCUMENT).head.querySelector('#datos-estructurados-pagina')?.remove();
+  });
+
+  it('publica la miga de pan con posiciones y URLs absolutas', async () => {
+    const fixture = TestBed.createComponent(SoloMigas);
+    await fixture.whenStable();
+
+    const miga = leerGrafo().find((n) => n['@type'] === 'BreadcrumbList')!;
+    expect(miga['itemListElement']).toEqual([
+      { '@type': 'ListItem', position: 1, name: 'Inicio', item: `${BASE_URL}/` },
+      { '@type': 'ListItem', position: 2, name: 'Blog', item: `${BASE_URL}/blog` },
+    ]);
+  });
+
+  it('un articulo publica ademas su Article con fecha y autor', async () => {
+    const fixture = TestBed.createComponent(ArticuloCompleto);
+    await fixture.whenStable();
+
+    const articulo = leerGrafo().find((n) => n['@type'] === 'Article')!;
+    expect(articulo['headline']).toBe('Señales de que toca automatizar');
+    expect(articulo['datePublished']).toBe('2026-06-15');
+    expect(articulo['mainEntityOfPage']).toBe(`${BASE_URL}/blog/senales`);
+    expect((articulo['author'] as Record<string, string>)['name']).toContain('Crear Code Cesar');
+  });
+
+  /**
+   * En una SPA se navega de un articulo a otro sin recargar el
+   * documento: dos Article en el mismo <head> describirian una pagina
+   * que no existe.
+   */
+  it('al cambiar de pagina reemplaza el bloque en vez de acumularlo', async () => {
+    const primera = TestBed.createComponent(ArticuloCompleto);
+    await primera.whenStable();
+    const segunda = TestBed.createComponent(SoloMigas);
+    await segunda.whenStable();
+
+    expect(
+      TestBed.inject(DOCUMENT).head.querySelectorAll('#datos-estructurados-pagina'),
+    ).toHaveLength(1);
+    expect(leerGrafo().some((n) => n['@type'] === 'Article')).toBe(false);
   });
 });

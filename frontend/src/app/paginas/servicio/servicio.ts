@@ -5,6 +5,7 @@ import { SERVICIO_ASIDE, SERVICIOS } from '../../../contenido/servicios';
 import { AparecerAlVer } from '../../componentes/aparecer-al-ver/aparecer-al-ver';
 import { Faq } from '../../componentes/faq/faq';
 import { WhatsappCta } from '../../componentes/whatsapp-cta/whatsapp-cta';
+import { establecerDatosEstructuradosDePagina } from '../../nucleo/datos-estructurados';
 import { establecerMetadatosDePagina } from '../../nucleo/metadatos-pagina';
 
 @Component({
@@ -26,5 +27,12 @@ export class ServicioPage {
         ? { titulo: `${s.nombre} — Crear Code Cesar`, descripcion: s.resumenCorto, ruta: `/servicios/${s.slug}` }
         : undefined;
     });
+
+    establecerDatosEstructuradosDePagina(() => ({
+      migas: [
+        { nombre: 'Inicio', ruta: '/' },
+        { nombre: 'Servicios', ruta: '/#servicios' },
+      ],
+    }));
   }
 }
