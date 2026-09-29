@@ -1,7 +1,8 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { COTIZADOR } from '../../../contenido/cotizador';
+import { Analitica } from '../../nucleo/analitica';
 import { WhatsappCta } from '../whatsapp-cta/whatsapp-cta';
 
 /**
@@ -18,6 +19,8 @@ import { WhatsappCta } from '../whatsapp-cta/whatsapp-cta';
 export class Cotizador {
   protected readonly textos = COTIZADOR;
 
+  private readonly analitica = inject(Analitica);
+
   private readonly indice = signal(0);
   private readonly respuestas = signal<Record<string, string>>({});
 
@@ -31,8 +34,13 @@ export class Cotizador {
   protected readonly porcentaje = computed(() =>
     Math.round((Math.min(this.indice(), COTIZADOR.pasos.length) / COTIZADOR.pasos.length) * 100),
   );
+  // El tipo tambien manda: antes el rango salia solo del alcance y una
+  // pagina web arrancaba en el mismo piso que un sistema (P1-2a).
   protected readonly rango = computed(
-    () => COTIZADOR.rangosPorAlcance[this.respuestas()['alcance']] ?? '',
+    () => COTIZADOR.rangosPorTipoYAlcance[this.respuestas()['tipo']]?.[this.respuestas()['alcance']] ?? '',
+  );
+  protected readonly notaUrgencia = computed(
+    () => COTIZADOR.notaPorUrgencia[this.respuestas()['urgencia']] ?? '',
   );
   protected readonly resumen = computed(() =>
     COTIZADOR.pasos
@@ -42,13 +50,25 @@ export class Cotizador {
   );
   protected readonly mensajeWhatsapp = computed(
     () =>
-      `Hola, usé el cotizador de la página. Mi proyecto: ${this.resumen()}. ¿Podemos hablar del alcance?`,
+      `Hola, usé el cotizador de la página. Mi proyecto: ${this.resumen()}. Me salió un rango de ${this.rango()}. ¿Podemos hablar del alcance?`,
   );
 
   protected elegir(opcion: string): void {
     const clave = this.paso().clave;
+    if (this.indice() === 0) {
+      this.analitica.registrar('tool_start', { herramienta: 'cotizador' });
+    }
     this.respuestas.update((r) => ({ ...r, [clave]: opcion }));
     this.indice.update((i) => i + 1);
+    if (this.completado()) {
+      // El rango, no la cifra de nadie: sirve para saber que tipo de
+      // proyecto llega al sitio y con que alcance.
+      this.analitica.registrar('quote_generated', {
+        tipo: this.respuestas()['tipo'] ?? '',
+        alcance: this.respuestas()['alcance'] ?? '',
+        rango: this.rango(),
+      });
+    }
   }
 
   protected readonly puedeRetroceder = computed(() => this.indice() > 0);

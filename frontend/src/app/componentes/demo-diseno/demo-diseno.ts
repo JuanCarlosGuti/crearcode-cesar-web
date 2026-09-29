@@ -6,6 +6,7 @@ import { DEMO_DISENO } from '../../../contenido/demo-diseno';
 import { BocetoDeDemo, DemoApi } from '../../api/demo-api';
 import { SesionService } from '../../nucleo/sesion';
 import { mensajeWhatsappParaRuta } from '../../layout/mensaje-whatsapp-por-ruta';
+import { Analitica } from '../../nucleo/analitica';
 import { WhatsappCta } from '../whatsapp-cta/whatsapp-cta';
 import { AVISO_IA } from '../../../contenido/legales';
 
@@ -27,6 +28,7 @@ export class DemoDiseno {
   // Aviso de privacidad de la IA (auditoria 28 sep 2026, §11).
   protected readonly avisoIa = AVISO_IA;
   private readonly api = inject(DemoApi);
+  private readonly analitica = inject(Analitica);
   protected readonly sesion = inject(SesionService);
 
   protected readonly textos = DEMO_DISENO;
@@ -103,13 +105,16 @@ export class DemoDiseno {
         next: (resultado) => {
           this.generando.set(false);
           this.boceto.set(resultado);
+          this.analitica.registrar('tool_complete', { herramienta: 'demo-diseno' });
           if (esVariacion) {
             this.variacionUsada.set(true);
           }
         },
         error: (error: unknown) => {
           this.generando.set(false);
-          this.error.set(this.codigoDesde(error));
+          const codigo = this.codigoDesde(error);
+          this.error.set(codigo);
+          this.analitica.registrar('ai_error', { herramienta: 'demo-diseno', codigo: codigo ?? 'desconocido' });
         },
       });
   }

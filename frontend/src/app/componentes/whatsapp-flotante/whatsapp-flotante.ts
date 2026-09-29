@@ -5,6 +5,7 @@ import { filter, map } from 'rxjs';
 
 import { urlWhatsapp } from '../../../contenido/empresa';
 import { mensajeWhatsappParaRuta } from '../../layout/mensaje-whatsapp-por-ruta';
+import { Analitica } from '../../nucleo/analitica';
 
 /**
  * Botón flotante de WhatsApp, solo en móvil.
@@ -33,6 +34,7 @@ import { mensajeWhatsappParaRuta } from '../../layout/mensaje-whatsapp-por-ruta'
       target="_blank"
       rel="noopener"
       aria-label="Escríbenos por WhatsApp"
+      (click)="registrarClic()"
     >
       <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" focusable="false" fill="currentColor">
         <path
@@ -45,6 +47,7 @@ import { mensajeWhatsappParaRuta } from '../../layout/mensaje-whatsapp-por-ruta'
 })
 export class WhatsappFlotante {
   private readonly router = inject(Router);
+  private readonly analitica = inject(Analitica);
   private readonly urlActual = toSignal(
     this.router.events.pipe(
       filter((evento) => evento instanceof NavigationEnd),
@@ -54,4 +57,8 @@ export class WhatsappFlotante {
   );
 
   protected readonly url = computed(() => urlWhatsapp(mensajeWhatsappParaRuta(this.urlActual())));
+
+  protected registrarClic(): void {
+    this.analitica.registrar('whatsapp_click', { origen: 'flotante-movil' });
+  }
 }

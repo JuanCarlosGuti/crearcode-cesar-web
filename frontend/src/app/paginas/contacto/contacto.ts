@@ -8,6 +8,7 @@ import { WhatsappCta } from '../../componentes/whatsapp-cta/whatsapp-cta';
 import { EMPRESA, urlWhatsapp } from '../../../contenido/empresa';
 import { HOME } from '../../../contenido/home';
 import { METADATOS_CONTACTO } from '../../../contenido/metadatos-paginas';
+import { Analitica } from '../../nucleo/analitica';
 import { establecerMetadatosDePagina } from '../../nucleo/metadatos-pagina';
 
 interface DatosFormularioContacto {
@@ -102,6 +103,7 @@ export const OPCIONES_SERVICIO = [
 })
 export class ContactoPage {
   private readonly solicitudesApi = inject(SolicitudesApi);
+  private readonly analitica = inject(Analitica);
 
   protected readonly opcionesServicio = OPCIONES_SERVICIO;
   protected readonly enviando = signal(false);
@@ -157,6 +159,7 @@ export class ContactoPage {
     this.formulario().markAsTouched();
     if (!this.formulario().valid()) {
       this.enfocarElPrimerCampoInvalido();
+      this.analitica.registrar('contact_form_error', { estado: 0, motivo: 'validacion-local' });
       return;
     }
 
@@ -167,11 +170,17 @@ export class ContactoPage {
       next: () => {
         this.enviando.set(false);
         this.enviado.set(true);
+        this.analitica.registrar('contact_form_submit');
       },
       error: (error: unknown) => {
         this.enviando.set(false);
         this.errorEnvio.set(true);
         this.motivoDelError.set(this.motivoDe(error));
+        // Solo el estado HTTP: el motivo puede traer datos escritos por
+        // el visitante y los eventos dicen que paso, no quien.
+        this.analitica.registrar('contact_form_error', {
+          estado: error instanceof HttpErrorResponse ? error.status : 0,
+        });
       },
     });
   }

@@ -26,7 +26,7 @@
       <p class="hero__gancho">{{ home.gancho }}</p>
       <div class="cta-doble">
         <a routerLink="/contacto" class="boton boton-primario">Agenda tu consulta gratuita</a>
-        <app-whatsapp-cta [mensaje]="home.mensajeWhatsapp" etiqueta="Escríbenos por WhatsApp" />
+        <app-whatsapp-cta origen="home" [mensaje]="home.mensajeWhatsapp" etiqueta="Escríbenos por WhatsApp" />
       </div>
     </div>
     <aside class="hero__demo" aria-label="Demo de diseño con IA">
@@ -167,7 +167,7 @@
     <p>{{ home.cierre.texto }}</p>
     <div class="cta-doble cta-doble--centrado">
       <a routerLink="/contacto" class="boton boton-primario">Agenda tu consulta gratuita</a>
-      <app-whatsapp-cta [mensaje]="home.mensajeWhatsapp" etiqueta="Escríbenos por WhatsApp" />
+      <app-whatsapp-cta origen="home" [mensaje]="home.mensajeWhatsapp" etiqueta="Escríbenos por WhatsApp" />
     </div>
   </div>
 </section>

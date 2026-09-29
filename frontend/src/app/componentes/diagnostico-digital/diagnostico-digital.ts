@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 
 import { DIAGNOSTICO } from '../../../contenido/diagnostico';
 import { mensajeWhatsappParaRuta } from '../../layout/mensaje-whatsapp-por-ruta';
+import { Analitica } from '../../nucleo/analitica';
 import {
   DiagnosticoApi,
   InformeDeDiagnostico,
@@ -38,6 +39,7 @@ export class DiagnosticoDigital {
   // Aviso de privacidad de la IA (auditoria 28 sep 2026, §11).
   protected readonly avisoIa = AVISO_IA;
   private readonly api = inject(DiagnosticoApi);
+  private readonly analitica = inject(Analitica);
   private readonly esNavegador = isPlatformBrowser(inject(PLATFORM_ID));
 
   protected readonly textos = DIAGNOSTICO;
@@ -115,10 +117,13 @@ export class DiagnosticoDigital {
       next: (informe) => {
         this.analizando.set(false);
         this.informe.set(informe);
+        this.analitica.registrar('tool_complete', { herramienta: 'diagnostico' });
       },
       error: (error: unknown) => {
         this.analizando.set(false);
-        this.error.set(this.codigoDesde(error));
+        const codigo = this.codigoDesde(error);
+        this.error.set(codigo);
+        this.analitica.registrar('ai_error', { herramienta: 'diagnostico', codigo: codigo ?? 'desconocido' });
       },
     });
   }

@@ -7,7 +7,7 @@
         ¡Listo! Ya recibimos tu mensaje. Te respondemos el mismo día hábil — mientras tanto, si prefieres hablar ya,
         escríbenos por WhatsApp.
       </p>
-      <app-whatsapp-cta [mensaje]="mensajeWhatsapp" />
+      <app-whatsapp-cta origen="contacto" [mensaje]="mensajeWhatsapp" />
     </div>
   } @else {
     <p>Cuéntanos qué necesitas. Te respondemos el mismo día hábil, sin compromiso.</p>
@@ -22,7 +22,7 @@
             directo por WhatsApp.
           </p>
         }
-        <app-whatsapp-cta [mensaje]="mensajeWhatsapp" />
+        <app-whatsapp-cta origen="contacto" [mensaje]="mensajeWhatsapp" />
       </div>
     }
 

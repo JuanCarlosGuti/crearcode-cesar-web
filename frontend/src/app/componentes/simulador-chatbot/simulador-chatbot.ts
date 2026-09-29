@@ -4,6 +4,7 @@ import { Component, PLATFORM_ID, computed, inject, signal } from '@angular/core'
 import { RouterLink } from '@angular/router';
 
 import { mensajeWhatsappParaRuta } from '../../layout/mensaje-whatsapp-por-ruta';
+import { Analitica } from '../../nucleo/analitica';
 import { WhatsappCta } from '../whatsapp-cta/whatsapp-cta';
 
 import { SIMULADOR } from '../../../contenido/simulador';
@@ -40,6 +41,7 @@ export class SimuladorChatbot {
   // invitaba, pero no habia enlace donde pulsar (auditoria P0-1d).
   protected readonly mensajeWhatsapp = mensajeWhatsappParaRuta('/herramientas');
   private readonly api = inject(SimuladorApi);
+  private readonly analitica = inject(Analitica);
   private readonly esNavegador = isPlatformBrowser(inject(PLATFORM_ID));
 
   protected readonly textos = SIMULADOR;
@@ -96,7 +98,9 @@ export class SimuladorChatbot {
       },
       error: (error: unknown) => {
         this.enviando.set(false);
-        this.error.set(this.codigoDesde(error));
+        const codigo = this.codigoDesde(error);
+        this.error.set(codigo);
+        this.analitica.registrar('ai_error', { herramienta: 'simulador', codigo: codigo ?? 'desconocido' });
       },
     });
   }

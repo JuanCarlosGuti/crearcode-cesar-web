@@ -3,6 +3,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { Injectable, PLATFORM_ID, inject, signal } from '@angular/core';
 
 import { AsistenteApi, MensajeEnviado, RolMensaje } from '../api/asistente-api';
+import { Analitica } from './analitica';
 
 export interface MensajeDeConversacion {
   rol: RolMensaje;
@@ -29,6 +30,7 @@ const MAXIMO_MENSAJES_ENVIADOS = 20;
 @Injectable({ providedIn: 'root' })
 export class ConversacionService {
   private readonly api = inject(AsistenteApi);
+  private readonly analitica = inject(Analitica);
   private readonly esNavegador = isPlatformBrowser(inject(PLATFORM_ID));
 
   readonly mensajes = signal<MensajeDeConversacion[]>([]);
@@ -59,7 +61,9 @@ export class ConversacionService {
       },
       error: (error: unknown) => {
         this.enviando.set(false);
-        this.error.set(this.codigoDesde(error));
+        const codigo = this.codigoDesde(error);
+        this.error.set(codigo);
+        this.analitica.registrar('ai_error', { herramienta: 'asistente', codigo });
       },
     });
   }
