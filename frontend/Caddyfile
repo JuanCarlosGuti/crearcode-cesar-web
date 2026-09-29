@@ -35,9 +35,33 @@
 		Referrer-Policy "strict-origin-when-cross-origin"
 		# Ninguna pagina usa camara, microfono ni ubicacion.
 		Permissions-Policy "camera=(), microphone=(), geolocation=()"
-		# CSP pendiente: Angular inyecta estilos en linea y el demo carga
-		# imagenes de terceros; una politica mal calibrada rompe el sitio
-		# en silencio. Se hara con Report-Only primero.
+		# CSP en Report-Only primero, a proposito: una politica mal
+		# calibrada no da error visible — deja de cargarse una fuente o
+		# un script y la pagina simplemente se ve rota, sin nada en la
+		# respuesta que lo explique. En Report-Only el navegador aplica
+		# nada y solo avisa por consola, asi que se puede recorrer el
+		# sitio y ver que se habria bloqueado antes de hacerla efectiva.
+		#
+		# Que necesita cada directiva hoy:
+		# - script-src: Angular emite dos <script> en linea (event
+		#   replay de la hidratacion) cuyo hash cambia en cada build, asi
+		#   que 'unsafe-inline' es la unica salida sin desactivar la
+		#   hidratacion. Los dominios de GA4 y Clarity van aqui: solo
+		#   cargan si el visitante acepta, pero la CSP se evalua siempre.
+		# - style-src: Angular inyecta estilos en ejecucion; Google
+		#   Fonts sirve su hoja desde fonts.googleapis.com.
+		# - img-src: 'self' y data:. El comentario anterior decia que el
+		#   demo carga imagenes de terceros y ESO YA NO ES CIERTO: llegan
+		#   en base64 desde el backend (demo-diseno.ts), asi que no hace
+		#   falta abrir ningun host de imagenes.
+		# - connect-src: la API es del mismo origen (ADR-09); se anaden
+		#   los destinos de medicion.
+		# - frame-ancestors 'none' repite X-Frame-Options para los
+		#   navegadores que ya solo miran la CSP.
+		#
+		# PENDIENTE: pasar de Report-Only a Content-Security-Policy tras
+		# recorrer el sitio sin avisos (ISS-178).
+		Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.clarity.ms; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://www.google-analytics.com https://c.clarity.ms; connect-src 'self' https://www.google-analytics.com https://*.clarity.ms; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'"
 	}
 
 	# 404 con cara: sin esto la respuesta era correcta (404 real) pero
