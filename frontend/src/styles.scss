@@ -6,6 +6,52 @@
 // Regla de color: verde = código/desarrollo; violeta = inteligencia artificial.
 // Contrastes verificados sobre --color-superficie (#0d1b21):
 // texto 15.6:1 · texto-secundario 8.1:1 · acento 10.6:1 · ia 6.7:1.
+// Fuentes autoalojadas (auditoria del 28 sep 2026, P2-6). Antes las
+// servia Google Fonts, asi que cada visitante hacia DNS + TLS contra
+// dos origenes mas y su IP llegaba a Google antes de ver la pagina —
+// y habia que declarar a Google como encargado del tratamiento solo
+// por las tipografias.
+//
+// Son TRES archivos y no siete: las tres familias son variables, asi
+// que un archivo cubre todos sus pesos. 74 KB en total, subset latin,
+// que cubre el espanol entero (a-u con tilde, n con virgulilla,
+// dieresis; U+0000-00FF). El subset latin-ext se deja fuera a
+// proposito: son otros 3 archivos para idiomas que este sitio no
+// habla.
+//
+// font-display: swap — el texto se ve desde el primer momento con la
+// fuente del sistema y cambia al cargar. Sin esto hay un parpadeo de
+// texto invisible.
+@font-face {
+  font-family: 'Figtree';
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url('/fuentes/figtree-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
+    U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 500 700;
+  font-display: swap;
+  src: url('/fuentes/space-grotesk-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
+    U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url('/fuentes/jetbrains-mono-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
+    U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 :root {
   color-scheme: dark;
 

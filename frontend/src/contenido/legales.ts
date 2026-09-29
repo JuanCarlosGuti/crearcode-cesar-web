@@ -162,7 +162,7 @@ export const POLITICA_DE_DATOS = {
         'Cloudflare, Inc. (Estados Unidos): DNS del dominio y generación de imágenes del demo de diseño.',
         'Pollinations (servicio abierto): genera las imágenes del demo cuando el proveedor principal falla. Recibe únicamente el título que generó el modelo, nunca el texto que tú escribiste.',
         'Resend, Inc. (Estados Unidos): envío de correos (verificación de cuenta, recuperación de contraseña y cotizaciones).',
-        'Google LLC (Estados Unidos): tipografías del sitio y, si aceptas las cookies de medición, Google Analytics.',
+        'Google LLC (Estados Unidos): solo si aceptas las cookies de medición, Google Analytics. Las tipografías del sitio se sirven desde nuestro propio servidor, así que navegar por aquí no le comunica nada a Google.',
         'Microsoft Corporation (Estados Unidos): Microsoft Clarity, solo si aceptas las cookies de medición.',
         'Meta Platforms (Estados Unidos): solo si nos escribes por WhatsApp; esa conversación se rige además por la política de Meta.',
         'También podemos entregar datos a las autoridades que los pidan en ejercicio de sus funciones legales.',

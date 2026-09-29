@@ -48,8 +48,9 @@
 		#   que 'unsafe-inline' es la unica salida sin desactivar la
 		#   hidratacion. Los dominios de GA4 y Clarity van aqui: solo
 		#   cargan si el visitante acepta, pero la CSP se evalua siempre.
-		# - style-src: Angular inyecta estilos en ejecucion; Google
-		#   Fonts sirve su hoja desde fonts.googleapis.com.
+		# - style-src: Angular inyecta estilos en ejecucion. Ya no hace
+		#   falta fonts.googleapis.com: las fuentes se autoalojan (P2-6),
+		#   asi que font-src 'self' basta.
 		# - img-src: 'self' y data:. El comentario anterior decia que el
 		#   demo carga imagenes de terceros y ESO YA NO ES CIERTO: llegan
 		#   en base64 desde el backend (demo-diseno.ts), asi que no hace
@@ -61,7 +62,7 @@
 		#
 		# PENDIENTE: pasar de Report-Only a Content-Security-Policy tras
 		# recorrer el sitio sin avisos (ISS-178).
-		Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.clarity.ms; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://www.google-analytics.com https://c.clarity.ms; connect-src 'self' https://www.google-analytics.com https://*.clarity.ms; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'"
+		Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.clarity.ms; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https://www.google-analytics.com https://c.clarity.ms; connect-src 'self' https://www.google-analytics.com https://*.clarity.ms; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'"
 	}
 
 	# 404 con cara: sin esto la respuesta era correcta (404 real) pero
@@ -110,11 +111,23 @@
 	}
 
 	# Los bundles de Angular llevan hash en el nombre, asi que el
-	# contenido bajo una misma URL no cambia nunca. Es la unica cache
-	# larga del sitio: todo lo demas se revalida.
+	# contenido bajo una misma URL no cambia nunca.
 	@hasheados path *.js *.css
 	handle @hasheados {
 		header Cache-Control "public, max-age=31536000, immutable"
+		file_server
+	}
+
+	# Fuentes autoalojadas (P2-6). Sin esta regla caian en el handle
+	# final con no-cache y se volverian a pedir en cada visita, que es
+	# justo lo que se gano al traerlas del CDN de Google.
+	#
+	# Un ano, pero SIN immutable: el nombre no lleva hash, asi que si
+	# algun dia se cambia el archivo hay que renombrarlo — con immutable
+	# el navegador no volveria a preguntar ni forzando recarga.
+	@fuentes path *.woff2
+	handle @fuentes {
+		header Cache-Control "public, max-age=31536000"
 		file_server
 	}
 
