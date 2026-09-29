@@ -5,118 +5,219 @@ export const WHATSAPP_NUMERO = '323 988 5883';
 export const WHATSAPP_NUMERO_INTERNACIONAL = '573239885883';
 
 /**
- * Aviso que acompana a cada herramienta de IA. Lo que el visitante
- * escribe sale a un proveedor externo (Groq en EE. UU.; en el demo de
- * diseno tambien Cloudflare Workers AI), y un dueno de consultorio o de
- * comercio puede pegar datos de sus clientes sin pensarlo — datos que la
- * Ley 1581 de 2012 considera sensibles. Auditoria del 28 sep 2026, §11.
+ * Aviso que acompana a cada herramienta de IA, debajo del campo de
+ * texto. Texto del documento legal del 28 sep 2026 ("Textos cortos
+ * para el sitio"): nombra el pais del proveedor y los tres tipos de
+ * dato que no deben escribirse, porque un dueno de consultorio o de
+ * comercio pega datos de sus pacientes o clientes sin pensarlo — datos
+ * que la Ley 1581 de 2012 considera sensibles.
  */
 export const AVISO_IA =
-  'No escribas datos personales de tus clientes: lo que escribes se procesa con un proveedor de IA externo.';
+  'Tu texto lo procesa un proveedor de IA externo (EE. UU.) para generar la respuesta. No escribas datos personales de tus clientes, datos de salud ni contraseñas. Las respuestas son orientativas.';
+
+/**
+ * Texto de la casilla de consentimiento del formulario de contacto.
+ * Obligatoria y sin marcar por defecto: la autorizacion tiene que ser
+ * previa, expresa e informada, y "informada" incluye decir que los
+ * datos salen del pais.
+ */
+export const CONSENTIMIENTO_CONTACTO =
+  'Autorizo a Crear Code Cesar S.A.S. a tratar mis datos para responder esta solicitud y enviarme una propuesta. Algunos proveedores tratan los datos en EE. UU. y Alemania.';
+
+/** Casilla del registro de cuenta (misma regla: previa y expresa). */
+export const CONSENTIMIENTO_REGISTRO =
+  'Autorizo el tratamiento de mi correo para crear y administrar mi cuenta, según la';
 
 /**
  * Fecha de entrada en vigor de la version actual de los documentos
- * legales. La propia politica promete que "la fecha de la version
- * vigente se indica al pie de esta pagina" y hasta la auditoria del 28
- * sep 2026 no se indicaba en ninguna parte.
+ * legales. La propia politica promete que la fecha de la version
+ * vigente se indica al pie, y hasta la auditoria del 28 sep 2026 no se
+ * indicaba en ninguna parte.
  */
 export const VIGENTE_DESDE = '28 de septiembre de 2026';
 
 /**
- * REVISAR CON ABOGADO — todo este documento.
+ * Politica de tratamiento de datos, version 2.
  *
- * La v1 eran seis parrafos que describian solo el formulario de
- * contacto, con un aviso visible de "esto es un borrador" (auditoria
- * del 28 sep 2026, C3 y P0-3). Se quito ese aviso y se escribio lo que
- * el sitio hace de verdad hoy: cuentas de cliente, cuatro herramientas
- * de IA que mandan texto del visitante fuera del pais, y seis
- * encargados del tratamiento que nunca se habian nombrado.
+ * Texto del documento legal del 28 sep 2026, que reemplaza los seis
+ * parrafos de la v1 (que describian solo el formulario de contacto y
+ * se publicaban con un recuadro diciendo que eran un borrador).
  *
- * Lo que sigue es una descripcion honesta y completa del tratamiento
- * real, redactada para que un abogado la revise — no un dictamen
- * juridico. Falta que un profesional confirme la forma de las
- * clausulas frente a la Ley 1581 de 2012, el Decreto 1377 de 2013 y el
- * registro de bases de datos ante la SIC.
+ * REVISAR CON ABOGADO. El documento fuente marcaba seis puntos como
+ * [CONFIRMAR]; asi quedaron:
+ *
+ * 1. Horarios y frecuencia de contacto comercial de la Ley 2300 de
+ *    2023 (L-V 7 a. m.-7 p. m., sabados 8 a. m.-3 p. m., maximo una vez
+ *    por semana, nunca domingos ni festivos). La politica se remite a
+ *    la ley sin transcribir el horario: ASI QUE HAY QUE CUMPLIRLO el
+ *    dia que se envie la primera comunicacion comercial.
+ * 2. "No autorizamos a los proveedores a entrenar con tus datos": se
+ *    publica como lo que es —lo que nosotros no autorizamos— y se dice
+ *    que cada proveedor se rige ademas por sus condiciones. Falta
+ *    confirmar los terminos de API vigentes de Groq y Cloudflare.
+ * 3. Que las conversaciones de IA no se guardan: CONFIRMADO en el
+ *    codigo. Ninguna entidad JPA las persiste (viven en la peticion) y
+ *    el manejador de errores registra la causa tecnica sin el texto del
+ *    visitante, con un IT que lo exige.
+ * 4. Copias de seguridad: NO se publican. Todavia no existen, y una
+ *    politica que promete lo que no se hace es peor que una incompleta.
+ *    Se agrega la linea el dia que esten activas.
+ * 5. Plazo de 15 dias habiles para reportar incidentes a la SIC: se
+ *    publica como compromiso; falta confirmar el plazo exacto.
+ * 6. Pollinations: se mantiene como respaldo del demo y se declara. Ya
+ *    no recibe el texto del cliente —solo el titulo que genero el
+ *    modelo— desde la correccion P1-8c de la auditoria.
+ *
+ * Analitica: las menciones a Google Analytics y Microsoft Clarity
+ * describen algo construido pero APAGADO mientras contenido/analitica.ts
+ * no tenga ids. Si el dueno decide no medir, hay que borrar esas dos
+ * menciones (seccion 4 y la tabla de encargados).
+ *
+ * Pendiente de inscripcion en el RNBD: obligatoria solo por encima de
+ * 100.000 UVT de activos (Decreto 090 de 2018) — confirmar con el
+ * contador.
  */
 export const POLITICA_DE_DATOS = {
   titulo: 'Política de tratamiento de datos personales',
   metaDescripcion:
-    'Política de tratamiento de datos personales de Crear Code Cesar S.A.S., conforme a la Ley 1581 de 2012.',
+    'Política de tratamiento de datos personales de Crear Code Cesar S.A.S., conforme a la Ley 1581 de 2012 y la Circular 002 de 2024 de la SIC.',
   version: 'v2',
   secciones: [
     {
-      titulo: 'Responsable del tratamiento',
+      titulo: '1. Quiénes somos',
       parrafos: [
-        'Crear Code Cesar S.A.S., NIT 901941017-0, con domicilio en la Calle 4B # 20-36, Oficina 303, Barrio Callejas, Valledupar, Cesar, Colombia.',
-        `Para cualquier asunto relacionado con tus datos personales, incluido el ejercicio de tus derechos, escríbenos a ${CORREO_CORPORATIVO} o por WhatsApp al ${WHATSAPP_NUMERO}.`,
+        'Crear Code Cesar S.A.S. ("Crear Code"), NIT 901.941.017-0, con domicilio en la Calle 4B # 20-36, oficina 303, Valledupar, Cesar, Colombia, es la responsable del tratamiento de los datos personales que se recogen en crearcodecesar.com y en nuestros canales comerciales.',
+        `Contacto para temas de datos: correo ${CORREO_CORPORATIVO} (asunto "Datos personales"), WhatsApp +57 ${WHATSAPP_NUMERO}, o correo físico a la dirección de arriba.`,
       ],
     },
     {
-      titulo: 'Qué datos recolectamos y para qué',
+      titulo: '2. Por qué existe esta política',
       parrafos: [
-        'Formulario de contacto: nombre, empresa (si aplica), correo electrónico, teléfono y el mensaje que nos escribas. Los usamos para responderte y hacer seguimiento comercial a tu solicitud.',
-        'Cuenta de cliente: correo electrónico y una contraseña, que guardamos siempre cifrada con un algoritmo de un solo sentido — ni nosotros podemos leerla. Los usamos para identificarte, permitirte entrar y mostrarte tus cotizaciones.',
-        'Cotizaciones: los datos del negocio y del proyecto necesarios para preparar y enviarte una propuesta.',
-        'Herramientas de inteligencia artificial: el texto que escribas en el asistente, el simulador de chatbot, el diagnóstico digital o el demo de diseño. Ese texto se envía a un proveedor externo para generar la respuesta, como se explica más abajo.',
-        'Medición: si aceptas las cookies de medición, cargamos Google Analytics 4 y Microsoft Clarity para saber qué partes del sitio sirven y cuáles no. No se cargan hasta que aceptas, tu dirección IP se envía truncada y no se usan para publicidad ni para cruzar tus datos con otros servicios. Puedes rechazarlas y el sitio funciona igual.',
-        'Datos técnicos: registramos tu dirección IP de forma transformada —un resumen criptográfico con una sal que cambia cada día, del que no se puede volver a la dirección original— únicamente para controlar cuántas veces se usan las herramientas de inteligencia artificial y para frenar abusos. No usamos cookies de seguimiento ni perfilado publicitario.',
+        'Cumplimos la Ley 1581 de 2012, el Decreto 1074 de 2015 y las instrucciones de la Superintendencia de Industria y Comercio (SIC), incluida la Circular Externa 002 de 2024 sobre inteligencia artificial. Aquí explicamos, en lenguaje claro, qué datos tratamos, para qué, con quién los compartimos y cómo puedes ejercer tus derechos.',
       ],
     },
     {
-      titulo: 'Encargados del tratamiento',
+      titulo: '3. Definiciones básicas',
       parrafos: [
-        'Para operar el sitio nos apoyamos en proveedores que, en los términos de la Ley 1581 de 2012, actúan como encargados del tratamiento. Estos son todos los que pueden tratar datos que te identifican:',
-        'Netcup GmbH (Alemania), donde está alojado el servidor que guarda la base de datos del sitio: solicitudes de contacto, cuentas y cotizaciones. El servidor está físicamente en Estados Unidos.',
-        'Groq, Inc. (Estados Unidos), que genera las respuestas del asistente, el simulador y el diagnóstico. Recibe el texto que escribas en esas herramientas.',
-        'Cloudflare, Inc. (Estados Unidos), cuyo servicio Workers AI genera las imágenes del demo de diseño, y que además presta el servicio de DNS del dominio.',
-        'Pollinations (servicio abierto), que genera las imágenes del demo de diseño cuando el proveedor principal falla. Recibe la descripción del boceto dentro de la dirección web de la petición.',
-        'Resend, Inc. (Estados Unidos), que entrega los correos que te enviamos: verificación de cuenta, recuperación de contraseña y cotizaciones.',
-        'Google LLC (Estados Unidos), cuyo servicio Google Fonts sirve las tipografías del sitio; al cargarlas, tu navegador le comunica tu dirección IP. Si aceptas las cookies de medición, también trata los datos de Google Analytics 4.',
-        'Microsoft Corporation (Estados Unidos), cuyo servicio Clarity registra cómo se usa el sitio, solo si aceptas las cookies de medición.',
-        'Ninguno de estos proveedores recibe tus datos para fines propios, ni para venderlos o cederlos a terceros.',
+        'Titular: la persona a quien se refieren los datos.',
+        'Tratamiento: cualquier operación sobre ellos (recoger, guardar, usar, enviar, borrar).',
+        'Responsable: quien decide sobre el tratamiento; en este caso, Crear Code.',
+        'Encargado: quien trata datos por cuenta del responsable (por ejemplo, un proveedor de servidores).',
+        'Dato sensible: el que afecta la intimidad o puede generar discriminación, como la salud, la biometría o la orientación política.',
       ],
     },
     {
-      titulo: 'Transferencia internacional de datos',
+      titulo: '4. Qué datos tratamos y de dónde vienen',
       parrafos: [
-        'Como se desprende de la lista anterior, tus datos se procesan fuera de Colombia, principalmente en Estados Unidos y en la Unión Europea. Al usar el formulario de contacto, crear una cuenta o escribir en las herramientas de inteligencia artificial, autorizas esa transferencia internacional en los términos del artículo 26 de la Ley 1581 de 2012.',
-        'Si prefieres no enviar información fuera del país, puedes contactarnos directamente por WhatsApp o por correo electrónico en lugar de usar las herramientas del sitio.',
+        'Formulario de contacto: nombre, empresa (opcional), correo, celular o WhatsApp, servicio de interés y el mensaje que escribas.',
+        'Cuenta de usuario: correo, contraseña (guardada solo como hash cifrado; nunca la conocemos), fecha de registro y verificación del correo.',
+        'Herramientas gratuitas (asistente, simulador de chatbot, diagnóstico, demo de diseño): el texto que escribas, el nombre y el rubro de tu negocio, y tus respuestas al cuestionario. También guardamos un identificador técnico y un contador de usos para aplicar los límites diarios.',
+        'Cotizaciones y relación comercial: datos de contacto y de facturación de tu empresa, el alcance del proyecto y tu aceptación o rechazo de la propuesta.',
+        'WhatsApp y correo: los mensajes que nos envíes por esos canales.',
+        'Datos técnicos: dirección IP y datos del navegador, usados para seguridad, prevención de abuso y límites de uso. La dirección IP no se guarda tal cual: se transforma en un resumen criptográfico con una sal que cambia cada día, del que no se puede volver a la dirección original. Si aceptas las cookies de medición, también recogemos estadísticas de navegación con Google Analytics y Microsoft Clarity.',
+        'No pedimos datos sensibles ni datos de menores de edad. Te pedimos que no escribas datos de salud, datos financieros ni datos de tus clientes o pacientes en las herramientas de IA ni en el formulario. Si igual los incluyes, los eliminaremos cuando lo detectemos.',
       ],
     },
     {
-      titulo: 'Inteligencia artificial: qué pasa con lo que escribes',
+      titulo: '5. Para qué usamos tus datos',
       parrafos: [
-        'Las respuestas del asistente y de las herramientas las genera un modelo de lenguaje a partir del texto que escribes. Ese texto sale de nuestro servidor hacia el proveedor de inteligencia artificial y no lo guardamos en nuestra base de datos: la conversación vive en tu navegador mientras dura la visita y desaparece al cerrarla.',
-        'No controlamos cuánto tiempo conserva ese texto el proveedor externo ni si lo usa para mejorar sus modelos, más allá de lo que él mismo declare en sus propias políticas.',
-        'Por eso te pedimos expresamente, en cada herramienta, que no escribas datos personales de tus clientes ni información confidencial de tu negocio. Están pensadas para describir un negocio, no para procesar los datos de las personas que atiende.',
+        'Responder tu solicitud y darte información sobre nuestros servicios.',
+        'Preparar, enviar y hacer seguimiento a cotizaciones y propuestas.',
+        'Ejecutar el contrato: desarrollo, soporte, facturación y cobro.',
+        'Crear y administrar tu cuenta, verificar tu correo y recuperar tu contraseña.',
+        'Prestar las herramientas gratuitas y aplicar sus límites de uso.',
+        'Proteger el sitio contra fraude, spam y abuso.',
+        'Mejorar el sitio y nuestros servicios con información agregada o anonimizada.',
+        'Solo si lo autorizas aparte: enviarte contenido, invitaciones y novedades comerciales, respetando los horarios y la frecuencia que fija la Ley 2300 de 2023. Puedes retirar esa autorización en cualquier momento sin que afecte lo demás.',
+        'Cumplir obligaciones legales, contables y tributarias.',
+        'No vendemos ni alquilamos tus datos.',
       ],
     },
     {
-      titulo: 'Cuánto tiempo conservamos tus datos',
+      titulo: '6. Inteligencia artificial',
       parrafos: [
-        'Solicitudes de contacto y cotizaciones: mientras dure la relación comercial y, después, durante el tiempo que exijan las obligaciones legales, contables y tributarias aplicables a la empresa.',
-        'Cuentas de cliente: mientras la cuenta esté activa. Si pides que la eliminemos, la borramos junto con sus datos asociados, salvo lo que debamos conservar por obligación legal.',
-        'Conversaciones con las herramientas de inteligencia artificial: no las guardamos. Los contadores de uso, que no contienen tu texto, se reinician cada día.',
+        'Qué hacemos: el asistente, el simulador de chatbot y el diagnóstico envían tu texto a un modelo de lenguaje de un proveedor externo para generar la respuesta. El demo de diseño envía a un modelo de imágenes la descripción de la solución, no el texto que tú escribiste.',
+        'Qué no hacemos: no usamos tus conversaciones para entrenar modelos propios ni autorizamos a los proveedores a usarlas para entrenar los suyos; lo que cada proveedor haga se rige además por sus propias condiciones de uso. Tampoco tomamos decisiones que te afecten de forma legal o significativa solo con un proceso automatizado: toda cotización final y toda decisión comercial la revisa una persona.',
+        'Resultados orientativos: las respuestas de la IA, los rangos del cotizador y los bocetos son referencias. Pueden contener errores y no son una oferta.',
+        'Evaluación y minimización: aplicamos límites de longitud y de uso, enviamos al proveedor solo el texto necesario, y revisamos el riesgo de estas herramientas al menos una vez al año, siguiendo la Circular 002 de 2024 de la SIC.',
       ],
     },
     {
-      titulo: 'Tus derechos',
+      titulo: '7. Con quién compartimos tus datos',
       parrafos: [
-        'De acuerdo con la Ley 1581 de 2012 y sus decretos reglamentarios, como titular de tus datos personales tienes derecho a conocer cuáles tenemos, actualizarlos, rectificarlos si están mal, solicitar prueba de la autorización que nos diste, ser informado del uso que les damos, presentar quejas ante la Superintendencia de Industria y Comercio, revocar tu autorización y solicitar que los eliminemos cuando no exista un deber legal de conservarlos.',
-        `Para ejercer cualquiera de estos derechos basta con escribir a ${CORREO_CORPORATIVO} desde el correo con el que te contactaste, indicando qué necesitas. Respondemos las consultas en un plazo máximo de diez días hábiles y los reclamos en un plazo máximo de quince días hábiles, contados como lo establece la ley.`,
+        'Solo con los proveedores que necesitamos para operar, bajo sus condiciones de confidencialidad y seguridad. Actúan como encargados del tratamiento:',
+        'Netcup GmbH (Alemania): el servidor donde viven el sitio y la base de datos.',
+        'Groq, Inc. (Estados Unidos): procesa el texto del asistente, el simulador y el diagnóstico.',
+        'Cloudflare, Inc. (Estados Unidos): DNS del dominio y generación de imágenes del demo de diseño.',
+        'Pollinations (servicio abierto): genera las imágenes del demo cuando el proveedor principal falla. Recibe únicamente el título que generó el modelo, nunca el texto que tú escribiste.',
+        'Resend, Inc. (Estados Unidos): envío de correos (verificación de cuenta, recuperación de contraseña y cotizaciones).',
+        'Google LLC (Estados Unidos): tipografías del sitio y, si aceptas las cookies de medición, Google Analytics.',
+        'Microsoft Corporation (Estados Unidos): Microsoft Clarity, solo si aceptas las cookies de medición.',
+        'Meta Platforms (Estados Unidos): solo si nos escribes por WhatsApp; esa conversación se rige además por la política de Meta.',
+        'También podemos entregar datos a las autoridades que los pidan en ejercicio de sus funciones legales.',
       ],
     },
     {
-      titulo: 'Cómo protegemos tus datos',
+      titulo: '8. Transferencias internacionales',
       parrafos: [
-        'El sitio completo viaja cifrado y las contraseñas se guardan cifradas con un algoritmo de un solo sentido. La base de datos no está expuesta a internet: solo se alcanza desde el propio servidor.',
-        'No escribimos datos personales en los registros técnicos del servidor ni en las direcciones web, y no los publicamos en ninguna parte visible del sitio.',
+        'Algunos proveedores tratan tus datos en Alemania y en Estados Unidos. Ambos países figuran en la lista de la SIC de países con nivel adecuado de protección (Circular Única, Título V). Al aceptar esta política, autorizas de forma expresa esa transmisión o transferencia.',
       ],
     },
     {
-      titulo: 'Vigencia y cambios',
+      titulo: '9. Cuánto tiempo guardamos tus datos',
       parrafos: [
-        'Esta política aplica desde la fecha indicada al pie de esta página y puede actualizarse. Cuando cambie de forma relevante, publicaremos la versión nueva aquí con su fecha.',
+        'Solicitudes de contacto que no se convierten en clientes: 24 meses desde el último contacto.',
+        'Datos de clientes y contratos: lo que dure la relación, más 10 años por obligaciones contables y comerciales.',
+        'Cuentas de usuario: mientras la cuenta esté activa; si pasan 24 meses sin uso, te avisamos y la eliminamos.',
+        'Conversaciones con las herramientas de IA: no las guardamos. Solo quedan los contadores de uso, que no contienen tu texto y se reinician cada día. Los proveedores las conservan según sus propias políticas.',
+        'Datos técnicos y de seguridad: hasta 90 días.',
+        'Al vencer el plazo, eliminamos o anonimizamos la información.',
+      ],
+    },
+    {
+      titulo: '10. Tus derechos',
+      parrafos: [
+        'Como titular puedes: conocer, actualizar y rectificar tus datos; pedir prueba de la autorización que nos diste; saber qué uso le hemos dado a tus datos; revocar la autorización o pedir que los eliminemos, salvo que exista un deber legal o contractual de conservarlos; acceder gratis a ellos; y presentar quejas ante la SIC, después de agotar el trámite con nosotros.',
+        'Además, de forma voluntaria, te entregamos una copia de tus datos en un formato de uso común si la pides (portabilidad) y te dejamos oponerte al uso de tus datos con fines comerciales.',
+      ],
+    },
+    {
+      titulo: '11. Cómo ejercer tus derechos',
+      parrafos: [
+        `Escríbenos a ${CORREO_CORPORATIVO} o por WhatsApp e incluye tu nombre, tu forma de contacto, qué pides y los documentos que quieras hacer valer. Si actúa otra persona en tu nombre, debe acreditar que te representa.`,
+        'Consultas (saber qué datos tenemos): respondemos en máximo 10 días hábiles. Si no es posible, te explicamos por qué y respondemos en máximo 5 días hábiles más.',
+        'Reclamos (corregir, borrar o revocar): respondemos en máximo 15 días hábiles, prorrogables 8 días hábiles más con aviso. Si el reclamo está incompleto, te pedimos corregirlo en 5 días; si pasan 2 meses sin que respondas, entendemos que desististe.',
+        'También puedes pedirnos que eliminemos tu cuenta escribiéndonos por cualquiera de esos canales.',
+      ],
+    },
+    {
+      titulo: '12. Cómo protegemos tus datos',
+      parrafos: [
+        'Conexión cifrada (HTTPS) en todo el sitio.',
+        'Contraseñas guardadas con hash BCrypt: ni nosotros podemos leerlas.',
+        'Tokens de un solo uso para verificar el correo y recuperar la contraseña.',
+        'Acceso al panel interno solo para personal autorizado.',
+        'Límites de uso y protección contra abuso.',
+        'No escribimos datos personales en los registros técnicos del servidor ni en las direcciones web.',
+        'Si ocurre un incidente que comprometa tus datos, lo reportamos a la SIC dentro de los 15 días hábiles siguientes a su detección y te avisamos a ti cuando el incidente pueda afectarte.',
+      ],
+    },
+    {
+      titulo: '13. Autorización',
+      parrafos: [
+        'Te pedimos autorización previa, expresa e informada mediante una casilla que no viene marcada. Guardamos la prueba: la fecha, la versión de la política que aceptaste y el canal. Las finalidades comerciales opcionales tienen su propia casilla, separada de la obligatoria.',
+      ],
+    },
+    {
+      titulo: '14. Cambios a esta política',
+      parrafos: [
+        'Si cambiamos algo sustancial, publicamos la nueva versión en esta página con su fecha. Si el cambio afecta las finalidades, te avisamos por correo y, cuando la ley lo exija, te pedimos una nueva autorización.',
+      ],
+    },
+    {
+      titulo: '15. Vigencia',
+      parrafos: [
+        'Esta versión rige desde la fecha indicada al pie de esta página. Las bases de datos se conservarán mientras se cumplan las finalidades descritas.',
       ],
     },
   ],
@@ -135,7 +236,7 @@ export const TERMINOS_DE_USO = {
     {
       titulo: 'Sobre este sitio',
       parrafos: [
-        'Este sitio web es operado por Crear Code Cesar S.A.S. (NIT 901941017-0, Valledupar, Cesar, Colombia) con fines informativos y de contacto comercial. El uso del formulario de contacto no genera, por sí solo, ninguna relación contractual entre el visitante y Crear Code Cesar S.A.S.',
+        'Este sitio web es operado por Crear Code Cesar S.A.S. (NIT 901.941.017-0, Valledupar, Cesar, Colombia) con fines informativos y de contacto comercial. El uso del formulario de contacto no genera, por sí solo, ninguna relación contractual entre el visitante y Crear Code Cesar S.A.S.',
       ],
     },
     {

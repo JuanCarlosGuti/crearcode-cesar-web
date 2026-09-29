@@ -6,6 +6,7 @@ import { FormField, required, pattern, schema, form, validate, maxLength } from 
 import { SolicitudesApi } from '../../api/solicitudes-api';
 import { WhatsappCta } from '../../componentes/whatsapp-cta/whatsapp-cta';
 import { EMPRESA, urlWhatsapp } from '../../../contenido/empresa';
+import { CONSENTIMIENTO_CONTACTO } from '../../../contenido/legales';
 import { HOME } from '../../../contenido/home';
 import { METADATOS_CONTACTO } from '../../../contenido/metadatos-paginas';
 import { Analitica } from '../../nucleo/analitica';
@@ -116,6 +117,9 @@ export class ContactoPage {
   protected readonly mensajeWhatsapp = HOME.mensajeWhatsapp;
   // NAP visible en la pagina donde se busca (auditoria P1-7).
   protected readonly empresa = EMPRESA;
+  // La autorizacion tiene que ser informada, e "informada" incluye
+  // decir que los datos salen del pais (politica v2, seccion 13).
+  protected readonly textoConsentimiento = CONSENTIMIENTO_CONTACTO;
   protected readonly urlCorreo = `mailto:${EMPRESA.correo}`;
   protected readonly urlWhatsappNumero = () => urlWhatsapp(HOME.mensajeWhatsapp);
 

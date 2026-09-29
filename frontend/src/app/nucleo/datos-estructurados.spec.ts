@@ -24,8 +24,11 @@ class AnfitrionDePrueba {
  */
 describe('establecerDatosEstructuradosDeLaEmpresa', () => {
   function leerJsonLd(): Record<string, unknown> {
-    const script = TestBed.inject(DOCUMENT).head.querySelector('script[type="application/ld+json"]');
-    expect(script, 'debe existir el script ld+json en <head>').toBeTruthy();
+    // Por id y no por tipo: desde que existe el JSON-LD por pagina hay
+    // dos scripts ld+json posibles en el <head>, y elegir "el primero"
+    // hacia que el resultado dependiera del orden de los tests.
+    const script = TestBed.inject(DOCUMENT).head.querySelector('#datos-estructurados-empresa');
+    expect(script, 'debe existir el script ld+json de la empresa en <head>').toBeTruthy();
     return JSON.parse(script!.textContent ?? '{}');
   }
 
@@ -33,6 +36,12 @@ describe('establecerDatosEstructuradosDeLaEmpresa', () => {
     TestBed.inject(DOCUMENT)
       .head.querySelectorAll('script[type="application/ld+json"]')
       .forEach((script) => script.remove());
+  });
+
+  beforeEach(() => {
+    // Un script de pagina que sobreviva de otro test dejaria a este
+    // mirando el JSON-LD equivocado.
+    TestBed.inject(DOCUMENT).head.querySelector('#datos-estructurados-pagina')?.remove();
   });
 
   it('publica un ProfessionalService con NAP, fundador y area de servicio, con el dominio canonico', async () => {

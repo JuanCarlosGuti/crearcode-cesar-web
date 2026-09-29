@@ -127,7 +127,8 @@
         "
       />
       <label for="aceptaConsentimiento">
-        He leído y acepto la <a routerLink="/legales/politica-de-datos">Política de tratamiento de datos</a>
+        {{ textoConsentimiento }}
+        <a routerLink="/legales/politica-de-datos">Ver la política de tratamiento de datos</a>
       </label>
       @if (formulario.aceptaConsentimiento().touched() && formulario.aceptaConsentimiento().invalid()) {
         <p class="campo__error" id="consentimiento-error">

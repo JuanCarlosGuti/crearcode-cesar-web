@@ -678,6 +678,50 @@ commit por identificador de la auditoría.
   Lo único real era la línea de `docs/02` que decía que lo servía
   Express; corregida en P3-e.
 
+### Política de datos v2 — texto legal aportado por el usuario (28 sep 2026)
+
+El usuario aportó un documento legal propio, más riguroso que el
+borrador que se había redactado: cita el marco vigente (Ley 1581,
+Decreto 1074 de 2015, Circular Única SIC Título V, **Circular Externa
+002 de 2024 sobre IA**, Ley 2300 de 2023), fija plazos y retenciones
+con números, y nombra encargados que faltaban — **Meta Platforms**
+(WhatsApp) y Microsoft. Está publicado en `contenido/legales.ts`
+(ISS-169) y la versión que se guarda como prueba con cada solicitud
+sube a **v2** (`VERSION_POLITICA_DATOS`).
+
+De los seis `[CONFIRMAR]` del documento:
+
+| Punto | Resolución |
+|---|---|
+| Conversaciones de IA no se guardan | **Confirmado en el código**: ninguna entidad JPA las persiste y el manejador registra la causa técnica sin el texto del visitante, con un IT que lo exige |
+| Copias de seguridad | **No se publican**: todavía no existen. Una política que promete lo que no se hace es peor que una incompleta |
+| Pollinations | Se declara como encargado, con el matiz de que desde P1-8c solo recibe el título que generó el modelo |
+| Entrenamiento con los datos | Se publica lo que nosotros no autorizamos, no lo que hacen ellos. Falta confirmar los términos de API de Groq y Cloudflare |
+| Ley 2300 (horarios de contacto comercial) | La política se remite a la ley sin transcribir el horario; hay que cumplirlo desde el primer envío comercial |
+| Plazo de 15 días hábiles para reportar incidentes | Se publica como compromiso; falta confirmar el plazo exacto |
+
+**Checklist del documento que sigue pendiente** (cada uno toca código
+u operación, y ninguno estaba en el alcance de la auditoría técnica):
+
+- [ ] **Casilla comercial separada** de la obligatoria en el formulario
+  (la política, sección 13, ya la promete). Es campo nuevo en el
+  dominio, migración y DTO. **Bloquea el primer envío comercial**, no
+  el despliegue: hoy no se envía ninguno.
+- [ ] Botón "Eliminar mi cuenta" en `/mi-cuenta`. Hoy se pide por
+  correo, que es lo que dice la política.
+- [ ] Tarea programada que borre solicitudes de más de 24 meses y
+  cuentas con 24 meses sin uso (la política fija esos plazos).
+- [ ] Copias de seguridad de PostgreSQL — y entonces añadir su línea a
+  la sección 12.
+- [ ] Evaluación de impacto de las herramientas de IA (Circular 002 de
+  2024): documento corto de riesgos, datos, proveedores y medidas, a
+  revisar una vez al año. La política ya lo promete.
+- [ ] Procedimiento interno de una página para responder consultas y
+  reclamos dentro de los plazos y registrar incidentes.
+- [ ] **RNBD**: obligatorio solo por encima de 100.000 UVT de activos
+  (Decreto 090 de 2018) — confirmar con el contador.
+- [ ] Seguimiento al Proyecto de Ley 282 de 2026 Cámara.
+
 **Lo que sigue esperando al usuario**: los ids de GA4 y Clarity
 (ISS-170), la revisión legal de la política (ISS-169), las doce cifras
 del cotizador (ISS-172), la prueba de ISS-136 antes de bajar el límite
