@@ -54,6 +54,88 @@ describe('ContactoPage', () => {
     expect(datos.querySelector('a[href^="https://wa.me/"]')).not.toBeNull();
   });
 
+  /**
+   * Un nombre de solo espacios pasaba el required de Angular, viajaba
+   * al backend y volvia como 400 generico: el visitante veia "algo
+   * salio mal" sin saber que campo arreglar (auditoria P2-2b).
+   */
+  it('un nombre de solo espacios no llega a salir', async () => {
+    const fixture = TestBed.createComponent(ContactoPage);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+
+    llenarFormularioValido(el);
+    escribir(el.querySelector('#nombre') as HTMLInputElement, '     ');
+    (el.querySelector('form') as HTMLFormElement).dispatchEvent(new Event('submit'));
+    await fixture.whenStable();
+
+    httpMock.expectNone('/api/solicitudes');
+  });
+
+  it('los campos declaran el mismo maximo que el dominio del backend', async () => {
+    const fixture = TestBed.createComponent(ContactoPage);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+
+    expect((el.querySelector('#nombre') as HTMLInputElement).maxLength).toBe(120);
+    expect((el.querySelector('#empresa') as HTMLInputElement).maxLength).toBe(120);
+    expect((el.querySelector('#correo') as HTMLInputElement).maxLength).toBe(254);
+  });
+
+  /**
+   * El backend contesta 400 con un {mensaje} que dice exactamente que
+   * esta mal; el formulario lo tiraba y mostraba su texto generico.
+   */
+  it('un 400 del backend muestra el motivo real, no el error generico', async () => {
+    const fixture = TestBed.createComponent(ContactoPage);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+
+    llenarFormularioValido(el);
+    (el.querySelector('form') as HTMLFormElement).dispatchEvent(new Event('submit'));
+    await fixture.whenStable();
+
+    httpMock
+      .expectOne('/api/solicitudes')
+      .flush({ mensaje: 'El teléfono no tiene un formato válido' }, { status: 400, statusText: 'Bad Request' });
+    await fixture.whenStable();
+
+    const error = el.querySelector('.pagina-contacto__error') as HTMLElement;
+    expect(error.textContent).toContain('El teléfono no tiene un formato válido');
+  });
+
+  it('un fallo sin mensaje del servidor sigue mostrando el texto generico', async () => {
+    const fixture = TestBed.createComponent(ContactoPage);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+
+    llenarFormularioValido(el);
+    (el.querySelector('form') as HTMLFormElement).dispatchEvent(new Event('submit'));
+    await fixture.whenStable();
+
+    httpMock.expectOne('/api/solicitudes').flush('boom', { status: 500, statusText: 'Server Error' });
+    await fixture.whenStable();
+
+    const error = el.querySelector('.pagina-contacto__error') as HTMLElement;
+    expect(error.textContent).toContain('Algo salió mal');
+  });
+
+  /**
+   * El foco estaba cableado al checkbox de consentimiento, que ademas
+   * es el ultimo campo: al enviar un formulario vacio saltaba al final
+   * (auditoria P2-2d).
+   */
+  it('al enviar con errores el foco va al primer campo invalido', async () => {
+    const fixture = TestBed.createComponent(ContactoPage);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+
+    (el.querySelector('form') as HTMLFormElement).dispatchEvent(new Event('submit'));
+    await fixture.whenStable();
+
+    expect(document.activeElement).toBe(el.querySelector('#nombre'));
+  });
+
   it('muestra todos los campos obligatorios con su label asociado', async () => {
     const fixture = TestBed.createComponent(ContactoPage);
     await fixture.whenStable();

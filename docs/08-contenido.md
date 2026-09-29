@@ -433,7 +433,7 @@ resumen (2-3 líneas) y fecha. Contenido en Markdown (ver
 > Hablemos de tu negocio
 
 **Texto introductorio:**
-> Cuéntanos qué necesitas. Te respondemos pronto y sin compromiso.
+> Cuéntanos qué necesitas. Te respondemos el mismo día hábil, sin compromiso.
 
 **Labels de campos:**
 - Nombre completo *(obligatorio)*
@@ -457,7 +457,7 @@ resumen (2-3 líneas) y fecha. Contenido en Markdown (ver
   datos para poder contactarte."
 
 **Mensaje de éxito:**
-> ¡Listo! Ya recibimos tu mensaje. Te contactamos muy pronto — mientras
+> ¡Listo! Ya recibimos tu mensaje. Te respondemos el mismo día hábil — mientras
 > tanto, si prefieres hablar ya, escríbenos por WhatsApp.
 
 **Mensaje de error (fallo técnico):**

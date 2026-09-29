@@ -45,7 +45,7 @@ export const METADATOS_BLOG_LISTADO = {
 
 export const METADATOS_CONTACTO = {
   titulo: 'Contacto — Crear Code Cesar',
-  descripcion: 'Cuéntanos qué necesita tu negocio. Te contactamos pronto — sin compromiso.',
+  descripcion: 'Cuéntanos qué necesita tu negocio. Te respondemos el mismo día hábil — sin compromiso.',
 };
 
 export const METADATOS_REGISTRO = {

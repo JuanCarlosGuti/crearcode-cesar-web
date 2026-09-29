@@ -4,20 +4,24 @@
   @if (enviado()) {
     <div class="pagina-contacto__confirmacion" role="status">
       <p>
-        ¡Listo! Ya recibimos tu mensaje. Te contactamos muy pronto — mientras tanto, si prefieres hablar ya,
+        ¡Listo! Ya recibimos tu mensaje. Te respondemos el mismo día hábil — mientras tanto, si prefieres hablar ya,
         escríbenos por WhatsApp.
       </p>
       <app-whatsapp-cta [mensaje]="mensajeWhatsapp" />
     </div>
   } @else {
-    <p>Cuéntanos qué necesitas. Te respondemos pronto y sin compromiso.</p>
+    <p>Cuéntanos qué necesitas. Te respondemos el mismo día hábil, sin compromiso.</p>
 
     @if (errorEnvio()) {
       <div class="pagina-contacto__error" role="alert">
-        <p>
-          Algo salió mal al enviar tu mensaje. Tus datos no se perdieron: inténtalo de nuevo, o escríbenos directo
-          por WhatsApp.
-        </p>
+        @if (motivoDelError(); as motivo) {
+          <p>{{ motivo }} Corrígelo y vuelve a enviar — tus datos no se perdieron.</p>
+        } @else {
+          <p>
+            Algo salió mal al enviar tu mensaje. Tus datos no se perdieron: inténtalo de nuevo, o escríbenos
+            directo por WhatsApp.
+          </p>
+        }
         <app-whatsapp-cta [mensaje]="mensajeWhatsapp" />
       </div>
     }
