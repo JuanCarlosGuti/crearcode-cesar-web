@@ -3,6 +3,7 @@ import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 
+import { EMPRESA } from '../../../contenido/empresa';
 import { ContactoPage } from './contacto';
 
 function escribir(elemento: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement, valor: string): void {
@@ -33,6 +34,24 @@ describe('ContactoPage', () => {
       providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
     });
     httpMock = TestBed.inject(HttpTestingController);
+  });
+
+  /**
+   * El NAP (nombre, direccion, telefono) solo estaba en el pie y en el
+   * PDF de cotizaciones: es lo que Google cruza para el resultado
+   * local y lo que un cliente mira para saber que hay una empresa real
+   * detras (auditoria del 28 sep 2026, P1-7).
+   */
+  it('muestra el NIT, la direccion y los contactos en la propia pagina', async () => {
+    const fixture = TestBed.createComponent(ContactoPage);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+
+    const datos = el.querySelector('.pagina-contacto__datos') as HTMLElement;
+    expect(datos.textContent).toContain(EMPRESA.nit);
+    expect(datos.textContent).toContain(EMPRESA.direccion);
+    expect(datos.querySelector(`a[href="mailto:${EMPRESA.correo}"]`)).not.toBeNull();
+    expect(datos.querySelector('a[href^="https://wa.me/"]')).not.toBeNull();
   });
 
   it('muestra todos los campos obligatorios con su label asociado', async () => {

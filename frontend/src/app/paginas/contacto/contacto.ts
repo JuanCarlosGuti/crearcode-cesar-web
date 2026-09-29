@@ -4,6 +4,7 @@ import { FormField, required, pattern, schema, form, validate, maxLength } from 
 
 import { SolicitudesApi } from '../../api/solicitudes-api';
 import { WhatsappCta } from '../../componentes/whatsapp-cta/whatsapp-cta';
+import { EMPRESA, urlWhatsapp } from '../../../contenido/empresa';
 import { HOME } from '../../../contenido/home';
 import { METADATOS_CONTACTO } from '../../../contenido/metadatos-paginas';
 import { establecerMetadatosDePagina } from '../../nucleo/metadatos-pagina';
@@ -88,6 +89,10 @@ export class ContactoPage {
   protected readonly enviado = signal(false);
   protected readonly errorEnvio = signal(false);
   protected readonly mensajeWhatsapp = HOME.mensajeWhatsapp;
+  // NAP visible en la pagina donde se busca (auditoria P1-7).
+  protected readonly empresa = EMPRESA;
+  protected readonly urlCorreo = `mailto:${EMPRESA.correo}`;
+  protected readonly urlWhatsappNumero = () => urlWhatsapp(HOME.mensajeWhatsapp);
 
   private readonly datos = signal<DatosFormularioContacto>({
     nombre: '',

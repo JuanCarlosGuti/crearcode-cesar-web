@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { POLITICA_DE_DATOS, TERMINOS_DE_USO } from '../contenido/legales';
+import { METADATOS_HOME } from '../contenido/metadatos-paginas';
 import { adminGuard } from './nucleo/admin.guard';
 import { clienteGuard } from './nucleo/cliente.guard';
 
@@ -8,7 +9,7 @@ export const routes: Routes = [
   {
     path: '',
     loadComponent: () => import('./paginas/home/home').then((m) => m.HomePage),
-    title: 'Crear Code Cesar — Software a la medida e IA para pymes',
+    title: METADATOS_HOME.titulo,
   },
   {
     path: 'servicios/:slug',

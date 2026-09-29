@@ -149,4 +149,22 @@
       </button>
     </form>
   }
+
+  <!--
+    NAP (nombre, direccion, telefono) visible en la pagina donde se
+    busca: hasta la auditoria del 28 sep 2026 solo estaba en el pie y
+    en el PDF de cotizaciones. Es lo que Google cruza para el resultado
+    local, y lo que un cliente mira para saber que hay una empresa real
+    detras (P1-7).
+  -->
+  <address class="pagina-contacto__datos">
+    <h2>Dónde estamos</h2>
+    <p class="pagina-contacto__razon-social">{{ empresa.razonSocial }} — NIT {{ empresa.nit }}</p>
+    <p>{{ empresa.direccion }}<br />{{ empresa.ciudad }}</p>
+    <p>
+      <a [href]="urlCorreo">{{ empresa.correo }}</a>
+      <br />
+      <a [href]="urlWhatsappNumero()">{{ empresa.whatsappNumero }}</a>
+    </p>
+  </address>
 </section>

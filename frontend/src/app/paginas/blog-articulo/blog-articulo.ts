@@ -24,7 +24,13 @@ export class BlogArticuloPage {
     establecerMetadatosDePagina(() => {
       const a = this.articulo();
       return a
-        ? { titulo: `${a.titulo} — Crear Code Cesar`, descripcion: a.resumen, ruta: `/blog/${a.slug}` }
+        ? {
+            titulo: `${a.titulo} — Crear Code Cesar`,
+            descripcion: a.resumen,
+            ruta: `/blog/${a.slug}`,
+            tipo: 'article' as const,
+            publicadoEn: a.fecha,
+          }
         : undefined;
     });
   }
