@@ -598,8 +598,10 @@ Dos detalles que conviene no perder:
 
 Verificado sobre la imagen de producción: Lighthouse **97-98/100/100/100**
 (igual que antes del rediseño), axe sin violaciones en 12 páginas, 242
-specs en verde y sin desborde a 375 ni 1280 px. **Falta el OK del
-usuario y los e2e completos con backend** antes de fusionar a master.
+specs en verde y sin desborde a 375 ni 1280 px. **Fusionado a master y
+en producción** — comprobado el 29 sep 2026: `rediseno-tech` es
+ancestro de `master` y el HTML del dominio sirve el fondo `#071115` y
+Space Grotesk.
 
 ## Cotizaciones (fase F11)
 
@@ -717,10 +719,8 @@ procedimiento del corte en §9.
   comprueba que la primera respuesta de cada ruta traiga la página
   correcta. Corre en CI sobre la imagen recién construida y sirve igual
   contra el dominio.
-- **Pendiente (ISS-082)**: comprar el dominio, decidir registrador
-  (ver [docs/09-despliegue.md](docs/09-despliegue.md) §4, sin
-  decisión todavía), y el visto bueno explícito del usuario para
-  publicar de verdad.
+- ~~Pendiente (ISS-082)~~: **cerrado**. El dominio se compró el 10 ago
+  2026 (ADR-11) y el sitio está publicado desde el 27 jul 2026.
 
 ## Decisiones ya resueltas por el usuario
 
@@ -824,8 +824,6 @@ política deliberadamente **no** promete respaldos.
 - **Revisar el eslogan del hero** ("Tecnología que trabaja para tu
   negocio, no al revés.") — pendiente desde el 29 jul 2026. Sigue
   siendo el titular del rediseño, ahora con "no al revés" resaltado.
-- **Aprobar el rediseño tech** de la rama `rediseno-tech` para
-  fusionarlo a master.
 - **Una foto real del fundador** para `/sobre-nosotros`: es lo único
   inventado que queda en esa página, y hoy simplemente no hay imagen.
   Cuadrada o 4:5, mínimo 800×800 px. Una horizontal de la misma sesión
