@@ -4,13 +4,14 @@ import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
 
 import { ChatAsistente } from './componentes/chat-asistente/chat-asistente';
+import { WhatsappFlotante } from './componentes/whatsapp-flotante/whatsapp-flotante';
 import { Footer } from './layout/footer/footer';
 import { Header } from './layout/header/header';
 import { establecerDatosEstructuradosDeLaEmpresa } from './nucleo/datos-estructurados';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Header, Footer, ChatAsistente],
+  imports: [RouterOutlet, Header, Footer, ChatAsistente, WhatsappFlotante],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })

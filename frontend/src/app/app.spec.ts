@@ -40,6 +40,22 @@ describe('App', () => {
     expect(el.querySelector('main')?.id).toBe('contenido');
   });
 
+  /**
+   * En movil el WhatsApp estaba escondido tras el menu hamburguesa o
+   * al final del pie (auditoria P1-4). El CSS lo oculta desde 60rem,
+   * el mismo corte con el que el header se pliega.
+   */
+  it('renderiza el boton flotante de WhatsApp con destino y etiqueta accesible', async () => {
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+
+    const flotante = el.querySelector('app-whatsapp-flotante a') as HTMLAnchorElement;
+    expect(flotante.href).toContain('https://wa.me/');
+    expect(flotante.getAttribute('aria-label')).toBe('Escríbenos por WhatsApp');
+    expect(flotante.getAttribute('rel')).toContain('noopener');
+  });
+
   it('renderiza el header y el footer', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
