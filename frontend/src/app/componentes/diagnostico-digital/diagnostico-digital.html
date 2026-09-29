@@ -49,7 +49,7 @@
         <p>{{ textos.cierreTexto }}</p>
         <div class="diagnostico-ctas">
           <a routerLink="/contacto" class="boton boton-primario">{{ textos.ctaContacto }}</a>
-          <app-whatsapp-cta [mensaje]="mensajeWhatsapp" [etiqueta]="textos.ctaWhatsapp" />
+          <app-whatsapp-cta [mensaje]="mensajeWhatsappDelCierre()" [etiqueta]="textos.ctaWhatsapp" />
           <button type="button" class="diagnostico-reiniciar" (click)="reiniciar()">
             {{ textos.reiniciar }}
           </button>

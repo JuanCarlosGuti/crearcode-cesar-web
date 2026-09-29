@@ -51,7 +51,10 @@ export const DIAGNOSTICO = {
   cierreTexto:
     '30 minutos con el fundador, sin costo y sin compromiso. Si no te sirve, te lo decimos.',
   ctaContacto: 'Agenda tu consulta gratuita',
-  ctaWhatsapp: 'WhatsApp',
+  // Antes decia solo "WhatsApp" y abria el mensaje generico de la
+  // Home: el lead llegaba sin ninguna senal de que venia del
+  // diagnostico (auditoria P1-3).
+  ctaWhatsapp: 'Recibe tus 3 oportunidades por WhatsApp',
   reiniciar: 'Volver a empezar',
   notaCorreo: 'Muy pronto: recibirlo por correo.',
   limiteAnonimo:

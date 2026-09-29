@@ -49,6 +49,27 @@ export class DiagnosticoDigital {
   protected readonly informe = signal<InformeDeDiagnostico | null>(null);
   protected readonly error = signal<ErrorDeDiagnostico>(null);
 
+  /**
+   * Mensaje de WhatsApp del cierre: lleva los titulos de las tres
+   * oportunidades. Antes abria el generico de la Home y el vendedor
+   * recibia un "quiero saber mas" sin saber que la persona acababa de
+   * hacer el diagnostico ni que le salio (auditoria P1-3). Solo los
+   * titulos: los detalles y beneficios harian un ?text= larguisimo que
+   * WhatsApp muestra truncado.
+   */
+  protected readonly mensajeWhatsappDelCierre = computed(() => {
+    const informe = this.informe();
+    if (!informe) {
+      return this.mensajeWhatsapp;
+    }
+    const titulos = informe.oportunidades.map((oportunidad) => `- ${oportunidad.titulo}`).join('\n');
+    return (
+      'Hola, acabo de hacer el diagnóstico digital en el sitio. Mis tres oportunidades fueron:\n' +
+      titulos +
+      '\n\n¿Cuál me conviene primero?'
+    );
+  });
+
   protected readonly enQuiz = computed(
     () => this.informe() === null && !this.analizando() && this.error() === null,
   );
