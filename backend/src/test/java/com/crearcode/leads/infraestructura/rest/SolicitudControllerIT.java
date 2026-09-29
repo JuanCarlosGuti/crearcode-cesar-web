@@ -33,7 +33,7 @@ class SolicitudControllerIT {
 
 	private SolicitudRequest solicitudValida() {
 		return new SolicitudRequest("Juan Pérez", "Empresa S.A.S.", "nombre@empresa.com", "3001234567",
-				ServicioDeInteres.IA_Y_AUTOMATIZACION, "Quiero automatizar mi negocio", true, null);
+				ServicioDeInteres.IA_Y_AUTOMATIZACION, "Quiero automatizar mi negocio", true, false, null);
 	}
 
 	// Cacheado a nivel de clase: un admin real inicia sesion una vez y
@@ -66,7 +66,7 @@ class SolicitudControllerIT {
 	@Test
 	void registrarConNombreVacioDevuelve400() {
 		SolicitudRequest invalida = new SolicitudRequest("", "Empresa S.A.S.", "nombre@empresa.com",
-				"3001234567", ServicioDeInteres.OTRO, "mensaje", true, null);
+				"3001234567", ServicioDeInteres.OTRO, "mensaje", true, false, null);
 
 		ResponseEntity<String> respuesta = restTemplate.postForEntity("/api/solicitudes", invalida, String.class);
 
@@ -76,7 +76,7 @@ class SolicitudControllerIT {
 	@Test
 	void registrarConCorreoConFormatoInvalidoDevuelve400() {
 		SolicitudRequest invalida = new SolicitudRequest("Juan Pérez", null, "esto-no-es-un-correo",
-				"3001234567", ServicioDeInteres.OTRO, "mensaje", true, null);
+				"3001234567", ServicioDeInteres.OTRO, "mensaje", true, false, null);
 
 		ResponseEntity<String> respuesta = restTemplate.postForEntity("/api/solicitudes", invalida, String.class);
 
@@ -88,7 +88,7 @@ class SolicitudControllerIT {
 		// Si no fuera publico, un payload invalido devolveria 401/403 en vez
 		// de 400: confirma que la ruta esta permitAll para POST.
 		SolicitudRequest invalida = new SolicitudRequest("", null, "x", "x",
-				ServicioDeInteres.OTRO, "", false, null);
+				ServicioDeInteres.OTRO, "", false, false, null);
 
 		ResponseEntity<String> respuesta = restTemplate.postForEntity("/api/solicitudes", invalida, String.class);
 
@@ -98,7 +98,7 @@ class SolicitudControllerIT {
 	@Test
 	void registrarConHoneypotRellenoRespondeExitosoPeroNoRegistraNiNotifica() {
 		SolicitudRequest conHoneypot = new SolicitudRequest("Bot Spam", null, "bot@spam.com", "3009999999",
-				ServicioDeInteres.OTRO, "mensaje de spam", true, "http://sitio-de-spam.com");
+				ServicioDeInteres.OTRO, "mensaje de spam", true, false, "http://sitio-de-spam.com");
 
 		ResponseEntity<SolicitudCreadaResponse> respuesta = restTemplate.postForEntity(
 				"/api/solicitudes", conHoneypot, SolicitudCreadaResponse.class);
@@ -189,6 +189,31 @@ class SolicitudControllerIT {
 				new HttpEntity<>(new CambiarEstadoRequest(EstadoSolicitud.CONTACTADA)), String.class, id);
 
 		assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+	}
+
+
+	/**
+	 * La politica v2 (§13) promete que la finalidad comercial tiene su
+	 * propia casilla. Si la API las mezclara, no habria forma de saber a
+	 * quien se le puede escribir sin revisar correos viejos — y la
+	 * promesa seria falsa.
+	 */
+	@Test
+	void laAutorizacionComercialViajaAparteYNoSeDaPorSupuesta() {
+		SolicitudRequest sinComercial = solicitudValida();
+		SolicitudRequest conComercial = new SolicitudRequest("Ana Gómez", null, "ana@empresa.com",
+				"3009876543", ServicioDeInteres.OTRO, "Quiero novedades", true, true, null);
+
+		UUID idSinComercial = restTemplate
+				.postForEntity("/api/solicitudes", sinComercial, SolicitudCreadaResponse.class)
+				.getBody().id();
+		UUID idConComercial = restTemplate
+				.postForEntity("/api/solicitudes", conComercial, SolicitudCreadaResponse.class)
+				.getBody().id();
+
+		assertThat(idSinComercial).isNotNull();
+		assertThat(idConComercial).isNotNull();
+		assertThat(idSinComercial).isNotEqualTo(idConComercial);
 	}
 
 }

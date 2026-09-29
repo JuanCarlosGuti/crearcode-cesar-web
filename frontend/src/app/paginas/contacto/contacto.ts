@@ -6,7 +6,7 @@ import { FormField, required, pattern, schema, form, validate, maxLength } from 
 import { SolicitudesApi } from '../../api/solicitudes-api';
 import { WhatsappCta } from '../../componentes/whatsapp-cta/whatsapp-cta';
 import { EMPRESA, urlWhatsapp } from '../../../contenido/empresa';
-import { CONSENTIMIENTO_CONTACTO } from '../../../contenido/legales';
+import { CONSENTIMIENTO_COMERCIAL, CONSENTIMIENTO_CONTACTO } from '../../../contenido/legales';
 import { HOME } from '../../../contenido/home';
 import { METADATOS_CONTACTO } from '../../../contenido/metadatos-paginas';
 import { Analitica } from '../../nucleo/analitica';
@@ -20,6 +20,7 @@ interface DatosFormularioContacto {
   servicioDeInteres: string;
   mensaje: string;
   aceptaConsentimiento: boolean;
+  aceptaComunicacionesComerciales: boolean;
   sitioWeb: string;
 }
 
@@ -120,6 +121,7 @@ export class ContactoPage {
   // La autorizacion tiene que ser informada, e "informada" incluye
   // decir que los datos salen del pais (politica v2, seccion 13).
   protected readonly textoConsentimiento = CONSENTIMIENTO_CONTACTO;
+  protected readonly textoConsentimientoComercial = CONSENTIMIENTO_COMERCIAL;
   protected readonly urlCorreo = `mailto:${EMPRESA.correo}`;
   protected readonly urlWhatsappNumero = () => urlWhatsapp(HOME.mensajeWhatsapp);
 
@@ -131,6 +133,9 @@ export class ContactoPage {
     servicioDeInteres: '',
     mensaje: '',
     aceptaConsentimiento: false,
+    // Sin marcar: la autorizacion comercial tiene que ser un acto
+    // deliberado, no un descuido del visitante.
+    aceptaComunicacionesComerciales: false,
     sitioWeb: '',
   });
 

@@ -18,6 +18,12 @@ public record SolicitudRequest(
 						+ " caracteres") String mensaje,
 		boolean aceptaConsentimiento,
 		/**
+		 * Autorización comercial, opcional y aparte de la obligatoria
+		 * (política de datos v2, §13). Ausente en el JSON = false, que es
+		 * lo correcto: no autorizar es el estado por defecto.
+		 */
+		boolean aceptaComunicacionesComerciales,
+		/**
 		 * Campo honeypot: oculto para personas en el formulario público, sin
 		 * validación propia a propósito. Si llega con contenido, la
 		 * solicitud es de un bot y se descarta antes de llegar al caso de

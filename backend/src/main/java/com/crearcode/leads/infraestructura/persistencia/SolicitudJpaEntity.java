@@ -49,6 +49,8 @@ class SolicitudJpaEntity {
 	private boolean consentimientoAceptado;
 	private Instant consentimientoFechaAceptacion;
 	private String consentimientoVersionPolitica;
+	/** Autorizacion comercial, opcional y aparte (politica v2, §13). */
+	private boolean consentimientoComunicacionesComerciales;
 
 	private Instant fechaCreacion;
 	private Instant fechaUltimaActualizacion;

@@ -24,6 +24,17 @@ export const AVISO_IA =
 export const CONSENTIMIENTO_CONTACTO =
   'Autorizo a Crear Code Cesar S.A.S. a tratar mis datos para responder esta solicitud y enviarme una propuesta. Algunos proveedores tratan los datos en EE. UU. y Alemania.';
 
+/**
+ * Casilla comercial: OPCIONAL, sin marcar y separada de la
+ * obligatoria. No es cosmetica — la Ley 2300 de 2023 fija horarios y
+ * frecuencia para el contacto comercial, y la politica v2 (seccion 13)
+ * promete que esta finalidad tiene su propia casilla. Mezclarla con la
+ * obligatoria seria obtener la autorizacion a cambio de responder una
+ * solicitud, que es justo lo que la ley no permite.
+ */
+export const CONSENTIMIENTO_COMERCIAL =
+  'Quiero recibir contenido y novedades de Crear Code por correo o WhatsApp (máximo una vez por semana). Puedo darme de baja cuando quiera.';
+
 /** Casilla del registro de cuenta (misma regla: previa y expresa). */
 export const CONSENTIMIENTO_REGISTRO =
   'Autorizo el tratamiento de mi correo para crear y administrar mi cuenta, según la';

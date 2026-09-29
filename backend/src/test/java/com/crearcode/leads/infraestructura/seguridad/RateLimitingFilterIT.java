@@ -70,7 +70,7 @@ class RateLimitingFilterIT {
 	@Test
 	void limitaLasSolicitudesRepetidasDesdeLaMismaIp() {
 		SolicitudRequest solicitud = new SolicitudRequest("Juan Pérez", null, "nombre@empresa.com",
-				"3001234567", ServicioDeInteres.OTRO, "mensaje", true, null);
+				"3001234567", ServicioDeInteres.OTRO, "mensaje", true, false, null);
 
 		List<HttpStatusCode> estados = new ArrayList<>();
 		for (int i = 0; i < MAX_SOLICITUDES_EN_ESTE_TEST + 3; i++) {

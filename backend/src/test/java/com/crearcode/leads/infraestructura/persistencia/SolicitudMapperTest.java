@@ -64,4 +64,31 @@ class SolicitudMapperTest {
 		assertThat(reconstruida.fechaUltimaActualizacion()).isEqualTo(original.fechaUltimaActualizacion());
 	}
 
+
+	/**
+	 * La autorizacion comercial tiene que sobrevivir el viaje: si se
+	 * perdiera al guardar, el panel mostraria que nadie la dio y la
+	 * empresa no sabria a quien puede escribirle (politica v2, §13).
+	 */
+	@Test
+	void laAutorizacionComercialSobreviveElViajeDeIdaYVuelta() {
+		ConsentimientoDatos conComercial = new ConsentimientoDatos(true, Instant.now(), "v2", true);
+		SolicitudDeContacto solicitud = SolicitudDeContacto.registrar(DATOS, ServicioDeInteres.OTRO,
+				"mensaje", conComercial, Instant.now());
+
+		SolicitudDeContacto ida = SolicitudMapper.aDominio(SolicitudMapper.aEntidad(solicitud));
+
+		assertThat(ida.consentimiento().comunicacionesComerciales()).isTrue();
+	}
+
+	@Test
+	void sinAutorizacionComercialVuelveEnFalse() {
+		SolicitudDeContacto solicitud = SolicitudDeContacto.registrar(DATOS, ServicioDeInteres.OTRO,
+				"mensaje", CONSENTIMIENTO, Instant.now());
+
+		SolicitudDeContacto ida = SolicitudMapper.aDominio(SolicitudMapper.aEntidad(solicitud));
+
+		assertThat(ida.consentimiento().comunicacionesComerciales()).isFalse();
+	}
+
 }

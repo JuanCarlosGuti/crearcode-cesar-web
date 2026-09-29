@@ -137,6 +137,20 @@
       }
     </div>
 
+    <!--
+      Casilla OPCIONAL y separada: la politica v2 (§13) promete que las
+      finalidades comerciales tienen la suya. Sin required ni
+      aria-invalid — no marcarla es una respuesta valida.
+    -->
+    <div class="campo campo--checkbox">
+      <input
+        id="aceptaComunicacionesComerciales"
+        type="checkbox"
+        [formField]="formulario.aceptaComunicacionesComerciales"
+      />
+      <label for="aceptaComunicacionesComerciales">{{ textoConsentimientoComercial }}</label>
+    </div>
+
     <div class="campo-honeypot" aria-hidden="true">
       <label for="sitioWeb">Sitio web</label>
       <input

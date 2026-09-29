@@ -9,6 +9,7 @@ export interface SolicitudContactoPayload {
   servicioDeInteres: string;
   mensaje: string;
   aceptaConsentimiento: boolean;
+  aceptaComunicacionesComerciales: boolean;
   sitioWeb: string;
 }
 
@@ -27,6 +28,7 @@ export interface Solicitud {
   servicioDeInteres: string;
   mensaje: string;
   estado: EstadoSolicitud;
+  aceptaComunicacionesComerciales: boolean;
   fechaCreacion: string;
   fechaUltimaActualizacion: string;
 }

@@ -42,6 +42,50 @@ describe('ContactoPage', () => {
    * local y lo que un cliente mira para saber que hay una empresa real
    * detras (auditoria del 28 sep 2026, P1-7).
    */
+  /**
+   * La politica v2 (§13) promete que las finalidades comerciales tienen
+   * su propia casilla. Si fuera obligatoria o viniera marcada, la
+   * autorizacion se estaria obteniendo a cambio de responder una
+   * solicitud, que es lo que la Ley 2300 no permite.
+   */
+  it('la casilla comercial es opcional, separada y no viene marcada', async () => {
+    const fixture = TestBed.createComponent(ContactoPage);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+
+    const comercial = el.querySelector('#aceptaComunicacionesComerciales') as HTMLInputElement;
+    const obligatoria = el.querySelector('#aceptaConsentimiento') as HTMLInputElement;
+    expect(comercial).not.toBe(obligatoria);
+    expect(comercial.checked).toBe(false);
+
+    // Sin marcarla, el formulario se envia igual.
+    llenarFormularioValido(el);
+    (el.querySelector('form') as HTMLFormElement).dispatchEvent(new Event('submit'));
+    await fixture.whenStable();
+
+    const peticion = httpMock.expectOne('/api/solicitudes');
+    expect(peticion.request.body.aceptaComunicacionesComerciales).toBe(false);
+    peticion.flush({ id: 'x' });
+  });
+
+  it('marcar la casilla comercial viaja como autorizacion aparte', async () => {
+    const fixture = TestBed.createComponent(ContactoPage);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+
+    llenarFormularioValido(el);
+    const comercial = el.querySelector('#aceptaComunicacionesComerciales') as HTMLInputElement;
+    comercial.checked = true;
+    comercial.dispatchEvent(new Event('input'));
+    (el.querySelector('form') as HTMLFormElement).dispatchEvent(new Event('submit'));
+    await fixture.whenStable();
+
+    const peticion = httpMock.expectOne('/api/solicitudes');
+    expect(peticion.request.body.aceptaComunicacionesComerciales).toBe(true);
+    expect(peticion.request.body.aceptaConsentimiento).toBe(true);
+    peticion.flush({ id: 'x' });
+  });
+
   it('muestra el NIT, la direccion y los contactos en la propia pagina', async () => {
     const fixture = TestBed.createComponent(ContactoPage);
     await fixture.whenStable();
@@ -331,6 +375,7 @@ describe('ContactoPage', () => {
       servicioDeInteres: 'OTRO',
       mensaje: 'Necesito ayuda con mi negocio.',
       aceptaConsentimiento: true,
+      aceptaComunicacionesComerciales: false,
       sitioWeb: '',
     });
     solicitud.flush({ id: '11111111-1111-1111-1111-111111111111' });

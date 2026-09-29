@@ -39,4 +39,30 @@ class ConsentimientoDatosTest {
 		assertThat(consentimiento.aceptado()).isFalse();
 	}
 
+
+	/**
+	 * La finalidad comercial es una autorizacion distinta de la de
+	 * atender la solicitud, y la politica v2 (seccion 13) promete que
+	 * tiene su propia casilla. Modelarla aparte es lo que permite
+	 * retirarla "sin que afecte lo demas": un solo booleano para las dos
+	 * haria imposible distinguir quien acepto que.
+	 */
+	@Test
+	void laFinalidadComercialEsUnaAutorizacionSeparadaDeLaObligatoria() {
+		ConsentimientoDatos soloLoObligatorio = new ConsentimientoDatos(true, Instant.now(), "v2", false);
+
+		assertThat(soloLoObligatorio.aceptado()).isTrue();
+		assertThat(soloLoObligatorio.comunicacionesComerciales()).isFalse();
+	}
+
+	/**
+	 * Sin esto se podria guardar "quiero novedades comerciales" de
+	 * alguien que no autorizo ni el tratamiento basico.
+	 */
+	@Test
+	void noSePuedeAutorizarLoComercialSinAutorizarElTratamiento() {
+		assertThatThrownBy(() -> new ConsentimientoDatos(false, Instant.now(), "v2", true))
+				.isInstanceOf(ConsentimientoRequeridoException.class);
+	}
+
 }

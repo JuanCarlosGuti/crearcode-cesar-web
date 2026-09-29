@@ -45,7 +45,7 @@ class LoggingSinDatosPersonalesIT {
 
 		try {
 			SolicitudRequest invalida = new SolicitudRequest("", null, "nombre@empresa.com", "3001234567",
-					ServicioDeInteres.OTRO, "mensaje", true, null);
+					ServicioDeInteres.OTRO, "mensaje", true, false, null);
 
 			restTemplate.postForEntity("/api/solicitudes", invalida, String.class);
 
