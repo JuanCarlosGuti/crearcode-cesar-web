@@ -33,4 +33,9 @@ interface TokenDeUsuarioJpaRepository extends JpaRepository<TokenDeUsuarioJpaEnt
 	void invalidarActivos(@Param("usuarioId") UUID usuarioId, @Param("proposito") PropositoDeToken proposito,
 			@Param("ahora") Instant ahora);
 
+	/** Al borrar la cuenta se van con ella. */
+	@Modifying
+	@Query("delete from TokenDeUsuarioJpaEntity t where t.usuarioId = :usuarioId")
+	void deleteByUsuarioId(UUID usuarioId);
+
 }

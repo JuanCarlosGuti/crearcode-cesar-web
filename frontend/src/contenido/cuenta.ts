@@ -71,6 +71,17 @@ export const CUENTA = {
     notaContrasenaAntes: '¿Quieres cambiar tu contraseña? Usa',
     enlaceRecuperar: 'recuperar contraseña',
     notaContrasenaDespues: '— te llegará un enlace al correo.',
+    // Derecho de supresion de la Ley 1581, que la politica v2 promete.
+    // Hasta ahora solo se podia pidiendolo por correo y esperando a
+    // que alguien lo atendiera a mano.
+    eliminarTitulo: 'Eliminar mi cuenta',
+    eliminarExplicacion:
+      'Se borra tu cuenta y no podrás volver a entrar. Las cotizaciones que ya te enviamos se conservan el tiempo que exige la ley contable y comercial.',
+    eliminarBoton: 'Eliminar mi cuenta',
+    eliminarConfirmar: 'Sí, eliminar definitivamente',
+    eliminarCancelar: 'Mejor no',
+    eliminarPregunta: '¿Seguro? Esto no se puede deshacer.',
+    eliminarError: 'No pudimos eliminar la cuenta. Inténtalo de nuevo o escríbenos.',
   },
   header: {
     ingresar: 'Ingresar',

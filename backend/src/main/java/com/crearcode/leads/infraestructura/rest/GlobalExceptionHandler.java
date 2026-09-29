@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.crearcode.leads.aplicacion.CotizacionNoEncontradaException;
 import com.crearcode.leads.aplicacion.CredencialesInvalidasException;
 import com.crearcode.leads.aplicacion.CuentaNoVerificadaException;
+import com.crearcode.leads.aplicacion.EliminacionNoPermitidaException;
 import com.crearcode.leads.aplicacion.LimiteDeUsoAlcanzadoException;
 import com.crearcode.leads.aplicacion.LimiteGlobalAlcanzadoException;
 import com.crearcode.leads.aplicacion.SolicitudNoEncontradaException;
+import com.crearcode.leads.aplicacion.UsuarioNoEncontradoException;
 import com.crearcode.leads.aplicacion.UsuarioYaExisteException;
 import com.crearcode.leads.dominio.AsistenteNoDisponibleException;
 import com.crearcode.leads.dominio.ConsentimientoRequeridoException;
@@ -177,6 +179,16 @@ class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
 				.body(new ErrorAsistenteResponse("El asistente no está disponible en este momento",
 						"proveedor-caido"));
+	}
+
+	@ExceptionHandler(UsuarioNoEncontradoException.class)
+	ResponseEntity<ErrorResponse> usuarioNoEncontrado(UsuarioNoEncontradoException excepcion) {
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(excepcion.getMessage()));
+	}
+
+	@ExceptionHandler(EliminacionNoPermitidaException.class)
+	ResponseEntity<ErrorResponse> eliminacionNoPermitida(EliminacionNoPermitidaException excepcion) {
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorResponse(excepcion.getMessage()));
 	}
 
 }

@@ -23,4 +23,11 @@ public interface UsuarioRepositorio {
 	 */
 	Optional<Usuario> buscarPorId(UsuarioId id);
 
+	/**
+	 * Borra la cuenta. Derecho de supresión de la Ley 1581, que la
+	 * política v2 promete: no basta con que exista el derecho si
+	 * ejercerlo depende de que alguien atienda un correo a mano.
+	 */
+	void eliminar(UsuarioId id);
+
 }

@@ -15,6 +15,15 @@ class FakeTokenDeUsuarioRepositorio implements TokenDeUsuarioRepositorio {
 
 	private final List<TokenDeUsuario> tokens = new ArrayList<>();
 
+	/** Para comprobar que eliminar la cuenta arrastra sus tokens. */
+	final List<UsuarioId> eliminadosDe = new ArrayList<>();
+
+	@Override
+	public void eliminarDe(UsuarioId usuarioId) {
+		eliminadosDe.add(usuarioId);
+		tokens.removeIf(token -> token.usuarioId().equals(usuarioId));
+	}
+
 	@Override
 	public void guardar(TokenDeUsuario token) {
 		tokens.removeIf(existente -> existente.id().equals(token.id()));

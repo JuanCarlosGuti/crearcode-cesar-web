@@ -21,6 +21,11 @@ class FakeUsuarioRepositorio implements UsuarioRepositorio {
 	}
 
 	@Override
+	public void eliminar(UsuarioId id) {
+		usuarios.removeIf(usuario -> usuario.id().equals(id));
+	}
+
+	@Override
 	public Optional<Usuario> buscarPorCorreo(Correo correo) {
 		return usuarios.stream()
 				.filter(u -> u.correo().valor().equalsIgnoreCase(correo.valor()))

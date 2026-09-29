@@ -8,3 +8,29 @@
 button {
   margin-top: var(--espacio-3);
 }
+
+.pagina-cuenta__eliminar {
+  margin-top: var(--espacio-5);
+  padding-top: var(--espacio-3);
+  border-top: 1px solid var(--color-borde);
+}
+
+.pagina-cuenta__eliminar h2 {
+  font-size: 1.05rem;
+}
+
+.pagina-cuenta__eliminar p {
+  color: var(--color-texto-secundario);
+  font-size: 0.9rem;
+}
+
+.pagina-cuenta__eliminar-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-2);
+}
+
+.pagina-cuenta__aviso,
+.pagina-cuenta__error {
+  color: var(--color-error);
+}

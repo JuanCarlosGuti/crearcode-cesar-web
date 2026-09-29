@@ -15,6 +15,41 @@
     {{ textos.botonCerrarSesion }}
   </button>
 
+  <!--
+    Derecho de supresion de la Ley 1581 (politica v2, §10 y §11). La
+    confirmacion va en la pagina y no en un window.confirm: ese no se
+    puede estilar, no siempre se lee y el navegador puede suprimirlo.
+  -->
+  <section class="pagina-cuenta__eliminar" aria-labelledby="titulo-eliminar-cuenta">
+    <h2 id="titulo-eliminar-cuenta">{{ textos.eliminarTitulo }}</h2>
+    <p>{{ textos.eliminarExplicacion }}</p>
+
+    @if (confirmando()) {
+      <p class="pagina-cuenta__aviso" role="alert">{{ textos.eliminarPregunta }}</p>
+      <div class="pagina-cuenta__eliminar-acciones">
+        <button type="button" class="boton boton-secundario" (click)="cancelarEliminacion()">
+          {{ textos.eliminarCancelar }}
+        </button>
+        <button
+          type="button"
+          class="boton boton-peligro"
+          [disabled]="eliminando()"
+          (click)="eliminarCuenta()"
+        >
+          {{ textos.eliminarConfirmar }}
+        </button>
+      </div>
+    } @else {
+      <button type="button" class="boton boton-secundario" (click)="pedirConfirmacion()">
+        {{ textos.eliminarBoton }}
+      </button>
+    }
+
+    @if (errorAlEliminar()) {
+      <p class="pagina-cuenta__error" role="alert">{{ textos.eliminarError }}</p>
+    }
+  </section>
+
   <p class="pagina-cuenta__nota">
     {{ textos.notaContrasenaAntes }}
     <a routerLink="/recuperar-contrasena">{{ textos.enlaceRecuperar }}</a>

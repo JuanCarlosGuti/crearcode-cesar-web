@@ -343,3 +343,16 @@ img {
     transform: none;
   }
 }
+
+// Accion destructiva e irreversible (eliminar la cuenta): se distingue
+// de las demas a proposito. Contorno y no relleno solido — el boton
+// mas llamativo de una pantalla no deberia ser el que borra cosas.
+.boton-peligro {
+  background-color: transparent;
+  color: var(--color-error);
+  border: 1px solid var(--color-error);
+}
+
+.boton-peligro:hover {
+  background-color: color-mix(in srgb, var(--color-error) 12%, transparent);
+}
