@@ -760,10 +760,10 @@ en vez de "pronto"; foto del fundador; Google Business Profile; activar
 el proxy de Cloudflare; apagar Render y revocar las llaves rotadas.
 
 **Estado al cierre de la segunda tanda (28 sep 2026)**: backend con
-`mvn verify` completo en verde (138 tests, ArchUnit y los ITs con
-Testcontainers) y **296 specs de frontend**, ESLint limpio. La rama
-`fix/auditoria-sep-2026` NO está desplegada: falta el OK del usuario y
-los e2e completos con backend.
+`mvn verify` completo en verde (142 tests, ArchUnit y los ITs con
+Testcontainers), **302 specs de frontend**, ESLint limpio y los e2e con
+axe en CI. **Desplegada en producción el 30 sep 2026** (PR #1, commit
+`9dcae8a`), con el OK del usuario y verificada en vivo.
 
 ---
 

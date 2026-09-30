@@ -792,10 +792,26 @@ pendiente del corte:
 
 **De la auditoría integral del 28 sep 2026** (ISS-161 a ISS-197 en
 [docs/05-backlog-issues.md](docs/05-backlog-issues.md)): el listado
-priorizado completo (P0 a P3) está implementado en la rama
-`fix/auditoria-sep-2026`, **sin desplegar y sin el OK del usuario**.
-De 48 sub-hallazgos verificados contra el código, 10 ya estaban hechos
-en la primera tanda, 1 no aplicaba y el resto se corrigió allí.
+priorizado completo (P0 a P3) está **desplegado en producción** desde
+el 30 sep 2026 (PR #1, commit `9dcae8a`). De 48 sub-hallazgos
+verificados contra el código, 10 ya estaban hechos en la primera
+tanda, 1 no aplicaba y el resto se corrigió.
+
+Se fusionó por **pull request** y no directo a master: en un PR, CI
+corre las cuatro suites sin desplegar (el job de despliegue exige
+`push` a master). Fue la primera vez que los e2e corrieron sobre esa
+rama, y **atraparon un 400 real**: el campo nuevo de la casilla
+comercial era un `boolean` primitivo, y Jackson 3 rechaza un primitivo
+ausente en vez de ponerle `false` — cualquier visitante con el
+JavaScript viejo en caché habría perdido su solicitud de contacto el
+día del despliegue. Los ITs no lo vieron porque armaban la petición en
+Java con el campo. **Convención desde entonces: los cambios grandes van
+por PR.**
+
+Verificado en producción tras desplegar: los dos contenedores corren
+`9dcae8a` y sin root (`app` y `sitio`), la migración V7 aplicada, el
+POST sin la casilla comercial responde 201, el asistente responde y la
+política v2 está publicada sin «borrador».
 
 Lo que sigue esperando al usuario, en orden de impacto: **revisión
 legal** de la política de datos (el texto ya está completo y marcado
