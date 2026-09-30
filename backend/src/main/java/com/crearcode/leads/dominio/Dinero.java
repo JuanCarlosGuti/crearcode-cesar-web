@@ -39,6 +39,28 @@ public record Dinero(BigDecimal monto) {
 		return new Dinero(this.monto.multiply(BigDecimal.valueOf(cantidad)));
 	}
 
+	/**
+	 * Resta sin permitir negativos: un saldo o un pendiente nunca pueden
+	 * quedar por debajo de cero (F12). Quien necesite comparar antes, que
+	 * use {@link #esMayorQue}.
+	 */
+	public Dinero menos(Dinero otro) {
+		BigDecimal resultado = this.monto.subtract(otro.monto);
+		if (resultado.signum() < 0) {
+			throw new MontoInvalidoException(
+					"No se puede restar " + otro.monto.toPlainString() + " de " + this.monto.toPlainString());
+		}
+		return new Dinero(resultado);
+	}
+
+	public boolean esMayorQue(Dinero otro) {
+		return this.monto.compareTo(otro.monto) > 0;
+	}
+
+	public boolean esCero() {
+		return this.monto.signum() == 0;
+	}
+
 	public Dinero porcentaje(Porcentaje porcentaje) {
 		return new Dinero(this.monto
 				.multiply(BigDecimal.valueOf(porcentaje.valor()))

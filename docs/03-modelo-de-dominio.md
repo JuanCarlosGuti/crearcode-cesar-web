@@ -448,8 +448,9 @@ Campos: `ProyectoId id` (UUID), `Correo correoDelCliente`,
 en blanco), `String nombre`, `String descripcion` (en lenguaje del
 cliente), `Porcentaje impuesto` (el de la cotización de origen, o el de
 `COTIZACIONES_IMPUESTO` si nace en blanco), `EstadoProyecto estado`,
-`LocalDate inicio`, `LocalDate entregaEstimada`, `LocalDate
-finDeGarantia` (nulo hasta entrar en garantía), `List<Fase> fases`,
+`DescripcionDelProyecto` (nombre, descripción, `LocalDate inicio`,
+`LocalDate entregaEstimada`), `Instant finDeGarantia` (nulo hasta entrar
+en garantía; el portal lo pinta como fecha en la zona del cliente), `List<Fase> fases`,
 `List<Pago> pagos`, `Instant creadoEn`, `Instant actualizadoEn`.
 
 **El cliente se identifica por su correo, no por su `UsuarioId`**
@@ -464,7 +465,8 @@ Como `Cotizacion`, **nunca llama al reloj**: todo `Instant` o
 
 ## 2. Entidades internas
 
-- **`Fase`** (un sprint): `orden`, `nombre`, `objetivo` (1-2 frases no
+- **`Fase`** (un sprint): `FaseId` (para editarla y reordenarla; el
+  orden es su posición en la lista), `nombre`, `objetivo` (1-2 frases no
   técnicas), `inicioPlaneado`, `finPlaneado`, `resumenParaElCliente`
   (lo escribe el equipo al cerrar la fase; nulo mientras está abierta),
   `List<Entregable> entregables`.

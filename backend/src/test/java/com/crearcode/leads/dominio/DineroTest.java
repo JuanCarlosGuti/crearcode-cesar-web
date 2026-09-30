@@ -64,4 +64,24 @@ class DineroTest {
 		assertThat(Dinero.de(5000)).isEqualTo(Dinero.de(5000));
 	}
 
+	// F12: saldos y pagos parciales necesitan restar y comparar.
+	@Test
+	void restaDosMontos() {
+		assertThat(Dinero.de(1_000_000).menos(Dinero.de(400_000))).isEqualTo(Dinero.de(600_000));
+	}
+
+	@Test
+	void unaRestaQueQuedariaNegativaSeRechaza() {
+		assertThatThrownBy(() -> Dinero.de(100).menos(Dinero.de(101)))
+				.isInstanceOf(MontoInvalidoException.class);
+	}
+
+	@Test
+	void comparaMontos() {
+		assertThat(Dinero.de(2).esMayorQue(Dinero.de(1))).isTrue();
+		assertThat(Dinero.de(1).esMayorQue(Dinero.de(1))).isFalse();
+		assertThat(Dinero.CERO.esCero()).isTrue();
+		assertThat(Dinero.de(1).esCero()).isFalse();
+	}
+
 }
