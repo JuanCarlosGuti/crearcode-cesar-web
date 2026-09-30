@@ -177,6 +177,9 @@ y el cliente ve desde su cuenta cómo avanza, fase por fase, y cómo van
 sus pagos. F11 dejó fuera la "gestión de proyectos"; F12 la introduce en
 su versión **para el cliente**, no un Jira interno.
 
+- **Qué hace el cliente** en `/mi-cuenta` (decisión 27): aprueba cada
+  entregable que le toca revisar, o lo devuelve con una nota de qué
+  ajustar.
 - **Qué ve el cliente** en `/mi-cuenta`: su proyecto como vista
   principal (si tiene uno), con el avance en porcentaje, la línea de
   tiempo de las fases (sprints), los entregables de cada fase con su
@@ -195,7 +198,7 @@ su versión **para el cliente**, no un Jira interno.
   nuevos, horas y tiempos, chat dentro del portal, notificaciones push.
 
 Modelo en [[03-modelo-de-dominio]] Parte 5, historias en
-[[04-historias-de-usuario]] épica E11 (HU-49 a HU-56), issues en
+[[04-historias-de-usuario]] épica E11 (HU-49 a HU-57), issues en
 [[05-backlog-issues]] §Fase F12 (ISS-203 en adelante) y decisiones de
 arquitectura en [[02-arquitectura]] ADR-14 y ADR-15.
 
@@ -439,18 +442,25 @@ su brief —no se reabren al implementar:
 
 Registradas el 30 sep 2026 al aprobar F12 (recomendaciones aceptadas):
 
-27. **El cliente no aprueba ni pide ajustes desde el portal, todavía.**
-    El equipo mueve los estados; el cliente mira. Aprobar desde la
-    cuenta —como ya acepta cotizaciones— queda para una fase posterior.
-28. **Sin límite de peticiones propio para las rutas del portal.** Son
+27. **El cliente aprueba o pide ajustes desde el portal** (el usuario
+    lo decidió así, en contra de la recomendación inicial de dejarlo
+    para después). Un entregable EN_REVISION lo puede aprobar el
+    cliente —y con eso queda cobrable— o devolverlo con una nota de qué
+    ajustar, como ya acepta o rechaza sus cotizaciones. El equipo
+    también puede hacerlo desde el panel, para cuando el cliente
+    responde por WhatsApp; el proyecto guarda quién aprobó y cuándo.
+28. **Sin límite de peticiones propio para las rutas del portal**
+    (confirmado por el usuario). Son
     consultas autenticadas de un cliente sobre lo suyo; el
     `RateLimitingFilter` sigue protegiendo los formularios públicos.
 29. **Un entregable PENDIENTE se puede quitar del plan; uno con trabajo
-    o con pagos, no.** No hay estado `CANCELADO` por ahora.
-
-El pie del PDF de cotización con las condiciones de las decisiones 21 a
-23 **no** entra en F12: queda como pendiente aparte hasta que el
-usuario lo pida.
+    o con pagos, no** (confirmado por el usuario). No hay estado
+    `CANCELADO` por ahora.
+30. **El pie del PDF de cotización lleva las condiciones de las
+    decisiones 21 a 23** (pedido por el usuario al aprobar F12): cobro
+    por entregables, cambio de alcance como entregable nuevo y garantía
+    de 60 días. Cierra el pendiente de las "condiciones comerciales del
+    pie del PDF". Entra en F12 como ISS-225.
 
 ## Aprobación
 

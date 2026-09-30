@@ -1093,6 +1093,25 @@ cada una** para **entender qué viene y qué me toca revisar**.
 
 **Prioridad**: Must (F12).
 
+### HU-57 — El cliente aprueba o pide ajustes
+Como **cliente** quiero **aprobar lo que me entregan o decir qué hay que
+ajustar desde mi cuenta** para **no tener que escribirlo por WhatsApp y
+que quede constancia**.
+
+- Dado que un entregable mío está EN_REVISION, entonces veo dos botones:
+  "Aprobar" y "Pedir ajustes".
+- Dado que apruebo, cuando confirmo, entonces el entregable queda
+  APROBADO, el avance sube y, si ese entregable se cobra al aprobarse,
+  aparece como pago pendiente.
+- Dado que pido ajustes, entonces tengo que escribir qué ajustar; sin
+  nota no se envía.
+- Dado que respondo, entonces al equipo le llega un correo.
+- Dado que el entregable no está en revisión, el proyecto está pausado
+  o no es mío, entonces no puedo responderlo (lo niega el servidor, no
+  solo la interfaz).
+
+**Prioridad**: Must (F12, decisión 27).
+
 ### HU-51 — El cliente ve cómo van sus pagos
 Como **cliente** quiero **saber cuánto he pagado y cuánto debo** para
 **llevar mis cuentas sin pedir un estado de cuenta**.
@@ -1153,6 +1172,8 @@ estado** para **que el portal cuente la verdad sin trabajo extra**.
 - Dado que cambio el estado de un entregable, entonces solo me ofrece
   las transiciones válidas; mandarlo a ajustes exige escribir qué se
   ajusta.
+- Dado que el cliente me aprobó por WhatsApp, entonces puedo aprobarlo
+  yo desde el panel, y queda registrado que lo aprobó el equipo.
 - Dado que cierro una fase, entonces escribo el resumen para el
   cliente.
 - Dado que el cliente pide algo nuevo, entonces lo agrego como

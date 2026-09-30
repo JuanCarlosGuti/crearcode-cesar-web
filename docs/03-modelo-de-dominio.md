@@ -473,7 +473,7 @@ Como `Cotizacion`, **nunca llama al reloj**: todo `Instant` o
   cotización), `MomentoDeCobro cobro`, `EstadoEntregable estado`,
   `UrlDeDemo demo` (opcional), `String notaDeAjustes` (la del último
   paso a CON_AJUSTES), `boolean esCambioDeAlcance`, `Instant
-  aprobadoEn`.
+  aprobadoEn`, `QuienResponde aprobadoPor` (`CLIENTE` | `EQUIPO`).
 - **`Pago`**: `PagoId`, `EntregableId`, `Dinero monto`, `LocalDate
   fecha`, `MedioDePago medio`, `OrigenDePago origen`, `String
   referencia` (nota o número del comprobante), `Correo registradoPor`.
@@ -508,6 +508,10 @@ Como `Cotizacion`, **nunca llama al reloj**: todo `Instant` o
 `APROBADO` es **terminal**. Pasar a `CON_AJUSTES` exige la nota de qué
 se ajusta.
 
+Las dos salidas de `EN_REVISION` las puede tomar **el cliente** desde
+su cuenta o **el equipo** desde el panel (decisión 27); el resto de
+transiciones son solo del equipo.
+
 **`EstadoProyecto`**
 
 `ACTIVO` ⇄ `PAUSADO`
@@ -529,14 +533,16 @@ de transiciones y `TransicionDeEstadoInvalidaException`.
 
 **De entrada**: `CrearProyectoUseCase` (desde cotización aceptada o en
 blanco), `GestionarPlanDelProyectoUseCase` (fases y entregables),
-`CambiarEstadoDeEntregableUseCase`, `RegistrarPagoUseCase`,
+`CambiarEstadoDeEntregableUseCase`, `ResponderEntregableUseCase`
+(el cliente aprueba o pide ajustes), `RegistrarPagoUseCase`,
 `CambiarEstadoDeProyectoUseCase` (pausar, reanudar, cerrar),
 `ConsultarProyectosUseCase` (equipo: todos; cliente: los de su correo),
 `CerrarGarantiasVencidasUseCase` (lo dispara un programador diario,
 como la retención de datos).
 
-**De salida**: `ProyectoRepositorio`, `NotificadorDeProyectos` (correo
-de entregable en revisión y de pago registrado).
+**De salida**: `ProyectoRepositorio`, `NotificadorDeProyectos` (al
+cliente: entregable en revisión y pago registrado; al equipo: el cliente
+aprobó o pidió ajustes).
 
 ## 6. Invariantes de negocio
 
@@ -568,9 +574,15 @@ de entregable en revisión y de pago registrado).
    cualquier estado: el dinero llega cuando llega.
 9. Los correos son **best-effort**: un fallo nunca deja un cambio a
    medias.
+10. **El cliente solo responde lo que le toca**: un entregable
+    EN_REVISION de un proyecto suyo y ACTIVO. Pedir ajustes exige la
+    nota. Se guarda quién aprobó (`CLIENTE` o `EQUIPO`) y cuándo: es la
+    constancia de que ese entregable ya se puede cobrar.
 
 ## 7. Fuera de este contexto, a propósito
 
+- **Firma electrónica** de la aprobación: queda registro de quién y
+  cuándo, nada más (mismo criterio que aceptar una cotización).
 - **Borrar entregables ya aprobados o pagados**, y un estado
   `CANCELADO` para entregables: no está en el brief. Mientras no se
   decida, un entregable PENDIENTE se puede eliminar del plan y uno con

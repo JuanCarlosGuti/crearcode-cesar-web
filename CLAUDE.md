@@ -211,7 +211,7 @@ variable de entorno del servidor el día que se use — nunca en el repo.
   a ISS-224): **aprobada el 30 sep 2026, en construcción** en la rama
   `f12/portal-proyectos`. Al aceptarse una cotización nace un proyecto que el
   cliente sigue desde `/mi-cuenta`: fases, entregables, avance y pagos.
-  Reglas de negocio en las decisiones 21-29 de docs/10 (cobro por
+  Reglas de negocio en las decisiones 21-30 de docs/10 (cobro por
   entregables, cambio de alcance = entregable nuevo, garantía de 60
   días, pagos manuales sin Wompi). Modelo en docs/03 Parte 5, historias
   E11, ADR-14 y ADR-15.
@@ -868,13 +868,10 @@ que se borra sigue en los respaldos hasta 30 días.
   defecto, porque una S.A.S. es persona jurídica y por regla general
   responsable. Confirmar con el contador (casilla 53 del RUT) y, si no
   aplica, bajarlo con `COTIZACIONES_IMPUESTO`.
-- **Condiciones comerciales del pie del PDF**: anticipo, forma de pago
-  y qué pasa con los cambios de alcance a mitad del proyecto. Hoy el
-  pie solo aclara que el documento es una cotización y no una factura,
-  así que esas condiciones se explican a mano por WhatsApp y no quedan
-  en el documento que el cliente guarda. **Lo tiene que redactar el
-  usuario**: es un compromiso comercial, y si se inventa y no es lo que
-  cobra, el problema lo tiene con el primer cliente que lo lea.
+- ~~**Condiciones comerciales del pie del PDF**~~: **decididas el 30 sep
+  2026** con la F12 (decisiones 21-23 y 30 de docs/10): cobro por
+  entregables, cambio de alcance como entregable nuevo y garantía de 60
+  días. Se implementan en ISS-225.
 - **Revisar el eslogan del hero** ("Tecnología que trabaja para tu
   negocio, no al revés.") — pendiente desde el 29 jul 2026. Sigue
   siendo el titular del rediseño, ahora con "no al revés" resaltado.
