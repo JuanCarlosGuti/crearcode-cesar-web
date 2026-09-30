@@ -15,6 +15,30 @@ describe('generarSitemap', () => {
     expect(xml).toContain('</urlset>');
   });
 
+  it('los articulos del blog llevan su fecha como lastmod', () => {
+    const xml = generarSitemap();
+
+    ARTICULOS.forEach((articulo) => {
+      expect(xml).toContain(
+        `<loc>${BASE_URL}/blog/${articulo.slug}</loc>
+    <lastmod>${articulo.fecha}</lastmod>`,
+      );
+    });
+  });
+
+  /**
+   * Poner la fecha del build en paginas que no cambiaron le diria a
+   * Google que el sitio entero se modifica en cada despliegue: una
+   * senal falsa se ignora, y con ella se ignoran las verdaderas.
+   */
+  it('las paginas sin fecha fiable no inventan un lastmod', () => {
+    const xml = generarSitemap();
+
+    expect(xml).toContain(`<loc>${BASE_URL}/contacto</loc>
+  </url>`);
+    expect(xml.match(/<lastmod>/g)?.length).toBe(ARTICULOS.length);
+  });
+
   it('incluye las rutas publicas estaticas con la URL base', () => {
     const xml = generarSitemap();
 

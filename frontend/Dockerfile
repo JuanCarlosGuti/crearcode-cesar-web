@@ -29,4 +29,12 @@ FROM caddy:2-alpine
 COPY Caddyfile /etc/caddy/Caddyfile
 COPY --from=build /app/dist/frontend/browser /srv
 
+# Usuario sin privilegios (auditoria P3-b). Caddy escucha en 8080, que
+# no es privilegiado, asi que no necesita root; los dos directorios de
+# estado que usa (configuracion y datos) tienen que ser suyos o no
+# arranca. Aqui no emite certificados —eso lo hace kamal-proxy— pero
+# los crea igual al iniciar.
+RUN addgroup -S sitio && adduser -S sitio -G sitio 	&& mkdir -p /data /config 	&& chown -R sitio:sitio /data /config /srv
+USER sitio
+
 EXPOSE 8080

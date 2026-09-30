@@ -3,6 +3,8 @@ package com.crearcode.leads.aplicacion;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,15 +27,20 @@ class RegistrarSolicitudUseCaseTest {
 			"Juan Pérez", "Empresa S.A.S.", new Correo("nombre@empresa.com"), new Telefono("3001234567"));
 
 	private FakeSolicitudRepositorio repositorio;
-	private FakeNotificadorPort notificador;
+	private List<Object> eventosPublicados;
 	private RegistrarSolicitudUseCaseImpl useCase;
 
 	@BeforeEach
 	void configurar() {
 		repositorio = new FakeSolicitudRepositorio();
-		notificador = new FakeNotificadorPort();
+		eventosPublicados = new ArrayList<>();
 		Clock reloj = Clock.fixed(Instant.parse("2026-07-16T10:00:00Z"), ZoneOffset.UTC);
-		useCase = new RegistrarSolicitudUseCaseImpl(repositorio, notificador, reloj);
+		useCase = new RegistrarSolicitudUseCaseImpl(repositorio, eventosPublicados::add, reloj);
+	}
+
+	private List<SolicitudRegistrada> solicitudesAnunciadas() {
+		return eventosPublicados.stream().filter(SolicitudRegistrada.class::isInstance)
+				.map(SolicitudRegistrada.class::cast).toList();
 	}
 
 	private ConsentimientoDatos consentimientoAceptado() {
@@ -49,21 +56,18 @@ class RegistrarSolicitudUseCaseTest {
 		assertThat(repositorio.buscarPorId(id).orElseThrow().estado()).isEqualTo(EstadoSolicitud.NUEVA);
 	}
 
+	/**
+	 * El caso de uso ya no manda el correo: anuncia el registro y sigue.
+	 * El aviso sale despues del commit y fuera de esta peticion (ver
+	 * NotificarSolicitudRegistrada), para que un SMTP lento no tenga al
+	 * visitante esperando por un correo que no es suyo.
+	 */
 	@Test
-	void registrarNotificaLaNuevaSolicitud() {
+	void registrarAnunciaLaNuevaSolicitudSinMandarElCorreoEnLinea() {
 		SolicitudId id = useCase.registrar(DATOS, ServicioDeInteres.OTRO, "mensaje", consentimientoAceptado());
 
-		assertThat(notificador.notificadas).hasSize(1);
-		assertThat(notificador.notificadas.get(0).id()).isEqualTo(id);
-	}
-
-	@Test
-	void siFallaLaNotificacionLaSolicitudQuedaPersistida() {
-		notificador.fallarAlNotificar = true;
-
-		SolicitudId id = useCase.registrar(DATOS, ServicioDeInteres.OTRO, "mensaje", consentimientoAceptado());
-
-		assertThat(repositorio.buscarPorId(id)).isPresent();
+		assertThat(solicitudesAnunciadas()).hasSize(1);
+		assertThat(solicitudesAnunciadas().getFirst().solicitud().id()).isEqualTo(id);
 	}
 
 	@Test
@@ -74,7 +78,7 @@ class RegistrarSolicitudUseCaseTest {
 				.isInstanceOf(ConsentimientoRequeridoException.class);
 
 		assertThat(repositorio.listar()).isEmpty();
-		assertThat(notificador.notificadas).isEmpty();
+		assertThat(solicitudesAnunciadas()).isEmpty();
 	}
 
 }

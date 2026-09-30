@@ -37,7 +37,7 @@
           @if (mensaje.escalar) {
             <div class="chat-escalamiento">
               <p>{{ textos.escalamiento }}</p>
-              <app-whatsapp-cta [mensaje]="mensajeWhatsapp()" etiqueta="WhatsApp" />
+              <app-whatsapp-cta origen="asistente" [mensaje]="mensajeWhatsapp()" etiqueta="WhatsApp" />
               <a routerLink="/contacto" (click)="cerrarPanel()">{{ textos.enlaceContacto }}</a>
             </div>
           }
@@ -57,10 +57,13 @@
             </a>
           } @else if (error === 'limite-registrado') {
             <p>{{ textos.limiteRegistrado }}</p>
-            <app-whatsapp-cta [mensaje]="mensajeWhatsapp()" etiqueta="WhatsApp" />
+            <app-whatsapp-cta origen="asistente" [mensaje]="mensajeWhatsapp()" etiqueta="WhatsApp" />
+          } @else if (error === 'limite-global') {
+            <p>{{ textos.cupoAgotado }}</p>
+            <app-whatsapp-cta origen="asistente" [mensaje]="mensajeWhatsapp()" etiqueta="WhatsApp" />
           } @else {
             <p>{{ textos.noDisponible }}</p>
-            <app-whatsapp-cta [mensaje]="mensajeWhatsapp()" etiqueta="WhatsApp" />
+            <app-whatsapp-cta origen="asistente" [mensaje]="mensajeWhatsapp()" etiqueta="WhatsApp" />
           }
         </div>
       }

@@ -24,7 +24,8 @@ async function crear() {
 
 async function responderTodo(fixture: Awaited<ReturnType<typeof crear>>['fixture']) {
   const el = fixture.nativeElement as HTMLElement;
-  for (let i = 0; i < DIAGNOSTICO.preguntas.length; i++) {
+  for (const pregunta of DIAGNOSTICO.preguntas) {
+    expect(el.textContent, `falta la pregunta "${pregunta.pregunta}"`).toContain(pregunta.pregunta);
     (el.querySelector('.diagnostico-opcion') as HTMLButtonElement).click();
     await fixture.whenStable();
   }
@@ -110,7 +111,7 @@ describe('DiagnosticoDigital (F10c, HU-41)', () => {
     });
     await fixture.whenStable();
 
-    expect(el.textContent).toContain('no te descuenta diagnósticos');
+    expect(el.textContent).toContain(DIAGNOSTICO.noDisponible);
 
     (el.querySelector('.diagnostico-reintentar') as HTMLButtonElement).click();
     await fixture.whenStable();
@@ -132,6 +133,38 @@ describe('DiagnosticoDigital (F10c, HU-41)', () => {
     expect(el.textContent).toContain(DIAGNOSTICO.preguntas[0].pregunta);
     expect(el.textContent).toContain('1 de 6');
   });
+  /**
+   * Al terminar, el boton de WhatsApp abria wa.me con el mensaje
+   * generico de la Home: el vendedor recibia "quiero saber mas sobre
+   * como pueden ayudarme" sin ninguna senal de que la persona acababa
+   * de hacer el diagnostico ni cuales fueron sus oportunidades
+   * (auditoria del 28 sep 2026, P1-3). El lead llegaba frio.
+   */
+  it('al terminar, el WhatsApp lleva las tres oportunidades del informe', async () => {
+    const { fixture, el } = await crear();
+    await responderTodo(fixture);
+    httpMock.expectOne('/api/asistente/diagnostico').flush(INFORME);
+    await fixture.whenStable();
+
+    const enlace = el.querySelector('.diagnostico-cierre a[href^="https://wa.me/"]') as HTMLAnchorElement;
+    const mensaje = decodeURIComponent(enlace.href.split('?text=')[1]);
+    INFORME.oportunidades.forEach((oportunidad) => expect(mensaje).toContain(oportunidad.titulo));
+  });
+
+  it('cuando el proveedor se cae ofrece un enlace de WhatsApp, no solo la invitacion escrita (P0-1d)', async () => {
+    const { fixture, el } = await crear();
+    await responderTodo(fixture);
+
+    httpMock.expectOne('/api/asistente/diagnostico').flush('error', {
+      status: 503,
+      statusText: 'Service Unavailable',
+    });
+    await fixture.whenStable();
+
+    const aviso = el.querySelector('.diagnostico-aviso') as HTMLElement;
+    expect(aviso.querySelector('a[href^="https://wa.me/"]')).not.toBeNull();
+  });
+
   it('avisa que el texto se procesa con un proveedor de IA externo y no admite datos de clientes (auditoria §11)', async () => {
     const { el } = await crear();
     expect(el.textContent).toContain(AVISO_IA);

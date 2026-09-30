@@ -31,9 +31,10 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          # Misma version que Render usa para construir (NODE_VERSION en
-          # render.yaml): si CI valida con otra, un fallo de version del
-          # CLI aparece recien en el deploy. Al subirla alla, subirla aqui.
+          # Misma version que usa frontend/Dockerfile para construir la
+          # imagen: si CI valida con otra, un fallo de version del CLI
+          # aparece recien en el deploy. Angular 22 exige 22.22.3,
+          # 24.15.0 o 26 — un 24.14.1 cumple ">=24" y el CLI lo rechaza.
           node-version: "24.15.0"
           cache: npm
           cache-dependency-path: frontend/package-lock.json
@@ -41,6 +42,12 @@ jobs:
       - name: npm ci
         working-directory: frontend
         run: npm ci
+
+      # Antes de los tests: un fallo de lint se ve en segundos y no
+      # despues de la suite entera (auditoria del 28 sep 2026, P3-c).
+      - name: npm run lint (ESLint + reglas de plantilla de Angular)
+        working-directory: frontend
+        run: npm run lint
 
       - name: npm test (Vitest)
         working-directory: frontend
@@ -53,8 +60,7 @@ jobs:
   docker-build:
     # El frontend vuelve a tener imagen (ADR-13): en el servidor propio
     # kamal-proxy enruta por dominio pero no sirve archivos, asi que el
-    # sitio viaja con Caddy dentro. En Render, mientras siga vivo, se
-    # despliega como Static Site desde el mismo build.
+    # sitio viaja con Caddy dentro.
     name: Docker (verifica que las imagenes construyan)
     runs-on: ubuntu-latest
     steps:
@@ -121,9 +127,10 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          # Misma version que Render usa para construir (NODE_VERSION en
-          # render.yaml): si CI valida con otra, un fallo de version del
-          # CLI aparece recien en el deploy. Al subirla alla, subirla aqui.
+          # Misma version que usa frontend/Dockerfile para construir la
+          # imagen: si CI valida con otra, un fallo de version del CLI
+          # aparece recien en el deploy. Angular 22 exige 22.22.3,
+          # 24.15.0 o 26 — un 24.14.1 cumple ">=24" y el CLI lo rechaza.
           node-version: "24.15.0"
           cache: npm
           cache-dependency-path: frontend/package-lock.json

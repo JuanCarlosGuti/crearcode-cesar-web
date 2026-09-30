@@ -141,7 +141,7 @@ class SimuladorControllerIT {
 				conSesionAnonima(peticion("Tienda Ana", "tienda", "hola"), "sim-caido"), String.class);
 
 		assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
-		assertThat(respuesta.getBody()).contains("no-disponible");
+		assertThat(respuesta.getBody()).contains("proveedor-caido");
 	}
 
 }

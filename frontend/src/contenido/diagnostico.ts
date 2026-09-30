@@ -51,7 +51,10 @@ export const DIAGNOSTICO = {
   cierreTexto:
     '30 minutos con el fundador, sin costo y sin compromiso. Si no te sirve, te lo decimos.',
   ctaContacto: 'Agenda tu consulta gratuita',
-  ctaWhatsapp: 'WhatsApp',
+  // Antes decia solo "WhatsApp" y abria el mensaje generico de la
+  // Home: el lead llegaba sin ninguna senal de que venia del
+  // diagnostico (auditoria P1-3).
+  ctaWhatsapp: 'Recibe tus 3 oportunidades por WhatsApp',
   reiniciar: 'Volver a empezar',
   notaCorreo: 'Muy pronto: recibirlo por correo.',
   limiteAnonimo:
@@ -59,5 +62,7 @@ export const DIAGNOSTICO = {
   ctaCrearCuenta: 'Crear mi cuenta',
   limiteRegistrado: 'Ya usaste tus diagnósticos de hoy. Vuelve mañana y seguimos.',
   noDisponible:
-    'El asistente está descansando. Este intento no te descuenta diagnósticos. Si prefieres, escríbenos por WhatsApp y lo hacemos en persona.',
+    'El diagnóstico no está respondiendo en este momento. Este intento no te descuenta nada. Escríbenos por WhatsApp y lo hacemos en persona.',
+  cupoAgotado:
+    'Hoy ya se agotó el cupo de diagnósticos. Vuelve mañana o escríbenos por WhatsApp y lo hacemos en persona.',
 } as const;

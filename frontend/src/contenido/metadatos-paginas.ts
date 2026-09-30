@@ -5,8 +5,12 @@
  * objeto de contenido en vez de repetirla acá.
  */
 
+// El titulo no lleva el nombre de la empresa: Google ya lo anade en
+// el resultado, y con 60 caracteres de presupuesto pesa mas la ciudad
+// —que es por lo que busca un cliente local— que repetirlo
+// (auditoria del 28 sep 2026, P1-6e).
 export const METADATOS_HOME = {
-  titulo: 'Crear Code Cesar — Software a la medida e IA para pymes',
+  titulo: 'Software a la medida e IA para pymes | Valledupar',
   descripcion:
     'Desarrollo de software a la medida, automatización con inteligencia artificial y soluciones tecnológicas para pymes colombianas. Valledupar, Cesar — alcance nacional.',
 };
@@ -41,7 +45,7 @@ export const METADATOS_BLOG_LISTADO = {
 
 export const METADATOS_CONTACTO = {
   titulo: 'Contacto — Crear Code Cesar',
-  descripcion: 'Cuéntanos qué necesita tu negocio. Te contactamos pronto — sin compromiso.',
+  descripcion: 'Cuéntanos qué necesita tu negocio. Te respondemos el mismo día hábil — sin compromiso.',
 };
 
 export const METADATOS_REGISTRO = {

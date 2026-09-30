@@ -26,7 +26,7 @@
       <p class="hero__gancho">{{ home.gancho }}</p>
       <div class="cta-doble">
         <a routerLink="/contacto" class="boton boton-primario">Agenda tu consulta gratuita</a>
-        <app-whatsapp-cta [mensaje]="home.mensajeWhatsapp" etiqueta="Escríbenos por WhatsApp" />
+        <app-whatsapp-cta origen="home" [mensaje]="home.mensajeWhatsapp" etiqueta="Escríbenos por WhatsApp" />
       </div>
     </div>
     <aside class="hero__demo" aria-label="Demo de diseño con IA">
@@ -50,7 +50,7 @@
   </div>
 </section>
 
-<section class="contenedor seccion-servicios" aria-labelledby="titulo-servicios" aparecerAlVer>
+<section class="contenedor seccion-servicios" aria-labelledby="titulo-servicios" appAparecerAlVer>
   <span class="etiqueta-codigo" aria-hidden="true">01 — servicios</span>
   <h2 id="titulo-servicios">Nuestros servicios</h2>
   <div class="rejilla-servicios">
@@ -60,7 +60,7 @@
   </div>
 </section>
 
-<section class="seccion-herramientas" aria-labelledby="titulo-herramientas" aparecerAlVer>
+<section class="seccion-herramientas" aria-labelledby="titulo-herramientas" appAparecerAlVer>
   <div class="contenedor">
     <div class="seccion-herramientas__encabezado">
       <div>
@@ -82,7 +82,7 @@
   </div>
 </section>
 
-<section class="contenedor seccion-asistente" aria-labelledby="titulo-asistente" aparecerAlVer>
+<section class="contenedor seccion-asistente" aria-labelledby="titulo-asistente" appAparecerAlVer>
   <span class="etiqueta-codigo etiqueta-codigo--ia" aria-hidden="true">03 — asistente IA</span>
   <h2 id="titulo-asistente">{{ home.asistente.titulo }}</h2>
   <p class="seccion-asistente__texto">{{ home.asistente.texto }}</p>
@@ -96,7 +96,7 @@
   </div>
 </section>
 
-<section class="seccion-cuenta" aria-labelledby="titulo-cuenta" aparecerAlVer>
+<section class="seccion-cuenta" aria-labelledby="titulo-cuenta" appAparecerAlVer>
   <div class="contenedor">
     <span class="etiqueta-codigo" aria-hidden="true">04 — tu cuenta</span>
     <h2 id="titulo-cuenta">{{ beneficios.titulo }}</h2>
@@ -142,7 +142,7 @@
   </div>
 </section>
 
-<section class="contenedor seccion-destacados" aria-labelledby="titulo-destacados" aparecerAlVer>
+<section class="contenedor seccion-destacados" aria-labelledby="titulo-destacados" appAparecerAlVer>
   <h2 id="titulo-destacados" class="sr-only">Proyectos y quién está detrás</h2>
   <div class="rejilla-destacados">
     <article class="tarjeta-destacado">
@@ -160,14 +160,14 @@
   </div>
 </section>
 
-<section class="contenedor seccion-cierre" aparecerAlVer>
+<section class="contenedor seccion-cierre" appAparecerAlVer>
   <div class="tarjeta-cierre tarjeta-elevada">
     <span class="etiqueta-codigo" aria-hidden="true">$ agendar --consulta --gratis</span>
     <h2>{{ home.cierre.titulo }}</h2>
     <p>{{ home.cierre.texto }}</p>
     <div class="cta-doble cta-doble--centrado">
       <a routerLink="/contacto" class="boton boton-primario">Agenda tu consulta gratuita</a>
-      <app-whatsapp-cta [mensaje]="home.mensajeWhatsapp" etiqueta="Escríbenos por WhatsApp" />
+      <app-whatsapp-cta origen="home" [mensaje]="home.mensajeWhatsapp" etiqueta="Escríbenos por WhatsApp" />
     </div>
   </div>
 </section>

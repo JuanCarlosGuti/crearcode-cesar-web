@@ -35,6 +35,11 @@ class TokenDeUsuarioRepositorioJpaAdapter implements TokenDeUsuarioRepositorio {
 	}
 
 	@Override
+	public void eliminarDe(UsuarioId usuarioId) {
+		jpaRepository.deleteByUsuarioId(usuarioId.valor());
+	}
+
+	@Override
 	public long contarRecientes(UsuarioId usuarioId, PropositoDeToken proposito, Instant desde) {
 		return jpaRepository.countByUsuarioIdAndPropositoAndCreadoEnGreaterThanEqual(usuarioId.valor(), proposito,
 				desde);

@@ -3,7 +3,7 @@
     <h1>{{ datos.titulo }}</h1>
     <p class="herramientas-intro">{{ datos.intro }}</p>
 
-    <div class="herramientas-grilla" aparecerAlVer>
+    <div class="herramientas-grilla" appAparecerAlVer>
       @for (tarjeta of datos.tarjetas; track tarjeta.titulo) {
         <article class="herramienta-tarjeta tarjeta-elevada" [class.herramienta-tarjeta--inactiva]="!tarjeta.activa">
           <div class="herramienta-tarjeta__encabezado">
@@ -54,7 +54,7 @@
 
 <section class="seccion">
   <div class="contenedor">
-    <div class="herramientas-cuenta" aparecerAlVer>
+    <div class="herramientas-cuenta" appAparecerAlVer>
       <div>
         <h2>{{ datos.cuenta.titulo }}</h2>
         <p>{{ datos.cuenta.texto }}</p>

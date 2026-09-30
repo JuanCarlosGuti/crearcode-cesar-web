@@ -15,6 +15,7 @@ const SOLICITUD_NUEVA: Solicitud = {
   servicioDeInteres: 'OTRO',
   mensaje: 'Necesito ayuda con mi negocio.',
   estado: 'NUEVA',
+  aceptaComunicacionesComerciales: false,
   fechaCreacion: '2026-07-17T10:00:00Z',
   fechaUltimaActualizacion: '2026-07-17T10:00:00Z',
 };
@@ -120,4 +121,19 @@ describe('DetalleSolicitudPage', () => {
     expect(el.textContent).not.toContain('¿Confirmas');
     httpMock.expectNone('/api/solicitudes/11111111-1111-1111-1111-111111111111/estado');
   });
+
+  /**
+   * Sin esta linea el dato no sirve: la razon de guardar la
+   * autorizacion comercial aparte es saber a quien se le puede
+   * escribir (politica v2, §13).
+   */
+  it('dice si el lead autorizo comunicaciones comerciales', async () => {
+    const fixture = crearFixture(SOLICITUD_NUEVA.id);
+    await fixture.whenStable();
+    httpMock.expectOne('/api/solicitudes').flush([SOLICITUD_NUEVA]);
+    await fixture.whenStable();
+
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('No autorizadas');
+  });
+
 });

@@ -1,12 +1,22 @@
+<!-- Primer elemento enfocable de cada pagina: sin el, llegar al
+     contenido con teclado cuesta una docena de tabulaciones por el
+     header (auditoria 28 sep 2026, P2-5a). Invisible hasta que recibe
+     el foco. -->
+<a class="salto-al-contenido" href="#contenido">Saltar al contenido</a>
+
 @if (!esRutaAdmin()) {
   <app-header />
 }
 
-<main>
+<main id="contenido" tabindex="-1">
   <router-outlet />
 </main>
 
 @if (!esRutaAdmin()) {
   <app-footer />
   <app-chat-asistente />
+  <!-- Solo en movil: en escritorio el WhatsApp ya esta en el header,
+       el hero y el cierre (auditoria 28 sep 2026, P1-4). -->
+  <app-whatsapp-flotante />
+  <app-consentimiento-cookies />
 }

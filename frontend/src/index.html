@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <title>Crear Code Cesar — Desarrollo a la medida, IA y soluciones tecnológicas para pymes</title>
+  <title>Crear Code Cesar — Software a la medida e IA para pymes</title>
   <meta name="description" content="Desarrollo de software a la medida, automatización con inteligencia artificial y soluciones tecnológicas para pymes colombianas. Valledupar, Cesar — alcance nacional.">
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,9 +10,18 @@
   <link rel="icon" href="favicon.ico" sizes="any">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <meta name="theme-color" content="#071115">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <!--
+    Fuentes autoalojadas desde el 28 sep 2026 (P2-6): ya no hay
+    preconnect ni hoja de Google, porque no se pide nada a Google. Los
+    @font-face estan en styles.scss.
+
+    Se precargan las dos que pinta la primera pantalla —titulos y
+    texto—; la monoespaciada no, que solo aparece en detalles. Sin
+    crossorigin el navegador descarga la fuente DOS veces: las fuentes
+    viajan en modo anonimo aunque sean del mismo origen.
+  -->
+  <link rel="preload" href="fuentes/space-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fuentes/figtree-latin.woff2" as="font" type="font/woff2" crossorigin>
 </head>
 <body>
   <app-root></app-root>

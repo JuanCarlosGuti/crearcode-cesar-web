@@ -113,3 +113,21 @@ button[type='submit']:disabled {
 button[type='submit'] {
   align-self: flex-start;
 }
+
+// Bloque NAP al pie del formulario (auditoria P1-7). <address> no se
+// pone en cursiva por defecto en todos los navegadores: se fija.
+.pagina-contacto__datos {
+  margin-top: var(--espacio-5);
+  padding-top: var(--espacio-3);
+  border-top: 1px solid var(--color-borde);
+  font-style: normal;
+}
+
+.pagina-contacto__datos h2 {
+  font-size: 1.05rem;
+  margin-bottom: var(--espacio-2);
+}
+
+.pagina-contacto__razon-social {
+  font-weight: 600;
+}

@@ -21,6 +21,11 @@ class FakeSolicitudRepositorio implements SolicitudRepositorio {
 	}
 
 	@Override
+	public void eliminar(SolicitudId id) {
+		solicitudes.removeIf(solicitud -> solicitud.id().equals(id));
+	}
+
+	@Override
 	public Optional<SolicitudDeContacto> buscarPorId(SolicitudId id) {
 		return solicitudes.stream().filter(s -> s.id().equals(id)).findFirst();
 	}

@@ -3,10 +3,18 @@
   max-width: 42rem;
 }
 
-.pagina-legal__nota {
+.pagina-legal h2 {
   margin-top: var(--espacio-4);
-  padding: var(--espacio-2) var(--espacio-3);
-  background-color: color-mix(in srgb, var(--color-alerta) 12%, var(--color-superficie));
-  border-left: 4px solid var(--color-alerta);
+  font-size: 1.15rem;
+}
+
+// Antes esta era la clase del recuadro ambar que anunciaba "esto es un
+// borrador" en las dos paginas legales (auditoria P0-3). Ahora al pie
+// va lo que la propia politica prometia y no cumplia: version y fecha.
+.pagina-legal__vigencia {
+  margin-top: var(--espacio-4);
+  padding-top: var(--espacio-2);
+  border-top: 1px solid var(--color-borde);
   font-size: 0.9rem;
+  color: var(--color-texto-secundario);
 }

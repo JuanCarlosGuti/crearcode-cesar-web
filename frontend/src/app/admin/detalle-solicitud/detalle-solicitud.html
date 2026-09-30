@@ -23,6 +23,19 @@
       <dd>{{ s.servicioDeInteres }}</dd>
       <dt>Fecha</dt>
       <dd><time [attr.datetime]="s.fechaCreacion">{{ formatearFecha(s.fechaCreacion) }}</time></dd>
+      <!--
+        Sin esta linea el dato no sirve para nada: la razon de guardar
+        la autorizacion comercial aparte es saber a quien se le puede
+        escribir sin ir a revisar correos viejos (politica v2, §13).
+      -->
+      <dt>Comunicaciones comerciales</dt>
+      <dd>
+        {{
+          s.aceptaComunicacionesComerciales
+            ? 'Autorizadas — respeta los horarios de la Ley 2300'
+            : 'No autorizadas — solo puedes responder a su solicitud'
+        }}
+      </dd>
     </dl>
 
     <h2>Mensaje</h2>

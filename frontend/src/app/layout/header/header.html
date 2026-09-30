@@ -72,7 +72,7 @@
         <!-- Solo en el menu movil: en escritorio WhatsApp salio de la
              cabecera a proposito en F10e (sigue en hero, cierre y pie). -->
         <span class="cabecera__whatsapp">
-          <app-whatsapp-cta [mensaje]="mensajeWhatsapp()" etiqueta="Escríbenos por WhatsApp" />
+          <app-whatsapp-cta origen="header" [mensaje]="mensajeWhatsapp()" etiqueta="Escríbenos por WhatsApp" />
         </span>
         @if (hidratado()) {
           @if (sesion.estaAutenticado()) {

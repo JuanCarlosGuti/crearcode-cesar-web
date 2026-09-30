@@ -56,8 +56,12 @@
               <a routerLink="/registro" class="boton boton-primario">{{ textos.ctaCrearCuenta }}</a>
             } @else if (codigo === 'limite-registrado') {
               <p>{{ textos.limiteRegistrado }}</p>
+            } @else if (codigo === 'limite-global') {
+              <p>{{ textos.cupoAgotado }}</p>
+              <app-whatsapp-cta origen="simulador" [mensaje]="mensajeWhatsapp" [etiqueta]="textos.ctaWhatsapp" />
             } @else {
               <p>{{ textos.noDisponible }}</p>
+              <app-whatsapp-cta origen="simulador" [mensaje]="mensajeWhatsapp" [etiqueta]="textos.ctaWhatsapp" />
             }
           </div>
         }

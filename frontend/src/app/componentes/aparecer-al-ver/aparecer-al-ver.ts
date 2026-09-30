@@ -9,7 +9,7 @@ import { Directive, ElementRef, OnDestroy, OnInit, PLATFORM_ID, inject } from '@
  * nunca se oculta nada que no se pueda revelar. Sin dependencias de
  * Zone (IntersectionObserver + clases CSS: seguro en zoneless).
  */
-@Directive({ selector: '[aparecerAlVer]' })
+@Directive({ selector: '[appAparecerAlVer]' })
 export class AparecerAlVer implements OnInit, OnDestroy {
   private readonly elemento = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly esNavegador = isPlatformBrowser(inject(PLATFORM_ID));

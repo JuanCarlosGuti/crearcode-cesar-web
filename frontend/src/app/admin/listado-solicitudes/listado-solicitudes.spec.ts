@@ -15,6 +15,7 @@ const SOLICITUD_EJEMPLO: Solicitud = {
   servicioDeInteres: 'OTRO',
   mensaje: 'Necesito ayuda.',
   estado: 'NUEVA',
+  aceptaComunicacionesComerciales: false,
   fechaCreacion: '2026-07-17T10:00:00Z',
   fechaUltimaActualizacion: '2026-07-17T10:00:00Z',
 };

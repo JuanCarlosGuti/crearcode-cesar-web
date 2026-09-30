@@ -1,7 +1,6 @@
 package com.crearcode.leads.aplicacion;
 
 import java.time.Clock;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,12 +61,7 @@ class GenerarDemoDeDisenoUseCaseImpl implements GenerarDemoDeDisenoUseCase {
 
 	private final GeneradorDeRespuestas generadorTexto;
 	private final GeneradorDeImagenes generadorImagenes;
-	private final Clock reloj;
-	private final int limiteGlobalDiario;
-	private final int limiteDiarioRegistrado;
-
-	private final ContadorDiario contadorGlobal = new ContadorDiario();
-	private final ContadorDiario contadorPorIdentidad = new ContadorDiario();
+	private final CupoDeIa cupo;
 
 	GenerarDemoDeDisenoUseCaseImpl(GeneradorDeRespuestas generadorTexto, GeneradorDeImagenes generadorImagenes,
 			Clock reloj,
@@ -75,9 +69,10 @@ class GenerarDemoDeDisenoUseCaseImpl implements GenerarDemoDeDisenoUseCase {
 			@Value("${app.demo.limite-diario-registrado}") int limiteDiarioRegistrado) {
 		this.generadorTexto = generadorTexto;
 		this.generadorImagenes = generadorImagenes;
-		this.reloj = reloj;
-		this.limiteGlobalDiario = limiteGlobalDiario;
-		this.limiteDiarioRegistrado = limiteDiarioRegistrado;
+		// Sin cupo anonimo: el demo corta antes con
+		// DemoSoloParaRegistradosException, asi que ese limite no se
+		// alcanza nunca.
+		this.cupo = new CupoDeIa(reloj, limiteGlobalDiario, limiteDiarioRegistrado, 0, 0);
 	}
 
 	@Override
@@ -85,20 +80,7 @@ class GenerarDemoDeDisenoUseCaseImpl implements GenerarDemoDeDisenoUseCase {
 		if (!identidad.registrada()) {
 			throw new DemoSoloParaRegistradosException();
 		}
-		LocalDate hoy = LocalDate.now(reloj);
-
-		// Reserva atomica antes de llamar; se devuelve si no se usa (ver
-		// ContadorDiario.reservar y ResponderAlVisitanteUseCaseImpl).
-		if (contadorGlobal.reservar(hoy, "global") > limiteGlobalDiario) {
-			contadorGlobal.liberar(hoy, "global");
-			throw new LimiteGlobalAlcanzadoException();
-		}
-		if (contadorPorIdentidad.reservar(hoy, identidad.clave()) > limiteDiarioRegistrado) {
-			contadorPorIdentidad.liberar(hoy, identidad.clave());
-			contadorGlobal.liberar(hoy, "global");
-			throw new LimiteDeUsoAlcanzadoException(true);
-		}
-		try {
+		return cupo.ejecutar(identidad, () -> {
 			String contexto = PLANTILLA_TEXTO.formatted(solicitud.sector(), solicitud.queHace(),
 					solicitud.queNecesita());
 			ConversacionDeAsistente conversacion = new ConversacionDeAsistente(
@@ -107,19 +89,21 @@ class GenerarDemoDeDisenoUseCaseImpl implements GenerarDemoDeDisenoUseCase {
 			RespuestaDelAsistente respuesta = generadorTexto.responder(contexto, conversacion);
 			PropuestaParseada propuesta = parsear(respuesta.texto());
 
-			ImagenGenerada imagen = generadorImagenes.generar(descripcionDeImagen(solicitud, propuesta.titulo()));
+			ImagenGenerada imagen = generadorImagenes.generar(descripcionDeImagen(propuesta.titulo()));
 			return new BocetoDeDemo(propuesta.titulo(), propuesta.funcionalidades(), imagen);
-		} catch (RuntimeException fallo) {
-			contadorPorIdentidad.liberar(hoy, identidad.clave());
-			contadorGlobal.liberar(hoy, "global");
-			throw fallo;
-		}
+		});
 	}
 
 	/**
 	 * Las instrucciones van en inglés (los modelos de imagen rinden
-	 * bastante mejor) y los datos del negocio se injertan tal como los
-	 * escribió el visitante. Se pide una pantalla LLENA de elementos: la
+	 * bastante mejor). Lo único que se manda del negocio es el título
+	 * que generó el modelo de texto, nunca lo que escribió el cliente:
+	 * el proveedor de imágenes recibe la descripción DENTRO DE LA URL
+	 * —el path es justo lo que termina en los logs de acceso de medio
+	 * internet— y en producción el respaldo es Pollinations, un
+	 * servicio gratuito sin contrato ni acuerdo de tratamiento de datos
+	 * (auditoría del 28 sep 2026, P1-8c). El título ya dice de qué va
+	 * el negocio sin repetir sus palabras. Se pide una pantalla LLENA de elementos: la
 	 * versión anterior pedía "una sola pantalla" y "sin texto largo", y
 	 * eso producía mockups casi vacíos (verificado contra Cloudflare
 	 * Workers AI el 10 ago 2026). Para que no dibuje cifras de dinero
@@ -129,14 +113,14 @@ class GenerarDemoDeDisenoUseCaseImpl implements GenerarDemoDeDisenoUseCase {
 	 * difusión ignoran las negaciones, y nombrar "prices" aunque sea
 	 * para negarlo terminaba induciendo columnas con signos de peso.
 	 */
-	private static String descripcionDeImagen(SolicitudDeDemo solicitud, String titulo) {
-		return ("UI design mockup of a web app screen: %s. Business sector: %s. Key need: %s. "
+	private static String descripcionDeImagen(String titulo) {
+		return ("UI design mockup of a web app screen: %s. "
 				+ "Modern clean interface showing a top navigation bar, a sidebar with menu items, "
 				+ "content cards with short placeholder text, and a list where each row shows a person "
 				+ "name, a colored status badge and a time. A primary action button. Professional SaaS "
 				+ "dashboard style, sober colors, soft shadows, flat design, straight front view, "
 				+ "full screen filled with interface elements.")
-				.formatted(titulo, solicitud.sector(), solicitud.queNecesita());
+				.formatted(titulo);
 	}
 
 	private static PropuestaParseada parsear(String texto) {

@@ -29,6 +29,7 @@ describe('SolicitudesApi', () => {
       servicioDeInteres: 'OTRO',
       mensaje: 'Necesito ayuda.',
       aceptaConsentimiento: true,
+      aceptaComunicacionesComerciales: false,
       sitioWeb: '',
     };
 

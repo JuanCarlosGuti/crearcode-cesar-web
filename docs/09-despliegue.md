@@ -622,6 +622,76 @@ disponibilidad externo**. Ambas cosas tienen que estar antes de que el
 sitio salga al mercado, porque a partir de ahí hay datos personales de
 terceros y una política de tratamiento publicada.
 
+## 10. Copias de seguridad de PostgreSQL — PROPUESTA, sin instalar
+
+Hoy **no hay ninguna copia de seguridad** de la base de datos, para
+ningún proyecto del servidor. No duele mientras los datos sean de
+prueba; deja de ser aceptable en cuanto haya un cliente real, y por eso
+la política de datos v2 **no menciona** los respaldos: prometer lo que
+no se hace es peor que no tenerlo.
+
+Esto es una propuesta para que el usuario la ejecute en el servidor.
+**No está instalada** — nada de este repositorio la crea ni la
+programa.
+
+### El script
+
+En el servidor, como `deploy`, en `/home/deploy/bin/respaldo-postgres.sh`:
+
+```bash
+#!/usr/bin/env bash
+# Copia diaria del PostgreSQL compartido. Un volcado por base, con la
+# fecha en el nombre, comprimido, y borrado de lo que pase de 30 dias.
+set -euo pipefail
+
+DESTINO=/home/deploy/respaldos
+RETENCION_DIAS=30
+FECHA=$(date +%Y-%m-%d)
+
+mkdir -p "$DESTINO"
+
+for BASE in crearcodecesar uparya; do
+  # --clean --if-exists: el volcado se puede restaurar sobre una base
+  # que ya existe, que es el caso real de una restauracion.
+  docker exec postgres pg_dump --clean --if-exists -U postgres "$BASE"     | gzip > "$DESTINO/$BASE-$FECHA.sql.gz"
+done
+
+find "$DESTINO" -name '*.sql.gz' -mtime +$RETENCION_DIAS -delete
+```
+
+### Programarlo
+
+```
+chmod +x /home/deploy/bin/respaldo-postgres.sh
+crontab -e
+# 3:00 a. m., media hora antes de la retencion de datos de la app:
+0 3 * * * /home/deploy/bin/respaldo-postgres.sh >> /home/deploy/respaldos/respaldo.log 2>&1
+```
+
+### Lo que falta para que esto sirva de algo
+
+Un respaldo **en el mismo servidor no es un respaldo**: si se pierde la
+máquina, se pierden los dos. Hay que copiarlos fuera. La cuenta de
+Cloudflare R2 que ya existe para UparYa sirve; con `rclone`:
+
+```
+rclone sync /home/deploy/respaldos r2:respaldos-crearcode --max-age 35d
+```
+
+Y falta lo que casi nadie hace: **probar una restauración**. Un
+respaldo que nunca se restauró es una suposición, no una copia de
+seguridad. Una vez, contra una base vacía:
+
+```
+gunzip -c crearcodecesar-2026-09-28.sql.gz | docker exec -i postgres psql -U postgres -d prueba_restauracion
+```
+
+### Cuando esté hecho
+
+Añadir a la sección 12 de la política de datos
+(`contenido/legales.ts`) la línea de copias de seguridad, que hoy está
+deliberadamente fuera.
+
 ## Fuentes consultadas (jul 2026)
 
 - [Render Pricing](https://render.com/pricing)

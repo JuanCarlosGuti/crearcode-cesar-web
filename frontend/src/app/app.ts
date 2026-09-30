@@ -1,16 +1,19 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, effect, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
 
 import { ChatAsistente } from './componentes/chat-asistente/chat-asistente';
+import { ConsentimientoCookies } from './componentes/consentimiento-cookies/consentimiento-cookies';
+import { WhatsappFlotante } from './componentes/whatsapp-flotante/whatsapp-flotante';
 import { Footer } from './layout/footer/footer';
 import { Header } from './layout/header/header';
+import { Analitica } from './nucleo/analitica';
 import { establecerDatosEstructuradosDeLaEmpresa } from './nucleo/datos-estructurados';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Header, Footer, ChatAsistente],
+  imports: [RouterOutlet, Header, Footer, ChatAsistente, WhatsappFlotante, ConsentimientoCookies],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
@@ -29,9 +32,16 @@ export class App {
   // contenido mas (ver ADR-08 en docs/02-arquitectura.md).
   protected readonly esRutaAdmin = computed(() => this.urlActual().startsWith('/admin'));
 
+  private readonly analitica = inject(Analitica);
+
   constructor() {
     // Datos de la empresa para buscadores, una vez por documento: se
     // hornean en el prerender de las 20 paginas publicas.
     establecerDatosEstructuradosDeLaEmpresa();
+
+    // En una SPA el navegador solo carga la pagina una vez: sin esto
+    // solo se mediria la de entrada y todo el recorrido posterior
+    // quedaria invisible.
+    effect(() => this.analitica.paginaVista(this.urlActual()));
   }
 }

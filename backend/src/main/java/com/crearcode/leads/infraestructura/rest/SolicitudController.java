@@ -62,7 +62,9 @@ class SolicitudController {
 		DatosDeContacto datos = new DatosDeContacto(request.nombre(), request.empresa(),
 				new Correo(request.correo()), new Telefono(request.telefono()));
 		ConsentimientoDatos consentimiento = new ConsentimientoDatos(
-				request.aceptaConsentimiento(), Instant.now(reloj), versionPoliticaVigente);
+				request.aceptaConsentimiento(), Instant.now(reloj), versionPoliticaVigente,
+				// Ausente = no autorizó (ver SolicitudRequest).
+				Boolean.TRUE.equals(request.aceptaComunicacionesComerciales()));
 
 		SolicitudId id = registrarSolicitudUseCase.registrar(
 				datos, request.servicioDeInteres(), request.mensaje(), consentimiento);

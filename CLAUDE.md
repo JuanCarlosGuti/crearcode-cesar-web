@@ -146,6 +146,7 @@ Detalle completo, diagrama y ADRs en
 | [08-contenido.md](docs/08-contenido.md) | Todos los textos del sitio en borrador |
 | [09-despliegue.md](docs/09-despliegue.md) | Opciones de hosting y dominio comparadas con costos, recomendación, checklist técnico pendiente (fase F7) |
 | [10-vision-v2.md](docs/10-vision-v2.md) | Visión v2 / Etapa 3 (fases F8-F11): cuentas de cliente, asistente IA (Groq), demo de diseño, gestión interna — pendiente de aprobación explícita |
+| [11-datos-personales.md](docs/11-datos-personales.md) | Evaluación de impacto de las herramientas de IA (Circular 002 de 2024 de la SIC) y procedimiento para consultas, reclamos e incidentes |
 
 ## Checklist de fases (Etapa 2 — actualizar a medida que avance)
 
@@ -597,8 +598,10 @@ Dos detalles que conviene no perder:
 
 Verificado sobre la imagen de producción: Lighthouse **97-98/100/100/100**
 (igual que antes del rediseño), axe sin violaciones en 12 páginas, 242
-specs en verde y sin desborde a 375 ni 1280 px. **Falta el OK del
-usuario y los e2e completos con backend** antes de fusionar a master.
+specs en verde y sin desborde a 375 ni 1280 px. **Fusionado a master y
+en producción** — comprobado el 29 sep 2026: `rediseno-tech` es
+ancestro de `master` y el HTML del dominio sirve el fondo `#071115` y
+Space Grotesk.
 
 ## Cotizaciones (fase F11)
 
@@ -634,7 +637,8 @@ adentro, en pesos enteros.
   **901941017-0**, Calle 4B # 20-36, Oficina 303, Barrio Callejas,
   Valledupar. **Pendiente**: si la empresa es responsable de IVA — ese
   dato está en el RUT de la DIAN, no en el certificado de Cámara —, la
-  validez por defecto (hoy 15 días) y las condiciones de pago del pie.
+  y las condiciones de pago del pie. La validez ya está decidida: 15
+  días (29 sep 2026).
 
 ## SEO, rendimiento y accesibilidad (tras la fase F6)
 
@@ -716,10 +720,8 @@ procedimiento del corte en §9.
   comprueba que la primera respuesta de cada ruta traiga la página
   correcta. Corre en CI sobre la imagen recién construida y sirve igual
   contra el dominio.
-- **Pendiente (ISS-082)**: comprar el dominio, decidir registrador
-  (ver [docs/09-despliegue.md](docs/09-despliegue.md) §4, sin
-  decisión todavía), y el visto bueno explícito del usuario para
-  publicar de verdad.
+- ~~Pendiente (ISS-082)~~: **cerrado**. El dominio se compró el 10 ago
+  2026 (ADR-11) y el sitio está publicado desde el 27 jul 2026.
 
 ## Decisiones ya resueltas por el usuario
 
@@ -741,6 +743,11 @@ procedimiento del corte en §9.
   cotizar sin él y descubrirlo después obliga a pedirle al cliente un
   19% extra sobre algo que ya aceptó. Se baja por cotización o con
   `COTIZACIONES_IMPUESTO` si el contador confirma que no aplica.
+- **Validez de las cotizaciones: 15 días** (29 sep 2026). Es cuánto
+  tiempo se sostiene un precio ya cotizado: más corto protege de que
+  suban los costos, más largo le da aire a un cliente que consulta con
+  su socio o espera el cierre de mes. Se cambia con
+  `COTIZACIONES_DIAS_VALIDEZ` sin tocar código.
 - LinkedIn del fundador: https://www.linkedin.com/in/juan-carlos-gutierrez-huerfano369582/
 - Paleta del sitio: nació como **Opción C, "Minimal Corporativo"**
   (clara) y desde el **rediseño tech del 28 sep 2026 es oscura** —
@@ -783,15 +790,34 @@ pendiente del corte:
   No duele mientras los datos sean de prueba; tienen que estar antes de
   salir al mercado.
 
-**De la auditoría integral del 28 sep 2026** (ISS-161 a ISS-178 en
-[docs/05-backlog-issues.md](docs/05-backlog-issues.md)): lo técnico ya
-está hecho — asistente restaurado, cupos atómicos, cabeceras, 404,
-SEO, aviso de privacidad. Lo que espera al usuario, en orden de
-impacto: la **política de datos definitiva** (hoy dice "borrador" en
-público), **analítica** (no se mide nada), la **prueba de ISS-136**
-que destraba bajar el rate limit de 600, los **números del cotizador**
-por tipo de proyecto, y las decisiones de producto (header, hero,
+**De la auditoría integral del 28 sep 2026** (ISS-161 a ISS-197 en
+[docs/05-backlog-issues.md](docs/05-backlog-issues.md)): el listado
+priorizado completo (P0 a P3) está implementado en la rama
+`fix/auditoria-sep-2026`, **sin desplegar y sin el OK del usuario**.
+De 48 sub-hallazgos verificados contra el código, 10 ya estaban hechos
+en la primera tanda, 1 no aplicaba y el resto se corrigió allí.
+
+Lo que sigue esperando al usuario, en orden de impacto: **revisión
+legal** de la política de datos (el texto ya está completo y marcado
+`REVISAR CON ABOGADO`), los **ids de GA4 y Clarity** (la analítica está
+construida pero apagada mientras `contenido/analitica.ts` esté vacío),
+la **prueba de ISS-136** que destraba bajar el rate limit de 600, las
+**doce cifras del cotizador** (la estructura ya distingue tipo y
+alcance; los números llevan `TODO dueño`), pasar la **CSP** de
+Report-Only a firme, y las decisiones de producto (header, hero,
 landings por sector, calendario).
+
+La **política de datos v2** que aportó el usuario está publicada en
+`contenido/legales.ts`, con las promesas que hace ya cumplidas en
+código: casilla comercial separada, botón de eliminar cuenta y
+retención automática a 24 meses. La evaluación de impacto de IA y el
+procedimiento de derechos están en
+[docs/11-datos-personales.md](docs/11-datos-personales.md).
+
+Sigue sin hacerse, y es lo más urgente de lo que queda: **las copias de
+seguridad de PostgreSQL**. El script está propuesto en
+[docs/09](docs/09-despliegue.md) §10 pero sin instalar, y por eso la
+política deliberadamente **no** promete respaldos.
 
 **Decisiones del usuario**:
 
@@ -799,13 +825,16 @@ landings por sector, calendario).
   defecto, porque una S.A.S. es persona jurídica y por regla general
   responsable. Confirmar con el contador (casilla 53 del RUT) y, si no
   aplica, bajarlo con `COTIZACIONES_IMPUESTO`.
-- **Validez por defecto** (hoy 15 días) y condiciones comerciales del
-  pie del PDF (anticipo, forma de pago).
+- **Condiciones comerciales del pie del PDF**: anticipo, forma de pago
+  y qué pasa con los cambios de alcance a mitad del proyecto. Hoy el
+  pie solo aclara que el documento es una cotización y no una factura,
+  así que esas condiciones se explican a mano por WhatsApp y no quedan
+  en el documento que el cliente guarda. **Lo tiene que redactar el
+  usuario**: es un compromiso comercial, y si se inventa y no es lo que
+  cobra, el problema lo tiene con el primer cliente que lo lea.
 - **Revisar el eslogan del hero** ("Tecnología que trabaja para tu
   negocio, no al revés.") — pendiente desde el 29 jul 2026. Sigue
   siendo el titular del rediseño, ahora con "no al revés" resaltado.
-- **Aprobar el rediseño tech** de la rama `rediseno-tech` para
-  fusionarlo a master.
 - **Una foto real del fundador** para `/sobre-nosotros`: es lo único
   inventado que queda en esa página, y hoy simplemente no hay imagen.
   Cuadrada o 4:5, mínimo 800×800 px. Una horizontal de la misma sesión

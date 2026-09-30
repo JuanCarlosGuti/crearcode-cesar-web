@@ -33,4 +33,9 @@ class UsuarioRepositorioJpaAdapter implements UsuarioRepositorio {
 		return jpaRepository.findById(id.valor()).map(UsuarioMapper::aDominio);
 	}
 
+	@Override
+	public void eliminar(UsuarioId id) {
+		jpaRepository.deleteById(id.valor());
+	}
+
 }

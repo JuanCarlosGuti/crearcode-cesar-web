@@ -1,0 +1,43 @@
+// Solo en movil: en escritorio el WhatsApp ya esta en el header, el
+// hero y el cierre, y un boton flotante mas seria ruido. El corte es
+// el mismo que usa el header para plegarse en hamburguesa (60rem): con
+// 768px la franja entre 768 y 960 se quedaba en modo movil y sin
+// boton.
+:host {
+  position: fixed;
+  right: var(--espacio-3);
+  // Apilado encima de la burbuja del asistente, que ocupa fija esta
+  // misma esquina: su alto (3.5rem) mas el hueco entre las dos.
+  bottom: calc(var(--espacio-3) + 3.5rem + var(--espacio-2));
+  // Por debajo de la burbuja (50) para que el panel del chat, al
+  // abrirse, lo tape en vez de pelearse con el.
+  z-index: 49;
+}
+
+@media (min-width: 60rem) {
+  :host {
+    display: none;
+  }
+}
+
+.whatsapp-flotante {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 999px;
+  background-color: var(--color-whatsapp);
+  color: var(--color-blanco);
+  box-shadow: var(--sombra-3);
+  transition: transform var(--transicion-estandar);
+}
+
+.whatsapp-flotante:hover {
+  transform: translateY(-2px);
+}
+
+.whatsapp-flotante:focus-visible {
+  outline: 3px solid var(--color-acento);
+  outline-offset: 2px;
+}

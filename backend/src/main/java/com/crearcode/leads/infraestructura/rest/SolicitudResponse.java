@@ -17,6 +17,13 @@ record SolicitudResponse(
 		ServicioDeInteres servicioDeInteres,
 		String mensaje,
 		EstadoSolicitud estado,
+		/**
+		 * Si el lead autorizó recibir comunicaciones comerciales. Se
+		 * expone porque sin verlo el dato no sirve de nada: la razón de
+		 * guardarlo aparte es saber a quién se le puede escribir sin
+		 * revisar correos viejos (política v2, §13).
+		 */
+		boolean aceptaComunicacionesComerciales,
 		Instant fechaCreacion,
 		Instant fechaUltimaActualizacion) {
 
@@ -31,6 +38,7 @@ record SolicitudResponse(
 				solicitud.servicioDeInteres(),
 				solicitud.mensaje(),
 				solicitud.estado(),
+				solicitud.consentimiento().comunicacionesComerciales(),
 				solicitud.fechaCreacion(),
 				solicitud.fechaUltimaActualizacion());
 	}

@@ -78,7 +78,7 @@
             </ul>
             <div class="demo-ctas">
               <a routerLink="/contacto" class="boton boton-primario">{{ textos.resultado.ctaHazloRealidad }}</a>
-              <app-whatsapp-cta [mensaje]="mensajeWhatsapp" [etiqueta]="textos.resultado.ctaWhatsapp" />
+              <app-whatsapp-cta origen="demo-diseno" [mensaje]="mensajeWhatsapp" [etiqueta]="textos.resultado.ctaWhatsapp" />
               @if (!variacionUsada()) {
                 <button type="button" class="demo-variacion" (click)="pedirVariacion()">
                   {{ textos.resultado.ctaVariacion }}
@@ -97,11 +97,15 @@
       <div class="demo-aviso" role="alert">
         @if (codigo === 'limite') {
           <p>{{ textos.limite }}</p>
+        } @else if (codigo === 'limite-global') {
+          <p>{{ textos.cupoAgotado }}</p>
+          <app-whatsapp-cta origen="demo-diseno" [mensaje]="mensajeWhatsapp" etiqueta="WhatsApp" />
         } @else {
           <p>{{ textos.noDisponible }}</p>
           <button type="button" class="boton boton-primario demo-reintentar" (click)="reintentar()">
             {{ textos.reintentar }}
           </button>
+          <app-whatsapp-cta origen="demo-diseno" [mensaje]="mensajeWhatsapp" etiqueta="WhatsApp" />
         }
         <button type="button" class="demo-reiniciar" (click)="reiniciar()">
           {{ textos.volverAEmpezar }}

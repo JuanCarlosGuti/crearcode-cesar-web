@@ -3,12 +3,21 @@ import { isPlatformBrowser } from '@angular/common';
 import { Component, PLATFORM_ID, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+import { mensajeWhatsappParaRuta } from '../../layout/mensaje-whatsapp-por-ruta';
+import { Analitica } from '../../nucleo/analitica';
+import { WhatsappCta } from '../whatsapp-cta/whatsapp-cta';
+
 import { SIMULADOR } from '../../../contenido/simulador';
 import { MensajeEnviado } from '../../api/asistente-api';
 import { SimuladorApi } from '../../api/simulador-api';
 import { AVISO_IA } from '../../../contenido/legales';
 
-type ErrorDeSimulador = 'limite-anonimo' | 'limite-registrado' | 'no-disponible' | null;
+type ErrorDeSimulador =
+  | 'limite-anonimo'
+  | 'limite-registrado'
+  | 'limite-global'
+  | 'no-disponible'
+  | null;
 
 const CLAVE_SESION_ANONIMA = 'crearcode-asistente-sesion';
 const MAXIMO_MENSAJES_ENVIADOS = 20;
@@ -23,12 +32,16 @@ const MAXIMO_MENSAJES_ENVIADOS = 20;
   selector: 'app-simulador-chatbot',
   templateUrl: './simulador-chatbot.html',
   styleUrl: './simulador-chatbot.scss',
-  imports: [RouterLink],
+  imports: [RouterLink, WhatsappCta],
 })
 export class SimuladorChatbot {
   // Aviso de privacidad de la IA (auditoria 28 sep 2026, §11).
   protected readonly avisoIa = AVISO_IA;
+  // La salida humana cuando el simulador no responde: el texto ya la
+  // invitaba, pero no habia enlace donde pulsar (auditoria P0-1d).
+  protected readonly mensajeWhatsapp = mensajeWhatsappParaRuta('/herramientas');
   private readonly api = inject(SimuladorApi);
+  private readonly analitica = inject(Analitica);
   private readonly esNavegador = isPlatformBrowser(inject(PLATFORM_ID));
 
   protected readonly textos = SIMULADOR;
@@ -85,7 +98,9 @@ export class SimuladorChatbot {
       },
       error: (error: unknown) => {
         this.enviando.set(false);
-        this.error.set(this.codigoDesde(error));
+        const codigo = this.codigoDesde(error);
+        this.error.set(codigo);
+        this.analitica.registrar('ai_error', { herramienta: 'simulador', codigo: codigo ?? 'desconocido' });
       },
     });
   }
@@ -93,7 +108,7 @@ export class SimuladorChatbot {
   private codigoDesde(error: unknown): ErrorDeSimulador {
     if (error instanceof HttpErrorResponse) {
       const codigo = (error.error as { codigo?: string } | null)?.codigo;
-      if (codigo === 'limite-anonimo' || codigo === 'limite-registrado') {
+      if (codigo === 'limite-anonimo' || codigo === 'limite-registrado' || codigo === 'limite-global') {
         return codigo;
       }
     }

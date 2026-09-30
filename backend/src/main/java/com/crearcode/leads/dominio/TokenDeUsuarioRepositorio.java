@@ -26,4 +26,12 @@ public interface TokenDeUsuarioRepositorio {
 	 */
 	long contarRecientes(UsuarioId usuarioId, PropositoDeToken proposito, Instant desde);
 
+	/**
+	 * Borra todos los tokens de un usuario. Se usa al eliminar la
+	 * cuenta: un token de recuperación vivo apuntando a un usuario que
+	 * ya no existe es basura en la tabla y una sorpresa esperando a que
+	 * alguien la encuentre.
+	 */
+	void eliminarDe(UsuarioId usuarioId);
+
 }

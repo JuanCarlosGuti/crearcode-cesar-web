@@ -3,6 +3,7 @@ import { provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 
+import { EMPRESA } from '../../../contenido/empresa';
 import { ContactoPage } from './contacto';
 
 function escribir(elemento: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement, valor: string): void {
@@ -33,6 +34,150 @@ describe('ContactoPage', () => {
       providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
     });
     httpMock = TestBed.inject(HttpTestingController);
+  });
+
+  /**
+   * El NAP (nombre, direccion, telefono) solo estaba en el pie y en el
+   * PDF de cotizaciones: es lo que Google cruza para el resultado
+   * local y lo que un cliente mira para saber que hay una empresa real
+   * detras (auditoria del 28 sep 2026, P1-7).
+   */
+  /**
+   * La politica v2 (§13) promete que las finalidades comerciales tienen
+   * su propia casilla. Si fuera obligatoria o viniera marcada, la
+   * autorizacion se estaria obteniendo a cambio de responder una
+   * solicitud, que es lo que la Ley 2300 no permite.
+   */
+  it('la casilla comercial es opcional, separada y no viene marcada', async () => {
+    const fixture = TestBed.createComponent(ContactoPage);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+
+    const comercial = el.querySelector('#aceptaComunicacionesComerciales') as HTMLInputElement;
+    const obligatoria = el.querySelector('#aceptaConsentimiento') as HTMLInputElement;
+    expect(comercial).not.toBe(obligatoria);
+    expect(comercial.checked).toBe(false);
+
+    // Sin marcarla, el formulario se envia igual.
+    llenarFormularioValido(el);
+    (el.querySelector('form') as HTMLFormElement).dispatchEvent(new Event('submit'));
+    await fixture.whenStable();
+
+    const peticion = httpMock.expectOne('/api/solicitudes');
+    expect(peticion.request.body.aceptaComunicacionesComerciales).toBe(false);
+    peticion.flush({ id: 'x' });
+  });
+
+  it('marcar la casilla comercial viaja como autorizacion aparte', async () => {
+    const fixture = TestBed.createComponent(ContactoPage);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+
+    llenarFormularioValido(el);
+    const comercial = el.querySelector('#aceptaComunicacionesComerciales') as HTMLInputElement;
+    comercial.checked = true;
+    comercial.dispatchEvent(new Event('input'));
+    (el.querySelector('form') as HTMLFormElement).dispatchEvent(new Event('submit'));
+    await fixture.whenStable();
+
+    const peticion = httpMock.expectOne('/api/solicitudes');
+    expect(peticion.request.body.aceptaComunicacionesComerciales).toBe(true);
+    expect(peticion.request.body.aceptaConsentimiento).toBe(true);
+    peticion.flush({ id: 'x' });
+  });
+
+  it('muestra el NIT, la direccion y los contactos en la propia pagina', async () => {
+    const fixture = TestBed.createComponent(ContactoPage);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+
+    const datos = el.querySelector('.pagina-contacto__datos') as HTMLElement;
+    expect(datos.textContent).toContain(EMPRESA.nit);
+    expect(datos.textContent).toContain(EMPRESA.direccion);
+    expect(datos.querySelector(`a[href="mailto:${EMPRESA.correo}"]`)).not.toBeNull();
+    expect(datos.querySelector('a[href^="https://wa.me/"]')).not.toBeNull();
+  });
+
+  /**
+   * Un nombre de solo espacios pasaba el required de Angular, viajaba
+   * al backend y volvia como 400 generico: el visitante veia "algo
+   * salio mal" sin saber que campo arreglar (auditoria P2-2b).
+   */
+  it('un nombre de solo espacios no llega a salir', async () => {
+    const fixture = TestBed.createComponent(ContactoPage);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+
+    llenarFormularioValido(el);
+    escribir(el.querySelector('#nombre') as HTMLInputElement, '     ');
+    (el.querySelector('form') as HTMLFormElement).dispatchEvent(new Event('submit'));
+    await fixture.whenStable();
+
+    httpMock.expectNone('/api/solicitudes');
+  });
+
+  it('los campos declaran el mismo maximo que el dominio del backend', async () => {
+    const fixture = TestBed.createComponent(ContactoPage);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+
+    expect((el.querySelector('#nombre') as HTMLInputElement).maxLength).toBe(120);
+    expect((el.querySelector('#empresa') as HTMLInputElement).maxLength).toBe(120);
+    expect((el.querySelector('#correo') as HTMLInputElement).maxLength).toBe(254);
+  });
+
+  /**
+   * El backend contesta 400 con un {mensaje} que dice exactamente que
+   * esta mal; el formulario lo tiraba y mostraba su texto generico.
+   */
+  it('un 400 del backend muestra el motivo real, no el error generico', async () => {
+    const fixture = TestBed.createComponent(ContactoPage);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+
+    llenarFormularioValido(el);
+    (el.querySelector('form') as HTMLFormElement).dispatchEvent(new Event('submit'));
+    await fixture.whenStable();
+
+    httpMock
+      .expectOne('/api/solicitudes')
+      .flush({ mensaje: 'El teléfono no tiene un formato válido' }, { status: 400, statusText: 'Bad Request' });
+    await fixture.whenStable();
+
+    const error = el.querySelector('.pagina-contacto__error') as HTMLElement;
+    expect(error.textContent).toContain('El teléfono no tiene un formato válido');
+  });
+
+  it('un fallo sin mensaje del servidor sigue mostrando el texto generico', async () => {
+    const fixture = TestBed.createComponent(ContactoPage);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+
+    llenarFormularioValido(el);
+    (el.querySelector('form') as HTMLFormElement).dispatchEvent(new Event('submit'));
+    await fixture.whenStable();
+
+    httpMock.expectOne('/api/solicitudes').flush('boom', { status: 500, statusText: 'Server Error' });
+    await fixture.whenStable();
+
+    const error = el.querySelector('.pagina-contacto__error') as HTMLElement;
+    expect(error.textContent).toContain('Algo salió mal');
+  });
+
+  /**
+   * El foco estaba cableado al checkbox de consentimiento, que ademas
+   * es el ultimo campo: al enviar un formulario vacio saltaba al final
+   * (auditoria P2-2d).
+   */
+  it('al enviar con errores el foco va al primer campo invalido', async () => {
+    const fixture = TestBed.createComponent(ContactoPage);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+
+    (el.querySelector('form') as HTMLFormElement).dispatchEvent(new Event('submit'));
+    await fixture.whenStable();
+
+    expect(document.activeElement).toBe(el.querySelector('#nombre'));
   });
 
   it('muestra todos los campos obligatorios con su label asociado', async () => {
@@ -230,6 +375,7 @@ describe('ContactoPage', () => {
       servicioDeInteres: 'OTRO',
       mensaje: 'Necesito ayuda con mi negocio.',
       aceptaConsentimiento: true,
+      aceptaComunicacionesComerciales: false,
       sitioWeb: '',
     });
     solicitud.flush({ id: '11111111-1111-1111-1111-111111111111' });

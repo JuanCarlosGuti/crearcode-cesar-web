@@ -3,32 +3,35 @@ package com.crearcode.leads.aplicacion;
 import java.time.Clock;
 import java.time.Instant;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.crearcode.leads.dominio.ConsentimientoDatos;
 import com.crearcode.leads.dominio.DatosDeContacto;
-import com.crearcode.leads.dominio.NotificadorPort;
 import com.crearcode.leads.dominio.RegistrarSolicitudUseCase;
 import com.crearcode.leads.dominio.ServicioDeInteres;
 import com.crearcode.leads.dominio.SolicitudDeContacto;
 import com.crearcode.leads.dominio.SolicitudId;
 import com.crearcode.leads.dominio.SolicitudRepositorio;
 
+/**
+ * Registra el lead del formulario de contacto (HU-18). El aviso por
+ * correo NO se manda aqui: se publica un evento que se despacha
+ * despues del commit y fuera de esta peticion (ver
+ * {@link SolicitudRegistrada}), para que un SMTP lento no tenga al
+ * visitante mirando «Enviando…» por un correo que no es suyo.
+ */
 @Service
 class RegistrarSolicitudUseCaseImpl implements RegistrarSolicitudUseCase {
 
-	private static final Logger LOG = LoggerFactory.getLogger(RegistrarSolicitudUseCaseImpl.class);
-
 	private final SolicitudRepositorio repositorio;
-	private final NotificadorPort notificador;
+	private final ApplicationEventPublisher eventos;
 	private final Clock reloj;
 
-	RegistrarSolicitudUseCaseImpl(SolicitudRepositorio repositorio, NotificadorPort notificador, Clock reloj) {
+	RegistrarSolicitudUseCaseImpl(SolicitudRepositorio repositorio, ApplicationEventPublisher eventos, Clock reloj) {
 		this.repositorio = repositorio;
-		this.notificador = notificador;
+		this.eventos = eventos;
 		this.reloj = reloj;
 	}
 
@@ -40,19 +43,9 @@ class RegistrarSolicitudUseCaseImpl implements RegistrarSolicitudUseCase {
 				datosDeContacto, servicioDeInteres, mensaje, consentimiento, Instant.now(reloj));
 
 		repositorio.guardar(solicitud);
-		notificar(solicitud);
+		eventos.publishEvent(new SolicitudRegistrada(solicitud));
 
 		return solicitud.id();
-	}
-
-	private void notificar(SolicitudDeContacto solicitud) {
-		try {
-			notificador.notificarNuevaSolicitud(solicitud);
-		} catch (RuntimeException excepcion) {
-			// La notificación es best-effort: su fallo no debe revertir el
-			// registro ya persistido (ver HU-18, caso triste).
-			LOG.warn("No se pudo notificar la solicitud {}", solicitud.id(), excepcion);
-		}
 	}
 
 }

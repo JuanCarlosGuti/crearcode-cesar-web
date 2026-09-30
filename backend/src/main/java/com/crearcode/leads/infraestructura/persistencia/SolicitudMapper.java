@@ -29,6 +29,7 @@ final class SolicitudMapper {
 				consentimiento.aceptado(),
 				consentimiento.fechaAceptacion(),
 				consentimiento.versionPoliticaAceptada(),
+				consentimiento.comunicacionesComerciales(),
 				solicitud.fechaCreacion(),
 				solicitud.fechaUltimaActualizacion());
 	}
@@ -43,7 +44,8 @@ final class SolicitudMapper {
 		ConsentimientoDatos consentimiento = new ConsentimientoDatos(
 				entidad.isConsentimientoAceptado(),
 				entidad.getConsentimientoFechaAceptacion(),
-				entidad.getConsentimientoVersionPolitica());
+				entidad.getConsentimientoVersionPolitica(),
+				entidad.isConsentimientoComunicacionesComerciales());
 
 		return SolicitudDeContacto.reconstruir(
 				new SolicitudId(entidad.getId()),

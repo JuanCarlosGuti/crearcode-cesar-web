@@ -36,7 +36,9 @@ export const DEMO_DISENO = {
   limite:
     'Usaste tus bocetos de hoy. Se reinician mañana a la medianoche — los límites existen para que la herramienta siga siendo gratis.',
   noDisponible:
-    'El asistente está descansando. No perdiste ningún boceto: puedes intentarlo otra vez en un minuto o escribirnos por WhatsApp.',
+    'El generador no está respondiendo en este momento. No perdiste ningún boceto: puedes intentarlo otra vez en un minuto o escribirnos por WhatsApp.',
+  cupoAgotado:
+    'Hoy ya se agotó el cupo de bocetos. Vuelve mañana o escríbenos por WhatsApp y lo diseñamos contigo.',
   reintentar: 'Intentar de nuevo',
   volverAEmpezar: 'Volver a empezar',
 } as const;

@@ -114,6 +114,20 @@ describe('SimuladorChatbot (F10b, HU-40)', () => {
     expect(el.textContent).toContain('No perdiste ningún mensaje');
     expect(el.textContent).toContain('hola');
   });
+  it('cuando el proveedor se cae ofrece un enlace de WhatsApp, no solo la invitacion escrita (P0-1d)', async () => {
+    const { fixture, el } = await crear();
+    await prepararNegocioYEnviar(fixture, 'hola');
+
+    httpMock.expectOne('/api/asistente/simulador').flush('error', {
+      status: 503,
+      statusText: 'Service Unavailable',
+    });
+    await fixture.whenStable();
+
+    const aviso = el.querySelector('.simulador-aviso') as HTMLElement;
+    expect(aviso.querySelector('a[href^="https://wa.me/"]')).not.toBeNull();
+  });
+
   it('avisa que el texto se procesa con un proveedor de IA externo y no admite datos de clientes (auditoria §11)', async () => {
     const { el } = await crear();
     expect(el.textContent).toContain(AVISO_IA);

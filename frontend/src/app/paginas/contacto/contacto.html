@@ -4,21 +4,25 @@
   @if (enviado()) {
     <div class="pagina-contacto__confirmacion" role="status">
       <p>
-        ¡Listo! Ya recibimos tu mensaje. Te contactamos muy pronto — mientras tanto, si prefieres hablar ya,
+        ¡Listo! Ya recibimos tu mensaje. Te respondemos el mismo día hábil — mientras tanto, si prefieres hablar ya,
         escríbenos por WhatsApp.
       </p>
-      <app-whatsapp-cta [mensaje]="mensajeWhatsapp" />
+      <app-whatsapp-cta origen="contacto" [mensaje]="mensajeWhatsapp" />
     </div>
   } @else {
-    <p>Cuéntanos qué necesitas. Te respondemos pronto y sin compromiso.</p>
+    <p>Cuéntanos qué necesitas. Te respondemos el mismo día hábil, sin compromiso.</p>
 
     @if (errorEnvio()) {
       <div class="pagina-contacto__error" role="alert">
-        <p>
-          Algo salió mal al enviar tu mensaje. Tus datos no se perdieron: inténtalo de nuevo, o escríbenos directo
-          por WhatsApp.
-        </p>
-        <app-whatsapp-cta [mensaje]="mensajeWhatsapp" />
+        @if (motivoDelError(); as motivo) {
+          <p>{{ motivo }} Corrígelo y vuelve a enviar — tus datos no se perdieron.</p>
+        } @else {
+          <p>
+            Algo salió mal al enviar tu mensaje. Tus datos no se perdieron: inténtalo de nuevo, o escríbenos
+            directo por WhatsApp.
+          </p>
+        }
+        <app-whatsapp-cta origen="contacto" [mensaje]="mensajeWhatsapp" />
       </div>
     }
 
@@ -123,13 +127,28 @@
         "
       />
       <label for="aceptaConsentimiento">
-        He leído y acepto la <a routerLink="/legales/politica-de-datos">Política de tratamiento de datos</a>
+        {{ textoConsentimiento }}
+        <a routerLink="/legales/politica-de-datos">Ver la política de tratamiento de datos</a>
       </label>
       @if (formulario.aceptaConsentimiento().touched() && formulario.aceptaConsentimiento().invalid()) {
         <p class="campo__error" id="consentimiento-error">
           {{ formulario.aceptaConsentimiento().errors()[0]?.message }}
         </p>
       }
+    </div>
+
+    <!--
+      Casilla OPCIONAL y separada: la politica v2 (§13) promete que las
+      finalidades comerciales tienen la suya. Sin required ni
+      aria-invalid — no marcarla es una respuesta valida.
+    -->
+    <div class="campo campo--checkbox">
+      <input
+        id="aceptaComunicacionesComerciales"
+        type="checkbox"
+        [formField]="formulario.aceptaComunicacionesComerciales"
+      />
+      <label for="aceptaComunicacionesComerciales">{{ textoConsentimientoComercial }}</label>
     </div>
 
     <div class="campo-honeypot" aria-hidden="true">
@@ -149,4 +168,22 @@
       </button>
     </form>
   }
+
+  <!--
+    NAP (nombre, direccion, telefono) visible en la pagina donde se
+    busca: hasta la auditoria del 28 sep 2026 solo estaba en el pie y
+    en el PDF de cotizaciones. Es lo que Google cruza para el resultado
+    local, y lo que un cliente mira para saber que hay una empresa real
+    detras (P1-7).
+  -->
+  <address class="pagina-contacto__datos">
+    <h2>Dónde estamos</h2>
+    <p class="pagina-contacto__razon-social">{{ empresa.razonSocial }} — NIT {{ empresa.nit }}</p>
+    <p>{{ empresa.direccion }}<br />{{ empresa.ciudad }}</p>
+    <p>
+      <a [href]="urlCorreo">{{ empresa.correo }}</a>
+      <br />
+      <a [href]="urlWhatsappNumero()">{{ empresa.whatsappNumero }}</a>
+    </p>
+  </address>
 </section>

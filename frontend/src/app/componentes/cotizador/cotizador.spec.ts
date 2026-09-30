@@ -39,18 +39,51 @@ describe('Cotizador (wizard de 3 pasos, HU-39)', () => {
     expect(el.textContent).toContain('2 de 3');
   });
 
-  it('al completar los 3 pasos muestra el rango segun el alcance y el resumen', async () => {
+  it('al completar los 3 pasos muestra el rango del tipo y alcance elegidos, y el resumen', async () => {
     const { fixture, el } = await crear();
     await elegir(fixture, 'Automatización con IA');
     await elegir(fixture, 'Varias funciones conectadas');
     await elegir(fixture, 'En 4 a 8 semanas');
 
-    expect(el.textContent).toContain('COP 9 – 25 millones');
+    expect(el.textContent).toContain(
+      COTIZADOR.rangosPorTipoYAlcance['Automatización con IA']['Varias funciones conectadas'],
+    );
     expect(el.textContent).toContain('a la medida');
     const resumen = el.querySelector('.cotizador-resumen')!.textContent!;
     expect(resumen).toContain('Automatización con IA');
     expect(resumen).toContain('Varias funciones conectadas');
     expect(resumen).toContain('En 4 a 8 semanas');
+  });
+
+  /**
+   * Antes el rango salia solo del alcance: las 36 combinaciones del
+   * wizard daban 3 resultados y una pagina web arrancaba en el mismo
+   * piso que un sistema a la medida (auditoria P1-2a).
+   */
+  it('cambiar solo el tipo de proyecto cambia el rango', async () => {
+    const { fixture, el } = await crear();
+    await elegir(fixture, 'Página web o tienda en línea');
+    await elegir(fixture, 'Algo puntual, una sola función');
+    await elegir(fixture, 'En 4 a 8 semanas');
+    const conWeb = el.querySelector('.cotizador-rango')!.textContent;
+
+    const segundo = await crear();
+    await elegir(segundo.fixture, 'Sistema interno a la medida');
+    await elegir(segundo.fixture, 'Algo puntual, una sola función');
+    await elegir(segundo.fixture, 'En 4 a 8 semanas');
+
+    expect(segundo.el.querySelector('.cotizador-rango')!.textContent).not.toBe(conWeb);
+  });
+
+  it('la urgencia deja su nota en el resultado', async () => {
+    const { fixture, el } = await crear();
+    await elegir(fixture, 'Automatización con IA');
+    await elegir(fixture, 'Varias funciones conectadas');
+    await elegir(fixture, 'Lo antes posible');
+
+    expect(el.querySelector('.cotizador-nota-urgencia')!.textContent).toContain(
+      COTIZADOR.notaPorUrgencia['Lo antes posible'],
+    );
   });
 
   it('el resultado ofrece contacto y WhatsApp con la seleccion prellenada', async () => {

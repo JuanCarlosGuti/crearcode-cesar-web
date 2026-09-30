@@ -2,6 +2,7 @@ import { Component, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { CASOS } from '../../../contenido/casos';
+import { establecerDatosEstructuradosDePagina } from '../../nucleo/datos-estructurados';
 import { establecerMetadatosDePagina } from '../../nucleo/metadatos-pagina';
 
 @Component({
@@ -22,5 +23,12 @@ export class CasoDetallePage {
         ? { titulo: `${c.titulo} — Crear Code Cesar`, descripcion: c.metaDescripcion, ruta: `/casos/${c.slug}` }
         : undefined;
     });
+
+    establecerDatosEstructuradosDePagina(() => ({
+      migas: [
+        { nombre: 'Inicio', ruta: '/' },
+        { nombre: 'Proyectos', ruta: '/casos' },
+      ],
+    }));
   }
 }

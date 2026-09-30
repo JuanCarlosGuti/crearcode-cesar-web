@@ -11,6 +11,14 @@ export interface MetadatosDePagina {
   ruta: string;
   /** Ruta relativa de una imagen Open Graph propia; si no se da, se usa {@link IMAGEN_OG_DEFECTO}. */
   imagen?: string;
+  /**
+   * Tipo Open Graph. Por defecto `website`; los articulos del blog
+   * declaran `article` — se anunciaban como sitio, y con eso pierden
+   * la fecha y el autor en la tarjeta (auditoria del 28 sep 2026).
+   */
+  tipo?: 'website' | 'article';
+  /** Fecha ISO de publicacion; solo tiene sentido con `tipo: 'article'`. */
+  publicadoEn?: string;
 }
 
 /**
@@ -32,7 +40,7 @@ export function establecerMetadatosDePagina(datos: () => MetadatosDePagina | und
 
     title.setTitle(valores.titulo);
     meta.updateTag({ name: 'description', content: valores.descripcion });
-    meta.updateTag({ property: 'og:type', content: 'website' });
+    meta.updateTag({ property: 'og:type', content: valores.tipo ?? 'website' });
     meta.updateTag({ property: 'og:title', content: valores.titulo });
     meta.updateTag({ property: 'og:description', content: valores.descripcion });
     meta.updateTag({ property: 'og:url', content: `${BASE_URL}${valores.ruta}` });
@@ -47,6 +55,10 @@ export function establecerMetadatosDePagina(datos: () => MetadatosDePagina | und
     meta.updateTag({ name: 'twitter:title', content: valores.titulo });
     meta.updateTag({ name: 'twitter:description', content: valores.descripcion });
     meta.updateTag({ name: 'twitter:image', content: imagen });
+    if (valores.tipo === 'article' && valores.publicadoEn) {
+      meta.updateTag({ property: 'article:published_time', content: valores.publicadoEn });
+      meta.updateTag({ property: 'article:author', content: 'Crear Code Cesar S.A.S.' });
+    }
 
     // Canonical (ADR-11): Meta de Angular solo maneja <meta>, así que el
     // <link rel="canonical"> se crea/actualiza directo en el documento.

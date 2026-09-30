@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 
 import { DIAGNOSTICO } from '../../../contenido/diagnostico';
 import { mensajeWhatsappParaRuta } from '../../layout/mensaje-whatsapp-por-ruta';
+import { Analitica } from '../../nucleo/analitica';
 import {
   DiagnosticoApi,
   InformeDeDiagnostico,
@@ -13,7 +14,12 @@ import {
 import { WhatsappCta } from '../whatsapp-cta/whatsapp-cta';
 import { AVISO_IA } from '../../../contenido/legales';
 
-type ErrorDeDiagnostico = 'limite-anonimo' | 'limite-registrado' | 'no-disponible' | null;
+type ErrorDeDiagnostico =
+  | 'limite-anonimo'
+  | 'limite-registrado'
+  | 'limite-global'
+  | 'no-disponible'
+  | null;
 
 const CLAVE_SESION_ANONIMA = 'crearcode-asistente-sesion';
 
@@ -33,6 +39,7 @@ export class DiagnosticoDigital {
   // Aviso de privacidad de la IA (auditoria 28 sep 2026, §11).
   protected readonly avisoIa = AVISO_IA;
   private readonly api = inject(DiagnosticoApi);
+  private readonly analitica = inject(Analitica);
   private readonly esNavegador = isPlatformBrowser(inject(PLATFORM_ID));
 
   protected readonly textos = DIAGNOSTICO;
@@ -43,6 +50,27 @@ export class DiagnosticoDigital {
   protected readonly analizando = signal(false);
   protected readonly informe = signal<InformeDeDiagnostico | null>(null);
   protected readonly error = signal<ErrorDeDiagnostico>(null);
+
+  /**
+   * Mensaje de WhatsApp del cierre: lleva los titulos de las tres
+   * oportunidades. Antes abria el generico de la Home y el vendedor
+   * recibia un "quiero saber mas" sin saber que la persona acababa de
+   * hacer el diagnostico ni que le salio (auditoria P1-3). Solo los
+   * titulos: los detalles y beneficios harian un ?text= larguisimo que
+   * WhatsApp muestra truncado.
+   */
+  protected readonly mensajeWhatsappDelCierre = computed(() => {
+    const informe = this.informe();
+    if (!informe) {
+      return this.mensajeWhatsapp;
+    }
+    const titulos = informe.oportunidades.map((oportunidad) => `- ${oportunidad.titulo}`).join('\n');
+    return (
+      'Hola, acabo de hacer el diagnóstico digital en el sitio. Mis tres oportunidades fueron:\n' +
+      titulos +
+      '\n\n¿Cuál me conviene primero?'
+    );
+  });
 
   protected readonly enQuiz = computed(
     () => this.informe() === null && !this.analizando() && this.error() === null,
@@ -89,10 +117,13 @@ export class DiagnosticoDigital {
       next: (informe) => {
         this.analizando.set(false);
         this.informe.set(informe);
+        this.analitica.registrar('tool_complete', { herramienta: 'diagnostico' });
       },
       error: (error: unknown) => {
         this.analizando.set(false);
-        this.error.set(this.codigoDesde(error));
+        const codigo = this.codigoDesde(error);
+        this.error.set(codigo);
+        this.analitica.registrar('ai_error', { herramienta: 'diagnostico', codigo: codigo ?? 'desconocido' });
       },
     });
   }
@@ -100,7 +131,7 @@ export class DiagnosticoDigital {
   private codigoDesde(error: unknown): ErrorDeDiagnostico {
     if (error instanceof HttpErrorResponse) {
       const codigo = (error.error as { codigo?: string } | null)?.codigo;
-      if (codigo === 'limite-anonimo' || codigo === 'limite-registrado') {
+      if (codigo === 'limite-anonimo' || codigo === 'limite-registrado' || codigo === 'limite-global') {
         return codigo;
       }
     }

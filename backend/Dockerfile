@@ -21,5 +21,14 @@ WORKDIR /app
 
 COPY --from=build /app/target/*.jar app.jar
 
+# Usuario sin privilegios: por omision el proceso corre como root
+# dentro del contenedor, asi que cualquier ejecucion de codigo lo hace
+# con todo el poder en ese espacio de nombres — y este proceso tiene a
+# mano la base de datos y los secretos del entorno. No cuesta nada: el
+# jar solo necesita leerse a si mismo y escuchar en 8080, que no es
+# privilegiado (auditoria del 28 sep 2026, P3-b).
+RUN addgroup -S app && adduser -S app -G app && chown -R app:app /app
+USER app
+
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]

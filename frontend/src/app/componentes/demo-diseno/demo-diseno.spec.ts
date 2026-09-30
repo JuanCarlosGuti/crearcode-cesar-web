@@ -149,6 +149,20 @@ describe('DemoDiseno (F10d, HU-42)', () => {
     expect(el.textContent).toContain('No perdiste ningún boceto');
     expect(el.querySelector('.demo-reintentar')).toBeTruthy();
   });
+  it('cuando el proveedor se cae ofrece un enlace de WhatsApp, no solo el boton de reintentar (P0-1d)', async () => {
+    iniciarSesionFake();
+    const { fixture, el } = await crear();
+    await llenarYGenerar(fixture);
+    httpMock.expectOne('/api/asistente/demo-diseno').flush('error', {
+      status: 503,
+      statusText: 'Service Unavailable',
+    });
+    await fixture.whenStable();
+
+    const aviso = el.querySelector('.demo-aviso') as HTMLElement;
+    expect(aviso?.querySelector('a[href^="https://wa.me/"]')).not.toBeNull();
+  });
+
   it('avisa que el texto se procesa con un proveedor de IA externo y no admite datos de clientes (auditoria §11)', async () => {
     const { el } = await crear();
     expect(el.textContent).toContain(AVISO_IA);

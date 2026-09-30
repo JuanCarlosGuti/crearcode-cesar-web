@@ -165,14 +165,14 @@ class AsistenteControllerIT {
 	}
 
 	@Test
-	void siElProveedorFallaElVisitanteRecibe503ConElCodigoNoDisponible() {
+	void siElProveedorFallaElVisitanteRecibe503ConElCodigoDeProveedorCaido() {
 		statusDelStub.set(500);
 
 		ResponseEntity<String> respuesta = restTemplate.postForEntity("/api/asistente/mensajes",
 				conSesionAnonima(conversacion("hola"), "sesion-caida"), String.class);
 
 		assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE);
-		assertThat(respuesta.getBody()).contains("no-disponible");
+		assertThat(respuesta.getBody()).contains("proveedor-caido");
 	}
 
 	/**

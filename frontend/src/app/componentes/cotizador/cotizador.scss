@@ -125,3 +125,10 @@
   text-underline-offset: 3px;
   padding: 0.25rem;
 }
+
+// Nota de urgencia: hasta la auditoria del 28 sep 2026 la respuesta
+// de "para cuando lo necesitas" no cambiaba nada en pantalla.
+.cotizador-nota-urgencia {
+  font-size: 0.9rem;
+  color: var(--color-texto-secundario);
+}

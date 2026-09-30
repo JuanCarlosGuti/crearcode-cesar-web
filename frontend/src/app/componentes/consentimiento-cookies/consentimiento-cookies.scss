@@ -1,0 +1,46 @@
+// Abajo y ancho completo, no encima del contenido: el banner pregunta,
+// no bloquea. Se queda por debajo de la burbuja del asistente (50) y
+// del botón flotante (49) en z-index, pero les deja sitio con su
+// propio ancho maximo en escritorio.
+.consentimiento {
+  position: fixed;
+  left: var(--espacio-3);
+  right: var(--espacio-3);
+  bottom: var(--espacio-3);
+  z-index: 48;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-3);
+  max-width: 56rem;
+  margin-inline: auto;
+  padding: var(--espacio-3);
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-borde);
+  box-shadow: var(--sombra-3);
+}
+
+.consentimiento__texto {
+  flex: 1 1 18rem;
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-texto-secundario);
+}
+
+// Las dos opciones pesan lo mismo a proposito: un "Rechazar" escondido
+// o disfrazado de enlace no es un consentimiento libre.
+.consentimiento__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-2);
+}
+
+// En movil el banner comparte esquina con los dos botones flotantes:
+// se sube por encima de los dos para no taparlos.
+@media (max-width: 60rem) {
+  .consentimiento {
+    bottom: calc(var(--espacio-3) + 7rem);
+  }
+}

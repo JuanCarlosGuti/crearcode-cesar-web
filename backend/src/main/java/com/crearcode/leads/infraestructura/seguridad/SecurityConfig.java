@@ -50,6 +50,9 @@ class SecurityConfig {
 						// quien entra a cada recurso.
 						.requestMatchers("/api/cotizaciones/**").hasRole("ADMIN")
 						.requestMatchers("/api/mis-cotizaciones/**").authenticated()
+						// Borrar la propia cuenta: solo autenticado, y el caso de
+						// uso toma el correo del token, no de la peticion.
+						.requestMatchers(HttpMethod.DELETE, "/api/mi-cuenta").authenticated()
 						// Endpoints de cuenta uno a uno, sin comodín
 						// /api/auth/**: un endpoint nuevo bajo /api/auth
 						// no queda público por accidente.

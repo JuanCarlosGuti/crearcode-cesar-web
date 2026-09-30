@@ -24,7 +24,10 @@ export const SIMULADOR = {
   ctaCrearCuenta: 'Crear mi cuenta',
   limiteRegistrado: 'Ya usaste tus mensajes de hoy. Vuelve mañana y seguimos la conversación.',
   noDisponible:
-    'El asistente está descansando. No perdiste ningún mensaje ni te descuenta intentos. Si prefieres, escríbenos por WhatsApp y te contamos cómo sería tu bot.',
+    'El simulador no está respondiendo en este momento. No perdiste ningún mensaje ni te descuenta intentos. Escríbenos por WhatsApp y te contamos cómo sería tu bot.',
+  ctaWhatsapp: 'Escríbenos por WhatsApp',
+  cupoAgotado:
+    'Hoy ya se agotó el cupo del simulador. Vuelve mañana o escríbenos por WhatsApp y te contamos cómo sería tu bot.',
   notaDemo:
     'El demo usa respuestas de ejemplo. Un chatbot real se entrena con tu catálogo, horarios y forma de atender.',
   notaIa: 'Te responde una IA, no una persona.',

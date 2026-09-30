@@ -4,7 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { AparecerAlVer } from './aparecer-al-ver';
 
 @Component({
-  template: '<section aparecerAlVer>Contenido</section>',
+  template: '<section appAparecerAlVer>Contenido</section>',
   imports: [AparecerAlVer],
 })
 class PaginaDePrueba {}

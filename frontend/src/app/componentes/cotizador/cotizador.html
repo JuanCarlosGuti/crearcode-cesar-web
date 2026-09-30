@@ -29,10 +29,13 @@
       <p class="cotizador-etiqueta">{{ textos.resultado.etiqueta }}</p>
       <p class="cotizador-rango">{{ rango() }}</p>
       <p class="cotizador-aclaracion">{{ textos.resultado.aclaracion }}</p>
+      @if (notaUrgencia(); as nota) {
+        <p class="cotizador-nota-urgencia">{{ nota }}</p>
+      }
       <p class="cotizador-resumen">{{ resumen() }}</p>
       <div class="cotizador-ctas">
         <a routerLink="/contacto" class="boton boton-primario">{{ textos.ctaContacto }}</a>
-        <app-whatsapp-cta [mensaje]="mensajeWhatsapp()" [etiqueta]="textos.ctaWhatsapp" />
+        <app-whatsapp-cta origen="cotizador" [mensaje]="mensajeWhatsapp()" [etiqueta]="textos.ctaWhatsapp" />
         <button type="button" class="cotizador-atras" (click)="retroceder()">{{ textos.atras }}</button>
         <button type="button" class="cotizador-reiniciar" (click)="reiniciar()">
           {{ textos.reiniciar }}
