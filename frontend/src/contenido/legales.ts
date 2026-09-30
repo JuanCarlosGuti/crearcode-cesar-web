@@ -70,9 +70,11 @@ export const VIGENTE_DESDE = '28 de septiembre de 2026';
  *    codigo. Ninguna entidad JPA las persiste (viven en la peticion) y
  *    el manejador de errores registra la causa tecnica sin el texto del
  *    visitante, con un IT que lo exige.
- * 4. Copias de seguridad: NO se publican. Todavia no existen, y una
- *    politica que promete lo que no se hace es peor que una incompleta.
- *    Se agrega la linea el dia que esten activas.
+ * 4. Copias de seguridad: NO se publican, por decision de Juan (30 sep
+ *    2026). Existen desde ese dia, pero la ley pide tener medidas de
+ *    seguridad, no publicarlas, y cada promesa escrita aqui se vuelve
+ *    una obligacion. Punto para el abogado: aclarar que los respaldos
+ *    guardan lo borrado hasta 30 dias.
  * 5. Plazo de 15 dias habiles para reportar incidentes a la SIC: se
  *    publica como compromiso; falta confirmar el plazo exacto.
  * 6. Pollinations: se mantiene como respaldo del demo y se declara. Ya

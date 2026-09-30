@@ -659,9 +659,11 @@ descargaron del bucket y se restauraron en otro Postgres aislado, con
 las filas idénticas a producción en las cuatro bases con datos. Es el
 escenario para el que existe esta copia.
 
-**Pendiente**: añadir la línea de respaldos a la sección 12 de la
-política de datos, que hasta hoy deliberadamente no la prometía. Es un
-cambio del texto legal publicado, así que va por su propio PR.
+**La política de datos no los menciona, y es a propósito** (decisión
+del usuario, 30 sep 2026): la ley pide tener medidas de seguridad, no
+publicarlas, y cada promesa escrita se vuelve una obligación. Queda un
+punto para el abogado: lo que se borra sigue en los respaldos hasta 30
+días.
 
 ## Fuentes consultadas (jul 2026)
 

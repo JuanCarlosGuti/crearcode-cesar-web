@@ -835,9 +835,9 @@ procedimiento de derechos están en
 
 Las **copias de seguridad de PostgreSQL** están activas desde el 30 sep
 2026, con copia fuera del servidor en Cloudflare R2 y restauración
-probada desde ella. La política todavía **no** promete respaldos: añadir
-esa línea a su sección 12 es un cambio del texto legal publicado y va por
-su propio PR.
+probada desde ella. La política **no** los menciona, por decisión del
+usuario: la ley pide tenerlos, no publicarlos. Punto para el abogado: lo
+que se borra sigue en los respaldos hasta 30 días.
 
 **Decisiones del usuario**:
 
