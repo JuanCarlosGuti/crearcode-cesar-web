@@ -533,16 +533,20 @@ de transiciones y `TransicionDeEstadoInvalidaException`.
 
 ## 5. Puertos
 
-**De entrada**: `CrearProyectoUseCase` (desde cotización aceptada o en
-blanco), `GestionarPlanDelProyectoUseCase` (fases y entregables),
-`CambiarEstadoDeEntregableUseCase`, `ResponderEntregableUseCase`
-(el cliente aprueba o pide ajustes), `RegistrarPagoUseCase`,
-`CambiarEstadoDeProyectoUseCase` (pausar, reanudar, cerrar),
-`ConsultarProyectosUseCase` (equipo: todos; cliente: los de su correo),
-`CerrarGarantiasVencidasUseCase` (lo dispara un programador diario,
-como la retención de datos).
+**De entrada** (consolidados al implementar ISS-208: el equipo hace
+unas quince operaciones, y quince interfaces no aclaraban nada):
+`CrearProyectoUseCase` (propone el plan desde la cotización, crea desde
+ella o en blanco), `GestionarProyectoUseCase` (todo lo del equipo: plan,
+estados, pagos, pausa y cierre), `ResponderEntregableUseCase` (el
+cliente aprueba o pide ajustes), `ConsultarProyectosUseCase` (equipo:
+todos; cliente: los de su correo) y `CerrarGarantiasVencidasUseCase`
+(lo dispara un programador diario, como la retención de datos).
 
-**De salida**: `ProyectoRepositorio`, `NotificadorDeProyectos` (al
+**De salida**: `ProyectoRepositorio` (con `buscarPorIdParaModificar`,
+que bloquea la fila del proyecto hasta el fin de la transacción: si el
+cliente aprueba mientras el equipo registra un pago, el segundo espera
+en vez de pisar el cambio del primero —probado con diez pagos
+simultáneos contra PostgreSQL—), `NotificadorDeProyectos` (al
 cliente: entregable en revisión y pago registrado; al equipo: el cliente
 aprobó o pidió ajustes).
 

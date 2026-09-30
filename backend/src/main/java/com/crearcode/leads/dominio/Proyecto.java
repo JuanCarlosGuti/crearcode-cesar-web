@@ -457,7 +457,7 @@ public final class Proyecto {
 	// --- Consultas ---
 
 	public boolean perteneceA(Correo correo) {
-		return correoDelCliente.equals(correo);
+		return correo != null && correoDelCliente.valor().equalsIgnoreCase(correo.valor());
 	}
 
 	public Fase fase(FaseId faseId) {

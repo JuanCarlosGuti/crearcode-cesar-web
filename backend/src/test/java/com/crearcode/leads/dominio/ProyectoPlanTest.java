@@ -42,6 +42,14 @@ class ProyectoPlanTest {
 		assertThat(proyecto.creadoEn()).isEqualTo(AHORA);
 	}
 
+	/** Mismo criterio que las cotizaciones (invariante 6 de F11). */
+	@Test
+	void elClienteSeReconoceSinImportarMayusculasEnSuCorreo() {
+		Proyecto proyecto = enBlancoConDosEntregables(IVA);
+
+		assertThat(proyecto.perteneceA(new Correo("CLIENTE@Ejemplo.co"))).isTrue();
+	}
+
 	@Test
 	void unProyectoNecesitaCorreoYNombreDelCliente() {
 		assertThatThrownBy(() -> Proyecto.enBlanco(null, "Café Valle", descripcion(), IVA, List.of(), AHORA))
