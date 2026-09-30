@@ -725,12 +725,12 @@ De los seis `[CONFIRMAR]` del documento:
 
 **Checklist del documento que sigue pendiente:**
 
-- [ ] **Copias de seguridad** de PostgreSQL. El script y el cron están
-  propuestos en [docs/09](09-despliegue.md) §10 pero **sin instalar**:
-  es una acción en el servidor. Mientras no existan, la sección 12 de
-  la política **no** las menciona. Falta además sacarlas del servidor
-  (una copia en la misma máquina no es una copia) y probar una
-  restauración.
+- [x] **Copias de seguridad** de PostgreSQL: activas desde el 30 sep
+  2026, todas las bases y sus roles, cada noche, 30 días. **Restauración
+  probada** en un Postgres limpio con filas idénticas a producción.
+- [ ] **Sacar las copias del servidor** (Cloudflare R2). Hasta entonces
+  la sección 12 de la política no las menciona: unas copias en la misma
+  máquina no protegen de perderla.
 - [ ] Borrar las **cuentas con 24 meses sin uso**, que la política
   también promete. La retención automática solo cubre solicitudes
   todavía: hace falta una fecha de último acceso en `usuarios`, que hoy

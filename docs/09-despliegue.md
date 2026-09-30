@@ -622,75 +622,33 @@ disponibilidad externo**. Ambas cosas tienen que estar antes de que el
 sitio salga al mercado, porque a partir de ahí hay datos personales de
 terceros y una política de tratamiento publicada.
 
-## 10. Copias de seguridad de PostgreSQL — PROPUESTA, sin instalar
+## 10. Copias de seguridad de PostgreSQL
 
-Hoy **no hay ninguna copia de seguridad** de la base de datos, para
-ningún proyecto del servidor. No duele mientras los datos sean de
-prueba; deja de ser aceptable en cuanto haya un cliente real, y por eso
-la política de datos v2 **no menciona** los respaldos: prometer lo que
-no se hace es peor que no tenerlo.
+**Activas desde el 30 sep 2026**, con restauración probada. Cada noche a
+las 3:00 a. m. se respaldan **todas** las bases del Postgres compartido
+—las de todos los proyectos del servidor, no solo esta— y sus roles.
 
-Esto es una propuesta para que el usuario la ejecute en el servidor.
-**No está instalada** — nada de este repositorio la crea ni la
-programa.
+El script y el procedimiento de restauración viven en el repo del
+servidor, no aquí, porque cubren a todas las apps:
+`infra-servidor/scripts/respaldo-postgres.sh` y
+`infra-servidor/RUNBOOK.md` §Respaldos.
 
-### El script
+Esta sección tenía antes una *propuesta* de script que nombraba las
+bases a mano (`crearcodecesar` y `uparya`). Al instalarlo resultó que
+el servidor tiene **cuatro**: se habría saltado las dos de Cesar Travel
+sin avisar. Por eso el script definitivo las descubre solas.
 
-En el servidor, como `deploy`, en `/home/deploy/bin/respaldo-postgres.sh`:
+**La restauración se probó de verdad**, no solo se configuró: en un
+Postgres nuevo y aislado (`--network none`) se cargaron los roles y las
+cuatro bases, y las filas coincidieron con producción tabla por tabla.
+Es el escenario real de un desastre —se perdió el servidor y se arranca
+uno limpio—, y prueba los roles, que es lo que casi siempre falla.
 
-```bash
-#!/usr/bin/env bash
-# Copia diaria del PostgreSQL compartido. Un volcado por base, con la
-# fecha en el nombre, comprimido, y borrado de lo que pase de 30 dias.
-set -euo pipefail
-
-DESTINO=/home/deploy/respaldos
-RETENCION_DIAS=30
-FECHA=$(date +%Y-%m-%d)
-
-mkdir -p "$DESTINO"
-
-for BASE in crearcodecesar uparya; do
-  # --clean --if-exists: el volcado se puede restaurar sobre una base
-  # que ya existe, que es el caso real de una restauracion.
-  docker exec postgres pg_dump --clean --if-exists -U postgres "$BASE"     | gzip > "$DESTINO/$BASE-$FECHA.sql.gz"
-done
-
-find "$DESTINO" -name '*.sql.gz' -mtime +$RETENCION_DIAS -delete
-```
-
-### Programarlo
-
-```
-chmod +x /home/deploy/bin/respaldo-postgres.sh
-crontab -e
-# 3:00 a. m., media hora antes de la retencion de datos de la app:
-0 3 * * * /home/deploy/bin/respaldo-postgres.sh >> /home/deploy/respaldos/respaldo.log 2>&1
-```
-
-### Lo que falta para que esto sirva de algo
-
-Un respaldo **en el mismo servidor no es un respaldo**: si se pierde la
-máquina, se pierden los dos. Hay que copiarlos fuera. La cuenta de
-Cloudflare R2 que ya existe para UparYa sirve; con `rclone`:
-
-```
-rclone sync /home/deploy/respaldos r2:respaldos-crearcode --max-age 35d
-```
-
-Y falta lo que casi nadie hace: **probar una restauración**. Un
-respaldo que nunca se restauró es una suposición, no una copia de
-seguridad. Una vez, contra una base vacía:
-
-```
-gunzip -c crearcodecesar-2026-09-28.sql.gz | docker exec -i postgres psql -U postgres -d prueba_restauracion
-```
-
-### Cuando esté hecho
-
-Añadir a la sección 12 de la política de datos
-(`contenido/legales.ts`) la línea de copias de seguridad, que hoy está
-deliberadamente fuera.
+**Pendiente: sacarlas del servidor.** Hoy viven en la misma máquina que
+la base. Protegen de un borrado, una migración mala o un bug que
+corrompe datos; **no** de perder el servidor. Falta copiarlas a
+Cloudflare R2. Cuando esté, se añade la línea de respaldos a la sección
+12 de la política de datos, que hoy deliberadamente no la promete.
 
 ## Fuentes consultadas (jul 2026)
 

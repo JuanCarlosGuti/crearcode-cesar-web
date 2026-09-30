@@ -145,9 +145,11 @@ colombianos, que son muchos.
 
 ### 2.4 Lo que todavía falta
 
-- [ ] **Copias de seguridad** del PostgreSQL fuera del servidor. Hasta
-      que existan, la sección 12 de la política **no** las menciona —
-      prometer un respaldo que no se hace es peor que no tenerlo.
+- [x] **Copias de seguridad** del PostgreSQL: activas desde el 30 sep
+      2026 y con restauración probada.
+- [ ] **Sacarlas del servidor**. Hasta entonces la sección 12 de la
+      política **no** las menciona: unas copias en la misma máquina no
+      protegen de perderla.
 - [ ] Confirmar con el abogado los tres puntos abiertos: el plazo de
       reporte de incidentes, los horarios de la Ley 2300 y los términos
       de API de Groq y Cloudflare.

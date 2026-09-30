@@ -785,10 +785,13 @@ pendiente del corte:
   `/api` desde un equipo y pedir el mismo desde otra red (datos
   móviles). Hasta hacerla, el límite por IP real está implementado pero
   no verificado.
-- **Copias de seguridad del PostgreSQL y un monitor de
-  disponibilidad**: hoy no existen para ningún proyecto del servidor.
-  No duele mientras los datos sean de prueba; tienen que estar antes de
-  salir al mercado.
+- **Copias de seguridad del PostgreSQL**: **activas desde el 30 sep
+  2026**, con restauración probada en un Postgres limpio. Cubren todas
+  las bases del servidor. **Falta sacarlas del servidor** (Cloudflare
+  R2): hoy no protegen de perder la máquina. Ver
+  [docs/09](docs/09-despliegue.md) §10.
+- **Monitor de disponibilidad**: no existe. Si un contenedor muere de
+  madrugada, nadie se entera.
 
 **De la auditoría integral del 28 sep 2026** (ISS-161 a ISS-197 en
 [docs/05-backlog-issues.md](docs/05-backlog-issues.md)): el listado
@@ -830,10 +833,11 @@ retención automática a 24 meses. La evaluación de impacto de IA y el
 procedimiento de derechos están en
 [docs/11-datos-personales.md](docs/11-datos-personales.md).
 
-Sigue sin hacerse, y es lo más urgente de lo que queda: **las copias de
-seguridad de PostgreSQL**. El script está propuesto en
-[docs/09](docs/09-despliegue.md) §10 pero sin instalar, y por eso la
-política deliberadamente **no** promete respaldos.
+Las **copias de seguridad de PostgreSQL** están activas desde el 30 sep
+2026 y la restauración está probada. Lo que falta es **sacarlas del
+servidor**; hasta entonces la política deliberadamente **no** promete
+respaldos, porque unas copias en la misma máquina no protegen de
+perderla.
 
 **Decisiones del usuario**:
 
