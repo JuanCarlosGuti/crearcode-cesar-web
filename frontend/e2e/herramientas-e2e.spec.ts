@@ -145,7 +145,13 @@ test('un visitante completa el cotizador y recibe su rango orientativo', async (
   await page.getByRole('button', { name: 'Varias funciones conectadas' }).click();
   await page.getByRole('button', { name: 'En 4 a 8 semanas' }).click();
 
-  await expect(page.getByText('COP 9 – 25 millones')).toBeVisible();
+  // La forma del rango y no una cifra concreta: las doce cifras del
+  // cotizador llevan un TODO del dueno y van a cambiar cuando las
+  // valide. Aqui se prueba lo que ve el visitante —que recibe un rango—;
+  // el valor exacto de cada combinacion lo verifican los specs unitarios
+  // contra contenido/cotizador.ts. Escribir la cifra aqui rompia esta
+  // prueba en cuanto el rango se movia (paso con la auditoria P1-2a).
+  await expect(page.locator('.cotizador-rango')).toHaveText(/^COP [\d,]+ – [\d,]+ millones$/);
   await expect(page.getByText('se cotiza a la medida')).toBeVisible();
 
   const whatsapp = page.locator('.cotizador-ctas a[href^="https://wa.me/"]');
