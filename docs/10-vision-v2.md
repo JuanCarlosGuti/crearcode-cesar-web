@@ -168,6 +168,37 @@ alrededor de la **cotización**, no del cobro.
 - **No incluye**: contabilidad, nómina electrónica, integración DIAN,
   gestión de proyectos (tareas, tiempos), pagos en línea.
 
+### F12 — Portal de proyectos del cliente ("Mi proyecto")
+
+**Pedida por el usuario el 30 sep 2026. PENDIENTE DE APROBACIÓN: no se
+escribe código hasta el OK explícito.** Es el paso siguiente del
+pipeline de F11: **cuando una cotización se acepta, nace un proyecto**,
+y el cliente ve desde su cuenta cómo avanza, fase por fase, y cómo van
+sus pagos. F11 dejó fuera la "gestión de proyectos"; F12 la introduce en
+su versión **para el cliente**, no un Jira interno.
+
+- **Qué ve el cliente** en `/mi-cuenta`: su proyecto como vista
+  principal (si tiene uno), con el avance en porcentaje, la línea de
+  tiempo de las fases (sprints), los entregables de cada fase con su
+  estado y su demo, y la tabla de pagos: valor, pagado, pendiente y
+  saldo. Recibe un correo cuando un entregable queda listo para revisar
+  y cuando se le registra un pago. Nada más: sin spam por cambios
+  menores.
+- **Qué hace el equipo** (rol `ADMIN`, decisión 19 sigue viva): crear
+  el proyecto desde la cotización aceptada (sus ítems se proponen como
+  borrador de entregables) o en blanco; gestionar fases, entregables y
+  sus estados; registrar pagos a mano; pausar, reanudar y cerrar.
+- **Móvil primero**: el cliente lo abre desde un enlace de WhatsApp.
+- **Reglas de negocio** fijadas por el usuario: decisiones 21 a 26.
+- **No incluye**: pasarela de pagos (Wompi: solo queda el modelo
+  listo), documentos de cobro ni DIAN (decisión 18), roles internos
+  nuevos, horas y tiempos, chat dentro del portal, notificaciones push.
+
+Modelo en [[03-modelo-de-dominio]] Parte 5, historias en
+[[04-historias-de-usuario]] épica E11 (HU-49 a HU-56), issues en
+[[05-backlog-issues]] §Fase F12 (ISS-203 en adelante) y decisiones de
+arquitectura en [[02-arquitectura]] ADR-14 y ADR-15.
+
 ## 3. Proveedor de IA: Groq (decidido)
 
 El usuario entregó una API key de **Groq** (groq.com — inferencia
@@ -384,6 +415,27 @@ Registradas el 10 ago 2026 (al arrancar F11):
     dominio solo conoce un puerto `GeneradorDeDocumento`, así que
     cambiar de librería —o pasar a un servicio externo— es cambiar el
     adaptador.
+
+Registradas el 30 sep 2026 (al plantear F12), fijadas por el usuario en
+su brief —no se reabren al implementar:
+
+21. **Se cobra por entregables.** El primer entregable se paga al
+    aceptar la propuesta; los siguientes, contra la aprobación de cada
+    entrega, salvo que la cotización diga otra cosa. Reemplaza el
+    "por fases" que el usuario había adelantado para el pie del PDF.
+22. **Todo cambio de alcance es un entregable nuevo**, con su valor,
+    que se agrega al proyecto en curso. El alcance aceptado no se
+    reescribe.
+23. **Garantía de 60 días** de corrección de errores tras la entrega
+    final.
+24. **Pagos registrados a mano** por el equipo (transferencia,
+    Nequi/Daviplata, efectivo, link de pago). **Wompi no se integra
+    todavía**: el modelo deja listo el origen `MANUAL | PASARELA` para
+    el día que se haga.
+25. **Sigue sin haber documentos de cobro ni DIAN** (decisión 18): el
+    portal muestra lo que se debe y lo que se pagó, pero no emite
+    ningún documento con efecto fiscal.
+26. **Sin roles internos nuevos** (decisión 19): `ADMIN` gestiona todo.
 
 ## Aprobación
 

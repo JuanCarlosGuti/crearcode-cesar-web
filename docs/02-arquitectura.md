@@ -554,6 +554,59 @@ estable. Con dos URLs las compara lado a lado. La imagen con Caddy dio
 **29 rutas idénticas a las que sirve producción hoy**, incluido el 404
 de una ruta inexistente. Corre en CI sobre la imagen recién construida.
 
+### ADR-14 — El proyecto nace de la cotización y se liga al cliente por su correo (F12, PROPUESTO 30 sep 2026)
+
+**Contexto**: el brief de F12 pedía que el proyecto referenciara al
+usuario de F8. Pero el cliente puede no tener cuenta cuando el equipo
+crea el proyecto, y puede eliminarla después (ISS-199) mientras el
+contrato sigue vivo.
+
+**Decisión**:
+- El proyecto guarda el **correo del cliente**, como la cotización
+  (invariante 6 de F11), no una clave foránea a `usuarios`. El cliente
+  lo ve en `/mi-cuenta` en cuanto entra con ese correo, y el backend lo
+  filtra por el correo del token, nunca por un parámetro.
+- **Eliminar la cuenta no borra el proyecto**: son datos del contrato,
+  que la política conserva por la relación más 10 años. Solo se pierde
+  el acceso. La retención automática a 24 meses no los toca.
+- El proyecto guarda la `CotizacionId` de origen (opcional), a lo sumo
+  un proyecto por cotización, y solo desde una ACEPTADA. Los ítems se
+  proponen como entregables, y al confirmar tienen que sumar el
+  subtotal aceptado: se puede reorganizar lo acordado, no cambiarlo.
+
+**Consecuencias**: no hay cascada entre `usuarios` y `proyectos`; un
+cliente que cambie de correo necesita que el equipo actualice el del
+proyecto (caso raro, se hace a mano). Mismo patrón y mismas pruebas de
+acceso cruzado que F11.
+
+### ADR-15 — El dinero del proyecto lo calcula el dominio (F12, PROPUESTO 30 sep 2026)
+
+**Contexto**: el portal muestra avance, lo cobrado, lo pagado y el
+saldo. La decisión 21 cobra el primer entregable al aceptar y los demás
+al aprobarse, y las cotizaciones salen con IVA.
+
+**Decisión**:
+- **Avance por valor, no por cantidad**: aprobados ÷ total, en valor.
+  Diez entregables pequeños no pesan lo mismo que uno grande.
+- **Cada entregable tiene su momento de cobro** (`AL_INICIAR` |
+  `AL_APROBAR`), en vez de una regla fija en el código. La decisión 21
+  es el valor por defecto (el primero al iniciar, el resto al aprobar),
+  y la excepción "salvo acuerdo distinto" queda posible sin cambiar
+  código.
+- **El impuesto es del proyecto** (el de su cotización) y el dominio lo
+  suma a cada entregable. El cliente ve siempre lo que paga, con el
+  impuesto separado, como en el PDF de la cotización.
+- **Pagos parciales sí; pasarse, no.** La suma de pagos de un
+  entregable nunca supera lo que se cobra por él.
+- **Pagos manuales con origen explícito** (`MANUAL` | `PASARELA`).
+  Cuando llegue Wompi, lo único nuevo es quién registra el pago.
+- **`Dinero` sigue siendo uno solo** para cotizaciones y proyectos,
+  pero deja de lanzar `CotizacionInvalidaException`.
+
+**Consecuencias**: el frontend no calcula nada, solo muestra (mismo
+criterio que los totales de F11). El portal no emite documentos
+(decisión 25): lo que muestra es un estado de cuenta informativo.
+
 ## 6. Seguridad (resumen, detalle en épica E3)
 
 - Panel admin protegido con Spring Security vía JWT (ver ADR-08):
