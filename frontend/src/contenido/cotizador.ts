@@ -60,8 +60,9 @@ export const COTIZADOR = {
    * medida 8-80 M+, apps 35-80 M); el reparto por alcance dentro de
    * cada tipo es una interpolacion razonable, no un dato medido.
    *
-   * TODO dueno: validar cifras. Son doce numeros y estan todos aqui;
-   * cambiarlos no toca ni una linea de codigo.
+   * Validadas por el dueno tal como estan (30 sep 2026). Son doce
+   * numeros y estan todos aqui: cambiarlos no toca ni una linea de
+   * codigo.
    */
   rangosPorTipoYAlcance: {
     'Página web o tienda en línea': {
@@ -89,8 +90,8 @@ export const COTIZADOR = {
    * La urgencia no mueve el rango: mueve como se planea el trabajo, y
    * decirlo en una frase es mas honesto que inventarle un porcentaje
    * al cliente antes de conocer el proyecto.
-   *
-   * TODO dueno: confirmar el recargo real por trabajo contra reloj.
+   * Decision del dueno (30 sep 2026): sin recargo fijo por urgencia; se
+   * avisa y se habla en la consulta.
    */
   notaPorUrgencia: {
     'Lo antes posible':

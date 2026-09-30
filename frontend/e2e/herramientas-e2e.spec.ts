@@ -146,8 +146,8 @@ test('un visitante completa el cotizador y recibe su rango orientativo', async (
   await page.getByRole('button', { name: 'En 4 a 8 semanas' }).click();
 
   // La forma del rango y no una cifra concreta: las doce cifras del
-  // cotizador llevan un TODO del dueno y van a cambiar cuando las
-  // valide. Aqui se prueba lo que ve el visitante —que recibe un rango—;
+  // cotizador son contenido y el dueno puede cambiarlas sin tocar
+  // codigo. Aqui se prueba lo que ve el visitante —que recibe un rango—;
   // el valor exacto de cada combinacion lo verifican los specs unitarios
   // contra contenido/cotizador.ts. Escribir la cifra aqui rompia esta
   // prueba en cuanto el rango se movia (paso con la auditoria P1-2a).

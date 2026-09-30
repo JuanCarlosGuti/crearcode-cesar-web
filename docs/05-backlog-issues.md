@@ -743,8 +743,9 @@ De los seis `[CONFIRMAR]` del documento:
 - [ ] Seguimiento al Proyecto de Ley 282 de 2026 Cámara.
 
 **Lo que sigue esperando al usuario**: los ids de GA4 y Clarity
-(ISS-170), la revisión legal de la política (ISS-169), las doce cifras
-del cotizador (ISS-172), la prueba de ISS-136 antes de bajar el límite
+(ISS-170), la revisión legal de la política (ISS-169; el usuario
+decidió no contratar abogado por ahora y verificar la norma directamente,
+30 sep 2026), la prueba de ISS-136 antes de bajar el límite
 de 600 (ISS-171), pasar la CSP de Report-Only a firme (ISS-178), y
 P2-6 —autoalojar las fuentes— que quedó sin hacer: son siete archivos
 `.woff2` que hay que descargar y versionar, y es una decisión sobre

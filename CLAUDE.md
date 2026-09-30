@@ -748,6 +748,10 @@ procedimiento del corte en §9.
   suban los costos, más largo le da aire a un cliente que consulta con
   su socio o espera el cierre de mes. Se cambia con
   `COTIZACIONES_DIAS_VALIDEZ` sin tocar código.
+- **Cotizador de `/herramientas`** (30 sep 2026): las doce cifras (tipo ×
+  alcance) quedan **como están**, validadas por el usuario, y **sin
+  recargo fijo por urgencia**: solo se avisa que trabajar contra reloj
+  suele costar más y se habla en la consulta.
 - LinkedIn del fundador: https://www.linkedin.com/in/juan-carlos-gutierrez-huerfano369582/
 - Paleta del sitio: nació como **Opción C, "Minimal Corporativo"**
   (clara) y desde el **rediseño tech del 28 sep 2026 es oscura** —
@@ -823,9 +827,8 @@ política v2 está publicada sin «borrador».
 Lo que sigue esperando al usuario, en orden de impacto: los **ids de
 GA4 y Clarity** (la analítica está
 construida pero apagada mientras `contenido/analitica.ts` esté vacío),
-la **prueba de ISS-136** que destraba bajar el rate limit de 600, las
-**doce cifras del cotizador** (la estructura ya distingue tipo y
-alcance; los números llevan `TODO dueño`), pasar la **CSP** de
+la **prueba de ISS-136** que destraba bajar el rate limit de 600, pasar
+la **CSP** de
 Report-Only a firme, y las decisiones de producto (header, hero,
 landings por sector, calendario).
 
