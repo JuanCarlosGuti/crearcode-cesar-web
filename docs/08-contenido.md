@@ -840,6 +840,27 @@ Portado del proyecto de Claude Design (decisión 15 de docs/10).
 
 ---
 
+## Portal de proyectos (F12)
+
+### Correos del proyecto (ISS-211)
+
+Tres, y solo tres: el cliente no recibe un correo por cada cambio menor
+(HU-52). Texto plano, como los de cuenta. Viven en
+`NotificadorDeProyectosAdapter`.
+
+- **Al cliente — algo para revisar.** Asunto: «Tienes algo para
+  revisar: {entregable}». Cuerpo: «{entregable}», de tu proyecto
+  «{proyecto}», está listo para que lo revises. Desde tu cuenta puedes
+  aprobarlo o decirnos qué ajustar: {enlace a /mi-cuenta/proyectos/{id}}.
+- **Al cliente — pago recibido.** Asunto: «Recibimos tu pago de
+  {monto}». Cuerpo: el monto, el entregable, total pagado y saldo del
+  proyecto, el enlace, y «Este correo confirma el pago recibido; no es
+  una factura» (decisión 25).
+- **Al equipo — respuesta del cliente.** Asunto: «El cliente aprobó
+  «{entregable}»» o «El cliente pidió ajustes en «{entregable}»». Si
+  pidió ajustes, lleva su nota; siempre, el enlace a
+  /admin/proyectos/{id}. Va a `NOTIFICACIONES_CORREO_DESTINO`.
+
 ## Legales
 
 ### Política de tratamiento de datos personales (borrador — Ley 1581 de 2012)
