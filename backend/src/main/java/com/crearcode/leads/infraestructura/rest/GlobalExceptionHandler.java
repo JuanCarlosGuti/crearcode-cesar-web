@@ -10,6 +10,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.crearcode.leads.aplicacion.ProyectoNoEncontradoException;
+import com.crearcode.leads.aplicacion.ProyectoYaExisteParaLaCotizacionException;
 import com.crearcode.leads.aplicacion.CotizacionNoEncontradaException;
 import com.crearcode.leads.aplicacion.CredencialesInvalidasException;
 import com.crearcode.leads.aplicacion.CuentaNoVerificadaException;
@@ -26,6 +28,7 @@ import com.crearcode.leads.dominio.ConversacionInvalidaException;
 import com.crearcode.leads.dominio.CotizacionInvalidaException;
 import com.crearcode.leads.dominio.MontoInvalidoException;
 import com.crearcode.leads.dominio.PorcentajeInvalidoException;
+import com.crearcode.leads.dominio.ProyectoInvalidoException;
 import com.crearcode.leads.dominio.CotizacionVencidaException;
 import com.crearcode.leads.dominio.DatosDeContactoInvalidosException;
 import com.crearcode.leads.dominio.DemoSoloParaRegistradosException;
@@ -106,6 +109,22 @@ class GlobalExceptionHandler {
 	@ExceptionHandler({ MontoInvalidoException.class, PorcentajeInvalidoException.class })
 	ResponseEntity<ErrorResponse> valorInvalido(RuntimeException excepcion) {
 		return ResponseEntity.badRequest().body(new ErrorResponse(excepcion.getMessage()));
+	}
+
+	@ExceptionHandler(ProyectoNoEncontradoException.class)
+	ResponseEntity<ErrorResponse> proyectoNoEncontrado(ProyectoNoEncontradoException excepcion) {
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(excepcion.getMessage()));
+	}
+
+	@ExceptionHandler(ProyectoInvalidoException.class)
+	ResponseEntity<ErrorResponse> proyectoInvalido(ProyectoInvalidoException excepcion) {
+		return ResponseEntity.badRequest().body(new ErrorResponse(excepcion.getMessage()));
+	}
+
+	/** Invariante 6 de proyectos: la cotización ya tiene su proyecto. */
+	@ExceptionHandler(ProyectoYaExisteParaLaCotizacionException.class)
+	ResponseEntity<ErrorResponse> proyectoYaExiste(ProyectoYaExisteParaLaCotizacionException excepcion) {
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(excepcion.getMessage()));
 	}
 
 	/** Vencida: el estado era correcto, lo que falló fue el plazo. */
