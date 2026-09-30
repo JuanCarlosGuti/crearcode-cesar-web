@@ -807,7 +807,7 @@ funcionando antes de seguir:
 | ISS-211 ✅ | `NotificadorDeProyectos`: al cliente, entregable en revisión y pago registrado, con enlace al proyecto; al equipo, el cliente aprobó o pidió ajustes; nada más | HU-52, HU-57 | IT con GreenMail; un fallo de correo no revierte el cambio | M | ISS-208 | Integration |
 | ISS-212 ✅ | REST del equipo `/api/proyectos/**` (rol ADMIN), mismo esquema de rutas que `/api/cotizaciones/**` | HU-53..56 | `hasRole("ADMIN")` explícito; 409 en transición inválida; 400 con el saldo real si un pago se pasa | L | ISS-210 | API (IT REST) |
 | ISS-213 ✅ | REST del cliente `/api/mis-proyectos/**`: listar, obtener, y aprobar o pedir ajustes de un entregable, filtrado por el correo del token | HU-49..51, HU-57 | IT de acceso cruzado: el proyecto ajeno responde **404** | M | ISS-212 | API (IT REST) |
-| ISS-214 | Datos de demostración: cliente ficticio, 3 fases, 7 entregables en estados variados, 2 pagos. Solo con un perfil local (`demo`), **nunca** como migración de Flyway | HU-49..51 | Test que asegura que el despliegue no activa el perfil: en producción no aparece | S | ISS-210 | Integration |
+| ISS-214 ✅ | Datos de demostración: cliente ficticio, 3 fases, 7 entregables en estados variados, 2 pagos, y su cuenta para entrar. Con la propiedad `app.demo.proyecto-de-demostracion` (`CARGAR_PROYECTO_DE_DEMOSTRACION`), apagada por defecto —el proyecto no usa perfiles de Spring—, **nunca** como migración de Flyway | HU-49..51 | Doble candado: el despliegue no la enciende (test que lee `deploy.api.yml`) y, aun encendida, no arranca donde `PERMITIR_CREDENCIALES_DE_DESARROLLO=false` | S | ISS-210 | Integration |
 
 ### F12c — Portal del cliente
 
