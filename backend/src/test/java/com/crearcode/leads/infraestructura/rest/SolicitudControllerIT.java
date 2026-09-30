@@ -1,5 +1,6 @@
 package com.crearcode.leads.infraestructura.rest;
 
+import java.util.Map;
 import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
@@ -214,6 +215,35 @@ class SolicitudControllerIT {
 		assertThat(idSinComercial).isNotNull();
 		assertThat(idConComercial).isNotNull();
 		assertThat(idSinComercial).isNotEqualTo(idConComercial);
+	}
+
+
+	/**
+	 * La casilla comercial es OPCIONAL, y un cliente que no la manda
+	 * tiene que poder seguir registrando su solicitud. No es un caso
+	 * teorico: las e2e lo hacen, un navegador con el JavaScript viejo en
+	 * cache lo haria el dia del despliegue, y cualquier integracion
+	 * externa tambien. Jackson 3 no convierte un boolean PRIMITIVO ausente
+	 * en false: lo rechaza, y la solicitud se pierde con un 400.
+	 *
+	 * El IT de arriba no lo atrapaba porque arma la peticion en Java CON
+	 * el campo. Este manda JSON crudo, que es lo que llega de verdad.
+	 */
+	@Test
+	void unClienteQueNoMandaLaCasillaComercialSigueRegistrandoSuSolicitud() {
+		Map<String, Object> sinCasillaComercial = Map.of(
+				"nombre", "Ana Perez",
+				"correo", "ana-sin-casilla@correo-de-prueba.com",
+				"telefono", "3001234567",
+				"servicioDeInteres", "OTRO",
+				"mensaje", "Necesito una app de pedidos",
+				"aceptaConsentimiento", true);
+
+		ResponseEntity<String> respuesta = restTemplate.postForEntity("/api/solicitudes", sinCasillaComercial,
+				String.class);
+
+		assertThat(respuesta.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+		assertThat(respuesta.getBody()).contains("\"id\"");
 	}
 
 }
