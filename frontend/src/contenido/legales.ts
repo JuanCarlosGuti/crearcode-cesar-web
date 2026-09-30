@@ -56,11 +56,11 @@ export const CONSENTIMIENTO_REGISTRO =
  * REVISAR CON ABOGADO. El documento fuente marcaba seis puntos como
  * [CONFIRMAR]; asi quedaron:
  *
- * 1. Horarios y frecuencia de contacto comercial de la Ley 2300 de
- *    2023 (L-V 7 a. m.-7 p. m., sabados 8 a. m.-3 p. m., maximo una vez
- *    por semana, nunca domingos ni festivos). La politica se remite a
- *    la ley sin transcribir el horario: ASI QUE HAY QUE CUMPLIRLO el
- *    dia que se envie la primera comunicacion comercial.
+ * 1. Contacto comercial (Ley 2300 de 2023): la politica se remite a la
+ *    ley sin transcribir el horario. Verificado en la norma el 30 sep
+ *    2026; la regla que se cumple —horario propio mas estricto, una
+ *    vez al dia, un canal por semana, baja facil— esta en
+ *    docs/11-datos-personales.md §2.4.
  * 2. Entrenamiento de los proveedores de IA: la politica NO promete lo
  *    que Groq o Cloudflare hacen con el texto (v2.1, decision de Juan,
  *    30 sep 2026). No se puede verificar ni hacerle seguimiento; se
@@ -75,8 +75,9 @@ export const CONSENTIMIENTO_REGISTRO =
  *    seguridad, no publicarlas, y cada promesa escrita aqui se vuelve
  *    una obligacion. Punto para el abogado: aclarar que los respaldos
  *    guardan lo borrado hasta 30 dias.
- * 5. Plazo de 15 dias habiles para reportar incidentes a la SIC: se
- *    publica como compromiso; falta confirmar el plazo exacto.
+ * 5. Plazo de 15 dias habiles para reportar incidentes a la SIC:
+ *    CONFIRMADO en la norma (SIC, concepto 21-17773), tambien para
+ *    empresas fuera del RNBD. Procedimiento en docs/11 §2.3.
  * 6. Pollinations: se mantiene como respaldo del demo y se declara. Ya
  *    no recibe el texto del cliente —solo el titulo que genero el
  *    modelo— desde la correccion P1-8c de la auditoria.

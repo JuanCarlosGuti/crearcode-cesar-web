@@ -820,9 +820,8 @@ Verificado en producción tras desplegar: los dos contenedores corren
 POST sin la casilla comercial responde 201, el asistente responde y la
 política v2 está publicada sin «borrador».
 
-Lo que sigue esperando al usuario, en orden de impacto: **revisión
-legal** de la política de datos (el texto ya está completo y marcado
-`REVISAR CON ABOGADO`), los **ids de GA4 y Clarity** (la analítica está
+Lo que sigue esperando al usuario, en orden de impacto: los **ids de
+GA4 y Clarity** (la analítica está
 construida pero apagada mientras `contenido/analitica.ts` esté vacío),
 la **prueba de ISS-136** que destraba bajar el rate limit de 600, las
 **doce cifras del cotizador** (la estructura ya distingue tipo y
@@ -833,9 +832,18 @@ landings por sector, calendario).
 La **política de datos v2** que aportó el usuario está publicada en
 `contenido/legales.ts`, con las promesas que hace ya cumplidas en
 código: casilla comercial separada, botón de eliminar cuenta y
-retención automática a 24 meses. La evaluación de impacto de IA y el
-procedimiento de derechos están en
+retención automática a 24 meses. La evaluación de impacto de IA, el
+procedimiento de derechos y el de incidentes, y la regla de contacto
+comercial de la Ley 2300 (horario propio: L-J 8 a. m.-6 p. m., viernes
+hasta las 3 p. m.) están en
 [docs/11-datos-personales.md](docs/11-datos-personales.md).
+
+**Sin abogado por ahora, por decisión del usuario (30 sep 2026)**: las
+dudas legales se resuelven leyendo la norma y cumpliéndola, y lo
+verificado queda anotado en docs/11 con su fuente. Así se cerraron el
+plazo de reporte de incidentes a la SIC y los horarios de la Ley 2300.
+Desde la v2.1 la política ya no promete lo que hacen los proveedores de
+IA con el texto.
 
 Las **copias de seguridad de PostgreSQL** están activas desde el 30 sep
 2026, con copia fuera del servidor en Cloudflare R2 y restauración

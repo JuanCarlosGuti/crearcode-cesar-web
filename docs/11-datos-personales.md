@@ -140,12 +140,40 @@ colombianos, que son muchos.
 1. Contenerlo: cortar el acceso, rotar credenciales.
 2. Anotar qué pasó, cuándo se detectó, qué datos y cuántas personas.
 3. **Reportarlo a la SIC dentro de los 15 días hábiles** siguientes a
-   la detección.
+   la detección —desde que se sabe, no desde que se resuelve—, en el
+   micrositio de Protección de Datos de sic.gov.co, módulo **"Reporte
+   de incidentes de seguridad"**. Aplica aunque la empresa no esté
+   inscrita en el RNBD (SIC, concepto 21-17773 de 2021, verificado el
+   30 sep 2026). Se puede mandar un reporte preliminar y completarlo
+   después: no esperar a tener todo.
 4. Avisar a las personas afectadas cuando el incidente pueda
    perjudicarlas.
 5. Escribir qué se cambió para que no se repita.
+6. **Guardar la prueba**: quién manejó el incidente, el comprobante del
+   reporte a la SIC, el aviso a los titulares si lo hubo y la
+   evaluación del riesgo.
 
-### 2.4 Lo que todavía falta
+### 2.4 Comunicaciones comerciales (Ley 2300 de 2023)
+
+Hoy el sitio no envía publicidad. Esto es la regla para el día que se
+mande la primera promoción por correo, WhatsApp, SMS o llamada. No
+aplica a responderle a quien escribió, ni a los correos que el propio
+cliente provoca (verificación, recuperación, una cotización que pidió).
+
+- **Solo a quien marcó la casilla comercial**, que es aparte de la
+  obligatoria (art. 5, parágrafo 2).
+- **Horario propio, decidido por el dueño (30 sep 2026)**: lunes a
+  jueves de 8:00 a. m. a 6:00 p. m. y viernes de 8:00 a. m. a 3:00
+  p. m. **Nunca sábados, domingos ni festivos.** Es más estricto que la
+  ley (L-V 7 a. m.-7 p. m., sábados 8 a. m.-3 p. m.), y eso siempre
+  está permitido.
+- **Máximo una vez al día y por un solo canal en la misma semana** (art.
+  3): si esta semana se le escribió por correo, no se le escribe
+  también por WhatsApp.
+- **Forma fácil de darse de baja** en cada mensaje: un enlace en el
+  correo, "responde BAJA" en WhatsApp (art. 5, parágrafo 2).
+
+### 2.5 Lo que todavía falta
 
 - [x] **Copias de seguridad** del PostgreSQL: activas desde el 30 sep
       2026 y con restauración probada.
@@ -154,10 +182,13 @@ colombianos, que son muchos.
       menciona, por decisión del dueño: la ley pide tenerlas, no
       publicarlas. Queda para el abogado aclarar que lo borrado sigue
       en los respaldos hasta 30 días.
-- [ ] Confirmar con el abogado los puntos abiertos: el plazo de
-      reporte de incidentes, los horarios de la Ley 2300, que lo borrado
-      sigue hasta 30 días en los respaldos, y que remitir a las
-      condiciones de Groq y Cloudflare (v2.1) basta como responsable.
+- [x] Plazo y canal de reporte de incidentes: verificados en la norma
+      (§2.3).
+- [x] Horarios y frecuencia de la Ley 2300: verificados en la norma, y
+      con horario propio más estricto (§2.4).
+- [ ] Para el abogado, si algún día se consulta: que lo borrado sigue
+      hasta 30 días en los respaldos, y que remitir a las condiciones de
+      Groq y Cloudflare (v2.1) basta como responsable.
 - [ ] Confirmar con el contador si aplica el **RNBD** (obligatorio por
       encima de 100.000 UVT de activos, Decreto 090 de 2018).
 - [ ] Hoja de control de consultas y reclamos: mientras no haya
