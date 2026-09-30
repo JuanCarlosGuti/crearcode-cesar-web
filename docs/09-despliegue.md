@@ -644,11 +644,26 @@ cuatro bases, y las filas coincidieron con producción tabla por tabla.
 Es el escenario real de un desastre —se perdió el servidor y se arranca
 uno limpio—, y prueba los roles, que es lo que casi siempre falla.
 
-**Pendiente: sacarlas del servidor.** Hoy viven en la misma máquina que
-la base. Protegen de un borrado, una migración mala o un bug que
-corrompe datos; **no** de perder el servidor. Falta copiarlas a
-Cloudflare R2. Cuando esté, se añade la línea de respaldos a la sección
-12 de la política de datos, que hoy deliberadamente no la promete.
+**Fuera del servidor desde el 30 sep 2026.** Cada respaldo se copia
+además al bucket privado `respaldos-servidor` de **Cloudflare R2**, que
+guarda 14 días; el servidor guarda 30. Sin esa copia protegían de un
+borrado, una migración mala o un bug que corrompe datos, pero **no** de
+perder la máquina. El token de R2 solo puede leer y escribir en ese
+bucket —ni siquiera listar los demás de la cuenta— y se sube con
+`rclone copy`, nunca `sync`, para que un borrado en el servidor no se
+propague a la nube. Cuesta $0: la capa gratis es de 10 GB y todo cabe
+en menos de 1 MB.
+
+**Se probó bajando de R2**, no del disco local: los volcados se
+descargaron del bucket y se restauraron en otro Postgres aislado, con
+las filas idénticas a producción en las cuatro bases con datos. Es el
+escenario para el que existe esta copia.
+
+**La política de datos no los menciona, y es a propósito** (decisión
+del usuario, 30 sep 2026): la ley pide tener medidas de seguridad, no
+publicarlas, y cada promesa escrita se vuelve una obligación. Queda un
+punto para el abogado: lo que se borra sigue en los respaldos hasta 30
+días.
 
 ## Fuentes consultadas (jul 2026)
 

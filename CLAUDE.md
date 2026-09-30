@@ -786,12 +786,16 @@ pendiente del corte:
   móviles). Hasta hacerla, el límite por IP real está implementado pero
   no verificado.
 - **Copias de seguridad del PostgreSQL**: **activas desde el 30 sep
-  2026**, con restauración probada en un Postgres limpio. Cubren todas
-  las bases del servidor. **Falta sacarlas del servidor** (Cloudflare
-  R2): hoy no protegen de perder la máquina. Ver
-  [docs/09](docs/09-despliegue.md) §10.
-- **Monitor de disponibilidad**: no existe. Si un contenedor muere de
-  madrugada, nadie se entera.
+  2026** y **fuera del servidor** en Cloudflare R2 (bucket privado
+  `respaldos-servidor`, 14 días; el servidor guarda 30). Cubren todas
+  las bases del servidor, y la restauración se probó bajando los
+  volcados **desde R2**. Ver [docs/09](docs/09-despliegue.md) §10.
+- **Monitor de disponibilidad**: **activo desde el 30 sep 2026** en
+  UptimeRobot (gratis, cada 5 min, alerta por correo a
+  `crearcodecesar@gmail.com`). Vigila el sitio y `/actuator/health` —este
+  con palabra clave `"status":"UP"`, para detectar la base caída aunque
+  la página responda—, más las otras apps del servidor. Detalle en
+  `infra-servidor/RUNBOOK.md` §Monitor.
 
 **De la auditoría integral del 28 sep 2026** (ISS-161 a ISS-197 en
 [docs/05-backlog-issues.md](docs/05-backlog-issues.md)): el listado
@@ -834,10 +838,10 @@ procedimiento de derechos están en
 [docs/11-datos-personales.md](docs/11-datos-personales.md).
 
 Las **copias de seguridad de PostgreSQL** están activas desde el 30 sep
-2026 y la restauración está probada. Lo que falta es **sacarlas del
-servidor**; hasta entonces la política deliberadamente **no** promete
-respaldos, porque unas copias en la misma máquina no protegen de
-perderla.
+2026, con copia fuera del servidor en Cloudflare R2 y restauración
+probada desde ella. La política **no** los menciona, por decisión del
+usuario: la ley pide tenerlos, no publicarlos. Punto para el abogado: lo
+que se borra sigue en los respaldos hasta 30 días.
 
 **Decisiones del usuario**:
 

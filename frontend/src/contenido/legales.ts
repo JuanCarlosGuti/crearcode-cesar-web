@@ -45,7 +45,6 @@ export const CONSENTIMIENTO_REGISTRO =
  * vigente se indica al pie, y hasta la auditoria del 28 sep 2026 no se
  * indicaba en ninguna parte.
  */
-export const VIGENTE_DESDE = '28 de septiembre de 2026';
 
 /**
  * Politica de tratamiento de datos, version 2.
@@ -62,17 +61,20 @@ export const VIGENTE_DESDE = '28 de septiembre de 2026';
  *    por semana, nunca domingos ni festivos). La politica se remite a
  *    la ley sin transcribir el horario: ASI QUE HAY QUE CUMPLIRLO el
  *    dia que se envie la primera comunicacion comercial.
- * 2. "No autorizamos a los proveedores a entrenar con tus datos": se
- *    publica como lo que es —lo que nosotros no autorizamos— y se dice
- *    que cada proveedor se rige ademas por sus condiciones. Falta
- *    confirmar los terminos de API vigentes de Groq y Cloudflare.
+ * 2. Entrenamiento de los proveedores de IA: la politica NO promete lo
+ *    que Groq o Cloudflare hacen con el texto (v2.1, decision de Juan,
+ *    30 sep 2026). No se puede verificar ni hacerle seguimiento; se
+ *    remite a sus condiciones y se pide no escribir datos sensibles,
+ *    que es la proteccion que si depende de nosotros.
  * 3. Que las conversaciones de IA no se guardan: CONFIRMADO en el
  *    codigo. Ninguna entidad JPA las persiste (viven en la peticion) y
  *    el manejador de errores registra la causa tecnica sin el texto del
  *    visitante, con un IT que lo exige.
- * 4. Copias de seguridad: NO se publican. Todavia no existen, y una
- *    politica que promete lo que no se hace es peor que una incompleta.
- *    Se agrega la linea el dia que esten activas.
+ * 4. Copias de seguridad: NO se publican, por decision de Juan (30 sep
+ *    2026). Existen desde ese dia, pero la ley pide tener medidas de
+ *    seguridad, no publicarlas, y cada promesa escrita aqui se vuelve
+ *    una obligacion. Punto para el abogado: aclarar que los respaldos
+ *    guardan lo borrado hasta 30 dias.
  * 5. Plazo de 15 dias habiles para reportar incidentes a la SIC: se
  *    publica como compromiso; falta confirmar el plazo exacto.
  * 6. Pollinations: se mantiene como respaldo del demo y se declara. Ya
@@ -92,7 +94,8 @@ export const POLITICA_DE_DATOS = {
   titulo: 'Política de tratamiento de datos personales',
   metaDescripcion:
     'Política de tratamiento de datos personales de Crear Code Cesar S.A.S., conforme a la Ley 1581 de 2012 y la Circular 002 de 2024 de la SIC.',
-  version: 'v2',
+  version: 'v2.1',
+  vigenteDesde: '30 de septiembre de 2026',
   secciones: [
     {
       titulo: '1. Quiénes somos',
@@ -148,7 +151,7 @@ export const POLITICA_DE_DATOS = {
       titulo: '6. Inteligencia artificial',
       parrafos: [
         'Qué hacemos: el asistente, el simulador de chatbot y el diagnóstico envían tu texto a un modelo de lenguaje de un proveedor externo para generar la respuesta. El demo de diseño envía a un modelo de imágenes la descripción de la solución, no el texto que tú escribiste.',
-        'Qué no hacemos: no usamos tus conversaciones para entrenar modelos propios ni autorizamos a los proveedores a usarlas para entrenar los suyos; lo que cada proveedor haga se rige además por sus propias condiciones de uso. Tampoco tomamos decisiones que te afecten de forma legal o significativa solo con un proceso automatizado: toda cotización final y toda decisión comercial la revisa una persona.',
+        'Qué no hacemos: no usamos tus conversaciones para entrenar modelos propios. Lo que cada proveedor haga con el texto que recibe se rige por sus propias condiciones de uso. Por eso te pedimos no escribir en estas herramientas datos sensibles (salud, información financiera, documentos de identidad) ni datos de otras personas. Tampoco tomamos decisiones que te afecten de forma legal o significativa solo con un proceso automatizado: toda cotización final y toda decisión comercial la revisa una persona.',
         'Resultados orientativos: las respuestas de la IA, los rangos del cotizador y los bocetos son referencias. Pueden contener errores y no son una oferta.',
         'Evaluación y minimización: aplicamos límites de longitud y de uso, enviamos al proveedor solo el texto necesario, y revisamos el riesgo de estas herramientas al menos una vez al año, siguiendo la Circular 002 de 2024 de la SIC.',
       ],
@@ -243,6 +246,7 @@ export const TERMINOS_DE_USO = {
   titulo: 'Términos de uso',
   metaDescripcion: 'Términos de uso del sitio web de Crear Code Cesar S.A.S.',
   version: 'v2',
+  vigenteDesde: '28 de septiembre de 2026',
   secciones: [
     {
       titulo: 'Sobre este sitio',
