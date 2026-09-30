@@ -768,10 +768,9 @@ axe en CI. **Desplegada en producción el 30 sep 2026** (PR #1, commit
 
 ---
 
-## Fase F12 — Portal de proyectos del cliente — PROPUESTA
+## Fase F12 — Portal de proyectos del cliente
 
-**Pendiente de aprobación del usuario: no se escribe código hasta su
-OK.** Alcance en [[10-vision-v2]] §F12 y decisiones 21 a 26; modelo en
+**Aprobada por el usuario el 30 sep 2026.** Alcance en [[10-vision-v2]] §F12 y decisiones 21 a 26; modelo en
 [[03-modelo-de-dominio]] Parte 5; historias en
 [[04-historias-de-usuario]] épica E11 (HU-49 a HU-56); decisiones de
 arquitectura en ADR-14 y ADR-15. Niveles de prueba por issue según
@@ -792,7 +791,7 @@ funcionando antes de seguir:
 
 | ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
 |---|---|---|---|---|---|---|
-| ISS-203 | Documentación de F12: visión y decisiones 21-26, modelo, épica E11, ADR-14 y ADR-15, este backlog | HU-49..56 | Aprobada por el usuario antes del primer test | S | — | No aplica |
+| ISS-203 ✅ | Documentación de F12: visión y decisiones 21-26, modelo, épica E11, ADR-14 y ADR-15, este backlog | HU-49..56 | Aprobada por el usuario antes del primer test | S | — | No aplica |
 | ISS-204 | `Dinero` deja de lanzar `CotizacionInvalidaException` y pasa a una excepción propia del monto, con el mismo 400 | — | Los tests de F11 siguen en verde sin tocarlos | S | ISS-203 | Unit |
 | ISS-205 | VOs y enums: `ProyectoId`, `EntregableId`, `PagoId`, `MomentoDeCobro`, `MedioDePago`, `OrigenDePago`, `UrlDeDemo` (solo `https://`) | HU-50, HU-55 | Un `javascript:` o un `http:` se rechazan en el dominio | M | ISS-204 | Unit |
 | ISS-206 | `EstadoEntregable` y `EstadoProyecto` con sus máquinas de estado, incluida `EN_GARANTIA → ACTIVO` | HU-54, HU-56 | Cada transición válida e inválida cubierta, como `EstadoCotizacionTest` | M | ISS-205 | Unit |

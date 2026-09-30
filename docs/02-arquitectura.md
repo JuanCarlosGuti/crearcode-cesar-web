@@ -554,7 +554,7 @@ estable. Con dos URLs las compara lado a lado. La imagen con Caddy dio
 **29 rutas idénticas a las que sirve producción hoy**, incluido el 404
 de una ruta inexistente. Corre en CI sobre la imagen recién construida.
 
-### ADR-14 — El proyecto nace de la cotización y se liga al cliente por su correo (F12, PROPUESTO 30 sep 2026)
+### ADR-14 — El proyecto nace de la cotización y se liga al cliente por su correo (F12, aprobado 30 sep 2026)
 
 **Contexto**: el brief de F12 pedía que el proyecto referenciara al
 usuario de F8. Pero el cliente puede no tener cuenta cuando el equipo
@@ -579,7 +579,7 @@ cliente que cambie de correo necesita que el equipo actualice el del
 proyecto (caso raro, se hace a mano). Mismo patrón y mismas pruebas de
 acceso cruzado que F11.
 
-### ADR-15 — El dinero del proyecto lo calcula el dominio (F12, PROPUESTO 30 sep 2026)
+### ADR-15 — El dinero del proyecto lo calcula el dominio (F12, aprobado 30 sep 2026)
 
 **Contexto**: el portal muestra avance, lo cobrado, lo pagado y el
 saldo. La decisión 21 cobra el primer entregable al aceptar y los demás

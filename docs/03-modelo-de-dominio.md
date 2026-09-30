@@ -433,10 +433,10 @@ válidas y `TransicionDeEstadoInvalidaException` al violarlo.
   deja registro de fecha y usuario, nada más.
 
 
-# Parte 5 — Contexto `proyectos` (fase F12) — PROPUESTO
+# Parte 5 — Contexto `proyectos` (fase F12)
 
-**Pendiente de aprobación del usuario** ([[10-vision-v2]] §F12,
-decisiones 21 a 26). Como los contextos anteriores, vive en los mismos
+**Aprobado por el usuario el 30 sep 2026** ([[10-vision-v2]] §F12,
+decisiones 21 a 29). Como los contextos anteriores, vive en los mismos
 paquetes `dominio/`, `aplicacion/` e `infraestructura/`, sin Spring ni
 JPA en el dominio (ArchUnit). Reutiliza `Correo`, `Dinero`,
 `Porcentaje` y `CotizacionId`; no toca sus invariantes.

@@ -1050,12 +1050,11 @@ la empresa** para **poder compartirlo internamente y decidir**.
 
 ---
 
-## Épica E11 — Portal de proyectos del cliente (Etapa 3, fase F12) — PROPUESTA
+## Épica E11 — Portal de proyectos del cliente (Etapa 3, fase F12)
 
 Cuando una cotización se acepta, nace un proyecto, y el cliente lo
 sigue desde su cuenta ([[10-vision-v2]] §F12, decisiones 21 a 26;
-modelo en [[03-modelo-de-dominio]] Parte 5). **Pendiente de aprobación
-del usuario.** Dos públicos, como en E10: el **cliente registrado**,
+modelo en [[03-modelo-de-dominio]] Parte 5). Aprobada el 30 sep 2026. Dos públicos, como en E10: el **cliente registrado**,
 que mira, y el **equipo** (rol `ADMIN`), que gestiona. El cliente abre
 esto casi siempre desde un enlace de WhatsApp en el celular: toda
 historia se verifica a 375 px.

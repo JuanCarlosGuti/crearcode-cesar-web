@@ -170,8 +170,8 @@ alrededor de la **cotización**, no del cobro.
 
 ### F12 — Portal de proyectos del cliente ("Mi proyecto")
 
-**Pedida por el usuario el 30 sep 2026. PENDIENTE DE APROBACIÓN: no se
-escribe código hasta el OK explícito.** Es el paso siguiente del
+**Pedida por el usuario el 30 sep 2026 y APROBADA el mismo día**
+("ok"), junto con las decisiones 27 a 29. Es el paso siguiente del
 pipeline de F11: **cuando una cotización se acepta, nace un proyecto**,
 y el cliente ve desde su cuenta cómo avanza, fase por fase, y cómo van
 sus pagos. F11 dejó fuera la "gestión de proyectos"; F12 la introduce en
@@ -436,6 +436,21 @@ su brief —no se reabren al implementar:
     portal muestra lo que se debe y lo que se pagó, pero no emite
     ningún documento con efecto fiscal.
 26. **Sin roles internos nuevos** (decisión 19): `ADMIN` gestiona todo.
+
+Registradas el 30 sep 2026 al aprobar F12 (recomendaciones aceptadas):
+
+27. **El cliente no aprueba ni pide ajustes desde el portal, todavía.**
+    El equipo mueve los estados; el cliente mira. Aprobar desde la
+    cuenta —como ya acepta cotizaciones— queda para una fase posterior.
+28. **Sin límite de peticiones propio para las rutas del portal.** Son
+    consultas autenticadas de un cliente sobre lo suyo; el
+    `RateLimitingFilter` sigue protegiendo los formularios públicos.
+29. **Un entregable PENDIENTE se puede quitar del plan; uno con trabajo
+    o con pagos, no.** No hay estado `CANCELADO` por ahora.
+
+El pie del PDF de cotización con las condiciones de las decisiones 21 a
+23 **no** entra en F12: queda como pendiente aparte hasta que el
+usuario lo pida.
 
 ## Aprobación
 

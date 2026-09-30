@@ -208,10 +208,10 @@ variable de entorno del servidor el día que se use — nunca en el repo.
   deducir. Tampoco entran roles internos todavía (decisión 19: rol
   único hasta que haya un segundo miembro del equipo).
 - [ ] **F12** — Portal de proyectos del cliente, "Mi proyecto" (ISS-203
-  a ISS-224): **planteada el 30 sep 2026, pendiente de aprobación; no
-  hay código**. Al aceptarse una cotización nace un proyecto que el
+  a ISS-224): **aprobada el 30 sep 2026, en construcción** en la rama
+  `f12/portal-proyectos`. Al aceptarse una cotización nace un proyecto que el
   cliente sigue desde `/mi-cuenta`: fases, entregables, avance y pagos.
-  Reglas de negocio en las decisiones 21-26 de docs/10 (cobro por
+  Reglas de negocio en las decisiones 21-29 de docs/10 (cobro por
   entregables, cambio de alcance = entregable nuevo, garantía de 60
   días, pagos manuales sin Wompi). Modelo en docs/03 Parte 5, historias
   E11, ADR-14 y ADR-15.
