@@ -24,6 +24,8 @@ import com.crearcode.leads.dominio.ConsentimientoRequeridoException;
 import com.crearcode.leads.dominio.ContrasenaInvalidaException;
 import com.crearcode.leads.dominio.ConversacionInvalidaException;
 import com.crearcode.leads.dominio.CotizacionInvalidaException;
+import com.crearcode.leads.dominio.MontoInvalidoException;
+import com.crearcode.leads.dominio.PorcentajeInvalidoException;
 import com.crearcode.leads.dominio.CotizacionVencidaException;
 import com.crearcode.leads.dominio.DatosDeContactoInvalidosException;
 import com.crearcode.leads.dominio.DemoSoloParaRegistradosException;
@@ -93,6 +95,16 @@ class GlobalExceptionHandler {
 
 	@ExceptionHandler(CotizacionInvalidaException.class)
 	ResponseEntity<ErrorResponse> cotizacionInvalida(CotizacionInvalidaException excepcion) {
+		return ResponseEntity.badRequest().body(new ErrorResponse(excepcion.getMessage()));
+	}
+
+	/**
+	 * Monto o porcentaje imposibles, vengan de una cotización o de un
+	 * proyecto: el mismo 400 que respondía cuando eran "cotización
+	 * inválida", para que ningún cliente de la API note el cambio.
+	 */
+	@ExceptionHandler({ MontoInvalidoException.class, PorcentajeInvalidoException.class })
+	ResponseEntity<ErrorResponse> valorInvalido(RuntimeException excepcion) {
 		return ResponseEntity.badRequest().body(new ErrorResponse(excepcion.getMessage()));
 	}
 

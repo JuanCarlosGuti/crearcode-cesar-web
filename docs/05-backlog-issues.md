@@ -792,7 +792,7 @@ funcionando antes de seguir:
 | ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
 |---|---|---|---|---|---|---|
 | ISS-203 ✅ | Documentación de F12: visión y decisiones 21-26, modelo, épica E11, ADR-14 y ADR-15, este backlog | HU-49..57 | Aprobada por el usuario antes del primer test | S | — | No aplica |
-| ISS-204 | `Dinero` deja de lanzar `CotizacionInvalidaException` y pasa a una excepción propia del monto, con el mismo 400 | — | Los tests de F11 siguen en verde sin tocarlos | S | ISS-203 | Unit |
+| ISS-204 ✅ | `Dinero` deja de lanzar `CotizacionInvalidaException` y pasa a una excepción propia del monto, con el mismo 400 | — | Los tests de F11 siguen en verde sin tocarlos | S | ISS-203 | Unit |
 | ISS-205 | VOs y enums: `ProyectoId`, `EntregableId`, `PagoId`, `MomentoDeCobro`, `MedioDePago`, `OrigenDePago`, `UrlDeDemo` (solo `https://`) | HU-50, HU-55 | Un `javascript:` o un `http:` se rechazan en el dominio | M | ISS-204 | Unit |
 | ISS-206 | `EstadoEntregable` y `EstadoProyecto` con sus máquinas de estado, incluida `EN_GARANTIA → ACTIVO` | HU-54, HU-56 | Cada transición válida e inválida cubierta, como `EstadoCotizacionTest` | M | ISS-205 | Unit |
 | ISS-207 | Agregado `Proyecto` con `Fase`, `Entregable` y `Pago`: avance por valor, entregable cobrable, impuesto sumado, pagos parciales sin pasarse, garantía a 60 días, nada cambia en PAUSADO o CERRADO | HU-49..51, HU-54..56 | Invariantes 1-4 y 8 de la Parte 5 con test; el dominio nunca llama al reloj | L | ISS-206 | Unit |

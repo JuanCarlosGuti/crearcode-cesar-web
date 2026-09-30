@@ -12,13 +12,13 @@ class DineroTest {
 	@Test
 	void rechazaMontoNulo() {
 		assertThatThrownBy(() -> new Dinero(null))
-				.isInstanceOf(CotizacionInvalidaException.class);
+				.isInstanceOf(MontoInvalidoException.class);
 	}
 
 	@Test
 	void rechazaMontoNegativo() {
 		assertThatThrownBy(() -> Dinero.de(-1))
-				.isInstanceOf(CotizacionInvalidaException.class);
+				.isInstanceOf(MontoInvalidoException.class);
 	}
 
 	@Test

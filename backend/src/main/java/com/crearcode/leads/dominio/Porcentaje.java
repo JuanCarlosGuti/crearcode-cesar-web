@@ -9,7 +9,7 @@ public record Porcentaje(int valor) {
 
 	public Porcentaje {
 		if (valor < 0 || valor > 100) {
-			throw new CotizacionInvalidaException("El porcentaje debe estar entre 0 y 100: " + valor);
+			throw new PorcentajeInvalidoException("El porcentaje debe estar entre 0 y 100: " + valor);
 		}
 	}
 

@@ -10,13 +10,13 @@ class PorcentajeTest {
 	@Test
 	void rechazaValorNegativo() {
 		assertThatThrownBy(() -> new Porcentaje(-1))
-				.isInstanceOf(CotizacionInvalidaException.class);
+				.isInstanceOf(PorcentajeInvalidoException.class);
 	}
 
 	@Test
 	void rechazaValorMayorACien() {
 		assertThatThrownBy(() -> new Porcentaje(101))
-				.isInstanceOf(CotizacionInvalidaException.class);
+				.isInstanceOf(PorcentajeInvalidoException.class);
 	}
 
 	// Cero es valido a proposito: la empresa aun no confirma su condicion

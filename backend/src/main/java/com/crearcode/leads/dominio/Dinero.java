@@ -19,10 +19,10 @@ public record Dinero(BigDecimal monto) {
 
 	public Dinero {
 		if (monto == null) {
-			throw new CotizacionInvalidaException("El monto no puede ser nulo");
+			throw new MontoInvalidoException("El monto no puede ser nulo");
 		}
 		if (monto.signum() < 0) {
-			throw new CotizacionInvalidaException("El monto no puede ser negativo: " + monto);
+			throw new MontoInvalidoException("El monto no puede ser negativo: " + monto);
 		}
 		monto = monto.setScale(0, RoundingMode.HALF_UP);
 	}
