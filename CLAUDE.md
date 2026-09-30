@@ -790,8 +790,12 @@ pendiente del corte:
   `respaldos-servidor`, 14 días; el servidor guarda 30). Cubren todas
   las bases del servidor, y la restauración se probó bajando los
   volcados **desde R2**. Ver [docs/09](docs/09-despliegue.md) §10.
-- **Monitor de disponibilidad**: no existe. Si un contenedor muere de
-  madrugada, nadie se entera.
+- **Monitor de disponibilidad**: **activo desde el 30 sep 2026** en
+  UptimeRobot (gratis, cada 5 min, alerta por correo a
+  `crearcodecesar@gmail.com`). Vigila el sitio y `/actuator/health` —este
+  con palabra clave `"status":"UP"`, para detectar la base caída aunque
+  la página responda—, más las otras apps del servidor. Detalle en
+  `infra-servidor/RUNBOOK.md` §Monitor.
 
 **De la auditoría integral del 28 sep 2026** (ISS-161 a ISS-197 en
 [docs/05-backlog-issues.md](docs/05-backlog-issues.md)): el listado
