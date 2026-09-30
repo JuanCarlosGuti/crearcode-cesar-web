@@ -80,9 +80,11 @@ Los cuatro criterios que exige la Circular 002 de 2024:
   probabilidad; no la elimina. Si se detectan datos de terceros en una
   conversación, no hay nada que borrar de nuestro lado —no se guarda—
   pero sí hay que revisar si el aviso se está leyendo.
-- **La retención en el proveedor.** Fuera de nuestro control más allá
-  de sus condiciones. Pendiente de confirmar los términos de API
-  vigentes de Groq y Cloudflare.
+- **La retención y el entrenamiento en el proveedor.** Fuera de nuestro
+  control más allá de sus condiciones. Por eso, desde la v2.1 (30 sep
+  2026), la política **no promete** lo que Groq o Cloudflare hacen con
+  el texto: se remite a sus condiciones y pide no escribir datos
+  sensibles, que es la mitigación que sí depende de nosotros.
 
 ### 1.6 Qué revisar cada año
 
@@ -147,12 +149,15 @@ colombianos, que son muchos.
 
 - [x] **Copias de seguridad** del PostgreSQL: activas desde el 30 sep
       2026 y con restauración probada.
-- [ ] **Sacarlas del servidor**. Hasta entonces la sección 12 de la
-      política **no** las menciona: unas copias en la misma máquina no
-      protegen de perderla.
-- [ ] Confirmar con el abogado los tres puntos abiertos: el plazo de
-      reporte de incidentes, los horarios de la Ley 2300 y los términos
-      de API de Groq y Cloudflare.
+- [x] **Sacarlas del servidor**: en Cloudflare R2 desde el 30 sep
+      2026, con restauración probada desde allí. La política **no** las
+      menciona, por decisión del dueño: la ley pide tenerlas, no
+      publicarlas. Queda para el abogado aclarar que lo borrado sigue
+      en los respaldos hasta 30 días.
+- [ ] Confirmar con el abogado los puntos abiertos: el plazo de
+      reporte de incidentes, los horarios de la Ley 2300, que lo borrado
+      sigue hasta 30 días en los respaldos, y que remitir a las
+      condiciones de Groq y Cloudflare (v2.1) basta como responsable.
 - [ ] Confirmar con el contador si aplica el **RNBD** (obligatorio por
       encima de 100.000 UVT de activos, Decreto 090 de 2018).
 - [ ] Hoja de control de consultas y reclamos: mientras no haya

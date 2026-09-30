@@ -74,5 +74,11 @@ export interface DocumentoLegal {
    * fecha de la version vigente se indica ahi (auditoria P0-3).
    */
   readonly version: string;
+  /**
+   * Desde cuando rige esta version. Va en cada documento y no en una
+   * constante compartida: al cambiar uno, el otro no debe heredar una
+   * fecha que no es la suya.
+   */
+  readonly vigenteDesde: string;
   readonly secciones: readonly SeccionLegal[];
 }

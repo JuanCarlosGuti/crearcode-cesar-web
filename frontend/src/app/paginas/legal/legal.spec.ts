@@ -49,8 +49,37 @@ describe('LegalPage', () => {
     const { el } = await pintar(POLITICA_DE_DATOS, '/legales/politica-de-datos');
 
     const pie = el.querySelector('.pagina-legal__vigencia');
-    expect(pie?.textContent).toContain(POLITICA_DE_DATOS.version);
+    expect(pie?.textContent).toContain('v2.1');
+    expect(pie?.textContent).toContain('30 de septiembre de 2026');
+  });
+
+  /**
+   * Cada documento lleva su propia fecha. Era una sola constante para
+   * los dos, y al cambiar la politica los terminos —que no cambiaron—
+   * habrian aparecido con una fecha de vigencia falsa.
+   */
+  it('los terminos conservan su propia version y fecha', async () => {
+    const { el } = await pintar(TERMINOS_DE_USO, '/legales/terminos');
+
+    const pie = el.querySelector('.pagina-legal__vigencia');
+    expect(pie?.textContent).toContain('v2');
     expect(pie?.textContent).toContain('28 de septiembre de 2026');
+  });
+
+  /**
+   * La politica no promete lo que hacen los proveedores de IA con los
+   * datos: no se puede verificar ni hacerle seguimiento (decision del
+   * dueno, 30 sep 2026). Lo que si promete depende de nosotros, y la
+   * proteccion real es pedir que no se escriban datos sensibles.
+   */
+  it('no promete lo que hacen los proveedores de IA y pide no escribir datos sensibles', async () => {
+    const { el } = await pintar(POLITICA_DE_DATOS, '/legales/politica-de-datos');
+    const texto = el.textContent ?? '';
+
+    expect(texto).not.toContain('autorizamos a los proveedores');
+    expect(texto).toContain('no usamos tus conversaciones para entrenar modelos propios');
+    expect(texto).toContain('se rige por sus propias condiciones de uso');
+    expect(texto).toContain('no escribir en estas herramientas datos sensibles');
   });
 
   it('funciona igual para el documento de terminos de uso', async () => {
