@@ -13,6 +13,7 @@ import com.crearcode.leads.dominio.Cotizacion;
 import com.crearcode.leads.dominio.Dinero;
 import com.crearcode.leads.dominio.GeneradorDeDocumento;
 import com.crearcode.leads.dominio.ItemDeCotizacion;
+import com.lowagie.text.Chunk;
 import com.lowagie.text.Document;
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
@@ -39,6 +40,7 @@ class CotizacionPdfAdapter implements GeneradorDeDocumento {
 	private static final Font TITULO = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18);
 	private static final Font SUBTITULO = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 11);
 	private static final Font NORMAL = FontFactory.getFont(FontFactory.HELVETICA, 10);
+	private static final Font NORMAL_NEGRITA = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10);
 	private static final Font PEQUENA = FontFactory.getFont(FontFactory.HELVETICA, 8);
 	private static final Font TOTAL = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12);
 
@@ -134,13 +136,32 @@ class CotizacionPdfAdapter implements GeneradorDeDocumento {
 
 	private void escribirPie(Document documento, Cotizacion cotizacion) {
 		if (cotizacion.notas() != null && !cotizacion.notas().isBlank()) {
-			documento.add(parrafo("Notas", SUBTITULO, 16));
+			documento.add(tituloDeBloque("Notas"));
 			documento.add(parrafo(cotizacion.notas(), NORMAL, 0));
 		}
-		documento.add(parrafo(
+		// Decisión 30: las condiciones de pago, alcance y garantía quedan en
+		// el documento que el cliente guarda, no solo en un WhatsApp.
+		documento.add(tituloDeBloque("Condiciones"));
+		for (CondicionesComerciales.Condicion condicion : CondicionesComerciales.lineas()) {
+			Paragraph linea = new Paragraph();
+			linea.add(new Chunk(condicion.etiqueta() + " ", NORMAL_NEGRITA));
+			linea.add(new Chunk(condicion.texto(), NORMAL));
+			linea.setSpacingAfter(3);
+			documento.add(linea);
+		}
+		Paragraph aviso = parrafo(
 				"Este documento es una cotización: una propuesta comercial, no una factura ni una cuenta de cobro. "
 						+ "Los valores están en pesos colombianos y rigen hasta la fecha de validez indicada.",
-				PEQUENA, 24));
+				PEQUENA, 24);
+		aviso.setSpacingBefore(10);
+		documento.add(aviso);
+	}
+
+	/** Los bloques del pie (notas, condiciones) con el mismo aire arriba y abajo. */
+	private static Paragraph tituloDeBloque(String titulo) {
+		Paragraph parrafo = parrafo(titulo, SUBTITULO, 4);
+		parrafo.setSpacingBefore(14);
+		return parrafo;
 	}
 
 	private static Paragraph parrafo(String texto, Font fuente, float espacioDespues) {

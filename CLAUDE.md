@@ -208,13 +208,13 @@ variable de entorno del servidor el día que se use — nunca en el repo.
   deducir. Tampoco entran roles internos todavía (decisión 19: rol
   único hasta que haya un segundo miembro del equipo).
 - [ ] **F12** — Portal de proyectos del cliente, "Mi proyecto" (ISS-203
-  a ISS-224): **aprobada el 30 sep 2026, en construcción** en la rama
-  `f12/portal-proyectos`. Al aceptarse una cotización nace un proyecto que el
-  cliente sigue desde `/mi-cuenta`: fases, entregables, avance y pagos.
-  Reglas de negocio en las decisiones 21-30 de docs/10 (cobro por
-  entregables, cambio de alcance = entregable nuevo, garantía de 60
-  días, pagos manuales sin Wompi). Modelo en docs/03 Parte 5, historias
-  E11, ADR-14 y ADR-15.
+  a ISS-225): **terminada el 1 oct 2026, pendiente del OK del usuario**.
+  Los entregables 1 a 3 ya están en producción desde el 1 oct (PR #3 y
+  #4); el 4 (e2e del ciclo, pie del PDF y cierre) va en el PR siguiente.
+  Al aceptarse una cotización nace un proyecto que el cliente sigue y
+  aprueba desde `/mi-cuenta`. Reglas en las decisiones 21-30 de docs/10,
+  modelo en docs/03 Parte 5, historias E11, ADR-14 y ADR-15. Detalle en
+  §Portal de proyectos.
 
 ## Arranque local
 
@@ -648,6 +648,60 @@ adentro, en pesos enteros.
   y las condiciones de pago del pie. La validez ya está decidida: 15
   días (29 sep 2026).
 
+## Portal de proyectos (fase F12)
+
+Contexto `proyectos` con el agregado `Proyecto` → `Fase` → `Entregable`
+→ `Pago` (dominio plano, como cotizaciones). Lo que más pesa:
+
+- **El dinero lo calcula el dominio** (ADR-15): avance por valor (no por
+  cantidad, y redondeado hacia abajo para no mostrar 100 % sin
+  terminar), lo que se cobra con el IVA del proyecto, cuándo es cobrable
+  cada entrega (`MomentoDeCobro`: el anticipo al iniciar, lo demás al
+  aprobar), pagos parciales que nunca se pasan, saldo. El frontend solo
+  muestra.
+- **Lo aceptado en la cotización no se cambia en silencio**: el plan
+  inicial suma exactamente su subtotal, y lo nuevo entra como cambio de
+  alcance (decisión 22). Un entregable con trabajo o pagos no se quita.
+- **El cliente se liga por su correo, no por su cuenta** (ADR-14): el
+  proyecto existe aunque no se haya registrado y sobrevive si borra la
+  cuenta (datos del contrato, 10 años). Uno ajeno responde 404.
+- **Los casos de uso que modifican bloquean la fila del proyecto**
+  (`buscarPorIdParaModificar`, `SELECT … FOR UPDATE`). Sin el bloqueo,
+  diez pagos simultáneos chocaban; con él quedan los diez
+  (`ProyectoConcurrenciaIT`). La fila se actualiza en su sitio y los
+  hijos se reescriben, para que el bloqueo siga valiendo.
+- **El cliente aprueba o pide ajustes desde su cuenta** (decisión 27);
+  el equipo también puede, y queda quién y cuándo.
+- **Garantía de 60 días** al aprobarse lo último (`Proyecto.GARANTIA`,
+  la misma constante que cita el PDF); un programador diario cierra las
+  vencidas.
+- **Tres correos y solo tres** (después del commit y en hilo aparte):
+  entrega para revisar y pago registrado al cliente, respuesta del
+  cliente al equipo. A dominios reservados (`.local`, `.test`…) no sale
+  ninguno: un rebote en Resend daña la reputación del dominio.
+- **API**: `/api/proyectos/**` (ADMIN) y `/api/mis-proyectos/**`
+  (cliente, correo del token).
+- **Frontend**: `/mi-cuenta` muestra los proyectos primero;
+  `/mi-cuenta/proyectos/:id` (también el enlace del correo) con línea de
+  tiempo, entregas, aprobar/pedir ajustes y pagos. Panel en
+  `/admin/proyectos` (listado, nuevo desde cotización o en blanco,
+  detalle con todo lo del equipo). Reordenar es con botones, no
+  arrastrando.
+- **El pie del PDF de cotización** lleva las condiciones de pago,
+  alcance y garantía (ISS-225).
+
+**Proyecto de demostración** (`CARGAR_PROYECTO_DE_DEMOSTRACION`):
+encendido en producción a pedido del usuario mientras prueba; ver
+§Pendientes para apagarlo antes de salir al mercado.
+
+Verificado al cerrar (1 oct 2026): backend 619 tests (`mvnw verify`,
+ArchUnit, ITs con PostgreSQL), frontend 347 specs y lint limpio, e2e del
+ciclo completo con axe, recorrido en navegador real del portal y del
+panel a 375 y 1280 px, y Lighthouse **99-100/100/100/100 en
+producción**. Esas revisiones atraparon lo que los tests no veían:
+«Valor» junto a «IVA» se leía como suma, el pago venía preseleccionado
+en una entrega ya pagada, y lo devuelto con ajustes ofrecía «Empezar».
+
 ## SEO, rendimiento y accesibilidad (tras la fase F6)
 
 - **Metadatos por página** (`title`, `meta description`, Open Graph):
@@ -880,9 +934,10 @@ dominio.
   responsable. Confirmar con el contador (casilla 53 del RUT) y, si no
   aplica, bajarlo con `COTIZACIONES_IMPUESTO`.
 - ~~**Condiciones comerciales del pie del PDF**~~: **decididas el 30 sep
-  2026** con la F12 (decisiones 21-23 y 30 de docs/10): cobro por
-  entregables, cambio de alcance como entregable nuevo y garantía de 60
-  días. Se implementan en ISS-225.
+  2026** con la F12 (decisiones 21-23 y 30 de docs/10) e
+  **implementadas el 1 oct 2026** (ISS-225): cobro por entregables,
+  cambio de alcance como entregable nuevo y garantía de 60 días, bajo
+  «Condiciones» en el PDF. Texto en docs/08.
 - **Revisar el eslogan del hero** ("Tecnología que trabaja para tu
   negocio, no al revés.") — pendiente desde el 29 jul 2026. Sigue
   siendo el titular del rediseño, ahora con "no al revés" resaltado.

@@ -473,6 +473,10 @@ Estado de la Etapa 3 al 11 ago 2026: **ETAPA COMPLETA**. F8, F8.5, F9,
 F10 y F11 terminadas y aprobadas; el dominio propio (pendiente que
 arrastraba la Etapa 2) se compró y migró el 10 ago 2026 (ADR-11).
 
+F12 (portal de proyectos del cliente) se terminó el 1 oct 2026 y queda
+a la espera del OK del usuario; sus entregables 1 a 3 ya están en
+producción.
+
 F11 cerró con el alcance reenfocado de la decisión 18 — cotizaciones
 sí, documentos de cobro no —, confirmado después por el certificado de
 existencia y representación legal que aportó el usuario: CREAR CODE
