@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 
 import com.crearcode.leads.aplicacion.LimiteGlobalAlcanzadoException;
 import com.crearcode.leads.dominio.AsistenteNoDisponibleException;
+import com.crearcode.leads.dominio.MontoInvalidoException;
+import com.crearcode.leads.dominio.PorcentajeInvalidoException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -47,6 +49,23 @@ class GlobalExceptionHandlerTest {
 
 		assertThat(respuesta.getBody().mensaje()).doesNotContain("model_not_found")
 				.doesNotContain("llama-3.3-70b-versatile");
+	}
+
+	/**
+	 * Dinero y Porcentaje los usan cotizaciones y proyectos (F12), asi
+	 * que sus errores ya no se llaman "cotizacion invalida" — pero el
+	 * cliente de la API tiene que seguir recibiendo el mismo 400.
+	 */
+	@Test
+	void unMontoOPorcentajeInvalidoSigueSiendoUn400ConSuMensaje() {
+		ResponseEntity<ErrorResponse> monto = manejador
+				.valorInvalido(new MontoInvalidoException("El monto no puede ser negativo: -1"));
+		ResponseEntity<ErrorResponse> porcentaje = manejador
+				.valorInvalido(new PorcentajeInvalidoException("El porcentaje debe estar entre 0 y 100: 101"));
+
+		assertThat(monto.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+		assertThat(monto.getBody().mensaje()).isEqualTo("El monto no puede ser negativo: -1");
+		assertThat(porcentaje.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 	}
 
 }

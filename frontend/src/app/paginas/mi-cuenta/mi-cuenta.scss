@@ -34,3 +34,52 @@ button {
 .pagina-cuenta__error {
   color: var(--color-error);
 }
+
+// --- Proyectos (F12): lo primero de la cuenta si los hay ---
+
+.proyectos {
+  margin-bottom: var(--espacio-4);
+}
+
+.proyectos__lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--espacio-2);
+}
+
+.tarjeta-proyecto {
+  display: grid;
+  gap: var(--espacio-1);
+  justify-items: start;
+  padding: var(--espacio-3);
+  border-radius: var(--radio-borde-grande);
+  background: var(--color-superficie);
+  box-shadow: var(--sombra-2);
+
+  h3 {
+    margin: 0;
+  }
+
+  app-barra-de-avance {
+    justify-self: stretch;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+.tarjeta-proyecto__aviso {
+  color: var(--color-alerta);
+  font-weight: 600;
+}
+
+.tarjeta-proyecto__pago {
+  color: var(--color-texto-secundario);
+}
+
+.pagina-cuenta__aviso-proyectos {
+  color: var(--color-texto-secundario);
+}

@@ -113,11 +113,17 @@ env:
     # IP real: este valor alto existia porque todos compartian la IP del
     # proxy.
     RATE_LIMIT_ASISTENTE_MAX_INTENTOS: "600"
+    # TEMPORAL (F12, pedido del dueno el 30 sep 2026): carga el proyecto
+    # de demostracion y su cuenta de cliente para probar el portal en
+    # produccion. APAGAR (borrar esta linea y DEMO_CONTRASENA) antes de
+    # salir al mercado, y borrar despues el proyecto y la cuenta demo.
+    CARGAR_PROYECTO_DE_DEMOSTRACION: "true"
   secret:
     - DB_PASSWORD
     - ADMIN_USERNAME
     - ADMIN_PASSWORD
     - JWT_SECRET
+    - DEMO_CONTRASENA
     - MAIL_PASSWORD
     - GROQ_API_KEY
     - CLOUDFLARE_ACCOUNT_ID

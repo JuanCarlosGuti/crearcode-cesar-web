@@ -207,6 +207,14 @@ variable de entorno del servidor el día que se use — nunca en el repo.
   naturales no responsables de IVA y no le sirve al cliente para
   deducir. Tampoco entran roles internos todavía (decisión 19: rol
   único hasta que haya un segundo miembro del equipo).
+- [ ] **F12** — Portal de proyectos del cliente, "Mi proyecto" (ISS-203
+  a ISS-224): **aprobada el 30 sep 2026, en construcción** en la rama
+  `f12/portal-proyectos`. Al aceptarse una cotización nace un proyecto que el
+  cliente sigue desde `/mi-cuenta`: fases, entregables, avance y pagos.
+  Reglas de negocio en las decisiones 21-30 de docs/10 (cobro por
+  entregables, cambio de alcance = entregable nuevo, garantía de 60
+  días, pagos manuales sin Wompi). Modelo en docs/03 Parte 5, historias
+  E11, ADR-14 y ADR-15.
 
 ## Arranque local
 
@@ -854,19 +862,27 @@ probada desde ella. La política **no** los menciona, por decisión del
 usuario: la ley pide tenerlos, no publicarlos. Punto para el abogado: lo
 que se borra sigue en los respaldos hasta 30 días.
 
+**Antes de salir al mercado — apagar la demostración del portal (F12)**:
+el 30 sep 2026 el usuario pidió el proyecto de demostración también en
+producción para probar la fase. Para apagarlo: borrar
+`CARGAR_PROYECTO_DE_DEMOSTRACION` de `config/deploy.api.yml`, quitar
+`DEMO_CONTRASENA` de ese archivo, de `.kamal/secrets` y de
+`.github/workflows/ci.yml`, y después borrar de la base el proyecto y la
+cuenta de `cliente.demo@crearcode-cesar.local` (apagar la propiedad no
+los borra). Mientras esté encendida, los correos a ese cliente no salen:
+`.local` es un dominio reservado y un rebote dañaría la reputación del
+dominio.
+
 **Decisiones del usuario**:
 
 - **Condición de IVA**: hoy las cotizaciones salen con **19%** por
   defecto, porque una S.A.S. es persona jurídica y por regla general
   responsable. Confirmar con el contador (casilla 53 del RUT) y, si no
   aplica, bajarlo con `COTIZACIONES_IMPUESTO`.
-- **Condiciones comerciales del pie del PDF**: anticipo, forma de pago
-  y qué pasa con los cambios de alcance a mitad del proyecto. Hoy el
-  pie solo aclara que el documento es una cotización y no una factura,
-  así que esas condiciones se explican a mano por WhatsApp y no quedan
-  en el documento que el cliente guarda. **Lo tiene que redactar el
-  usuario**: es un compromiso comercial, y si se inventa y no es lo que
-  cobra, el problema lo tiene con el primer cliente que lo lea.
+- ~~**Condiciones comerciales del pie del PDF**~~: **decididas el 30 sep
+  2026** con la F12 (decisiones 21-23 y 30 de docs/10): cobro por
+  entregables, cambio de alcance como entregable nuevo y garantía de 60
+  días. Se implementan en ISS-225.
 - **Revisar el eslogan del hero** ("Tecnología que trabaja para tu
   negocio, no al revés.") — pendiente desde el 29 jul 2026. Sigue
   siendo el titular del rediseño, ahora con "no al revés" resaltado.

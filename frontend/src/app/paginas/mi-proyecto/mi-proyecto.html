@@ -1,0 +1,257 @@
+<section class="contenedor pagina-proyecto">
+  <a routerLink="/mi-cuenta" class="volver">← {{ t.volver }}</a>
+
+  @if (cargando()) {
+    <p class="estado-carga" role="status">{{ t.cargando }}</p>
+  } @else if (noEncontrado()) {
+    <p class="mensaje" role="alert">{{ t.noEncontrado }}</p>
+  } @else if (errorDeCarga()) {
+    <div class="mensaje" role="alert">
+      <p>{{ t.error }}</p>
+      <button type="button" class="boton boton-secundario" (click)="cargar()">{{ t.reintentar }}</button>
+    </div>
+  } @else if (proyecto(); as p) {
+    <header class="encabezado tarjeta-elevada">
+      <p class="etiqueta-codigo">{{ estadosDelProyecto[p.estado] }}</p>
+      <h1>{{ p.nombre }}</h1>
+      @if (p.descripcion) {
+        <p class="encabezado__descripcion">{{ p.descripcion }}</p>
+      }
+      <dl class="encabezado__fechas">
+        <div>
+          <dt>{{ t.inicio }}</dt>
+          <dd>{{ fecha(p.inicio) }}</dd>
+        </div>
+        @if (p.entregaEstimada) {
+          <div>
+            <dt>{{ t.entregaEstimada }}</dt>
+            <dd>{{ fecha(p.entregaEstimada) }}</dd>
+          </div>
+        }
+      </dl>
+      @if (p.estado === 'EN_GARANTIA' && p.finDeGarantia) {
+        <p class="encabezado__garantia">{{ t.garantiaHasta }} {{ fechaDeInstante(p.finDeGarantia) }}</p>
+      }
+      <app-barra-de-avance [porcentaje]="p.avance" [etiqueta]="t.avance" />
+      <p class="encabezado__nota">{{ t.avanceExplicacion }}</p>
+    </header>
+
+    @if (paraRevisar().length > 0) {
+      <section class="para-revisar" aria-labelledby="titulo-para-revisar">
+        <h2 id="titulo-para-revisar">{{ t.paraRevisarTitulo }}</h2>
+        <p>{{ t.paraRevisarIntro }}</p>
+        <ul>
+          @for (entregable of paraRevisar(); track entregable.id) {
+            <li>
+              <a [href]="'#entregable-' + entregable.id">{{ entregable.nombre }}</a>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+
+    <section class="plan" aria-labelledby="titulo-plan">
+      <h2 id="titulo-plan">{{ t.planTitulo }}</h2>
+
+      @if (p.fases.length === 0) {
+        <p class="estado-vacio">{{ t.planVacio }}</p>
+      } @else {
+        <ol class="linea-de-tiempo">
+          @for (fase of p.fases; track fase.id) {
+            <li class="fase">
+              <h3>{{ fase.nombre }}</h3>
+              @if (fase.objetivo) {
+                <p class="fase__objetivo">{{ fase.objetivo }}</p>
+              }
+              @if (fechasDeFase(fase.inicioPlaneado, fase.finPlaneado); as fechas) {
+                <p class="fase__fechas">{{ fechas }}</p>
+              }
+              @if (fase.resumenParaElCliente) {
+                <div class="fase__resumen">
+                  <p class="fase__resumen-titulo">{{ t.resumenDeFase }}</p>
+                  <p>{{ fase.resumenParaElCliente }}</p>
+                </div>
+              }
+
+              <ul class="entregables">
+                @for (entregable of fase.entregables; track entregable.id) {
+                  <li
+                    class="entregable"
+                    [id]="'entregable-' + entregable.id"
+                    [class.entregable--destacado]="entregable.estado === 'EN_REVISION'"
+                  >
+                    <div class="entregable__cabecera">
+                      <h4>{{ entregable.nombre }}</h4>
+                      <app-estado-de-entregable [estado]="entregable.estado" />
+                    </div>
+                    @if (entregable.esCambioDeAlcance) {
+                      <p class="entregable__marca">{{ t.cambioDeAlcance }}</p>
+                    }
+                    @if (entregable.descripcion) {
+                      <p class="entregable__descripcion">{{ entregable.descripcion }}</p>
+                    }
+                    @if (entregable.estado === 'CON_AJUSTES' && entregable.notaDeAjustes) {
+                      <p class="entregable__ajustes">
+                        <strong>{{ t.queSeAjusta }}</strong> {{ entregable.notaDeAjustes }}
+                      </p>
+                    }
+                    @if (entregable.estado === 'APROBADO' && entregable.aprobadoEn) {
+                      <p class="entregable__aprobado">{{ textoDeAprobacion(entregable) }}</p>
+                    }
+                    @if (entregable.urlDemo) {
+                      <a class="ver-demo" [href]="entregable.urlDemo" target="_blank" rel="noopener noreferrer">
+                        {{ t.verDemo }} <span class="sr-only">{{ t.abreEnPestanaNueva }}</span>
+                        <span aria-hidden="true">↗</span>
+                      </a>
+                    }
+
+                    @if (entregable.estado === 'EN_REVISION' && puedeResponder()) {
+                      @if (respondiendo(entregable, 'aprobar')) {
+                        <div class="respuesta" role="group" [attr.aria-label]="t.aprobar">
+                          <p>{{ textoDeConfirmacion(entregable) }}</p>
+                          <div class="respuesta__acciones">
+                            <button type="button" class="boton boton-secundario" (click)="cancelar()">
+                              {{ t.cancelar }}
+                            </button>
+                            <button
+                              type="button"
+                              class="boton boton-primario"
+                              [disabled]="enviando()"
+                              (click)="confirmarAprobacion(entregable)"
+                            >
+                              {{ t.siAprobar }}
+                            </button>
+                          </div>
+                        </div>
+                      } @else if (respondiendo(entregable, 'ajustes')) {
+                        <div class="respuesta">
+                          <label [for]="'ajustes-' + entregable.id">{{ t.labelAjustes }}</label>
+                          <p class="respuesta__ayuda" [id]="'ayuda-ajustes-' + entregable.id">{{ t.ayudaAjustes }}</p>
+                          <textarea
+                            [id]="'ajustes-' + entregable.id"
+                            rows="4"
+                            maxlength="1000"
+                            [value]="nota()"
+                            (input)="escribirNota($event)"
+                            [attr.aria-invalid]="notaVacia()"
+                            [attr.aria-describedby]="'ayuda-ajustes-' + entregable.id"
+                          ></textarea>
+                          @if (notaVacia()) {
+                            <p class="respuesta__error" role="alert">{{ t.errorAjustesVacio }}</p>
+                          }
+                          <div class="respuesta__acciones">
+                            <button type="button" class="boton boton-secundario" (click)="cancelar()">
+                              {{ t.cancelar }}
+                            </button>
+                            <button
+                              type="button"
+                              class="boton boton-primario"
+                              [disabled]="enviando()"
+                              (click)="enviarAjustes(entregable)"
+                            >
+                              {{ t.enviarAjustes }}
+                            </button>
+                          </div>
+                        </div>
+                      } @else {
+                        <div class="respuesta__acciones">
+                          <button type="button" class="boton boton-primario" (click)="empezarAprobacion(entregable)">
+                            {{ t.aprobar }}
+                          </button>
+                          <button type="button" class="boton boton-secundario" (click)="empezarAjustes(entregable)">
+                            {{ t.pedirAjustes }}
+                          </button>
+                        </div>
+                      }
+                      @if (errorAlResponder() && respuesta()?.entregable === entregable.id) {
+                        <p class="respuesta__error" role="alert">{{ t.errorAlResponder }}</p>
+                      }
+                    }
+                  </li>
+                }
+              </ul>
+            </li>
+          }
+        </ol>
+      }
+    </section>
+
+    <section class="pagos" aria-labelledby="titulo-pagos">
+      <h2 id="titulo-pagos">{{ t.pagosTitulo }}</h2>
+      <p class="pagos__intro">{{ t.pagosIntro }}</p>
+
+      <dl class="pagos__totales">
+        <div>
+          <dt>{{ t.totalDelProyecto }}</dt>
+          <dd>{{ pesos(p.total) }}</dd>
+        </div>
+        <div>
+          <dt>{{ t.totalPagado }}</dt>
+          <dd>{{ pesos(p.totalPagado) }}</dd>
+        </div>
+        <div>
+          <dt>{{ t.saldo }}</dt>
+          <dd>{{ pesos(p.saldo) }}</dd>
+        </div>
+        <div class="pagos__por-pagar">
+          <dt>{{ t.pendienteAhora }}</dt>
+          <dd>{{ pesos(p.pendienteDePago) }}</dd>
+        </div>
+      </dl>
+
+      <ul class="pagos__entregables">
+        @for (entregable of entregables(); track entregable.id) {
+          <li class="pago-de-entregable">
+            <p class="pago-de-entregable__nombre">{{ entregable.nombre }}</p>
+            <dl>
+              <div>
+                <dt>{{ t.valor }}</dt>
+                <dd>{{ pesos(entregable.cobro) }}</dd>
+              </div>
+              @if (entregable.impuesto > 0) {
+                <div>
+                  <dt>{{ t.impuesto }}</dt>
+                  <dd>{{ pesos(entregable.impuesto) }}</dd>
+                </div>
+              }
+              <div>
+                <dt>{{ t.pagado }}</dt>
+                <dd>{{ pesos(entregable.pagado) }}</dd>
+              </div>
+              <div>
+                <dt>{{ t.pendiente }}</dt>
+                <dd>
+                  @if (!entregable.esCobrable && entregable.pagado < entregable.cobro) {
+                    <span class="pago-de-entregable__aun-no">{{ t.todaviaNo }}</span>
+                  } @else if (entregable.pendiente === 0) {
+                    <span class="pago-de-entregable__al-dia">{{ t.pagadoCompleto }}</span>
+                  } @else {
+                    <strong class="pago-de-entregable__debe">{{ pesos(entregable.pendiente) }}</strong>
+                  }
+                </dd>
+              </div>
+            </dl>
+          </li>
+        }
+      </ul>
+
+      <h3>{{ t.historialTitulo }}</h3>
+      @if (p.pagos.length === 0) {
+        <p class="estado-vacio">{{ t.sinPagos }}</p>
+      } @else {
+        <ul class="pagos__historial">
+          @for (pago of p.pagos; track pago.id) {
+            <li>
+              <span>{{ fecha(pago.fecha) }}</span>
+              <span>{{ nombreDelEntregable(pago.entregableId) }}</span>
+              <span>{{ medios[pago.medio] }}</span>
+              <strong>{{ pesos(pago.monto) }}</strong>
+            </li>
+          }
+        </ul>
+      }
+
+      <p class="pagos__aclaracion">{{ t.noEsFactura }}</p>
+    </section>
+  }
+</section>

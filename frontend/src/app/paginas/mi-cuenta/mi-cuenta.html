@@ -1,6 +1,36 @@
 <section class="contenedor pagina-cuenta">
   <h1>{{ textos.titulo }}</h1>
 
+  @if (proyectos().length > 0) {
+    <section class="proyectos" aria-labelledby="titulo-proyectos">
+      <h2 id="titulo-proyectos">
+        {{ proyectos().length === 1 ? textosDeProyectos.titulo : textosDeProyectos.tituloVarios }}
+      </h2>
+      <ul class="proyectos__lista">
+        @for (proyecto of proyectos(); track proyecto.id) {
+          <li class="tarjeta-proyecto">
+            <p class="etiqueta-codigo">{{ estadosDelProyecto[proyecto.estado] }}</p>
+            <h3>{{ proyecto.nombre }}</h3>
+            <app-barra-de-avance [porcentaje]="proyecto.avance" [etiqueta]="textosDeProyectos.avance" />
+            @if (textoParaRevisar(proyecto); as aviso) {
+              <p class="tarjeta-proyecto__aviso">{{ aviso }}</p>
+            }
+            @if (proyecto.pendienteDePago > 0) {
+              <p class="tarjeta-proyecto__pago">
+                {{ textosDeProyectos.pagoPendiente }} <strong>{{ pesos(proyecto.pendienteDePago) }}</strong>
+              </p>
+            }
+            <a [routerLink]="['/mi-cuenta/proyectos', proyecto.id]" class="boton boton-primario">
+              {{ textosDeProyectos.verProyecto }}
+            </a>
+          </li>
+        }
+      </ul>
+    </section>
+  } @else if (errorDeProyectos()) {
+    <p class="pagina-cuenta__aviso-proyectos" role="status">{{ textosDeProyectos.error }}</p>
+  }
+
   <p>
     {{ textos.sesionIniciadaComo }} <strong>{{ sesion.correo() }}</strong
     >.

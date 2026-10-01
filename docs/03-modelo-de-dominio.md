@@ -431,3 +431,168 @@ válidas y `TransicionDeEstadoInvalidaException` al violarlo.
 - **Gestión de proyectos** (tareas, tiempos, entregables), **pagos en
   línea** y **firma electrónica** de la aceptación: fuera. Aceptar
   deja registro de fecha y usuario, nada más.
+
+
+# Parte 5 — Contexto `proyectos` (fase F12)
+
+**Aprobado por el usuario el 30 sep 2026** ([[10-vision-v2]] §F12,
+decisiones 21 a 29). Como los contextos anteriores, vive en los mismos
+paquetes `dominio/`, `aplicacion/` e `infraestructura/`, sin Spring ni
+JPA en el dominio (ArchUnit). Reutiliza `Correo`, `Dinero`,
+`Porcentaje` y `CotizacionId`; no toca sus invariantes.
+
+## 1. Entidad raíz: `Proyecto`
+
+Campos: `ProyectoId id` (UUID), `Correo correoDelCliente`,
+`String nombreDelCliente`, `CotizacionId origen` (opcional: puede nacer
+en blanco), `String nombre`, `String descripcion` (en lenguaje del
+cliente), `Porcentaje impuesto` (el de la cotización de origen, o el de
+`COTIZACIONES_IMPUESTO` si nace en blanco), `EstadoProyecto estado`,
+`DescripcionDelProyecto` (nombre, descripción, `LocalDate inicio`,
+`LocalDate entregaEstimada`), `Instant finDeGarantia` (nulo hasta entrar
+en garantía; el portal lo pinta como fecha en la zona del cliente), `List<Fase> fases`,
+`List<Pago> pagos`, `Instant creadoEn`, `Instant actualizadoEn`.
+
+**El cliente se identifica por su correo, no por su `UsuarioId`**
+(ADR-14): igual que las cotizaciones, el proyecto existe aunque el
+cliente todavía no tenga cuenta, y aparece en su `/mi-cuenta` el día
+que se registre con ese correo. Si el cliente elimina su cuenta, el
+proyecto **no se borra**: son datos del contrato, que la política
+conserva por la relación más 10 años.
+
+Como `Cotizacion`, **nunca llama al reloj**: todo `Instant` o
+`LocalDate` entra como parámetro.
+
+## 2. Entidades internas
+
+- **`Fase`** (un sprint): `FaseId` (para editarla y reordenarla; el
+  orden es su posición en la lista), `nombre`, `objetivo` (1-2 frases no
+  técnicas), `inicioPlaneado`, `finPlaneado`, `resumenParaElCliente`
+  (lo escribe el equipo al cerrar la fase; nulo mientras está abierta),
+  `List<Entregable> entregables`.
+- **`Entregable`**: `EntregableId`, `nombre`, `descripcion` (para el
+  cliente), `Dinero valor` (antes de impuesto, como un ítem de
+  cotización), `MomentoDeCobro cobro`, `EstadoEntregable estado`,
+  `UrlDeDemo demo` (opcional), `String notaDeAjustes` (la del último
+  paso a CON_AJUSTES), `boolean esCambioDeAlcance`, `Instant
+  aprobadoEn`, `QuienResponde aprobadoPor` (`CLIENTE` | `EQUIPO`).
+- **`Pago`**: `PagoId`, `EntregableId`, `Dinero monto`, `LocalDate
+  fecha`, `MedioDePago medio`, `OrigenDePago origen`, `String
+  referencia` (nota o número del comprobante), `Correo registradoPor`.
+
+## 3. Objetos de valor y enums
+
+- **`MomentoDeCobro`**: `AL_INICIAR` | `AL_APROBAR`. Traduce la
+  decisión 21: el primer entregable se cobra al iniciar (es el
+  anticipo) y los demás al aprobarse. Es por entregable, no fijo en el
+  proyecto, porque la misma decisión admite "salvo acuerdo distinto en
+  la cotización".
+- **`MedioDePago`**: `TRANSFERENCIA`, `NEQUI_DAVIPLATA`, `EFECTIVO`,
+  `LINK_DE_PAGO`.
+- **`OrigenDePago`**: `MANUAL` | `PASARELA`. En F12 solo se crea
+  `MANUAL` (decisión 24); `PASARELA` existe para no migrar el modelo
+  el día que llegue Wompi.
+- **`UrlDeDemo`**: solo `https://`. Un enlace que el panel pega y el
+  portal pinta como botón es la puerta clásica a un `javascript:`; se
+  rechaza en el dominio, no en la interfaz.
+- **`Dinero`** se reutiliza de F11, con un ajuste: hoy lanza
+  `CotizacionInvalidaException`, un nombre que no tiene sentido en un
+  pago. Pasa a lanzar una excepción propia del monto (ISS-204).
+
+## 4. Máquinas de estado
+
+**`EstadoEntregable`**
+
+`PENDIENTE` → `EN_CURSO`
+`EN_CURSO` → `EN_REVISION`
+`EN_REVISION` → `{APROBADO, CON_AJUSTES}`
+`CON_AJUSTES` → `EN_CURSO`
+`APROBADO` es **terminal**. Pasar a `CON_AJUSTES` exige la nota de qué
+se ajusta.
+
+Las dos salidas de `EN_REVISION` las puede tomar **el cliente** desde
+su cuenta o **el equipo** desde el panel (decisión 27); el resto de
+transiciones son solo del equipo.
+
+**`EstadoProyecto`**
+
+`ACTIVO` ⇄ `PAUSADO`
+`ACTIVO` → `EN_GARANTIA` (automático al aprobarse el último entregable;
+fija `finDeGarantia` = fecha de aprobación + 60 días, decisión 23)
+`EN_GARANTIA` → `ACTIVO` (si se agrega un cambio de alcance durante la
+garantía: hay trabajo pendiente otra vez)
+`EN_GARANTIA` → `CERRADO` (al vencer la garantía o a mano)
+`CERRADO` es **terminal**.
+
+El brief no traía `EN_GARANTIA → ACTIVO`; hace falta porque la decisión
+22 permite agregar entregables al proyecto en curso, y un proyecto en
+garantía con trabajo pendiente no está en garantía.
+
+Mismo patrón que `EstadoSolicitud` y `EstadoCotizacion`: mapa estático
+de transiciones y `TransicionDeEstadoInvalidaException`.
+
+## 5. Puertos
+
+**De entrada** (consolidados al implementar ISS-208: el equipo hace
+unas quince operaciones, y quince interfaces no aclaraban nada):
+`CrearProyectoUseCase` (propone el plan desde la cotización, crea desde
+ella o en blanco), `GestionarProyectoUseCase` (todo lo del equipo: plan,
+estados, pagos, pausa y cierre), `ResponderEntregableUseCase` (el
+cliente aprueba o pide ajustes), `ConsultarProyectosUseCase` (equipo:
+todos; cliente: los de su correo) y `CerrarGarantiasVencidasUseCase`
+(lo dispara un programador diario, como la retención de datos).
+
+**De salida**: `ProyectoRepositorio` (con `buscarPorIdParaModificar`,
+que bloquea la fila del proyecto hasta el fin de la transacción: si el
+cliente aprueba mientras el equipo registra un pago, el segundo espera
+en vez de pisar el cambio del primero —probado con diez pagos
+simultáneos contra PostgreSQL—), `NotificadorDeProyectos` (al
+cliente: entregable en revisión y pago registrado; al equipo: el cliente
+aprobó o pidió ajustes).
+
+## 6. Invariantes de negocio
+
+1. **El avance lo calcula el dominio**: valor de los entregables
+   APROBADOS ÷ valor total de los entregables, en porcentaje entero.
+   Un proyecto sin entregables está en 0 %.
+2. **Un entregable es cobrable** cuando su momento de cobro se
+   cumplió: `AL_INICIAR` desde que el proyecto existe, `AL_APROBAR`
+   desde que se aprueba. El portal muestra "pago pendiente" en todo
+   entregable cobrable que no esté pagado completo.
+3. **Lo que se cobra lleva el impuesto del proyecto**: valor del
+   entregable + impuesto, calculado aquí (ADR-15). El cliente siempre
+   ve lo que paga, con el impuesto incluido y separado.
+4. **Los pagos de un entregable nunca suman más que lo que se cobra
+   por él.** Se admiten pagos parciales; un pago que se pasaría se
+   rechaza con el saldo en el mensaje. Todo pago es mayor que cero.
+5. **Al crear el proyecto desde una cotización**, los entregables
+   iniciales suman exactamente el subtotal de la cotización. Se pueden
+   reagrupar y renombrar los ítems, pero no cambiar lo que el cliente
+   aceptó; lo que se agregue después va como cambio de alcance
+   (decisión 22) y queda marcado como tal.
+6. Solo se crea un proyecto desde una cotización **ACEPTADA**, y solo
+   uno por cotización.
+7. Un cliente solo ve **los proyectos de su correo**; el equipo los ve
+   todos. Uno ajeno responde **404, no 403** (mismo criterio que la
+   invariante 6 de cotizaciones: no se revela ni que existe).
+8. Mientras el proyecto está **PAUSADO** o **CERRADO**, sus
+   entregables no cambian de estado. Registrar un pago sí se puede en
+   cualquier estado: el dinero llega cuando llega.
+9. Los correos son **best-effort**: un fallo nunca deja un cambio a
+   medias.
+10. **El cliente solo responde lo que le toca**: un entregable
+    EN_REVISION de un proyecto suyo y ACTIVO. Pedir ajustes exige la
+    nota. Se guarda quién aprobó (`CLIENTE` o `EQUIPO`) y cuándo: es la
+    constancia de que ese entregable ya se puede cobrar.
+
+## 7. Fuera de este contexto, a propósito
+
+- **Firma electrónica** de la aprobación: queda registro de quién y
+  cuándo, nada más (mismo criterio que aceptar una cotización).
+- **Borrar entregables ya aprobados o pagados**, y un estado
+  `CANCELADO` para entregables: no está en el brief. Mientras no se
+  decida, un entregable PENDIENTE se puede eliminar del plan y uno con
+  trabajo o pagos no.
+- **Horas, tareas internas, responsables**: esto es la vista del
+  cliente, no un gestor de tareas.
+- **Documentos de cobro** (decisión 25) y **pasarela** (decisión 24).

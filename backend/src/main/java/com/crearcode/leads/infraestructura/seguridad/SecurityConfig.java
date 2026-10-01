@@ -50,6 +50,11 @@ class SecurityConfig {
 						// quien entra a cada recurso.
 						.requestMatchers("/api/cotizaciones/**").hasRole("ADMIN")
 						.requestMatchers("/api/mis-cotizaciones/**").authenticated()
+						// Proyectos (F12): mismo reparto. La gestion es del
+						// equipo; el cliente ve y responde lo suyo en
+						// /api/mis-proyectos, filtrado por el correo del token.
+						.requestMatchers("/api/proyectos/**").hasRole("ADMIN")
+						.requestMatchers("/api/mis-proyectos/**").authenticated()
 						// Borrar la propia cuenta: solo autenticado, y el caso de
 						// uso toma el correo del token, no de la peticion.
 						.requestMatchers(HttpMethod.DELETE, "/api/mi-cuenta").authenticated()

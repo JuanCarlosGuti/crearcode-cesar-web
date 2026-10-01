@@ -768,6 +768,91 @@ axe en CI. **Desplegada en producción el 30 sep 2026** (PR #1, commit
 
 ---
 
+## Fase F12 — Portal de proyectos del cliente
+
+**Aprobada por el usuario el 30 sep 2026.** Alcance en [[10-vision-v2]] §F12 y decisiones 21 a 26; modelo en
+[[03-modelo-de-dominio]] Parte 5; historias en
+[[04-historias-de-usuario]] épica E11 (HU-49 a HU-57); decisiones de
+arquitectura en ADR-14 y ADR-15. Niveles de prueba por issue según
+[[06-plan-de-pruebas]] §7.
+
+**Plan por entregables — la fase se construye como se le va a mostrar
+a un cliente.** Cada entregable termina con algo que el usuario revisa
+funcionando antes de seguir:
+
+| Entregable | Qué ve el usuario al final | Issues |
+|---|---|---|
+| 1. El motor | La API respondiendo con el proyecto de demostración: avance, cobros y saldo calculados; un cliente que no ve el proyecto de otro | ISS-203 a ISS-214 |
+| 2. El portal del cliente | `/mi-cuenta` en local, en el celular y en escritorio, recorriendo el proyecto de demostración como lo vería un cliente, y aprobando un entregable | ISS-215 a ISS-218 |
+| 3. El panel del equipo | Crear un proyecto desde una cotización aceptada, mover entregables y registrar un pago, y verlo reflejado en el portal | ISS-219 a ISS-222 |
+| 4. Correos y cierre | Los dos correos en Mailpit, el e2e completo con axe, Lighthouse y la revisión a 375 y 1280 px; el PDF de cotización con las condiciones nuevas | ISS-223 a ISS-225 |
+
+### F12a — Dominio y casos de uso (sin infraestructura)
+
+| ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
+|---|---|---|---|---|---|---|
+| ISS-203 ✅ | Documentación de F12: visión y decisiones 21-26, modelo, épica E11, ADR-14 y ADR-15, este backlog | HU-49..57 | Aprobada por el usuario antes del primer test | S | — | No aplica |
+| ISS-204 ✅ | `Dinero` deja de lanzar `CotizacionInvalidaException` y pasa a una excepción propia del monto, con el mismo 400 | — | Los tests de F11 siguen en verde sin tocarlos | S | ISS-203 | Unit |
+| ISS-205 ✅ | VOs y enums: `ProyectoId`, `EntregableId`, `PagoId`, `MomentoDeCobro`, `MedioDePago`, `OrigenDePago`, `UrlDeDemo` (solo `https://`) | HU-50, HU-55 | Un `javascript:` o un `http:` se rechazan en el dominio | M | ISS-204 | Unit |
+| ISS-206 ✅ | `EstadoEntregable` y `EstadoProyecto` con sus máquinas de estado, incluida `EN_GARANTIA → ACTIVO` | HU-54, HU-56 | Cada transición válida e inválida cubierta, como `EstadoCotizacionTest` | M | ISS-205 | Unit |
+| ISS-207 ✅ | Agregado `Proyecto` con `Fase`, `Entregable` y `Pago`: avance por valor, entregable cobrable, impuesto sumado, pagos parciales sin pasarse, garantía a 60 días, nada cambia en PAUSADO o CERRADO | HU-49..51, HU-54..56 | Invariantes 1-4 y 8 de la Parte 5 con test; el dominio nunca llama al reloj | L | ISS-206 | Unit |
+| ISS-208 ✅ | Casos de uso: crear (desde cotización ACEPTADA, una sola vez y sumando su subtotal, o en blanco), gestionar el plan, cambiar estados, **el cliente aprueba o pide ajustes** (decisión 27), registrar pago, pausar/reanudar/cerrar, consultar (equipo: todos; cliente: los de su correo) | HU-49..57 | Invariantes 5-7 y 10 con test; fakes a mano y `Clock` fijo | L | ISS-207 | Unit (fakes) |
+| ISS-209 ✅ | `CerrarGarantiasVencidasUseCase` y su programador diario (como la retención de datos) | HU-56 | Cierra solo los vencidos; idempotente | S | ISS-208 | Unit + Integration |
+
+### F12b — Infraestructura
+
+| ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
+|---|---|---|---|---|---|---|
+| ISS-210 ✅ | Migración `V8__proyectos.sql` (proyectos, fases, entregables, pagos) y el cuarteto entidad/mapper/repositorio-adaptador | HU-49..57 | Patrón de `Cotizacion*`; entidad JPA plana | L | ISS-207 | Integration (Testcontainers) |
+| ISS-211 ✅ | `NotificadorDeProyectos`: al cliente, entregable en revisión y pago registrado, con enlace al proyecto; al equipo, el cliente aprobó o pidió ajustes; nada más | HU-52, HU-57 | IT con GreenMail; un fallo de correo no revierte el cambio | M | ISS-208 | Integration |
+| ISS-212 ✅ | REST del equipo `/api/proyectos/**` (rol ADMIN), mismo esquema de rutas que `/api/cotizaciones/**` | HU-53..56 | `hasRole("ADMIN")` explícito; 409 en transición inválida; 400 con el saldo real si un pago se pasa | L | ISS-210 | API (IT REST) |
+| ISS-213 ✅ | REST del cliente `/api/mis-proyectos/**`: listar, obtener, y aprobar o pedir ajustes de un entregable, filtrado por el correo del token | HU-49..51, HU-57 | IT de acceso cruzado: el proyecto ajeno responde **404** | M | ISS-212 | API (IT REST) |
+| ISS-214 ✅ | Datos de demostración: cliente ficticio, 3 fases, 7 entregables en estados variados, 2 pagos, y su cuenta para entrar. Con la propiedad `app.demo.proyecto-de-demostracion` (`CARGAR_PROYECTO_DE_DEMOSTRACION`), apagada por defecto —el proyecto no usa perfiles de Spring—, **nunca** como migración de Flyway | HU-49..51 | Doble candado: el despliegue no la enciende (test que lee `deploy.api.yml`) y, aun encendida, no arranca donde `PERMITIR_CREDENCIALES_DE_DESARROLLO=false` | S | ISS-210 | Integration |
+
+### F12c — Portal del cliente
+
+| ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
+|---|---|---|---|---|---|---|
+| ISS-215 ✅ | `/mi-cuenta` con el proyecto como vista principal; lista si hay varios; sin proyectos, como hoy | HU-49 | `RenderMode.Client`, como el resto de la cuenta | M | ISS-213 | Component |
+| ISS-216 ✅ | Detalle: barra de avance, línea de tiempo de fases (vertical en móvil), entregables con estado en color **y** texto, EN_REVISION destacado con "Aprobar" y "Pedir ajustes" (nota obligatoria, confirmación), "Ver demo" con `rel="noopener noreferrer"` | HU-49, HU-50 | Verde para lo del código, **nunca violeta** (reservado a la IA, §Rediseño tech); animaciones apagadas con `prefers-reduced-motion`; axe sin violaciones | L | ISS-215 | Component + axe |
+| ISS-217 ✅ | Pagos: por entregable (cobro con impuesto separado, pagado, pendiente) y totales; tarjetas en el celular en vez de tabla; la aclaración de que no es una factura | HU-51 | Sin desborde a 375 px ni con zoom de texto al 200 % | M | ISS-216 | Component |
+| ISS-218 ✅ | Estados vacíos ("Estamos armando tu plan", sin pagos todavía), de carga y de error con reintento | HU-49..51 | Ninguna pantalla en blanco | S | ISS-216 | Component |
+
+**Entregable 2 verificado el 1 oct 2026** en un navegador real
+(Playwright, con el proyecto de demostración): sin desborde horizontal a
+375 ni a 1280 px, sin errores de consola, y aprobar y pedir ajustes
+funcionan contra el backend. La revisión de las capturas encontró un
+problema que ningún test veía —«Valor» al lado de «IVA» se leía como
+si hubiera que sumarlos— y se corrigió a «Total con IVA» / «IVA
+incluido».
+
+**Hallazgos de esa revisión que NO son de F12** (ya existían; quedan
+para resolverse aparte):
+
+- axe marca la regla `region` sobre `app-whatsapp-flotante` a 375 px
+  en todas las páginas (también en la Home y en Contacto): el botón
+  flotante queda fuera de los landmarks.
+- En `/ingreso`, lo que se escribe antes de que la página termine de
+  hidratarse se borra: un usuario en un celular lento podría perder su
+  correo y su contraseña del primer segundo.
+
+### F12d — Panel del equipo
+
+| ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
+|---|---|---|---|---|---|---|
+| ISS-219 | Listado de proyectos; "Crear proyecto" en la cotización aceptada (ítems como borrador de entregables, con la diferencia a la vista si no suman) y en blanco; aviso claro si el correo aún no tiene cuenta | HU-53 | `admin/**` sigue en Client | L | ISS-212 | Component |
+| ISS-220 | Gestión del plan: fases y entregables (crear, editar, reordenar), solo las transiciones válidas, nota obligatoria de ajustes, resumen de fase, enlace de demo, cambio de alcance marcado | HU-54 | Accesible con teclado, incluido el reordenar (sin depender de arrastrar) | L | ISS-219 | Component |
+| ISS-221 | Registrar pago; pausar, reanudar y cerrar con confirmación | HU-55, HU-56 | El saldo se ve actualizado sin recargar | M | ISS-220 | Component |
+| ISS-222 | Textos del portal, del panel y de los correos en `contenido/` | HU-49..57 | Contenido desacoplado (ADR-05) | S | ISS-221 | Component |
+
+### F12e — Cierre
+
+| ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
+|---|---|---|---|---|---|---|
+| ISS-223 | E2E del ciclo: cotización aceptada → proyecto → entregable en revisión → el cliente recibe el correo (Mailpit), entra, **lo aprueba** y ve subir el avance → se registra un pago y el saldo cambia; el acceso cruzado se niega | HU-49..57 | axe en portal y panel, a 375 y 1280 px | L | ISS-222 | E2E |
+| ISS-225 | Pie del PDF de cotización con las condiciones de las decisiones 21-23 (cobro por entregables, cambio de alcance como entregable nuevo, garantía de 60 días), sin tocar la aclaración de que no es factura | — | Decisión 30; los textos viven en un solo lugar y los usan el PDF y el portal | S | — | Integration (texto del PDF) |
+| ISS-224 | Cierre de fase: suites en verde, ArchUnit, Lighthouse, revisión manual 375/1280, docs y CLAUDE.md al día, OK del usuario | HU-49..57 | Regla dura del proyecto | M | todo F12 | Checklist manual |
+
 ## Resumen de cobertura
 
 Todas las HU de [[04-historias-de-usuario]] (29 de la Etapa 2, HU-30 a

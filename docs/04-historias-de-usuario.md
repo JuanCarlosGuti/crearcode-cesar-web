@@ -1047,3 +1047,163 @@ la empresa** para **poder compartirlo internamente y decidir**.
   factura ni una cuenta de cobro).
 
 **Prioridad**: Must (F11).
+
+---
+
+## Épica E11 — Portal de proyectos del cliente (Etapa 3, fase F12)
+
+Cuando una cotización se acepta, nace un proyecto, y el cliente lo
+sigue desde su cuenta ([[10-vision-v2]] §F12, decisiones 21 a 26;
+modelo en [[03-modelo-de-dominio]] Parte 5). Aprobada el 30 sep 2026. Dos públicos, como en E10: el **cliente registrado**,
+que mira, y el **equipo** (rol `ADMIN`), que gestiona. El cliente abre
+esto casi siempre desde un enlace de WhatsApp en el celular: toda
+historia se verifica a 375 px.
+
+### HU-49 — El cliente ve su proyecto al entrar a la cuenta
+Como **cliente** quiero **ver de un vistazo cómo va mi proyecto** para
+**no tener que preguntar por WhatsApp en qué va**.
+
+- Dado que tengo un proyecto, cuando entro a `/mi-cuenta`, entonces lo
+  primero que veo es ese proyecto: nombre, estado, barra de avance con
+  el porcentaje, fecha de inicio y fecha estimada de entrega.
+- Dado que tengo varios, entonces veo la lista y entro al que quiero.
+- Dado que no tengo ninguno, entonces la cuenta se ve como hoy.
+- Dado que el proyecto está en garantía, entonces veo hasta qué fecha.
+- Dado que miro el porcentaje de avance, entonces sale del valor de
+  lo aprobado sobre el total (nadie lo escribe a mano).
+
+**Prioridad**: Must (F12).
+
+### HU-50 — El cliente sigue las fases y los entregables
+Como **cliente** quiero **ver el plan por fases y qué se entregó en
+cada una** para **entender qué viene y qué me toca revisar**.
+
+- Dado que abro mi proyecto, entonces veo una línea de tiempo de las
+  fases (vertical en el celular), cada una con su objetivo, sus fechas
+  y, si ya cerró, el resumen de lo que se hizo.
+- Dado que abro una fase, entonces veo sus entregables con nombre,
+  descripción, estado (con color **y** texto, no solo color), valor y
+  un botón "Ver demo" si tiene.
+- Dado que un entregable está EN_REVISION, entonces se destaca:
+  "Esto está listo para que lo mires".
+- Dado que un entregable volvió con ajustes, entonces veo qué se está
+  ajustando.
+- Dado que el plan todavía no tiene fases, entonces veo "Estamos
+  armando tu plan", no una pantalla vacía.
+
+**Prioridad**: Must (F12).
+
+### HU-57 — El cliente aprueba o pide ajustes
+Como **cliente** quiero **aprobar lo que me entregan o decir qué hay que
+ajustar desde mi cuenta** para **no tener que escribirlo por WhatsApp y
+que quede constancia**.
+
+- Dado que un entregable mío está EN_REVISION, entonces veo dos botones:
+  "Aprobar" y "Pedir ajustes".
+- Dado que apruebo, cuando confirmo, entonces el entregable queda
+  APROBADO, el avance sube y, si ese entregable se cobra al aprobarse,
+  aparece como pago pendiente.
+- Dado que pido ajustes, entonces tengo que escribir qué ajustar; sin
+  nota no se envía.
+- Dado que respondo, entonces al equipo le llega un correo.
+- Dado que el entregable no está en revisión, el proyecto está pausado
+  o no es mío, entonces no puedo responderlo (lo niega el servidor, no
+  solo la interfaz).
+
+**Prioridad**: Must (F12, decisión 27).
+
+### HU-51 — El cliente ve cómo van sus pagos
+Como **cliente** quiero **saber cuánto he pagado y cuánto debo** para
+**llevar mis cuentas sin pedir un estado de cuenta**.
+
+- Dado que abro mi proyecto, entonces veo por entregable: lo que se
+  cobra (con el impuesto separado), lo pagado, lo pendiente, y la
+  fecha y el medio de cada pago.
+- Dado que un entregable ya es cobrable (el primero al iniciar, los
+  demás al aprobarse) y no está pagado completo, entonces aparece como
+  "pago pendiente".
+- Dado que miro los totales, entonces veo total del proyecto, total
+  pagado y saldo, calculados por el sistema.
+- Dado que el portal muestra pagos, entonces deja claro que **no es una
+  factura** (decisión 25).
+
+**Prioridad**: Must (F12).
+
+### HU-52 — El cliente se entera sin tener que entrar
+Como **cliente** quiero **un correo cuando haya algo que me toque** para
+**no revisar el portal cada día**.
+
+- Dado que un entregable pasa a EN_REVISION, entonces me llega un
+  correo con el enlace directo a mi proyecto.
+- Dado que se registra un pago mío, entonces me llega un correo que lo
+  confirma, con el monto y el saldo.
+- Dado cualquier otro cambio (una fase renombrada, una fecha movida),
+  entonces **no** me llega nada.
+- Dado que el correo falla, entonces el cambio queda hecho igual.
+
+**Prioridad**: Should (F12).
+
+### HU-53 — El equipo crea el proyecto desde una cotización aceptada
+Como **fundador** quiero **convertir una cotización aceptada en un
+proyecto** para **no volver a escribir lo que ya se acordó**.
+
+- Dado que una cotización está ACEPTADA, cuando elijo "Crear proyecto",
+  entonces sus ítems aparecen como borrador de entregables que puedo
+  reagrupar y renombrar antes de confirmar.
+- Dado que confirmo, entonces los entregables suman exactamente lo que
+  el cliente aceptó; si no, la app me dice la diferencia y no deja
+  confirmar.
+- Dado que la cotización ya tiene proyecto, entonces no puedo crear
+  otro.
+- Dado que el correo del cliente todavía no tiene cuenta, entonces la
+  app me lo dice claro: el proyecto queda creado y el cliente lo verá
+  cuando se registre con ese correo.
+- Dado que quiero un proyecto sin cotización, entonces puedo crearlo en
+  blanco.
+
+**Prioridad**: Must (F12).
+
+### HU-54 — El equipo arma y mueve el plan
+Como **fundador** quiero **organizar fases y entregables y cambiar su
+estado** para **que el portal cuente la verdad sin trabajo extra**.
+
+- Dado que estoy en un proyecto, entonces puedo crear, editar y
+  reordenar fases y entregables, y poner el enlace de la demo.
+- Dado que cambio el estado de un entregable, entonces solo me ofrece
+  las transiciones válidas; mandarlo a ajustes exige escribir qué se
+  ajusta.
+- Dado que el cliente me aprobó por WhatsApp, entonces puedo aprobarlo
+  yo desde el panel, y queda registrado que lo aprobó el equipo.
+- Dado que cierro una fase, entonces escribo el resumen para el
+  cliente.
+- Dado que el cliente pide algo nuevo, entonces lo agrego como
+  entregable de cambio de alcance, con su valor, y queda marcado como
+  tal (decisión 22).
+- Dado que apruebo el último entregable, entonces el proyecto pasa solo
+  a garantía por 60 días.
+
+**Prioridad**: Must (F12).
+
+### HU-55 — El equipo registra los pagos
+Como **fundador** quiero **anotar cada pago que recibo** para **que el
+cliente y yo veamos el mismo saldo**.
+
+- Dado que recibo un pago, cuando lo registro con entregable, monto,
+  fecha, medio y referencia, entonces el saldo se actualiza solo.
+- Dado que el monto se pasaría de lo que se cobra por ese entregable,
+  entonces la app lo rechaza y me dice el saldo real.
+- Dado que el pago es parcial, entonces se acepta y el entregable sigue
+  con saldo pendiente.
+
+**Prioridad**: Must (F12).
+
+### HU-56 — El equipo pausa, reanuda y cierra
+Como **fundador** quiero **pausar o cerrar un proyecto** para **que el
+portal refleje cuando algo está detenido o terminado**.
+
+- Dado que pauso un proyecto, entonces el cliente lo ve pausado y sus
+  entregables no cambian de estado hasta reanudarlo.
+- Dado que vence la garantía, entonces el proyecto se cierra solo.
+- Dado que quiero cerrarlo antes, entonces puedo, con confirmación.
+
+**Prioridad**: Should (F12).

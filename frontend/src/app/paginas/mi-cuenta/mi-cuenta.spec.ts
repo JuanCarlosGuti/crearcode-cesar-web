@@ -5,6 +5,7 @@ import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 
 import { SesionService } from '../../nucleo/sesion';
+import { entregableDePrueba, faseDePrueba, proyectoDePrueba } from '../mi-proyecto/proyecto-de-prueba';
 import { MiCuentaPage } from './mi-cuenta';
 
 describe('MiCuentaPage', () => {
@@ -134,5 +135,56 @@ describe('MiCuentaPage', () => {
 
     expect(el.textContent).toContain('No pudimos eliminar la cuenta');
     expect(TestBed.inject(SesionService).estaAutenticado()).toBe(true);
+  });
+
+  describe('proyectos del cliente (F12)', () => {
+    async function crearConProyectos(respuesta: object | null, estado = 200) {
+      TestBed.inject(SesionService).iniciarSesion({ token: 't', rol: 'CLIENTE', correo: 'cliente@ejemplo.co' });
+      const fixture = TestBed.createComponent(MiCuentaPage);
+      await fixture.whenStable();
+      TestBed.inject(HttpTestingController)
+        .expectOne('/api/mis-proyectos')
+        .flush(respuesta, { status: estado, statusText: estado === 200 ? 'OK' : 'Error' });
+      await fixture.whenStable();
+      return fixture.nativeElement as HTMLElement;
+    }
+
+    it('con un proyecto, lo pone primero con su avance y lo que toca revisar', async () => {
+      const el = await crearConProyectos([
+        proyectoDePrueba({
+          fases: [faseDePrueba({ entregables: [entregableDePrueba({ estado: 'EN_REVISION' })] })],
+        }),
+      ]);
+
+      const seccion = el.querySelector('.proyectos') as HTMLElement;
+      expect(seccion.querySelector('h2')?.textContent).toContain('Mi proyecto');
+      expect(seccion.textContent).toContain('Tienda de Café Valle');
+      expect(seccion.querySelector('[role="progressbar"]')?.getAttribute('aria-valuenow')).toBe('25');
+      expect(seccion.textContent).toContain('Tienes 1 entrega para revisar');
+      expect(seccion.querySelector('a[href="/mi-cuenta/proyectos/p-1"]')).not.toBeNull();
+      // Lo primero de la página, antes que el resto de la cuenta.
+      expect(el.querySelector('h1')?.nextElementSibling?.classList.contains('proyectos')).toBe(true);
+    });
+
+    it('con varios, los lista todos', async () => {
+      const el = await crearConProyectos([proyectoDePrueba(), proyectoDePrueba({ id: 'p-2', nombre: 'App de pedidos' })]);
+
+      expect(el.querySelector('.proyectos h2')?.textContent).toContain('Mis proyectos');
+      expect(el.querySelectorAll('.proyectos li')).toHaveLength(2);
+    });
+
+    it('sin proyectos la cuenta se ve como siempre', async () => {
+      const el = await crearConProyectos([]);
+
+      expect(el.querySelector('.proyectos')).toBeNull();
+      expect(el.textContent).toContain('Mis cotizaciones');
+    });
+
+    it('si no cargan, lo dice sin romper el resto de la cuenta', async () => {
+      const el = await crearConProyectos(null, 500);
+
+      expect(el.textContent).toContain('No pudimos cargar tus proyectos');
+      expect(el.textContent).toContain('Mis cotizaciones');
+    });
   });
 });
