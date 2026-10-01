@@ -66,14 +66,24 @@ class CargadorDeProyectoDeDemostracionIT {
 	}
 
 	/**
-	 * La cuenta de demostración tiene una contraseña que está en el
-	 * repositorio. El despliegue no puede encender la carga, y el valor
-	 * por defecto de la aplicación es apagado.
+	 * Encendida en producción a pedido del dueño (30 sep 2026), mientras
+	 * prueba la fase. Si el despliegue la enciende, la contraseña de la
+	 * cuenta tiene que llegar como secreto por las tres puertas —el YAML,
+	 * .kamal/secrets y el workflow—, nunca como valor en claro. Y por
+	 * defecto, fuera del despliegue, sigue apagada.
 	 */
 	@Test
-	void elDespliegueNoLaEnciendeYPorDefectoEstaApagada() throws Exception {
-		assertThat(Files.readString(Path.of("..", "config", "deploy.api.yml")))
-				.doesNotContainIgnoringCase("demostracion");
+	void siElDespliegueLaEnciendeLaContrasenaLlegaComoSecreto() throws Exception {
+		String despliegue = Files.readString(Path.of("..", "config", "deploy.api.yml"));
+		if (despliegue.contains("CARGAR_PROYECTO_DE_DEMOSTRACION")) {
+			String secretos = despliegue.substring(despliegue.indexOf("secret:"));
+			assertThat(secretos).contains("- DEMO_CONTRASENA");
+			assertThat(despliegue.substring(0, despliegue.indexOf("secret:"))).doesNotContain("DEMO_CONTRASENA:");
+			assertThat(Files.readString(Path.of("..", ".kamal", "secrets")))
+					.contains("DEMO_CONTRASENA=$DEMO_CONTRASENA");
+			assertThat(Files.readString(Path.of("..", ".github", "workflows", "ci.yml")))
+					.contains("DEMO_CONTRASENA: ${{ secrets.DEMO_CONTRASENA }}");
+		}
 		assertThat(Files.readString(Path.of("src", "main", "resources", "application.properties")))
 				.contains("app.demo.proyecto-de-demostracion=${CARGAR_PROYECTO_DE_DEMOSTRACION:false}");
 	}

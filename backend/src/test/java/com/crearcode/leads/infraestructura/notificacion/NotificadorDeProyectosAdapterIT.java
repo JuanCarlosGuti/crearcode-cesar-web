@@ -123,4 +123,24 @@ class NotificadorDeProyectosAdapterIT {
 				.contains("https://sitio-de-prueba.example/admin/proyectos/" + proyecto.id().valor());
 	}
 
+	/**
+	 * Los dominios reservados (.local, .test, .example, .invalid) no
+	 * existen en internet. Mandarles un correo por Resend es un rebote
+	 * seguro, y los rebotes dañan la reputación del dominio para los
+	 * correos de verdad. El cliente de demostración usa uno de ellos.
+	 */
+	@Test
+	void aUnDominioReservadoNoSaleNingunCorreo() {
+		Proyecto deDemostracion = Proyecto.enBlanco(new Correo("cliente.demo@crearcode-cesar.local"), "Demo",
+				new DescripcionDelProyecto("Demo", null, LocalDate.of(2026, 9, 1), null), new Porcentaje(0),
+				List.of(new NuevaFase(new DatosDeFase("Fase", null, null, null), List.of(
+						new DatosDeEntregable("Algo", null, Dinero.de(1), MomentoDeCobro.AL_INICIAR)))),
+				Instant.parse("2026-09-01T15:00:00Z"));
+		int antes = GREEN_MAIL.getReceivedMessages().length;
+
+		notificador.entregableListoParaRevisar(deDemostracion, deDemostracion.entregables().getFirst().id());
+
+		assertThat(GREEN_MAIL.getReceivedMessages()).hasSize(antes);
+	}
+
 }

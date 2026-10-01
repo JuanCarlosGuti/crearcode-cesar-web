@@ -862,6 +862,17 @@ probada desde ella. La política **no** los menciona, por decisión del
 usuario: la ley pide tenerlos, no publicarlos. Punto para el abogado: lo
 que se borra sigue en los respaldos hasta 30 días.
 
+**Antes de salir al mercado — apagar la demostración del portal (F12)**:
+el 30 sep 2026 el usuario pidió el proyecto de demostración también en
+producción para probar la fase. Para apagarlo: borrar
+`CARGAR_PROYECTO_DE_DEMOSTRACION` de `config/deploy.api.yml`, quitar
+`DEMO_CONTRASENA` de ese archivo, de `.kamal/secrets` y de
+`.github/workflows/ci.yml`, y después borrar de la base el proyecto y la
+cuenta de `cliente.demo@crearcode-cesar.local` (apagar la propiedad no
+los borra). Mientras esté encendida, los correos a ese cliente no salen:
+`.local` es un dominio reservado y un rebote dañaría la reputación del
+dominio.
+
 **Decisiones del usuario**:
 
 - **Condición de IVA**: hoy las cotizaciones salen con **19%** por

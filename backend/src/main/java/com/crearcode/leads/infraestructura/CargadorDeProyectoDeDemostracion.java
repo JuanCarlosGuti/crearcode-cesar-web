@@ -42,14 +42,16 @@ import com.crearcode.leads.dominio.UsuarioRepositorio;
  * pagos, para recorrer el portal en local como lo vería un cliente.
  *
  * <p>
- * Crea también la cuenta del cliente, con una contraseña que está en
- * este archivo. Por eso tiene dos candados: solo existe si se enciende
- * {@code app.demo.proyecto-de-demostracion} —apagado por defecto, y el
- * despliegue no lo enciende—, y aun encendido se niega a arrancar donde
- * no se admiten credenciales de desarrollo, que es exactamente
- * producción ({@code PERMITIR_CREDENCIALES_DE_DESARROLLO=false}). Es una
- * propiedad y no un perfil de Spring porque el proyecto no usa perfiles
- * (ver {@code CredencialesDeArranque}).
+ * Crea también la cuenta del cliente. Está apagado por defecto
+ * ({@code app.demo.proyecto-de-demostracion}); el dueño lo encendió en
+ * producción el 30 sep 2026 para probar la fase, y se apaga antes de
+ * salir al mercado. Allí la contraseña de la cuenta sale de un secreto
+ * ({@code DEMO_CONTRASENA}): la de por defecto está en el repositorio.
+ * Si en producción llega la de por defecto o ninguna, la demo no se
+ * carga —con un ERROR en el log— pero la aplicación arranca igual: una
+ * demo mal configurada no puede tumbar el sitio. Es una propiedad y no
+ * un perfil de Spring porque el proyecto no usa perfiles (ver
+ * {@code CredencialesDeArranque}).
  *
  * <p>
  * Nunca es una migración de Flyway: una migración corre en todos los
@@ -60,7 +62,11 @@ import com.crearcode.leads.dominio.UsuarioRepositorio;
 class CargadorDeProyectoDeDemostracion implements ApplicationRunner {
 
 	static final String CORREO_DEL_CLIENTE = "cliente.demo@crearcode-cesar.local";
-	static final String CONTRASENA_DEL_CLIENTE = "demo-del-portal";
+	/** La de desarrollo, que está en el repositorio. En producción no vale. */
+	static final String CONTRASENA_DE_DESARROLLO = "demo-del-portal";
+
+	/** El mínimo de cualquier contraseña de cliente (ContrasenaPlana). */
+	private static final int LONGITUD_MINIMA = 10;
 
 	private static final Logger LOG = LoggerFactory.getLogger(CargadorDeProyectoDeDemostracion.class);
 
@@ -69,34 +75,53 @@ class CargadorDeProyectoDeDemostracion implements ApplicationRunner {
 	private final CifradorDeContrasenas cifrador;
 	private final Clock reloj;
 	private final String correoDelEquipo;
+	private final String contrasenaDelCliente;
+	private final boolean permitirCredencialesDeDesarrollo;
 
 	CargadorDeProyectoDeDemostracion(ProyectoRepositorio proyectos, UsuarioRepositorio usuarios,
 			CifradorDeContrasenas cifrador, Clock reloj, @Value("${app.admin.username}") String correoDelEquipo,
+			@Value("${app.demo.contrasena-del-cliente}") String contrasenaDelCliente,
 			@Value("${app.seguridad.permitir-credenciales-de-desarrollo}") boolean permitirCredencialesDeDesarrollo) {
-		if (!permitirCredencialesDeDesarrollo) {
-			throw new IllegalStateException("El proyecto de demostración crea una cuenta con contraseña conocida y "
-					+ "no se carga donde PERMITIR_CREDENCIALES_DE_DESARROLLO=false. Apague "
-					+ "CARGAR_PROYECTO_DE_DEMOSTRACION en este entorno.");
-		}
 		this.proyectos = proyectos;
 		this.usuarios = usuarios;
 		this.cifrador = cifrador;
 		this.reloj = reloj;
 		this.correoDelEquipo = correoDelEquipo;
+		this.contrasenaDelCliente = contrasenaDelCliente;
+		this.permitirCredencialesDeDesarrollo = permitirCredencialesDeDesarrollo;
+	}
+
+	/**
+	 * Donde no se admiten credenciales de desarrollo, la contraseña tiene
+	 * que ser propia: la de por defecto la conoce cualquiera que lea el
+	 * repositorio.
+	 */
+	boolean puedeCargar() {
+		if (contrasenaDelCliente == null || contrasenaDelCliente.isBlank()
+				|| contrasenaDelCliente.length() < LONGITUD_MINIMA) {
+			return false;
+		}
+		return permitirCredencialesDeDesarrollo || !CONTRASENA_DE_DESARROLLO.equals(contrasenaDelCliente);
 	}
 
 	@Override
 	public void run(ApplicationArguments argumentos) {
+		if (!puedeCargar()) {
+			LOG.error("No se carga el proyecto de demostración: falta DEMO_CONTRASENA, es corta o es la del "
+					+ "repositorio en un entorno de producción. El resto de la aplicación sigue normal.");
+			return;
+		}
 		Correo cliente = new Correo(CORREO_DEL_CLIENTE);
 		if (usuarios.buscarPorCorreo(cliente).isEmpty()) {
-			usuarios.guardar(Usuario.crear(cliente, cifrador.hash(CONTRASENA_DEL_CLIENTE), Rol.CLIENTE));
+			usuarios.guardar(Usuario.crear(cliente, cifrador.hash(contrasenaDelCliente), Rol.CLIENTE));
 		}
 		if (!proyectos.listarPorCorreoDelCliente(cliente).isEmpty()) {
 			return;
 		}
 		proyectos.guardar(proyectoDeDemostracion(cliente));
-		LOG.warn("Proyecto de demostración cargado. Entra a /ingreso con {} / {} — solo para uso local.",
-				CORREO_DEL_CLIENTE, CONTRASENA_DEL_CLIENTE);
+		// La contraseña nunca va al log: en producción es un secreto.
+		LOG.warn("Proyecto de demostración cargado para {}. Apagar CARGAR_PROYECTO_DE_DEMOSTRACION antes de salir "
+				+ "al mercado.", CORREO_DEL_CLIENTE);
 	}
 
 	private Proyecto proyectoDeDemostracion(Correo cliente) {
