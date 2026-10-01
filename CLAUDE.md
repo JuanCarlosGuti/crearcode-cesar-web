@@ -207,10 +207,9 @@ variable de entorno del servidor el día que se use — nunca en el repo.
   naturales no responsables de IVA y no le sirve al cliente para
   deducir. Tampoco entran roles internos todavía (decisión 19: rol
   único hasta que haya un segundo miembro del equipo).
-- [ ] **F12** — Portal de proyectos del cliente, "Mi proyecto" (ISS-203
-  a ISS-225): **terminada el 1 oct 2026, pendiente del OK del usuario**.
-  Los entregables 1 a 3 ya están en producción desde el 1 oct (PR #3 y
-  #4); el 4 (e2e del ciclo, pie del PDF y cierre) va en el PR siguiente.
+- [x] **F12** — Portal de proyectos del cliente, "Mi proyecto" (ISS-203
+  a ISS-225): **terminada, aprobada por el usuario y en producción (1
+  oct 2026)**, en cuatro entregables desplegados por PR (#3, #4 y #5).
   Al aceptarse una cotización nace un proyecto que el cliente sigue y
   aprueba desde `/mi-cuenta`. Reglas en las decisiones 21-30 de docs/10,
   modelo en docs/03 Parte 5, historias E11, ADR-14 y ADR-15. Detalle en
@@ -261,6 +260,15 @@ proyecto vía `npx`/scripts de `package.json`.
    apunta a `http://localhost:8080` por defecto — actualízalo si
    corriste el backend en otro puerto). Test e2e del flujo de contacto
    (requiere los tres servicios arriba corriendo): `npm run e2e`.
+
+   Notas de esta máquina (1 oct 2026): **`JAVA_HOME` apunta a Java 21**
+   (lo usa otro proyecto); para este hay que exportar el JDK 25 instalado
+   (`JAVA_HOME="/c/Program Files/Eclipse Adoptium/jdk-25.0.3.9-hotspot"`)
+   antes de `./mvnw`, o falla con «class file version 69». Y el **5433 lo
+   ocupa el Postgres de desarrollo de La Ganancia**: el de este proyecto
+   se levanta en otro puerto con un override de Compose fuera del repo
+   (`ports: !override ["5434:5432"]`) y el backend con `DB_PORT=5434`.
+   No tocar el contenedor de La Ganancia.
 
    Nota de esta máquina de desarrollo: el puerto 8080 ya está ocupado
    por Docker Desktop, así que aquí el backend hay que correrlo en el
