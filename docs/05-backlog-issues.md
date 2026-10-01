@@ -865,7 +865,18 @@ revisión encontró y se corrigió:
 |---|---|---|---|---|---|---|
 | ISS-223 ✅ | E2E del ciclo: cotización aceptada → proyecto → entregable en revisión → el cliente recibe el correo (Mailpit), entra, **lo aprueba** y ve subir el avance → se registra un pago y el saldo cambia; el acceso cruzado se niega | HU-49..57 | axe en portal y panel, a 375 y 1280 px | L | ISS-222 | E2E |
 | ISS-225 ✅ | Pie del PDF de cotización con las condiciones de las decisiones 21-23 (cobro por entregables, cambio de alcance como entregable nuevo, garantía de 60 días), sin tocar la aclaración de que no es factura | — | Decisión 30; los textos viven en un solo lugar y los usan el PDF y el portal | S | — | Integration (texto del PDF) |
-| ISS-224 | Cierre de fase: suites en verde, ArchUnit, Lighthouse, revisión manual 375/1280, docs y CLAUDE.md al día, OK del usuario | HU-49..57 | Regla dura del proyecto | M | todo F12 | Checklist manual |
+| ISS-224 ✅ | Cierre de fase: suites en verde, ArchUnit, Lighthouse, revisión manual 375/1280, docs y CLAUDE.md al día, OK del usuario | HU-49..57 | Regla dura del proyecto | M | todo F12 | Checklist manual |
+
+**Fase F12 terminada el 1 oct 2026, pendiente del OK del usuario.**
+Verificación de cierre:
+
+| Comprobación | Resultado |
+|---|---|
+| Backend (`mvnw verify`: unitarios + ArchUnit + ITs con PostgreSQL) | 619 tests, BUILD SUCCESS |
+| Frontend (`ng test`) y lint | 347 specs; lint limpio |
+| E2E del ciclo de F12 con axe | 2 escenarios en verde (ciclo completo y acceso ajeno) |
+| Recorrido en navegador real, portal y panel | 375 y 1280 px: sin desborde, sin errores de consola, axe limpio |
+| Lighthouse en producción (móvil) | Performance 99-100 · Accesibilidad 100 · Buenas Prácticas 100 · SEO 100 |
 
 ## Resumen de cobertura
 
