@@ -1,27 +1,40 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 
 import { CUENTA } from '../../../contenido/cuenta';
+import { PROYECTOS } from '../../../contenido/proyectos';
 import { MiCuentaApi } from '../../api/mi-cuenta-api';
+import { MisProyectosApi, Proyecto, entregablesDe } from '../../api/proyectos-api';
+import { BarraDeAvance } from '../../componentes/barra-de-avance/barra-de-avance';
+import { formatearPesos } from '../../nucleo/formato';
 import { SesionService } from '../../nucleo/sesion';
 
 /**
- * Área mínima del cliente en F8: correo de la sesión y cerrar sesión.
- * El cambio de contraseña lo cubre el flujo de recuperación (docs/08).
- * Protegida por clienteGuard y sin SSR (RenderMode.Client).
+ * La cuenta del cliente. Desde F12, si tiene proyectos, van primero:
+ * es lo que vino a ver (HU-49). Debajo sigue lo de F8 y F11 —sus
+ * cotizaciones, cerrar sesión, eliminar la cuenta—. El cambio de
+ * contraseña lo cubre el flujo de recuperación (docs/08). Protegida por
+ * clienteGuard y sin SSR (RenderMode.Client).
  */
 @Component({
   selector: 'app-pagina-mi-cuenta',
   templateUrl: './mi-cuenta.html',
   styleUrl: './mi-cuenta.scss',
-  imports: [RouterLink],
+  imports: [RouterLink, BarraDeAvance],
 })
-export class MiCuentaPage {
+export class MiCuentaPage implements OnInit {
   private readonly router = inject(Router);
   private readonly api = inject(MiCuentaApi);
+  private readonly proyectosApi = inject(MisProyectosApi);
 
   protected readonly sesion = inject(SesionService);
   protected readonly textos = CUENTA.miCuenta;
+  protected readonly textosDeProyectos = PROYECTOS.cuenta;
+  protected readonly estadosDelProyecto = PROYECTOS.estadosDelProyecto;
+  protected readonly pesos = formatearPesos;
+
+  protected readonly proyectos = signal<Proyecto[]>([]);
+  protected readonly errorDeProyectos = signal(false);
 
   // Confirmacion en dos pasos, en la propia pagina: un window.confirm
   // no se puede estilar, no siempre se lee y el navegador puede
@@ -29,6 +42,24 @@ export class MiCuentaPage {
   protected readonly confirmando = signal(false);
   protected readonly eliminando = signal(false);
   protected readonly errorAlEliminar = signal(false);
+
+  ngOnInit(): void {
+    this.proyectosApi.listar().subscribe({
+      next: (proyectos) => this.proyectos.set(proyectos),
+      // Sin proyectos visibles la cuenta sigue sirviendo: no se bloquea.
+      error: () => this.errorDeProyectos.set(true),
+    });
+  }
+
+  protected textoParaRevisar(proyecto: Proyecto): string | null {
+    const cuantos = entregablesDe(proyecto).filter((entregable) => entregable.estado === 'EN_REVISION').length;
+    if (cuantos === 0) {
+      return null;
+    }
+    return cuantos === 1
+      ? this.textosDeProyectos.paraRevisarUno
+      : this.textosDeProyectos.paraRevisarVarios.replace('{n}', String(cuantos));
+  }
 
   protected cerrarSesion(): void {
     this.sesion.cerrarSesion();
