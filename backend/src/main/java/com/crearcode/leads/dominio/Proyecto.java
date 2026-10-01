@@ -376,6 +376,9 @@ public final class Proyecto {
 		EntregableId entregableId = nuevo.entregable();
 		entregable(entregableId);
 		Dinero saldoDelEntregable = cobroDe(entregableId).menos(pagadoDe(entregableId));
+		if (saldoDelEntregable.esCero()) {
+			throw new ProyectoInvalidoException("Ese entregable ya está pagado completo");
+		}
 		if (nuevo.monto().esMayorQue(saldoDelEntregable)) {
 			throw new ProyectoInvalidoException("El pago supera lo que falta por pagar de ese entregable: "
 					+ saldoDelEntregable.monto().toPlainString());

@@ -1,0 +1,153 @@
+.detalle-proyecto {
+  max-width: 60rem;
+  padding-block: var(--espacio-5);
+  display: grid;
+  gap: var(--espacio-3);
+}
+
+.admin-encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--espacio-2);
+}
+
+.bloque {
+  padding: var(--espacio-3);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-borde);
+  background: var(--color-superficie);
+  display: grid;
+  gap: var(--espacio-1);
+
+  > p {
+    margin: 0;
+  }
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+}
+
+.secundario {
+  color: var(--color-texto-secundario);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.aviso {
+  color: var(--color-alerta);
+  margin: 0;
+}
+
+.totales {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+  gap: var(--espacio-1);
+  margin: var(--espacio-1) 0;
+
+  dt {
+    font-size: 0.8rem;
+    color: var(--color-texto-secundario);
+  }
+
+  dd {
+    margin: 0;
+    font-weight: 700;
+  }
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-1);
+  align-items: center;
+}
+
+.acciones--compactas .boton {
+  padding: 0.35rem 0.7rem;
+}
+
+.confirmacion {
+  padding: var(--espacio-2);
+  border: 1px solid var(--color-alerta);
+  border-radius: var(--radio-borde);
+}
+
+.formulario {
+  display: grid;
+  gap: 0.35rem;
+
+  label {
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+
+  input,
+  select,
+  textarea {
+    font: inherit;
+    padding: 0.45rem;
+    border-radius: var(--radio-borde);
+    border: 1px solid var(--color-borde);
+    background: var(--color-fondo);
+    color: var(--color-texto);
+    min-width: 0;
+  }
+}
+
+.casilla {
+  display: flex;
+  gap: var(--espacio-1);
+  align-items: center;
+}
+
+.fase__cabecera,
+.entrega__cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--espacio-1);
+}
+
+.entregas {
+  list-style: none;
+  margin: var(--espacio-1) 0;
+  padding: 0;
+  display: grid;
+  gap: var(--espacio-1);
+}
+
+.entrega {
+  padding: var(--espacio-2);
+  border-radius: var(--radio-borde);
+  background: var(--color-fondo);
+  display: grid;
+  gap: 0.35rem;
+}
+
+.nota {
+  margin: 0;
+  padding-left: var(--espacio-1);
+  border-left: 3px solid var(--color-alerta);
+}
+
+.entrega__mas summary {
+  cursor: pointer;
+  color: var(--color-acento);
+  font-size: 0.9rem;
+}
+
+.historial {
+  margin: 0;
+  padding-left: var(--espacio-3);
+  display: grid;
+  gap: 0.35rem;
+}
+
+.mensaje-error {
+  color: var(--color-error);
+}

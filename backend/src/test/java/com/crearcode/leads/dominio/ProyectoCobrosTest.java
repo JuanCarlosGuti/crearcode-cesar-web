@@ -144,6 +144,18 @@ class ProyectoCobrosTest {
 		assertThat(proyecto.pendienteDe(diseno)).isEqualTo(Dinero.CERO);
 	}
 
+	/** Un "lo que falta: 0" no le dice nada a quien está registrando el pago. */
+	@Test
+	void pagarAlgoYaPagadoCompletoLoDiceConPalabras() {
+		Proyecto proyecto = enBlancoConDosEntregables(IVA);
+		EntregableId diseno = idDe(proyecto, "Diseño");
+		proyecto.registrarPago(pago(diseno, 1_190_000), AHORA);
+
+		assertThatThrownBy(() -> proyecto.registrarPago(pago(diseno, 1_000), AHORA))
+				.isInstanceOf(ProyectoInvalidoException.class)
+				.hasMessage("Ese entregable ya está pagado completo");
+	}
+
 	/**
 	 * Un cliente puede adelantar el pago de algo que aún no se aprueba;
 	 * lo que no puede es pasarse de lo que vale.

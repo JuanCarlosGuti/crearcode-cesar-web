@@ -108,3 +108,163 @@ export class MisProyectosApi {
 export function entregablesDe(proyecto: Proyecto): Entregable[] {
   return proyecto.fases.flatMap((fase) => fase.entregables);
 }
+
+// --- Vista del equipo (rol ADMIN, F12 entregable 3) ---
+
+export interface ResumenDeProyecto {
+  id: string;
+  nombre: string;
+  clienteNombre: string;
+  clienteCorreo: string;
+  estado: EstadoProyecto;
+  avance: number;
+  total: number;
+  saldo: number;
+  pendienteDePago: number;
+  actualizadoEn: string;
+}
+
+export interface DatosDeFasePayload {
+  nombre: string;
+  objetivo: string | null;
+  inicioPlaneado: string | null;
+  finPlaneado: string | null;
+}
+
+export interface DatosDeEntregablePayload {
+  nombre: string;
+  descripcion: string | null;
+  valor: number;
+  momentoDeCobro: MomentoDeCobro;
+}
+
+export interface FaseDelPlan {
+  fase: DatosDeFasePayload;
+  entregables: DatosDeEntregablePayload[];
+}
+
+export interface DescripcionPayload {
+  nombre: string;
+  descripcion: string | null;
+  inicio: string;
+  entregaEstimada: string | null;
+}
+
+export interface NuevoProyectoPayload {
+  cotizacionId: string | null;
+  cliente: { nombre: string; correo: string } | null;
+  impuestoPorcentaje: number | null;
+  descripcion: DescripcionPayload;
+  plan: FaseDelPlan[];
+}
+
+export interface PagoPayload {
+  entregableId: string;
+  monto: number;
+  fecha: string;
+  medio: MedioDePago;
+  referencia: string | null;
+}
+
+/** Gestión del equipo (rol ADMIN). Cada cambio devuelve el proyecto ya recalculado. */
+@Injectable({ providedIn: 'root' })
+export class ProyectosApi {
+  private readonly http = inject(HttpClient);
+  private readonly base = '/api/proyectos';
+
+  listar() {
+    return this.http.get<ResumenDeProyecto[]>(this.base);
+  }
+
+  obtener(id: string) {
+    return this.http.get<Proyecto>(`${this.base}/${id}`);
+  }
+
+  deLaCotizacion(cotizacion: string) {
+    return this.http.get<ResumenDeProyecto>(`${this.base}/de-cotizacion/${cotizacion}`);
+  }
+
+  proponerPlan(cotizacion: string) {
+    return this.http.get<FaseDelPlan[]>(`${this.base}/propuesta`, { params: { cotizacion } });
+  }
+
+  crear(payload: NuevoProyectoPayload) {
+    return this.http.post<Proyecto>(this.base, payload);
+  }
+
+  cambiarDescripcion(id: string, descripcion: DescripcionPayload) {
+    return this.http.put<Proyecto>(`${this.base}/${id}/descripcion`, descripcion);
+  }
+
+  agregarFase(id: string, fase: DatosDeFasePayload) {
+    return this.http.post<Proyecto>(`${this.base}/${id}/fases`, fase);
+  }
+
+  editarFase(id: string, fase: string, datos: DatosDeFasePayload) {
+    return this.http.put<Proyecto>(`${this.base}/${id}/fases/${fase}`, datos);
+  }
+
+  moverFase(id: string, fase: string, posicion: number) {
+    return this.http.put<Proyecto>(`${this.base}/${id}/fases/${fase}/posicion`, { posicion });
+  }
+
+  quitarFase(id: string, fase: string) {
+    return this.http.delete<Proyecto>(`${this.base}/${id}/fases/${fase}`);
+  }
+
+  escribirResumen(id: string, fase: string, resumen: string) {
+    return this.http.put<Proyecto>(`${this.base}/${id}/fases/${fase}/resumen`, { resumen });
+  }
+
+  agregarEntregable(id: string, fase: string, entregable: DatosDeEntregablePayload, esCambioDeAlcance: boolean) {
+    return this.http.post<Proyecto>(`${this.base}/${id}/fases/${fase}/entregables`, { entregable, esCambioDeAlcance });
+  }
+
+  editarEntregable(id: string, entregable: string, datos: DatosDeEntregablePayload) {
+    return this.http.put<Proyecto>(`${this.base}/${id}/entregables/${entregable}`, datos);
+  }
+
+  ponerDemo(id: string, entregable: string, url: string | null) {
+    return this.http.put<Proyecto>(`${this.base}/${id}/entregables/${entregable}/demo`, { url });
+  }
+
+  moverEntregable(id: string, entregable: string, faseId: string, posicion: number) {
+    return this.http.put<Proyecto>(`${this.base}/${id}/entregables/${entregable}/posicion`, { faseId, posicion });
+  }
+
+  quitarEntregable(id: string, entregable: string) {
+    return this.http.delete<Proyecto>(`${this.base}/${id}/entregables/${entregable}`);
+  }
+
+  cambiarEstado(id: string, entregable: string, estado: EstadoEntregable, nota: string | null) {
+    return this.http.post<Proyecto>(`${this.base}/${id}/entregables/${entregable}/estado`, { estado, nota });
+  }
+
+  registrarPago(id: string, pago: PagoPayload) {
+    return this.http.post<Proyecto>(`${this.base}/${id}/pagos`, pago);
+  }
+
+  pausar(id: string) {
+    return this.http.post<Proyecto>(`${this.base}/${id}/pausa`, null);
+  }
+
+  reanudar(id: string) {
+    return this.http.post<Proyecto>(`${this.base}/${id}/reanudacion`, null);
+  }
+
+  cerrar(id: string) {
+    return this.http.post<Proyecto>(`${this.base}/${id}/cierre`, null);
+  }
+}
+
+/**
+ * Las transiciones que el panel ofrece para cada estado. Es solo para no
+ * mostrar botones inútiles: quien decide es el servidor (docs/03 Parte 5).
+ */
+export const TRANSICIONES_DEL_EQUIPO: Record<EstadoEntregable, EstadoEntregable[]> = {
+  PENDIENTE: ['EN_CURSO'],
+  EN_CURSO: ['EN_REVISION'],
+  EN_REVISION: ['APROBADO', 'CON_AJUSTES'],
+  CON_AJUSTES: ['EN_CURSO'],
+  APROBADO: [],
+};

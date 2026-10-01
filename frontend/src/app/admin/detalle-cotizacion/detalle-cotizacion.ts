@@ -2,7 +2,9 @@ import { Component, OnInit, computed, inject, input, signal } from '@angular/cor
 import { Router, RouterLink } from '@angular/router';
 
 import { COTIZACIONES } from '../../../contenido/cotizaciones';
+import { PROYECTOS } from '../../../contenido/proyectos';
 import { Cotizacion, CotizacionesApi, ItemPayload } from '../../api/cotizaciones-api';
+import { ProyectosApi } from '../../api/proyectos-api';
 import { CerrarSesionButton } from '../cerrar-sesion/cerrar-sesion';
 
 interface ItemEditable {
@@ -26,10 +28,15 @@ export class DetalleCotizacionPage implements OnInit {
   readonly id = input.required<string>();
 
   private readonly cotizacionesApi = inject(CotizacionesApi);
+  private readonly proyectosApi = inject(ProyectosApi);
   private readonly router = inject(Router);
 
   protected readonly textos = COTIZACIONES.detalle;
   protected readonly etiquetasDeEstado = COTIZACIONES.estados;
+  protected readonly textosDeProyecto = PROYECTOS.panel;
+
+  /** F12: el proyecto de esta cotización, si ya existe (null = todavía no; undefined = no aplica). */
+  protected readonly suProyecto = signal<string | null | undefined>(undefined);
 
   protected readonly cotizacion = signal<Cotizacion | null>(null);
   protected readonly items = signal<ItemEditable[]>([]);
@@ -56,6 +63,7 @@ export class DetalleCotizacionPage implements OnInit {
       next: (cotizacion) => {
         this.aplicar(cotizacion);
         this.cargando.set(false);
+        this.buscarSuProyecto(cotizacion);
       },
       error: () => {
         this.error.set(this.textos.errorGuardar);
@@ -155,6 +163,17 @@ export class DetalleCotizacionPage implements OnInit {
     enlace.download = `${this.cotizacion()?.numero ?? 'cotizacion'}.pdf`;
     enlace.click();
     URL.revokeObjectURL(url);
+  }
+
+  /** Solo una aceptada puede tener proyecto (invariante 6 de F12). */
+  private buscarSuProyecto(cotizacion: Cotizacion): void {
+    if (cotizacion.estado !== 'ACEPTADA') {
+      return;
+    }
+    this.proyectosApi.deLaCotizacion(cotizacion.id).subscribe({
+      next: (proyecto) => this.suProyecto.set(proyecto.id),
+      error: () => this.suProyecto.set(null),
+    });
   }
 
   private aplicar(cotizacion: Cotizacion): void {

@@ -110,6 +110,19 @@
   </section>
 
   <div class="acciones">
+    @if (suProyecto(); as proyecto) {
+      <a class="boton boton-primario" [routerLink]="['/admin/proyectos', proyecto]">
+        {{ textosDeProyecto.verProyectoDeCotizacion }}
+      </a>
+    } @else if (suProyecto() === null) {
+      <a
+        class="boton boton-primario crear-proyecto"
+        routerLink="/admin/proyectos/nuevo"
+        [queryParams]="{ cotizacion: c.id }"
+      >
+        {{ textosDeProyecto.crearDesdeCotizacion }}
+      </a>
+    }
     @if (esBorrador()) {
       <button type="button" class="boton boton-secundario" (click)="guardar()" [disabled]="guardando()">
         {{ guardando() ? textos.guardando : textos.guardar }}

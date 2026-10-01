@@ -1,0 +1,428 @@
+<section class="contenedor pagina-admin detalle-proyecto">
+  <header class="admin-encabezado">
+    <a routerLink="/admin/proyectos" class="enlace-volver">← {{ t.volverAlListado }}</a>
+    <app-cerrar-sesion />
+  </header>
+
+  @if (cargando()) {
+    <p class="estado-carga">{{ t.cargando }}</p>
+  } @else if (errorDeCarga()) {
+    <p class="mensaje-error" role="alert">{{ t.error }}</p>
+  } @else if (proyecto(); as p) {
+    <!-- Encabezado -->
+    <section class="bloque" aria-labelledby="titulo-proyecto">
+      <p class="etiqueta-codigo">{{ estadosDelProyecto[p.estado] }}</p>
+      @if (editando() === 'descripcion') {
+        <div class="formulario">
+          <label for="d-nombre">{{ t.labelNombre }}</label>
+          <input id="d-nombre" #dNombre type="text" maxlength="120" [value]="p.nombre" />
+          <label for="d-descripcion">{{ t.labelDescripcion }}</label>
+          <textarea id="d-descripcion" #dDescripcion rows="2" maxlength="1000" [value]="p.descripcion ?? ''"></textarea>
+          <label for="d-inicio">{{ t.labelInicio }}</label>
+          <input id="d-inicio" #dInicio type="date" [value]="p.inicio" />
+          <label for="d-entrega">{{ t.labelEntregaEstimada }}</label>
+          <input id="d-entrega" #dEntrega type="date" [value]="p.entregaEstimada ?? ''" />
+          <div class="acciones">
+            <button type="button" class="boton boton-secundario" (click)="editando.set(null)">{{ t.cancelar }}</button>
+            <button
+              type="button"
+              class="boton boton-primario"
+              (click)="guardarDescripcion(dNombre.value, dDescripcion.value, dInicio.value, dEntrega.value)"
+            >
+              {{ t.guardar }}
+            </button>
+          </div>
+        </div>
+      } @else {
+        <h1 id="titulo-proyecto">{{ p.nombre }}</h1>
+        @if (p.descripcion) {
+          <p>{{ p.descripcion }}</p>
+        }
+        <p class="secundario">
+          {{ t.labelInicio }}: {{ fecha(p.inicio) }}
+          @if (p.entregaEstimada) {
+            · {{ t.labelEntregaEstimada }}: {{ fecha(p.entregaEstimada) }}
+          }
+        </p>
+        @if (!cerrado()) {
+          <button type="button" class="boton boton-secundario" (click)="editando.set('descripcion')">{{ t.editar }}</button>
+        }
+      }
+
+      <p class="cliente">
+        <strong>{{ p.clienteNombre }}</strong> · {{ p.clienteCorreo }}
+      </p>
+      @if (p.clienteTieneCuenta === false) {
+        <p class="aviso" role="status">{{ t.sinCuenta }}</p>
+      }
+      @if (p.estado === 'EN_GARANTIA' && p.finDeGarantia) {
+        <p class="secundario">{{ t.garantiaHasta }} {{ fechaDeInstante(p.finDeGarantia) }}</p>
+      }
+
+      <app-barra-de-avance [porcentaje]="p.avance" />
+
+      <dl class="totales">
+        <div><dt>Total</dt><dd>{{ pesos(p.total) }}</dd></div>
+        <div><dt>Pagado</dt><dd>{{ pesos(p.totalPagado) }}</dd></div>
+        <div><dt>Saldo</dt><dd>{{ pesos(p.saldo) }}</dd></div>
+        <div><dt>{{ t.columnaPorCobrar }}</dt><dd>{{ pesos(p.pendienteDePago) }}</dd></div>
+      </dl>
+
+      <div class="acciones">
+        @if (p.estado === 'ACTIVO') {
+          <button type="button" class="boton boton-secundario" (click)="pedirConfirmacion('pausa')">{{ t.pausar }}</button>
+        }
+        @if (p.estado === 'PAUSADO') {
+          <button type="button" class="boton boton-primario" (click)="reanudar()">{{ t.reanudar }}</button>
+        }
+        @if (p.estado === 'EN_GARANTIA') {
+          <button type="button" class="boton boton-secundario" (click)="pedirConfirmacion('cierre')">{{ t.cerrar }}</button>
+        }
+      </div>
+      @if (confirmando(); as cual) {
+        <div class="confirmacion" role="group">
+          <p>{{ cual === 'pausa' ? t.confirmarPausa : t.confirmarCierre }}</p>
+          <div class="acciones">
+            <button type="button" class="boton boton-secundario" (click)="confirmando.set(null)">{{ t.cancelar }}</button>
+            <button type="button" class="boton boton-primario" (click)="confirmar()">{{ t.confirmar }}</button>
+          </div>
+        </div>
+      }
+    </section>
+
+    @if (mensaje(); as texto) {
+      <p class="mensaje-error" role="alert">{{ texto }}</p>
+    }
+
+    <!-- Plan -->
+    <section aria-labelledby="titulo-plan">
+      <h2 id="titulo-plan">{{ t.seccionPlan }}</h2>
+
+      @for (fase of p.fases; track fase.id; let i = $index, primera = $first, ultima = $last) {
+        <article class="bloque fase">
+          @if (editando() === 'fase:' + fase.id) {
+            <div class="formulario">
+              <label [for]="'f-nombre-' + fase.id">{{ t.labelFase }}</label>
+              <input [id]="'f-nombre-' + fase.id" #fNombre type="text" maxlength="120" [value]="fase.nombre" />
+              <label [for]="'f-objetivo-' + fase.id">{{ t.labelObjetivo }}</label>
+              <input [id]="'f-objetivo-' + fase.id" #fObjetivo type="text" maxlength="500" [value]="fase.objetivo ?? ''" />
+              <label [for]="'f-inicio-' + fase.id">{{ t.labelInicio }}</label>
+              <input [id]="'f-inicio-' + fase.id" #fInicio type="date" [value]="fase.inicioPlaneado ?? ''" />
+              <label [for]="'f-fin-' + fase.id">Fin</label>
+              <input [id]="'f-fin-' + fase.id" #fFin type="date" [value]="fase.finPlaneado ?? ''" />
+              <div class="acciones">
+                <button type="button" class="boton boton-secundario" (click)="editando.set(null)">{{ t.cancelar }}</button>
+                <button
+                  type="button"
+                  class="boton boton-primario"
+                  (click)="guardarFase(fase, fNombre.value, fObjetivo.value, fInicio.value, fFin.value)"
+                >
+                  {{ t.guardar }}
+                </button>
+              </div>
+            </div>
+          } @else {
+            <div class="fase__cabecera">
+              <h3>{{ fase.nombre }}</h3>
+              @if (!cerrado()) {
+                <div class="acciones acciones--compactas">
+                  <button type="button" class="boton boton-secundario" (click)="editando.set('fase:' + fase.id)">
+                    {{ t.editar }}
+                  </button>
+                  <button
+                    type="button"
+                    class="boton boton-secundario"
+                    [disabled]="primera"
+                    [attr.aria-label]="t.subir + ' fase ' + fase.nombre"
+                    (click)="moverFase(fase, i - 1)"
+                  >
+                    ↑
+                  </button>
+                  <button
+                    type="button"
+                    class="boton boton-secundario"
+                    [disabled]="ultima"
+                    [attr.aria-label]="t.bajar + ' fase ' + fase.nombre"
+                    (click)="moverFase(fase, i + 1)"
+                  >
+                    ↓
+                  </button>
+                  @if (fase.entregables.length === 0) {
+                    <button type="button" class="boton boton-secundario" (click)="quitarFase(fase)">{{ t.quitarFase }}</button>
+                  }
+                </div>
+              }
+            </div>
+            @if (fase.objetivo) {
+              <p class="secundario">{{ fase.objetivo }}</p>
+            }
+          }
+
+          <ul class="entregas">
+            @for (entregable of fase.entregables; track entregable.id; let j = $index, primeraEntrega = $first, ultimaEntrega = $last) {
+              <li class="entrega">
+                <div class="entrega__cabecera">
+                  <strong>{{ entregable.nombre }}</strong>
+                  <app-estado-de-entregable [estado]="entregable.estado" />
+                </div>
+                <p class="secundario">
+                  {{ pesos(entregable.valor) }} + IVA · {{ entregable.momentoDeCobro === 'AL_INICIAR' ? t.cobroAlIniciar : t.cobroAlAprobar }}
+                  @if (entregable.esCambioDeAlcance) {
+                    · {{ t.cambioDeAlcance }}
+                  }
+                  · Pagado {{ pesos(entregable.pagado) }}
+                </p>
+                @if (entregable.notaDeAjustes && entregable.estado === 'CON_AJUSTES') {
+                  <p class="nota">{{ entregable.notaDeAjustes }}</p>
+                }
+
+                @if (puedeMoverEntregas()) {
+                  <div class="acciones">
+                    @for (destino of transicionesDe(entregable); track destino) {
+                      <button
+                        type="button"
+                        class="boton"
+                        [class.boton-primario]="destino !== 'CON_AJUSTES'"
+                        [class.boton-secundario]="destino === 'CON_AJUSTES'"
+                        [disabled]="ocupado()"
+                        (click)="cambiarEstado(entregable, destino)"
+                      >
+                        {{ textoDeAccion(entregable, destino) }}
+                      </button>
+                    }
+                  </div>
+                }
+                @if (ajustesDe() === entregable.id) {
+                  <div class="formulario">
+                    <label [for]="'nota-' + entregable.id">{{ t.notaDeAjustes }}</label>
+                    <textarea
+                      [id]="'nota-' + entregable.id"
+                      name="nota-ajustes"
+                      rows="3"
+                      maxlength="1000"
+                      [value]="notaDeAjustes()"
+                      (input)="escribirNota($event)"
+                    ></textarea>
+                    @if (notaVacia()) {
+                      <p class="mensaje-error" role="alert">{{ t.notaDeAjustes }}.</p>
+                    }
+                    <div class="acciones">
+                      <button type="button" class="boton boton-secundario" (click)="ajustesDe.set(null)">{{ t.cancelar }}</button>
+                      <button type="button" class="boton boton-primario" (click)="devolverConAjustes(entregable)">
+                        {{ t.guardar }}
+                      </button>
+                    </div>
+                  </div>
+                }
+
+                @if (!cerrado()) {
+                  <details class="entrega__mas">
+                    <summary>Editar, demo y mover</summary>
+                    <div class="formulario">
+                      <label [for]="'e-nombre-' + entregable.id">{{ t.labelEntregable }}</label>
+                      <input [id]="'e-nombre-' + entregable.id" #eNombre type="text" maxlength="120" [value]="entregable.nombre" />
+                      <label [for]="'e-desc-' + entregable.id">{{ t.labelDescripcion }}</label>
+                      <input [id]="'e-desc-' + entregable.id" #eDesc type="text" maxlength="1000" [value]="entregable.descripcion ?? ''" />
+                      <label [for]="'e-valor-' + entregable.id">{{ t.labelValor }}</label>
+                      <input [id]="'e-valor-' + entregable.id" #eValor type="number" min="0" [value]="entregable.valor" />
+                      <label [for]="'e-cobro-' + entregable.id">{{ t.labelCobro }}</label>
+                      <select [id]="'e-cobro-' + entregable.id" #eCobro [value]="entregable.momentoDeCobro">
+                        <option value="AL_INICIAR">{{ t.cobroAlIniciar }}</option>
+                        <option value="AL_APROBAR">{{ t.cobroAlAprobar }}</option>
+                      </select>
+                      <div class="acciones">
+                        <button
+                          type="button"
+                          class="boton boton-secundario"
+                          (click)="guardarEntregable(entregable, eNombre.value, eDesc.value, eValor.value, eCobro.value)"
+                        >
+                          {{ t.guardar }} {{ entregable.nombre }}
+                        </button>
+                      </div>
+
+                      <label [for]="'e-demo-' + entregable.id">{{ t.enlaceDemo }}</label>
+                      <input [id]="'e-demo-' + entregable.id" #eDemo type="url" maxlength="500" [value]="entregable.urlDemo ?? ''" />
+                      <div class="acciones">
+                        <button type="button" class="boton boton-secundario" (click)="guardarDemo(entregable, eDemo.value)">
+                          {{ t.guardarDemo }}
+                        </button>
+                      </div>
+
+                      <label [for]="'e-fase-' + entregable.id">{{ t.moverA }}</label>
+                      <select [id]="'e-fase-' + entregable.id" #eFase (change)="moverEntregable(entregable, eFase.value, 9999)">
+                        @for (otra of p.fases; track otra.id) {
+                          <option [value]="otra.id" [selected]="otra.id === fase.id">{{ otra.nombre }}</option>
+                        }
+                      </select>
+                      <div class="acciones">
+                        <button
+                          type="button"
+                          class="boton boton-secundario"
+                          [disabled]="primeraEntrega"
+                          [attr.aria-label]="t.subir + ' ' + entregable.nombre"
+                          (click)="moverEntregable(entregable, fase.id, j - 1)"
+                        >
+                          ↑ {{ t.subir }}
+                        </button>
+                        <button
+                          type="button"
+                          class="boton boton-secundario"
+                          [disabled]="ultimaEntrega"
+                          [attr.aria-label]="t.bajar + ' ' + entregable.nombre"
+                          (click)="moverEntregable(entregable, fase.id, j + 1)"
+                        >
+                          ↓ {{ t.bajar }}
+                        </button>
+                        <button type="button" class="boton boton-secundario" (click)="quitarEntregable(entregable)">
+                          {{ t.quitarEntregable }}
+                        </button>
+                      </div>
+                    </div>
+                  </details>
+                }
+              </li>
+            }
+          </ul>
+
+          @if (!cerrado()) {
+            <details class="entrega__mas">
+              <summary>{{ t.resumenDeFase }}</summary>
+              <div class="formulario">
+                <label class="sr-only" [for]="'resumen-' + fase.id">{{ t.resumenDeFase }}</label>
+                <textarea [id]="'resumen-' + fase.id" #resumen rows="3" maxlength="2000" [value]="fase.resumenParaElCliente ?? ''"></textarea>
+                <div class="acciones">
+                  <button type="button" class="boton boton-secundario" (click)="guardarResumen(fase, resumen.value)">
+                    {{ t.guardarResumen }}
+                  </button>
+                </div>
+              </div>
+            </details>
+          }
+        </article>
+      }
+
+      @if (!cerrado()) {
+        <!-- Agregar fase -->
+        <div class="bloque formulario">
+          <h3>{{ t.tituloNuevaFase }}</h3>
+          <label for="nueva-fase">{{ t.labelFase }}</label>
+          <input id="nueva-fase" #nuevaFaseNombre type="text" maxlength="120" />
+          <div class="acciones">
+            <button type="button" class="boton boton-secundario" (click)="agregarFase(nuevaFaseNombre.value); nuevaFaseNombre.value = ''">
+              {{ t.agregarFase }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Agregar entrega -->
+        @if (p.fases.length > 0) {
+          <div class="bloque formulario">
+            <h3>{{ t.tituloNuevaEntrega }}</h3>
+            <label for="nueva-entrega-fase">Fase</label>
+            <select id="nueva-entrega-fase" (change)="nuevaFase.set(valorDe($event))">
+              @for (fase of p.fases; track fase.id) {
+                <option [value]="fase.id" [selected]="fase.id === nuevaFase()">{{ fase.nombre }}</option>
+              }
+            </select>
+            <label for="nueva-entrega-nombre">{{ t.labelEntregable }}</label>
+            <input
+              id="nueva-entrega-nombre"
+              name="nuevo-entregable-nombre"
+              type="text"
+              maxlength="120"
+              [value]="nuevoNombre()"
+              (input)="nuevoNombre.set(valorDe($event))"
+            />
+            <label for="nueva-entrega-valor">{{ t.labelValor }}</label>
+            <input
+              id="nueva-entrega-valor"
+              name="nuevo-entregable-valor"
+              type="number"
+              min="0"
+              [value]="nuevoValor()"
+              (input)="nuevoValor.set(+valorDe($event))"
+            />
+            <label for="nueva-entrega-cobro">{{ t.labelCobro }}</label>
+            <select id="nueva-entrega-cobro" (change)="nuevoCobro.set($any(valorDe($event)))">
+              <option value="AL_APROBAR" [selected]="nuevoCobro() === 'AL_APROBAR'">{{ t.cobroAlAprobar }}</option>
+              <option value="AL_INICIAR" [selected]="nuevoCobro() === 'AL_INICIAR'">{{ t.cobroAlIniciar }}</option>
+            </select>
+            <label class="casilla">
+              <input
+                type="checkbox"
+                name="nuevo-cambio-de-alcance"
+                [checked]="cambioDeAlcanceObligatorio() || nuevoCambioDeAlcance()"
+                [disabled]="cambioDeAlcanceObligatorio()"
+                (change)="nuevoCambioDeAlcance.set($any($event.target).checked)"
+              />
+              {{ t.esCambioDeAlcance }}
+            </label>
+            @if (cambioDeAlcanceObligatorio()) {
+              <p class="secundario">{{ t.cambioDeAlcanceObligatorio }}</p>
+            }
+            <div class="acciones">
+              <button type="button" class="boton boton-primario" [disabled]="ocupado()" (click)="agregarEntregable()">
+                {{ t.agregarEntregable }}
+              </button>
+            </div>
+          </div>
+        }
+      }
+    </section>
+
+    <!-- Pagos -->
+    <section aria-labelledby="titulo-pagos">
+      <h2 id="titulo-pagos">{{ t.pagosTitulo }}</h2>
+      @if (entregables().length > 0) {
+        <div class="bloque formulario">
+          <label for="pago-entregable">{{ t.labelEntregaDelPago }}</label>
+          <select id="pago-entregable" (change)="pagoEntregable.set(valorDe($event))">
+            @for (entregable of entregables(); track entregable.id) {
+              <option [value]="entregable.id" [selected]="entregable.id === pagoEntregable()">
+                {{ entregable.nombre }} — falta {{ pesos(entregable.cobro - entregable.pagado) }}
+              </option>
+            }
+          </select>
+          <label for="pago-monto">{{ t.labelMonto }}</label>
+          <input id="pago-monto" type="number" min="1" [value]="pagoMonto()" (input)="pagoMonto.set(+valorDe($event))" />
+          <label for="pago-fecha">{{ t.labelFechaPago }}</label>
+          <input id="pago-fecha" type="date" [value]="pagoFecha()" (input)="pagoFecha.set(valorDe($event))" />
+          <label for="pago-medio">{{ t.labelMedio }}</label>
+          <select id="pago-medio" (change)="pagoMedio.set($any(valorDe($event)))">
+            @for (medio of listaDeMedios; track medio) {
+              <option [value]="medio" [selected]="medio === pagoMedio()">{{ medios[medio] }}</option>
+            }
+          </select>
+          <label for="pago-referencia">{{ t.labelReferencia }}</label>
+          <input
+            id="pago-referencia"
+            type="text"
+            maxlength="200"
+            [value]="pagoReferencia()"
+            (input)="pagoReferencia.set(valorDe($event))"
+          />
+          <div class="acciones">
+            <button type="button" class="boton boton-primario" [disabled]="ocupado()" (click)="registrarPago()">
+              {{ t.registrarPago }}
+            </button>
+          </div>
+        </div>
+      }
+
+      @if (p.pagos.length === 0) {
+        <p class="secundario">{{ t.sinPagos }}</p>
+      } @else {
+        <ul class="historial">
+          @for (pago of p.pagos; track pago.id) {
+            <li>
+              {{ fecha(pago.fecha) }} · {{ medios[pago.medio] }} · <strong>{{ pesos(pago.monto) }}</strong>
+              @if (pago.referencia) {
+                · {{ pago.referencia }}
+              }
+            </li>
+          }
+        </ul>
+      }
+    </section>
+  }
+</section>

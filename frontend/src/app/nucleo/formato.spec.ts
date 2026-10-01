@@ -1,4 +1,4 @@
-import { formatearFecha, formatearFechaDeInstante, formatearPesos } from './formato';
+import { formatearFecha, formatearFechaDeInstante, formatearPesos, hoyEnColombia } from './formato';
 
 describe('formato', () => {
   it('formatea pesos colombianos sin decimales', () => {
@@ -24,5 +24,10 @@ describe('formato', () => {
   it('sin fecha no inventa una', () => {
     expect(formatearFecha(null)).toBe('');
     expect(formatearFechaDeInstante(null)).toBe('');
+  });
+
+  it('hoy es el día de Colombia, en formato de fecha sin hora', () => {
+    // 3 a. m. UTC del 2 de octubre todavía es 1 de octubre en Bogotá.
+    expect(hoyEnColombia(new Date('2026-10-02T03:00:00Z'))).toBe('2026-10-01');
   });
 });

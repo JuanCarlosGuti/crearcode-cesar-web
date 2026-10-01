@@ -84,6 +84,17 @@ class ProyectoController {
 		return respuesta(consultar.obtener(proyectoId).orElseThrow(() -> new ProyectoNoEncontradoException(proyectoId)));
 	}
 
+	/**
+	 * HU-53: el detalle de una cotización aceptada pregunta si ya tiene
+	 * proyecto, para ofrecer crearlo o llevar al que existe.
+	 */
+	@GetMapping("/de-cotizacion/{cotizacion}")
+	ProyectoResumenResponse deLaCotizacion(@PathVariable UUID cotizacion) {
+		CotizacionId cotizacionId = new CotizacionId(cotizacion);
+		return consultar.deLaCotizacion(cotizacionId).map(ProyectoResumenResponse::desde)
+				.orElseThrow(() -> new CotizacionSinProyectoException(cotizacionId));
+	}
+
 	/** HU-53: el plan que propone la cotización, en la misma forma que se envía al crear. */
 	@GetMapping("/propuesta")
 	List<NuevaFaseRequest> proponer(@RequestParam UUID cotizacion) {

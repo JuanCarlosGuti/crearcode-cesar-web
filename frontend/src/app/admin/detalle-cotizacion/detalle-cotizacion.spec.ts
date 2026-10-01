@@ -144,4 +144,32 @@ describe('DetalleCotizacionPage', () => {
     expect(enviar.disabled).toBe(true);
     expect(el.textContent).toContain('Agrega al menos un ítem');
   });
+
+  describe('el proyecto de una cotización aceptada (F12)', () => {
+    it('si todavía no tiene, ofrece crearlo desde ella', async () => {
+      const { fixture, el, httpMock } = await crear('ACEPTADA');
+      httpMock.expectOne('/api/proyectos/de-cotizacion/id-1').flush(null, { status: 404, statusText: 'Not Found' });
+      await fixture.whenStable();
+
+      const enlace = el.querySelector('a.crear-proyecto') as HTMLAnchorElement;
+      expect(enlace.textContent).toContain('Crear proyecto');
+      expect(enlace.getAttribute('href')).toBe('/admin/proyectos/nuevo?cotizacion=id-1');
+    });
+
+    it('si ya lo tiene, lleva a él', async () => {
+      const { fixture, el, httpMock } = await crear('ACEPTADA');
+      httpMock.expectOne('/api/proyectos/de-cotizacion/id-1').flush({ id: 'p-1', nombre: 'Tienda' });
+      await fixture.whenStable();
+
+      expect(el.querySelector('a.crear-proyecto')).toBeNull();
+      expect(el.querySelector('a[href="/admin/proyectos/p-1"]')?.textContent).toContain('Ver su proyecto');
+    });
+
+    it('una cotización que no está aceptada ni pregunta', async () => {
+      const { el, httpMock } = await crear('ENVIADA');
+
+      httpMock.expectNone('/api/proyectos/de-cotizacion/id-1');
+      expect(el.querySelector('a.crear-proyecto')).toBeNull();
+    });
+  });
 });
