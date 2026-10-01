@@ -21,7 +21,12 @@ import java.util.List;
  */
 public final class Proyecto {
 
-	static final Duration GARANTIA = Duration.ofDays(60);
+	/**
+	 * Decisión 23 de docs/10. Pública porque el pie del PDF de cotización
+	 * la cita: un solo número, para que el documento y el proyecto nunca
+	 * digan cosas distintas.
+	 */
+	public static final Duration GARANTIA = Duration.ofDays(60);
 
 	private final ProyectoId id;
 	private final Correo correoDelCliente;

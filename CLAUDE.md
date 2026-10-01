@@ -880,9 +880,10 @@ dominio.
   responsable. Confirmar con el contador (casilla 53 del RUT) y, si no
   aplica, bajarlo con `COTIZACIONES_IMPUESTO`.
 - ~~**Condiciones comerciales del pie del PDF**~~: **decididas el 30 sep
-  2026** con la F12 (decisiones 21-23 y 30 de docs/10): cobro por
-  entregables, cambio de alcance como entregable nuevo y garantía de 60
-  días. Se implementan en ISS-225.
+  2026** con la F12 (decisiones 21-23 y 30 de docs/10) e
+  **implementadas el 1 oct 2026** (ISS-225): cobro por entregables,
+  cambio de alcance como entregable nuevo y garantía de 60 días, bajo
+  «Condiciones» en el PDF. Texto en docs/08.
 - **Revisar el eslogan del hero** ("Tecnología que trabaja para tu
   negocio, no al revés.") — pendiente desde el 29 jul 2026. Sigue
   siendo el titular del rediseño, ahora con "no al revés" resaltado.

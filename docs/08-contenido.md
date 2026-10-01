@@ -861,6 +861,24 @@ Tres, y solo tres: el cliente no recibe un correo por cada cambio menor
   pidió ajustes, lleva su nota; siempre, el enlace a
   /admin/proyectos/{id}. Va a `NOTIFICACIONES_CORREO_DESTINO`.
 
+### Pie del PDF de cotización: condiciones (ISS-225, decisión 30)
+
+Bajo «Condiciones», con la etiqueta en negrita. Viven en
+`CondicionesComerciales` (backend); los días de garantía salen de
+`Proyecto.GARANTIA`, así el PDF y el proyecto nunca dicen cosas
+distintas.
+
+- **Forma de pago:** se paga por entregables. El primero al aceptar
+  esta propuesta y cada uno de los siguientes al aprobar su entrega,
+  salvo que se acuerde otra cosa por escrito.
+- **Cambios de alcance:** lo que se pida y no esté en esta cotización
+  se cotiza aparte, como un entregable nuevo con su propio valor.
+- **Garantía:** 60 días de corrección de errores a partir de la entrega
+  final.
+
+Debajo sigue el aviso de siempre: es una cotización, no una factura ni
+una cuenta de cobro.
+
 ## Legales
 
 ### Política de tratamiento de datos personales (borrador — Ley 1581 de 2012)

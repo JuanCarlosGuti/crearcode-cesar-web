@@ -132,4 +132,29 @@ class CotizacionPdfAdapterIT {
 		assertThat(texto).doesNotContain("NIT ");
 	}
 
+	/**
+	 * Decisión 30 de docs/10: el pie lleva las condiciones de las
+	 * decisiones 21 a 23. Antes se explicaban a mano por WhatsApp y no
+	 * quedaban en el documento que el cliente guarda.
+	 */
+	@Test
+	void elPieLlevaLasCondicionesDePagoAlcanceYGarantia() throws Exception {
+		String texto = textoDe(adapter.generar(cotizacionEnviada(new Porcentaje(19))));
+
+		assertThat(texto).contains("Condiciones");
+		assertThat(texto).contains("se paga por entregables");
+		assertThat(texto).contains("al aceptar esta propuesta");
+		assertThat(texto).contains("entregable nuevo");
+		assertThat(texto).contains("60 días");
+		// Sigue diciendo lo que no es, y sigue cabiendo en una página.
+		assertThat(texto).contains("no una factura ni una cuenta de cobro");
+	}
+
+	@Test
+	void conLasCondicionesSigueCabiendoEnUnaPagina() throws Exception {
+		byte[] pdf = adapter.generar(cotizacionEnviada(new Porcentaje(19)));
+
+		assertThat(new PdfReader(new ByteArrayInputStream(pdf)).getNumberOfPages()).isEqualTo(1);
+	}
+
 }
