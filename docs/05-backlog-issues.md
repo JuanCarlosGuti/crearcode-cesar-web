@@ -863,7 +863,7 @@ revisión encontró y se corrigió:
 
 | ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
 |---|---|---|---|---|---|---|
-| ISS-223 | E2E del ciclo: cotización aceptada → proyecto → entregable en revisión → el cliente recibe el correo (Mailpit), entra, **lo aprueba** y ve subir el avance → se registra un pago y el saldo cambia; el acceso cruzado se niega | HU-49..57 | axe en portal y panel, a 375 y 1280 px | L | ISS-222 | E2E |
+| ISS-223 ✅ | E2E del ciclo: cotización aceptada → proyecto → entregable en revisión → el cliente recibe el correo (Mailpit), entra, **lo aprueba** y ve subir el avance → se registra un pago y el saldo cambia; el acceso cruzado se niega | HU-49..57 | axe en portal y panel, a 375 y 1280 px | L | ISS-222 | E2E |
 | ISS-225 ✅ | Pie del PDF de cotización con las condiciones de las decisiones 21-23 (cobro por entregables, cambio de alcance como entregable nuevo, garantía de 60 días), sin tocar la aclaración de que no es factura | — | Decisión 30; los textos viven en un solo lugar y los usan el PDF y el portal | S | — | Integration (texto del PDF) |
 | ISS-224 | Cierre de fase: suites en verde, ArchUnit, Lighthouse, revisión manual 375/1280, docs y CLAUDE.md al día, OK del usuario | HU-49..57 | Regla dura del proyecto | M | todo F12 | Checklist manual |
 
