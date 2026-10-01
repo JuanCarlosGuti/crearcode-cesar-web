@@ -255,6 +255,18 @@ class ProyectoControllerIT {
 
 		assertThat(pedir(HttpMethod.POST, "/api/proyectos", pedido, admin(), Map.class).getStatusCode())
 				.isEqualTo(HttpStatus.CONFLICT);
+
+		// El detalle de la cotización en el panel pregunta si ya tiene proyecto.
+		ResponseEntity<ProyectoResumenResponse> suProyecto = pedir(HttpMethod.GET,
+				"/api/proyectos/de-cotizacion/" + cotizacionId, null, admin(), ProyectoResumenResponse.class);
+		assertThat(suProyecto.getStatusCode()).isEqualTo(HttpStatus.OK);
+		assertThat(suProyecto.getBody().id()).isEqualTo(creado.getBody().id());
+	}
+
+	@Test
+	void unaCotizacionSinProyectoResponde404() {
+		assertThat(pedir(HttpMethod.GET, "/api/proyectos/de-cotizacion/" + UUID.randomUUID(), null, admin(),
+				Map.class).getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 	}
 
 	@Test

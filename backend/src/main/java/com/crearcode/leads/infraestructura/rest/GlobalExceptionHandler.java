@@ -116,6 +116,11 @@ class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(excepcion.getMessage()));
 	}
 
+	@ExceptionHandler(CotizacionSinProyectoException.class)
+	ResponseEntity<ErrorResponse> cotizacionSinProyecto(CotizacionSinProyectoException excepcion) {
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(excepcion.getMessage()));
+	}
+
 	@ExceptionHandler(ProyectoInvalidoException.class)
 	ResponseEntity<ErrorResponse> proyectoInvalido(ProyectoInvalidoException excepcion) {
 		return ResponseEntity.badRequest().body(new ErrorResponse(excepcion.getMessage()));

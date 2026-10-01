@@ -44,3 +44,15 @@ export function formatearFechaDeInstante(instante: string | null | undefined): s
   }
   return FECHA_LARGA_EN_COLOMBIA.format(new Date(instante));
 }
+
+const DIA_EN_COLOMBIA = new Intl.DateTimeFormat('en-CA', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  timeZone: 'America/Bogota',
+});
+
+/** El día de hoy en Colombia como "AAAA-MM-DD", el formato de los campos de fecha. */
+export function hoyEnColombia(ahora: Date = new Date()): string {
+  return DIA_EN_COLOMBIA.format(ahora);
+}

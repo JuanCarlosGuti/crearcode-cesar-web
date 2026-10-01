@@ -1,0 +1,149 @@
+<section class="contenedor pagina-admin nuevo-proyecto">
+  <header class="admin-encabezado">
+    <a routerLink="/admin/proyectos" class="enlace-volver">← {{ t.volverAlListado }}</a>
+    <app-cerrar-sesion />
+  </header>
+
+  <h1>{{ t.nuevoTitulo }}</h1>
+  @if (deLaCotizacion(); as c) {
+    <p>{{ textoDeOrigen(c) }}</p>
+  } @else if (!cotizacion()) {
+    <p>{{ t.nuevoIntroBlanco }}</p>
+  }
+
+  @if (!cotizacion()) {
+    <fieldset class="bloque">
+      <legend>{{ t.seccionCliente }}</legend>
+      <label for="cliente-nombre">{{ t.labelClienteNombre }}</label>
+      <input id="cliente-nombre" type="text" maxlength="120" [value]="clienteNombre()" (input)="clienteNombre.set(valorDe($event))" />
+      <label for="cliente-correo">{{ t.labelClienteCorreo }}</label>
+      <input
+        id="cliente-correo"
+        type="email"
+        maxlength="254"
+        aria-describedby="ayuda-correo"
+        [value]="clienteCorreo()"
+        (input)="clienteCorreo.set(valorDe($event))"
+      />
+      <p id="ayuda-correo" class="ayuda">{{ t.ayudaClienteCorreo }}</p>
+      <label for="impuesto">{{ t.labelImpuesto }}</label>
+      <input id="impuesto" type="number" min="0" max="100" [value]="impuesto()" (input)="impuesto.set(+valorDe($event))" />
+    </fieldset>
+  }
+
+  <fieldset class="bloque">
+    <legend>{{ t.seccionDescripcion }}</legend>
+    <label for="nombre-proyecto">{{ t.labelNombre }}</label>
+    <input id="nombre-proyecto" type="text" maxlength="120" [value]="nombre()" (input)="nombre.set(valorDe($event))" />
+    <label for="descripcion-proyecto">{{ t.labelDescripcion }}</label>
+    <textarea id="descripcion-proyecto" rows="2" maxlength="1000" [value]="descripcion()" (input)="descripcion.set(valorDe($event))"></textarea>
+    <div class="fechas">
+      <div>
+        <label for="inicio">{{ t.labelInicio }}</label>
+        <input id="inicio" type="date" [value]="inicio()" (input)="inicio.set(valorDe($event))" />
+      </div>
+      <div>
+        <label for="entrega">{{ t.labelEntregaEstimada }}</label>
+        <input id="entrega" type="date" [value]="entregaEstimada()" (input)="entregaEstimada.set(valorDe($event))" />
+      </div>
+    </div>
+  </fieldset>
+
+  <section class="bloque" aria-labelledby="titulo-plan">
+    <h2 id="titulo-plan">{{ t.seccionPlan }}</h2>
+    @if (cotizacion()) {
+      <p class="ayuda">{{ t.ayudaPlan }}</p>
+    }
+
+    @for (fase of plan(); track $index; let i = $index) {
+      <fieldset class="fase">
+        <legend class="sr-only">{{ fase.fase.nombre }}</legend>
+        <label [for]="'fase-' + i">{{ t.labelFase }}</label>
+        <input [id]="'fase-' + i" type="text" [value]="fase.fase.nombre" (input)="cambiarFase(i, 'nombre', valorDe($event))" />
+        <label [for]="'objetivo-' + i">{{ t.labelObjetivo }}</label>
+        <input
+          [id]="'objetivo-' + i"
+          type="text"
+          [value]="fase.fase.objetivo ?? ''"
+          (input)="cambiarFase(i, 'objetivo', valorDe($event))"
+        />
+
+        <ul class="entregas">
+          @for (entregable of fase.entregables; track $index; let j = $index) {
+            <li class="entrega">
+              <div>
+                <label [for]="'e-nombre-' + i + '-' + j">{{ t.labelEntregable }}</label>
+                <input
+                  [id]="'e-nombre-' + i + '-' + j"
+                  name="entregable-nombre"
+                  type="text"
+                  maxlength="120"
+                  [value]="entregable.nombre"
+                  (input)="cambiarEntregable(i, j, 'nombre', valorDe($event))"
+                />
+              </div>
+              <div>
+                <label [for]="'e-valor-' + i + '-' + j">{{ t.labelValor }}</label>
+                <input
+                  [id]="'e-valor-' + i + '-' + j"
+                  name="entregable-valor"
+                  type="number"
+                  min="0"
+                  step="1000"
+                  [value]="entregable.valor"
+                  (input)="cambiarEntregable(i, j, 'valor', valorDe($event))"
+                />
+              </div>
+              <div>
+                <label [for]="'e-cobro-' + i + '-' + j">{{ t.labelCobro }}</label>
+                <select
+                  [id]="'e-cobro-' + i + '-' + j"
+                  [value]="entregable.momentoDeCobro"
+                  (change)="cambiarEntregable(i, j, 'momentoDeCobro', valorDe($event))"
+                >
+                  <option value="AL_INICIAR">{{ t.cobroAlIniciar }}</option>
+                  <option value="AL_APROBAR">{{ t.cobroAlAprobar }}</option>
+                </select>
+              </div>
+              <button type="button" class="boton boton-secundario" (click)="quitarEntregable(i, j)">
+                {{ t.quitarEntregable }}
+              </button>
+            </li>
+          }
+        </ul>
+        <div class="acciones">
+          <button type="button" class="boton boton-secundario" (click)="agregarEntregable(i)">{{ t.agregarEntregable }}</button>
+          <button type="button" class="boton boton-secundario" (click)="quitarFase(i)">{{ t.quitarFase }}</button>
+        </div>
+      </fieldset>
+    }
+    <button type="button" class="boton boton-secundario" (click)="agregarFase()">{{ t.agregarFase }}</button>
+
+    <dl class="suma">
+      <div>
+        <dt>{{ t.sumaDelPlan }}</dt>
+        <dd>{{ pesos(suma()) }}</dd>
+      </div>
+      @if (deLaCotizacion(); as c) {
+        <div>
+          <dt>{{ t.sumaAceptada }}</dt>
+          <dd>{{ pesos(c.subtotal) }}</dd>
+        </div>
+        @if (diferencia() !== 0) {
+          <div class="suma__diferencia" role="status">
+            <dt>{{ t.diferencia }}</dt>
+            <dd>{{ pesos(diferencia()) }}</dd>
+          </div>
+        }
+      }
+    </dl>
+  </section>
+
+  @if (error(); as mensaje) {
+    <p class="mensaje-error" role="alert">{{ mensaje }}</p>
+  }
+
+  <button type="button" class="boton boton-primario" [disabled]="!puedeCrear()" (click)="crear()">
+    {{ creando() ? t.creando : t.crear }}
+  </button>
+</section>

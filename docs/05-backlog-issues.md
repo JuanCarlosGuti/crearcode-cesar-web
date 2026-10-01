@@ -840,10 +840,24 @@ para resolverse aparte):
 
 | ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
 |---|---|---|---|---|---|---|
-| ISS-219 | Listado de proyectos; "Crear proyecto" en la cotización aceptada (ítems como borrador de entregables, con la diferencia a la vista si no suman) y en blanco; aviso claro si el correo aún no tiene cuenta | HU-53 | `admin/**` sigue en Client | L | ISS-212 | Component |
-| ISS-220 | Gestión del plan: fases y entregables (crear, editar, reordenar), solo las transiciones válidas, nota obligatoria de ajustes, resumen de fase, enlace de demo, cambio de alcance marcado | HU-54 | Accesible con teclado, incluido el reordenar (sin depender de arrastrar) | L | ISS-219 | Component |
-| ISS-221 | Registrar pago; pausar, reanudar y cerrar con confirmación | HU-55, HU-56 | El saldo se ve actualizado sin recargar | M | ISS-220 | Component |
-| ISS-222 | Textos del portal, del panel y de los correos en `contenido/` | HU-49..57 | Contenido desacoplado (ADR-05) | S | ISS-221 | Component |
+| ISS-219 ✅ | Listado de proyectos; "Crear proyecto" en la cotización aceptada (ítems como borrador de entregables, con la diferencia a la vista si no suman) y en blanco; aviso claro si el correo aún no tiene cuenta | HU-53 | `admin/**` sigue en Client | L | ISS-212 | Component |
+| ISS-220 ✅ | Gestión del plan: fases y entregables (crear, editar, reordenar), solo las transiciones válidas, nota obligatoria de ajustes, resumen de fase, enlace de demo, cambio de alcance marcado | HU-54 | Accesible con teclado, incluido el reordenar (sin depender de arrastrar) | L | ISS-219 | Component |
+| ISS-221 ✅ | Registrar pago; pausar, reanudar y cerrar con confirmación | HU-55, HU-56 | El saldo se ve actualizado sin recargar | M | ISS-220 | Component |
+| ISS-222 ✅ | Textos del portal, del panel y de los correos en `contenido/` | HU-49..57 | Contenido desacoplado (ADR-05) | S | ISS-221 | Component |
+
+**Entregable 3 verificado el 1 oct 2026** en un navegador real
+(Playwright) a 1280 y 375 px: sin desborde, axe sin violaciones, y
+crear (desde cotización y en blanco), mover estados, registrar pagos y
+el aviso de «sin cuenta» funcionando contra el backend. Lo que la
+revisión encontró y se corrigió:
+
+- El pago venía preseleccionado en la primera entrega aunque ya
+  estuviera pagada, y el rechazo decía «lo que falta por pagar: 0».
+  Ahora preselecciona la primera con algo por cobrar, y el dominio dice
+  «Ese entregable ya está pagado completo».
+- Lo que vuelve de ajustes ofrecía «Empezar»; ahora dice «Retomar».
+- Para saber si una cotización ya tiene proyecto se agregó
+  `GET /api/proyectos/de-cotizacion/{id}` (404 si todavía no).
 
 ### F12e — Cierre
 

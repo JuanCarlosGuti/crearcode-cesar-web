@@ -1,0 +1,51 @@
+<section class="contenedor pagina-admin">
+  <header class="admin-encabezado">
+    <div>
+      <h1>{{ t.listadoTitulo }}</h1>
+      <p>{{ t.listadoIntro }}</p>
+    </div>
+    <div class="admin-encabezado__acciones">
+      <a routerLink="/admin" class="boton boton-secundario">Solicitudes</a>
+      <a routerLink="/admin/cotizaciones" class="boton boton-secundario">Cotizaciones</a>
+      <a routerLink="/admin/proyectos/nuevo" class="boton boton-primario">{{ t.nuevoEnBlanco }}</a>
+      <app-cerrar-sesion />
+    </div>
+  </header>
+
+  @if (cargando()) {
+    <p class="estado-carga">{{ t.cargando }}</p>
+  } @else if (error()) {
+    <p class="mensaje-error" role="alert">{{ t.error }}</p>
+  } @else if (proyectos().length === 0) {
+    <p class="estado-vacio">{{ t.vacio }}</p>
+  } @else {
+    <div class="tabla-envoltorio">
+      <table class="tabla-cotizaciones">
+        <thead>
+          <tr>
+            <th scope="col">{{ t.columnaProyecto }}</th>
+            <th scope="col">{{ t.columnaCliente }}</th>
+            <th scope="col">{{ t.columnaEstado }}</th>
+            <th scope="col">{{ t.columnaAvance }}</th>
+            <th scope="col">{{ t.columnaPorCobrar }}</th>
+            <th scope="col">{{ t.columnaSaldo }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (proyecto of proyectos(); track proyecto.id) {
+            <tr>
+              <td>
+                <a [routerLink]="['/admin/proyectos', proyecto.id]">{{ proyecto.nombre }}</a>
+              </td>
+              <td>{{ proyecto.clienteNombre }}</td>
+              <td>{{ estados[proyecto.estado] }}</td>
+              <td>{{ proyecto.avance }} %</td>
+              <td>{{ pesos(proyecto.pendienteDePago) }}</td>
+              <td>{{ pesos(proyecto.saldo) }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

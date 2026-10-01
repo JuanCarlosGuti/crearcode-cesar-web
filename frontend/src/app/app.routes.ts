@@ -148,6 +148,26 @@ export const routes: Routes = [
     canActivate: [clienteGuard],
     title: 'Mi proyecto — Crear Code Cesar',
   },
+  // Proyectos del equipo (F12). "nuevo" va antes que ":id".
+  {
+    path: 'admin/proyectos',
+    loadComponent: () => import('./admin/listado-proyectos/listado-proyectos').then((m) => m.ListadoProyectosPage),
+    canActivate: [adminGuard],
+    title: 'Proyectos — Panel Crear Code Cesar',
+  },
+  {
+    path: 'admin/proyectos/nuevo',
+    loadComponent: () => import('./admin/nuevo-proyecto/nuevo-proyecto').then((m) => m.NuevoProyectoPage),
+    canActivate: [adminGuard],
+    title: 'Nuevo proyecto — Panel Crear Code Cesar',
+  },
+  {
+    path: 'admin/proyectos/:id',
+    loadComponent: () =>
+      import('./admin/detalle-proyecto/detalle-proyecto').then((m) => m.DetalleProyectoAdminPage),
+    canActivate: [adminGuard],
+    title: 'Proyecto — Panel Crear Code Cesar',
+  },
   {
     path: 'mi-cuenta/cotizaciones',
     loadComponent: () =>
