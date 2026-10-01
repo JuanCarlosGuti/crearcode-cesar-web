@@ -140,6 +140,14 @@ export const routes: Routes = [
     canActivate: [adminGuard],
     title: 'Cotización — Panel Crear Code Cesar',
   },
+  // Proyecto del cliente (F12). Es también el enlace que llega por
+  // correo: tiene que funcionar entrando directo.
+  {
+    path: 'mi-cuenta/proyectos/:id',
+    loadComponent: () => import('./paginas/mi-proyecto/mi-proyecto').then((m) => m.MiProyectoPage),
+    canActivate: [clienteGuard],
+    title: 'Mi proyecto — Crear Code Cesar',
+  },
   {
     path: 'mi-cuenta/cotizaciones',
     loadComponent: () =>

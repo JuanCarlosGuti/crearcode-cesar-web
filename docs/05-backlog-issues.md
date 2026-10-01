@@ -813,10 +813,28 @@ funcionando antes de seguir:
 
 | ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
 |---|---|---|---|---|---|---|
-| ISS-215 | `/mi-cuenta` con el proyecto como vista principal; lista si hay varios; sin proyectos, como hoy | HU-49 | `RenderMode.Client`, como el resto de la cuenta | M | ISS-213 | Component |
-| ISS-216 | Detalle: barra de avance, línea de tiempo de fases (vertical en móvil), entregables con estado en color **y** texto, EN_REVISION destacado con "Aprobar" y "Pedir ajustes" (nota obligatoria, confirmación), "Ver demo" con `rel="noopener noreferrer"` | HU-49, HU-50 | Verde para lo del código, **nunca violeta** (reservado a la IA, §Rediseño tech); animaciones apagadas con `prefers-reduced-motion`; axe sin violaciones | L | ISS-215 | Component + axe |
-| ISS-217 | Pagos: por entregable (cobro con impuesto separado, pagado, pendiente) y totales; tarjetas en el celular en vez de tabla; la aclaración de que no es una factura | HU-51 | Sin desborde a 375 px ni con zoom de texto al 200 % | M | ISS-216 | Component |
-| ISS-218 | Estados vacíos ("Estamos armando tu plan", sin pagos todavía), de carga y de error con reintento | HU-49..51 | Ninguna pantalla en blanco | S | ISS-216 | Component |
+| ISS-215 ✅ | `/mi-cuenta` con el proyecto como vista principal; lista si hay varios; sin proyectos, como hoy | HU-49 | `RenderMode.Client`, como el resto de la cuenta | M | ISS-213 | Component |
+| ISS-216 ✅ | Detalle: barra de avance, línea de tiempo de fases (vertical en móvil), entregables con estado en color **y** texto, EN_REVISION destacado con "Aprobar" y "Pedir ajustes" (nota obligatoria, confirmación), "Ver demo" con `rel="noopener noreferrer"` | HU-49, HU-50 | Verde para lo del código, **nunca violeta** (reservado a la IA, §Rediseño tech); animaciones apagadas con `prefers-reduced-motion`; axe sin violaciones | L | ISS-215 | Component + axe |
+| ISS-217 ✅ | Pagos: por entregable (cobro con impuesto separado, pagado, pendiente) y totales; tarjetas en el celular en vez de tabla; la aclaración de que no es una factura | HU-51 | Sin desborde a 375 px ni con zoom de texto al 200 % | M | ISS-216 | Component |
+| ISS-218 ✅ | Estados vacíos ("Estamos armando tu plan", sin pagos todavía), de carga y de error con reintento | HU-49..51 | Ninguna pantalla en blanco | S | ISS-216 | Component |
+
+**Entregable 2 verificado el 1 oct 2026** en un navegador real
+(Playwright, con el proyecto de demostración): sin desborde horizontal a
+375 ni a 1280 px, sin errores de consola, y aprobar y pedir ajustes
+funcionan contra el backend. La revisión de las capturas encontró un
+problema que ningún test veía —«Valor» al lado de «IVA» se leía como
+si hubiera que sumarlos— y se corrigió a «Total con IVA» / «IVA
+incluido».
+
+**Hallazgos de esa revisión que NO son de F12** (ya existían; quedan
+para resolverse aparte):
+
+- axe marca la regla `region` sobre `app-whatsapp-flotante` a 375 px
+  en todas las páginas (también en la Home y en Contacto): el botón
+  flotante queda fuera de los landmarks.
+- En `/ingreso`, lo que se escribe antes de que la página termine de
+  hidratarse se borra: un usuario en un celular lento podría perder su
+  correo y su contraseña del primer segundo.
 
 ### F12d — Panel del equipo
 
