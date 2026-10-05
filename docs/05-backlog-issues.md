@@ -834,7 +834,12 @@ para resolverse aparte):
   flotante queda fuera de los landmarks.
 - En `/ingreso`, lo que se escribe antes de que la página termine de
   hidratarse se borra: un usuario en un celular lento podría perder su
-  correo y su contraseña del primer segundo.
+  correo y su contraseña del primer segundo. **Pasa igual en
+  `/contacto`** (visto el 5 oct 2026 con ISS-226): con la suite e2e a
+  7-8 workers contra el servidor de desarrollo, el e2e de contacto
+  falla a veces con «Nombre» y «Correo» vacíos. Es el formulario que
+  trae los leads, así que pesa más que el del ingreso. Con 2 workers,
+  como en CI, no aparece.
 
 ### F12d — Panel del equipo
 
@@ -887,6 +892,7 @@ abren fase: cada uno es un issue con sus pruebas y va por PR.
 
 | ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
 |---|---|---|---|---|---|---|
+| ISS-227 | Cada página nueva empieza arriba y «atrás» recupera donde iba (`scrollPositionRestoration: 'enabled'`). El router conservaba el scroll de la página anterior: desde el footer se llegaba al fondo de la página siguiente, y el aviso de `/registro` de ISS-226 quedaba fuera de la pantalla en el celular | — | Las anclas (`/herramientas#…`) siguen funcionando | S | — | E2E (`navegacion-e2e.spec.ts`: footer → página nueva arriba → atrás recupera; tarjeta → aviso a la vista) |
 | ISS-226 | Tarjeta del demo en el hero editable (decisión 31 de [[10-vision-v2]]): tres campos en vez del ejemplo fijo. Con sesión lleva al demo con los campos llenos y el boceto se genera solo; sin sesión lleva a `/registro` con un aviso, y el ingreso de un CLIENTE con boceto pendiente cae en el demo. Lo escrito vive en `localStorage` 24 h y se borra al generar | HU-42 | axe sin violaciones y Lighthouse de la Home sin bajar; 375 y 1280 px sin desborde | M | — | Unit (`BocetoPendienteService`: vigencia, consumo único, datos corruptos, almacenamiento bloqueado, SSR), Component (hero, demo, registro, ingreso), E2E (visitante → registro → ingreso → boceto) |
 
 ## Resumen de cobertura

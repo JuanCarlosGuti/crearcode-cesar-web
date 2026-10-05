@@ -12,8 +12,11 @@ export const appConfig: ApplicationConfig = {
     provideRouter(
       routes,
       withComponentInputBinding(),
-      // El CTA del demo en la Home enlaza a /herramientas#demo-diseno (ISS-133).
-      withInMemoryScrolling({ anchorScrolling: 'enabled' }),
+      // Las anclas llevan a la herramienta correcta (/herramientas#demo-diseno,
+      // ISS-133). Y cada página nueva empieza arriba, con el botón de volver
+      // recuperando donde iba (ISS-227): por defecto el router conservaba el
+      // scroll de la página anterior.
+      withInMemoryScrolling({ anchorScrolling: 'enabled', scrollPositionRestoration: 'enabled' }),
     ),
     provideClientHydration(),
     provideHttpClient(withFetch(), withInterceptors([tokenInterceptor])),
