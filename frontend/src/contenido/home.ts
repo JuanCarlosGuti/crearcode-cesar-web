@@ -10,15 +10,24 @@ export const HOME = {
   gancho:
     'No te contamos lo que la tecnología puede hacer por ti: te lo mostramos aquí mismo, en dos minutos y sin compromiso.',
   mensajeWhatsapp: 'Hola, vengo del sitio web de Crear Code Cesar y quiero saber más sobre cómo pueden ayudarme con mi negocio.',
+  // Editable desde ISS-226 (decisión 31 de docs/10): los ejemplos que
+  // antes eran fijos pasan a ser el texto de ayuda. Los máximos son los
+  // del formulario del demo en /herramientas.
   demo: {
     titulo: 'Demo de diseño con IA',
     badge: 'Gratis · para cuentas',
-    ejemplos: [
-      { etiqueta: 'Sector', valor: 'Restaurante' },
-      { etiqueta: 'Qué hace', valor: 'Domicilios en Valledupar' },
-      { etiqueta: 'Qué necesita', valor: 'Recibir pedidos sin saturar el WhatsApp' },
+    campos: [
+      { id: 'sector', etiqueta: 'Sector', ejemplo: 'Ej. restaurante', maximo: 60 },
+      { id: 'queHace', etiqueta: 'Qué hace', ejemplo: 'Ej. domicilios en Valledupar', maximo: 300 },
+      {
+        id: 'queNecesita',
+        etiqueta: 'Qué necesita',
+        ejemplo: 'Ej. recibir pedidos sin saturar el WhatsApp',
+        maximo: 300,
+      },
     ],
     cta: 'Ver mi boceto con IA',
+    notaPrivacidad: 'Lo que escribes queda solo en tu navegador hasta que generes tu boceto.',
     nota: 'Genera una imagen de referencia, no un producto final.',
   },
   herramientas: {

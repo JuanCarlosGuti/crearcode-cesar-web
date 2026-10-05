@@ -3,6 +3,8 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 
+import { CUENTA } from '../../../contenido/cuenta';
+import { BocetoPendienteService, CLAVE_BOCETO_PENDIENTE } from '../../nucleo/boceto-pendiente';
 import { RegistroPage } from './registro';
 
 function escribir(elemento: HTMLInputElement, valor: string): void {
@@ -38,6 +40,7 @@ describe('RegistroPage', () => {
 
   afterEach(() => {
     sessionStorage.clear();
+    localStorage.removeItem(CLAVE_BOCETO_PENDIENTE);
   });
 
   it('muestra los campos con su label asociado y el enlace a la politica', async () => {
@@ -117,6 +120,34 @@ describe('RegistroPage', () => {
     expect(el.textContent).toContain('¡Ya casi!');
     expect(el.textContent).toContain('cliente@correo-de-prueba.com');
     expect(el.querySelector('form')).toBeNull();
+  });
+
+  it('si llega desde la tarjeta del demo, le dice que vera su boceto y le ofrece iniciar sesion (ISS-226)', async () => {
+    TestBed.inject(BocetoPendienteService).guardar({ sector: 'Restaurante', queHace: 'Domicilios', queNecesita: 'Pedidos' });
+    const { el } = await crearPagina();
+
+    const aviso = el.querySelector('.pagina-registro__aviso-boceto');
+    expect(aviso?.textContent).toContain(CUENTA.registro.avisoBoceto);
+    expect(aviso?.querySelector('a[href="/ingreso"]')).not.toBeNull();
+  });
+
+  it('sin boceto pendiente no muestra ese aviso', async () => {
+    const { el } = await crearPagina();
+
+    expect(el.querySelector('.pagina-registro__aviso-boceto')).toBeNull();
+  });
+
+  it('al registrarse con un boceto pendiente, le recuerda que al entrar lo lleva a su boceto', async () => {
+    TestBed.inject(BocetoPendienteService).guardar({ sector: 'Restaurante', queHace: 'Domicilios', queNecesita: 'Pedidos' });
+    const { fixture, el } = await crearPagina();
+    await llenarFormularioValido(fixture);
+
+    (el.querySelector('form') as HTMLFormElement).requestSubmit();
+    await fixture.whenStable();
+    httpMock.expectOne('/api/auth/registro').flush(null, { status: 201, statusText: 'Created' });
+    await fixture.whenStable();
+
+    expect(el.textContent).toContain(CUENTA.registro.exitoBoceto);
   });
 
   it('un 409 muestra el aviso de cuenta existente con enlaces a ingreso y recuperacion', async () => {

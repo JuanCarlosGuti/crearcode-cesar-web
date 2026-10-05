@@ -4,7 +4,8 @@ import { Router, RouterLink } from '@angular/router';
 import { FormField, required, schema, form } from '@angular/forms/signals';
 
 import { AuthApi } from '../../api/auth-api';
-import { SesionService } from '../../nucleo/sesion';
+import { BocetoPendienteService } from '../../nucleo/boceto-pendiente';
+import { RolDeSesion, SesionService } from '../../nucleo/sesion';
 import {
   CUENTA,
   MENSAJE_ERROR_CONTRASENA_REQUERIDA,
@@ -33,6 +34,7 @@ export class IngresoPage {
   private readonly authApi = inject(AuthApi);
   private readonly sesion = inject(SesionService);
   private readonly router = inject(Router);
+  private readonly bocetoPendiente = inject(BocetoPendienteService);
 
   protected readonly textos = CUENTA.ingreso;
   protected readonly enviando = signal(false);
@@ -63,7 +65,7 @@ export class IngresoPage {
       next: (sesion) => {
         this.sesion.iniciarSesion(sesion);
         this.enviando.set(false);
-        this.router.navigateByUrl(sesion.rol === 'ADMIN' ? '/admin' : '/mi-cuenta');
+        this.router.navigateByUrl(this.destinoTrasIngresar(sesion.rol));
       },
       error: (error: unknown) => {
         this.enviando.set(false);
@@ -76,5 +78,17 @@ export class IngresoPage {
         }
       },
     });
+  }
+
+  /**
+   * Un cliente que dejó escrito su boceto en la Home y se fue a crear
+   * la cuenta vuelve a él, no a /mi-cuenta (ISS-226). El ingreso solo
+   * pregunta: lo consume el demo al generarlo.
+   */
+  private destinoTrasIngresar(rol: RolDeSesion): string {
+    if (rol === 'ADMIN') {
+      return '/admin';
+    }
+    return this.bocetoPendiente.hay() ? '/herramientas#demo-diseno' : '/mi-cuenta';
   }
 }

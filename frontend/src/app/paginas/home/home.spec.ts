@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { Title } from '@angular/platform-browser';
-import { provideRouter } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 
 import { ASISTENTE } from '../../../contenido/asistente';
 import { TABLA_CUENTA } from '../../../contenido/cuenta';
@@ -8,11 +8,24 @@ import { HOME } from '../../../contenido/home';
 import { METADATOS_HOME } from '../../../contenido/metadatos-paginas';
 import { SERVICIOS } from '../../../contenido/servicios';
 import { AsistenteUiService } from '../../nucleo/asistente-ui';
+import { BocetoPendienteService, CLAVE_BOCETO_PENDIENTE } from '../../nucleo/boceto-pendiente';
 import { HomePage } from './home';
+
+function escribir(el: HTMLElement, selector: string, valor: string) {
+  const campo = el.querySelector<HTMLInputElement>(selector)!;
+  campo.value = valor;
+  campo.dispatchEvent(new Event('input'));
+}
 
 describe('HomePage', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({ providers: [provideRouter([])] });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    sessionStorage.clear();
+    localStorage.removeItem(CLAVE_BOCETO_PENDIENTE);
   });
 
   it('muestra la propuesta de valor', async () => {
@@ -82,16 +95,63 @@ describe('HomePage', () => {
 
   // ---- Rediseno F10e (ISS-133) --------------------------------------
 
-  it('el hero muestra el gancho y la tarjeta del demo con enlace a herramientas', async () => {
+  it('el hero muestra el gancho y la tarjeta del demo con sus tres campos editables (ISS-226)', async () => {
     const fixture = TestBed.createComponent(HomePage);
     await fixture.whenStable();
     const el = fixture.nativeElement as HTMLElement;
 
     expect(el.textContent).toContain(HOME.gancho);
-    const demo = el.querySelector('.hero__demo');
-    expect(demo).toBeTruthy();
-    expect(demo?.textContent).toContain(HOME.demo.titulo);
-    expect(demo?.querySelector('a[href="/herramientas#demo-diseno"]')).toBeTruthy();
+    const demo = el.querySelector('.hero__demo')!;
+    expect(demo.textContent).toContain(HOME.demo.titulo);
+    for (const campo of HOME.demo.campos) {
+      const entrada = demo.querySelector<HTMLInputElement>(`#hero-${campo.id}`)!;
+      expect(entrada).not.toBeNull();
+      expect(entrada.readOnly).toBe(false);
+      expect(entrada.placeholder).toBe(campo.ejemplo);
+      expect(entrada.maxLength).toBe(campo.maximo);
+      expect(demo.querySelector(`label[for="hero-${campo.id}"]`)?.textContent).toContain(campo.etiqueta);
+    }
+    expect(demo.textContent).toContain(HOME.demo.notaPrivacidad);
+  });
+
+  it('sin sesion, pedir el boceto guarda lo escrito y lleva a crear la cuenta (ISS-226)', async () => {
+    const router = TestBed.inject(Router);
+    const navegar = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+    const fixture = TestBed.createComponent(HomePage);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+
+    escribir(el, '#hero-sector', 'Ferretería');
+    escribir(el, '#hero-queHace', 'Vendemos materiales al por mayor');
+    escribir(el, '#hero-queNecesita', 'Que los maestros pidan por WhatsApp');
+    (el.querySelector('.hero__demo form') as HTMLFormElement).requestSubmit();
+    await fixture.whenStable();
+
+    expect(navegar).toHaveBeenCalledWith(['/registro']);
+    expect(TestBed.inject(BocetoPendienteService).tomar()).toEqual({
+      sector: 'Ferretería',
+      queHace: 'Vendemos materiales al por mayor',
+      queNecesita: 'Que los maestros pidan por WhatsApp',
+    });
+  });
+
+  it('con sesion, pedir el boceto lleva directo al demo de herramientas (ISS-226)', async () => {
+    sessionStorage.setItem(
+      'crearcode-sesion',
+      JSON.stringify({ token: 'token-fake', rol: 'CLIENTE', correo: 'cliente@correo.com' }),
+    );
+    const router = TestBed.inject(Router);
+    const navegar = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+    const fixture = TestBed.createComponent(HomePage);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+
+    escribir(el, '#hero-sector', 'Clínica');
+    (el.querySelector('.hero__demo form') as HTMLFormElement).requestSubmit();
+    await fixture.whenStable();
+
+    expect(navegar).toHaveBeenCalledWith(['/herramientas'], { fragment: 'demo-diseno' });
+    expect(TestBed.inject(BocetoPendienteService).hay()).toBe(true);
   });
 
   it('la seccion de herramientas muestra las cuatro tarjetas y el CTA al centro', async () => {

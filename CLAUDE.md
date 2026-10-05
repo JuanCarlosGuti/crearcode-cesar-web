@@ -539,6 +539,12 @@ usuario (10 ago 2026). No cambia paleta ni tokens: los reutiliza.
   de casos/equipo que reemplazaron a los testimonios ficticios de la v1
   (a su vez reemplazados por contenido real el 28 sep 2026, ver
   §Proyectos).
+- **Tarjeta del demo del hero, editable desde ISS-226** (5 oct 2026,
+  decisión 31 de docs/10): con sesión lleva al demo y el boceto se
+  genera solo; sin sesión, a `/registro`, y el ingreso de un cliente
+  vuelve al demo. Lo escrito vive en `localStorage` 24 h
+  (`BocetoPendienteService`) porque la verificación del correo abre
+  otra pestaña; se borra al generar.
 - **Servicios**: miga de pan, resumen corto, dos columnas con aside
   pegajoso que lleva al diagnóstico (`/herramientas#diagnostico`), y
   los títulos "Lo que resolvemos" / "Cómo trabajamos".

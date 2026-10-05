@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, signal } from '@angular/core';
+import { Component, afterNextRender, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormField, required, pattern, schema, form, validate } from '@angular/forms/signals';
 
@@ -13,6 +13,7 @@ import {
   MENSAJE_ERROR_POLITICA,
 } from '../../../contenido/cuenta';
 import { METADATOS_REGISTRO } from '../../../contenido/metadatos-paginas';
+import { BocetoPendienteService } from '../../nucleo/boceto-pendiente';
 import { establecerMetadatosDePagina } from '../../nucleo/metadatos-pagina';
 
 interface DatosRegistro {
@@ -58,8 +59,15 @@ const ESQUEMA_REGISTRO = schema<DatosRegistro>((campo) => {
 })
 export class RegistroPage {
   private readonly authApi = inject(AuthApi);
+  private readonly bocetoPendiente = inject(BocetoPendienteService);
 
   protected readonly textos = CUENTA.registro;
+  /**
+   * Viene de la tarjeta del demo de la Home (ISS-226). Se lee después
+   * de hidratar: la página se prerenderiza y el servidor no ve el
+   * almacenamiento del navegador.
+   */
+  protected readonly vieneDelBoceto = signal(false);
   protected readonly beneficios = BENEFICIOS_CUENTA;
   protected readonly enviando = signal(false);
   protected readonly exito = signal(false);
@@ -78,6 +86,7 @@ export class RegistroPage {
 
   constructor() {
     establecerMetadatosDePagina(() => ({ ...METADATOS_REGISTRO, ruta: '/registro' }));
+    afterNextRender(() => this.vieneDelBoceto.set(this.bocetoPendiente.hay()));
   }
 
   protected enviar(evento: Event): void {

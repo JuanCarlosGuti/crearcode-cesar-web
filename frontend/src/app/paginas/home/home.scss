@@ -207,30 +207,31 @@
   white-space: nowrap;
 }
 
-.hero__demo-ejemplos {
+// Editable desde ISS-226: conserva el aspecto de terminal de la tarjeta.
+.hero__demo-formulario {
   display: grid;
   gap: var(--espacio-1);
-  margin: 0 0 var(--espacio-2);
 }
 
-.hero__demo-ejemplo {
+.hero__demo-campo {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
 }
 
-.hero__demo-ejemplo dt {
+.hero__demo-campo label {
   font-family: var(--fuente-mono);
   font-size: 0.78rem;
   color: var(--color-ia-claro);
 }
 
-.hero__demo-ejemplo dt::before {
+.hero__demo-campo label::before {
   content: '$ ' / '';
 }
 
-.hero__demo-ejemplo dd {
-  margin: 0;
+.hero__demo-campo input {
+  width: 100%;
+  min-width: 0;
   padding: 0.6rem 0.75rem;
   border: 1px solid var(--color-borde);
   border-radius: 0.5rem;
@@ -238,6 +239,22 @@
   font-family: var(--fuente-mono);
   font-size: 0.88rem;
   color: var(--color-texto);
+  transition: border-color var(--transicion-estandar);
+}
+
+.hero__demo-campo input::placeholder {
+  color: var(--color-texto-secundario);
+  opacity: 1;
+}
+
+.hero__demo-campo input:focus-visible {
+  outline: 2px solid var(--color-ia);
+  outline-offset: 1px;
+  border-color: var(--color-ia);
+}
+
+.hero__demo-cta {
+  margin-top: var(--espacio-1);
 }
 
 // En el demo de IA el botón es violeta: la acción la hace la IA.

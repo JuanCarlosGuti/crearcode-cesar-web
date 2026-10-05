@@ -880,6 +880,15 @@ Verificación de cierre:
 | Recorrido en navegador real, portal y panel | 375 y 1280 px: sin desborde, sin errores de consola, axe limpio |
 | Lighthouse en producción (móvil) | Performance 99-100 · Accesibilidad 100 · Buenas Prácticas 100 · SEO 100 |
 
+## Pulido posterior a F12 (oct 2026)
+
+Cambios pedidos por el usuario al probar el sitio en producción. No
+abren fase: cada uno es un issue con sus pruebas y va por PR.
+
+| ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
+|---|---|---|---|---|---|---|
+| ISS-226 | Tarjeta del demo en el hero editable (decisión 31 de [[10-vision-v2]]): tres campos en vez del ejemplo fijo. Con sesión lleva al demo con los campos llenos y el boceto se genera solo; sin sesión lleva a `/registro` con un aviso, y el ingreso de un CLIENTE con boceto pendiente cae en el demo. Lo escrito vive en `localStorage` 24 h y se borra al generar | HU-42 | axe sin violaciones y Lighthouse de la Home sin bajar; 375 y 1280 px sin desborde | M | — | Unit (`BocetoPendienteService`: vigencia, consumo único, datos corruptos, almacenamiento bloqueado, SSR), Component (hero, demo, registro, ingreso), E2E (visitante → registro → ingreso → boceto) |
+
 ## Resumen de cobertura
 
 Todas las HU de [[04-historias-de-usuario]] (29 de la Etapa 2, HU-30 a

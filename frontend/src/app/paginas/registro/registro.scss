@@ -47,3 +47,13 @@
     grid-template-columns: 3fr 2fr;
   }
 }
+
+// Llega desde la tarjeta del demo de la Home (ISS-226). Violeta porque
+// lo que espera es el boceto, que hace la IA.
+.pagina-registro__aviso-boceto {
+  padding: var(--espacio-2) var(--espacio-3);
+  border-radius: var(--radio-borde);
+  border-left: 3px solid var(--color-ia);
+  background-color: color-mix(in srgb, var(--color-ia) 10%, var(--color-superficie));
+  color: var(--color-texto);
+}

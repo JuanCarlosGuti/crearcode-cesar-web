@@ -1,5 +1,5 @@
-import { Component, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, inject, signal } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 
 import { ASISTENTE } from '../../../contenido/asistente';
 import { BENEFICIOS_CUENTA, TABLA_CUENTA } from '../../../contenido/cuenta';
@@ -9,7 +9,10 @@ import { SERVICIOS } from '../../../contenido/servicios';
 import { AparecerAlVer } from '../../componentes/aparecer-al-ver/aparecer-al-ver';
 import { TarjetaServicio } from '../../componentes/tarjeta-servicio/tarjeta-servicio';
 import { WhatsappCta } from '../../componentes/whatsapp-cta/whatsapp-cta';
+import { SolicitudDeDemo } from '../../api/demo-api';
 import { AsistenteUiService } from '../../nucleo/asistente-ui';
+import { BocetoPendienteService } from '../../nucleo/boceto-pendiente';
+import { SesionService } from '../../nucleo/sesion';
 import { establecerMetadatosDePagina } from '../../nucleo/metadatos-pagina';
 
 /**
@@ -26,12 +29,16 @@ import { establecerMetadatosDePagina } from '../../nucleo/metadatos-pagina';
 })
 export class HomePage {
   private readonly asistenteUi = inject(AsistenteUiService);
+  private readonly bocetoPendiente = inject(BocetoPendienteService);
+  private readonly sesion = inject(SesionService);
+  private readonly router = inject(Router);
 
   protected readonly home = HOME;
   protected readonly servicios = SERVICIOS;
   protected readonly beneficios = BENEFICIOS_CUENTA;
   protected readonly tablaCuenta = TABLA_CUENTA;
   protected readonly sugerencias = ASISTENTE.sugerencias;
+  protected readonly bocetoEscrito = signal<SolicitudDeDemo>({ sector: '', queHace: '', queNecesita: '' });
 
   // El titular se parte en la ultima coma para resaltar el remate
   // ("no al reves.") en el color de acento. El texto completo del <h1>
@@ -45,5 +52,25 @@ export class HomePage {
 
   protected preguntarAlAsistente(pregunta: string): void {
     this.asistenteUi.abrir(pregunta);
+  }
+
+  protected escribirEnBoceto(campo: keyof SolicitudDeDemo, evento: Event): void {
+    const valor = (evento.target as HTMLInputElement).value;
+    this.bocetoEscrito.update((actual) => ({ ...actual, [campo]: valor }));
+  }
+
+  /**
+   * La tarjeta no genera el boceto aquí: tarda hasta 30 segundos y la
+   * Home es lo primero que carga (decisión 31 de docs/10). Deja lo
+   * escrito en el navegador y lleva a donde se genera; sin cuenta, a
+   * crearla, y el ingreso retoma desde ahí.
+   */
+  protected verMiBoceto(): void {
+    this.bocetoPendiente.guardar(this.bocetoEscrito());
+    if (this.sesion.estaAutenticado()) {
+      this.router.navigate(['/herramientas'], { fragment: 'demo-diseno' });
+    } else {
+      this.router.navigate(['/registro']);
+    }
   }
 }

@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 
 import { DEMO_DISENO } from '../../../contenido/demo-diseno';
 import { BocetoDeDemo, DemoApi } from '../../api/demo-api';
+import { BocetoPendienteService } from '../../nucleo/boceto-pendiente';
 import { SesionService } from '../../nucleo/sesion';
 import { mensajeWhatsappParaRuta } from '../../layout/mensaje-whatsapp-por-ruta';
 import { Analitica } from '../../nucleo/analitica';
@@ -17,6 +18,11 @@ type ErrorDeDemo = 'limite' | 'limite-global' | 'no-disponible' | null;
  * registrados: el estado bloqueado (también el del prerender) invita a
  * crear cuenta; tras hidratar, la sesión revela el formulario. La
  * imagen se muestra SOLO como <img> con data URI — nunca HTML.
+ *
+ * <p>
+ * Si el visitante viene de la tarjeta de la Home (ISS-226), retoma lo
+ * que escribió allá y, si está completo, genera el boceto sin pedirle
+ * otro clic: ya lo pidió una vez.
  */
 @Component({
   selector: 'app-demo-diseno',
@@ -29,6 +35,7 @@ export class DemoDiseno {
   protected readonly avisoIa = AVISO_IA;
   private readonly api = inject(DemoApi);
   private readonly analitica = inject(Analitica);
+  private readonly bocetoPendiente = inject(BocetoPendienteService);
   protected readonly sesion = inject(SesionService);
 
   protected readonly textos = DEMO_DISENO;
@@ -57,7 +64,25 @@ export class DemoDiseno {
   });
 
   constructor() {
-    afterNextRender(() => this.hidratado.set(true));
+    afterNextRender(() => {
+      this.hidratado.set(true);
+      this.retomarLoEscritoEnLaHome();
+    });
+  }
+
+  /** Sin sesión no se toca: queda esperando a que inicie sesión. */
+  private retomarLoEscritoEnLaHome(): void {
+    if (!this.sesion.estaAutenticado()) {
+      return;
+    }
+    const pendiente = this.bocetoPendiente.tomar();
+    if (pendiente === null) {
+      return;
+    }
+    this.sector.set(pendiente.sector);
+    this.queHace.set(pendiente.queHace);
+    this.queNecesita.set(pendiente.queNecesita);
+    this.generar();
   }
 
   protected actualizar(campo: 'sector' | 'queHace' | 'queNecesita', evento: Event): void {
