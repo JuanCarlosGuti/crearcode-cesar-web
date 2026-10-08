@@ -62,6 +62,13 @@ cambios no relacionados.
   `ReactiveFormsModule` clásico en código nuevo.
 - Estado derivado siempre con `computed`, nunca duplicado manualmente en
   otro signal que haya que sincronizar a mano.
+- **Todo formulario de una página prerenderizada lleva
+  `appConservarLoEscrito`** en su contenedor (ISS-228). Sin la directiva,
+  lo que el visitante escribe antes de que la página hidrate se borra:
+  `[formField]` y `[value]` escriben en el campo el valor del modelo, que
+  todavía está vacío. En un celular lento eso es el primer segundo y
+  medio. No hace falta en lo que solo se pinta tras hidratar (el demo de
+  diseño, el panel admin, las rutas `RenderMode.Client`).
 
 ## Parte 2 — Guía visual
 

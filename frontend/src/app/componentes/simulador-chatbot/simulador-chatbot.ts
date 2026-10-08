@@ -3,6 +3,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { Component, PLATFORM_ID, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+import { ConservarLoEscrito } from '../conservar-lo-escrito/conservar-lo-escrito';
 import { mensajeWhatsappParaRuta } from '../../layout/mensaje-whatsapp-por-ruta';
 import { Analitica } from '../../nucleo/analitica';
 import { WhatsappCta } from '../whatsapp-cta/whatsapp-cta';
@@ -32,7 +33,7 @@ const MAXIMO_MENSAJES_ENVIADOS = 20;
   selector: 'app-simulador-chatbot',
   templateUrl: './simulador-chatbot.html',
   styleUrl: './simulador-chatbot.scss',
-  imports: [RouterLink, WhatsappCta],
+  imports: [RouterLink, WhatsappCta, ConservarLoEscrito],
 })
 export class SimuladorChatbot {
   // Aviso de privacidad de la IA (auditoria 28 sep 2026, §11).

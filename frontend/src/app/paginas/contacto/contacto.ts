@@ -3,6 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormField, required, pattern, schema, form, validate, maxLength } from '@angular/forms/signals';
 
+import { ConservarLoEscrito } from '../../componentes/conservar-lo-escrito/conservar-lo-escrito';
 import { SolicitudesApi } from '../../api/solicitudes-api';
 import { WhatsappCta } from '../../componentes/whatsapp-cta/whatsapp-cta';
 import { EMPRESA, urlWhatsapp } from '../../../contenido/empresa';
@@ -101,7 +102,7 @@ export const OPCIONES_SERVICIO = [
   selector: 'app-pagina-contacto',
   templateUrl: './contacto.html',
   styleUrl: './contacto.scss',
-  imports: [FormField, RouterLink, WhatsappCta],
+  imports: [FormField, RouterLink, WhatsappCta, ConservarLoEscrito],
 })
 export class ContactoPage {
   private readonly solicitudesApi = inject(SolicitudesApi);

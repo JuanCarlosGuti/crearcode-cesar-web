@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 
+import { ConservarLoEscrito } from '../../componentes/conservar-lo-escrito/conservar-lo-escrito';
 import { ASISTENTE } from '../../../contenido/asistente';
 import { BENEFICIOS_CUENTA, TABLA_CUENTA } from '../../../contenido/cuenta';
 import { HOME } from '../../../contenido/home';
@@ -23,7 +24,7 @@ import { establecerMetadatosDePagina } from '../../nucleo/metadatos-pagina';
  */
 @Component({
   selector: 'app-pagina-home',
-  imports: [RouterLink, TarjetaServicio, WhatsappCta, AparecerAlVer],
+  imports: [RouterLink, TarjetaServicio, WhatsappCta, AparecerAlVer, ConservarLoEscrito],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
