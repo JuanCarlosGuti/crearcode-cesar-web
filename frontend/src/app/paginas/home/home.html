@@ -34,17 +34,24 @@
         <span class="hero__demo-titulo">{{ home.demo.titulo }}</span>
         <span class="hero__demo-badge">{{ home.demo.badge }}</span>
       </div>
-      <dl class="hero__demo-ejemplos">
-        @for (ejemplo of home.demo.ejemplos; track ejemplo.etiqueta) {
-          <div class="hero__demo-ejemplo">
-            <dt>{{ ejemplo.etiqueta }}</dt>
-            <dd>{{ ejemplo.valor }}</dd>
+      <form class="hero__demo-formulario" (submit)="$event.preventDefault(); verMiBoceto()">
+        @for (campo of home.demo.campos; track campo.id) {
+          <div class="hero__demo-campo">
+            <label [for]="'hero-' + campo.id">{{ campo.etiqueta }}</label>
+            <input
+              [id]="'hero-' + campo.id"
+              type="text"
+              [value]="bocetoEscrito()[campo.id]"
+              (input)="escribirEnBoceto(campo.id, $event)"
+              [placeholder]="campo.ejemplo"
+              [attr.maxlength]="campo.maximo"
+              autocomplete="off"
+            />
           </div>
         }
-      </dl>
-      <a routerLink="/herramientas" fragment="demo-diseno" class="boton boton-primario hero__demo-cta">
-        {{ home.demo.cta }}
-      </a>
+        <button type="submit" class="boton boton-primario hero__demo-cta">{{ home.demo.cta }}</button>
+      </form>
+      <p class="hero__demo-nota">{{ home.demo.notaPrivacidad }}</p>
       <p class="hero__demo-nota">{{ home.demo.nota }}</p>
     </aside>
   </div>

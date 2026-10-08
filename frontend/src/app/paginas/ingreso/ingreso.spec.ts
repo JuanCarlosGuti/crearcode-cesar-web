@@ -3,6 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { Router, provideRouter } from '@angular/router';
 
+import { BocetoPendienteService, CLAVE_BOCETO_PENDIENTE } from '../../nucleo/boceto-pendiente';
 import { SesionService } from '../../nucleo/sesion';
 import { IngresoPage } from './ingreso';
 
@@ -35,6 +36,7 @@ describe('IngresoPage', () => {
 
   afterEach(() => {
     sessionStorage.clear();
+    localStorage.removeItem(CLAVE_BOCETO_PENDIENTE);
   });
 
   it('muestra los campos y los enlaces a registro y recuperacion', async () => {
@@ -67,6 +69,42 @@ describe('IngresoPage', () => {
   });
 
   it('un admin entra y navega a /admin', async () => {
+    const router = TestBed.inject(Router);
+    const navigateSpy = vi.spyOn(router, 'navigateByUrl');
+    const { fixture } = await crearPaginaConCredenciales('admin@crearcode-cesar.local', 'clave-correcta');
+
+    httpMock.expectOne('/api/auth/login').flush({
+      token: 'token-admin',
+      expiraEn: '2026-07-29T18:00:00Z',
+      rol: 'ADMIN',
+      correo: 'admin@crearcode-cesar.local',
+    });
+    await fixture.whenStable();
+
+    expect(navigateSpy).toHaveBeenCalledWith('/admin');
+  });
+
+  it('un cliente con un boceto pendiente de la Home entra directo al demo (ISS-226)', async () => {
+    TestBed.inject(BocetoPendienteService).guardar({ sector: 'Restaurante', queHace: 'Domicilios', queNecesita: 'Pedidos' });
+    const router = TestBed.inject(Router);
+    const navigateSpy = vi.spyOn(router, 'navigateByUrl');
+    const { fixture } = await crearPaginaConCredenciales('cliente@correo-de-prueba.com', 'contrasena-larga');
+
+    httpMock.expectOne('/api/auth/login').flush({
+      token: 'token-cliente',
+      expiraEn: '2026-07-29T18:00:00Z',
+      rol: 'CLIENTE',
+      correo: 'cliente@correo-de-prueba.com',
+    });
+    await fixture.whenStable();
+
+    expect(navigateSpy).toHaveBeenCalledWith('/herramientas#demo-diseno');
+    // Lo consume el demo al generarlo, no el ingreso.
+    expect(TestBed.inject(BocetoPendienteService).hay()).toBe(true);
+  });
+
+  it('un admin va a su panel aunque haya un boceto pendiente', async () => {
+    TestBed.inject(BocetoPendienteService).guardar({ sector: 'Restaurante', queHace: 'Domicilios', queNecesita: 'Pedidos' });
     const router = TestBed.inject(Router);
     const navigateSpy = vi.spyOn(router, 'navigateByUrl');
     const { fixture } = await crearPaginaConCredenciales('admin@crearcode-cesar.local', 'clave-correcta');

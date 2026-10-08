@@ -5,10 +5,19 @@
     <p class="pagina-cuenta__exito" role="status">
       {{ textos.exitoAntesDelCorreo }} <strong>{{ correoRegistrado() }}</strong>
       {{ textos.exitoDespuesDelCorreo }}
+      @if (vieneDelBoceto()) {
+        {{ textos.exitoBoceto }}
+      }
     </p>
   } @else {
     <div class="pagina-registro__columnas">
       <div class="pagina-registro__formulario">
+    @if (vieneDelBoceto()) {
+      <p class="pagina-registro__aviso-boceto">
+        {{ textos.avisoBoceto }} {{ textos.avisoBocetoIngreso }}
+        <a routerLink="/ingreso">{{ textos.enlaceIngresoBoceto }}</a>
+      </p>
+    }
     <p>{{ textos.intro }}</p>
 
     @if (errorYaRegistrada()) {

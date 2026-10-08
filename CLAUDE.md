@@ -290,6 +290,13 @@ proyecto vía `npx`/scripts de `package.json`.
    real sigue en 20/10 min y el e2e de contacto falla en la tercera
    corrida sin decir por qué.
 
+   **Correrla con `--workers=2`**, como CI. Con los 7-8 que Playwright
+   elige solo en esta máquina, la suite tropieza con la carrera de
+   hidratación de los formularios (lo escrito antes de hidratar se
+   borra, hallazgo abierto en docs/05) y `contacto` falla al azar. Los
+   cupos diarios del asistente y del diagnóstico viven en memoria: si
+   se agotan de tanto repetir la suite, se reinicia el backend.
+
    **Probar el build de producción localmente**: `npm run
    servir:estatico` (puerto 4300) construye la imagen del sitio y la
    levanta. No es una réplica de producción: **es la misma imagen**
@@ -539,6 +546,12 @@ usuario (10 ago 2026). No cambia paleta ni tokens: los reutiliza.
   de casos/equipo que reemplazaron a los testimonios ficticios de la v1
   (a su vez reemplazados por contenido real el 28 sep 2026, ver
   §Proyectos).
+- **Tarjeta del demo del hero, editable desde ISS-226** (5 oct 2026,
+  decisión 31 de docs/10): con sesión lleva al demo y el boceto se
+  genera solo; sin sesión, a `/registro`, y el ingreso de un cliente
+  vuelve al demo. Lo escrito vive en `localStorage` 24 h
+  (`BocetoPendienteService`) porque la verificación del correo abre
+  otra pestaña; se borra al generar.
 - **Servicios**: miga de pan, resumen corto, dos columnas con aside
   pegajoso que lleva al diagnóstico (`/herramientas#diagnostico`), y
   los títulos "Lo que resolvemos" / "Cómo trabajamos".
@@ -547,7 +560,10 @@ usuario (10 ago 2026). No cambia paleta ni tokens: los reutiliza.
   como siempre. El botón de WhatsApp salió del header; sigue en footer,
   hero, cierre y escalamiento del asistente.
 - **`anchorScrolling: 'enabled'`** en el router: los CTA con ancla a
-  `/herramientas` posicionan en la herramienta correcta.
+  `/herramientas` posicionan en la herramienta correcta. Y desde
+  ISS-227 **`scrollPositionRestoration: 'enabled'`**: hasta el 5 oct
+  2026 cada página nueva heredaba el scroll de la anterior (desde el
+  footer se llegaba al fondo de la siguiente), y ningún test lo veía.
 - **Hallazgo AA**: el e2e de zoom de texto al 200% atrapó un overflow
   horizontal real — `1fr` en una rejilla deja que el contenido mínimo
   de una tarjeta empuje la columna. Convención nueva: `minmax(0, 1fr)`

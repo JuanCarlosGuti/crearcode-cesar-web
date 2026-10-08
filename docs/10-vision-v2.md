@@ -462,6 +462,25 @@ Registradas el 30 sep 2026 al aprobar F12 (recomendaciones aceptadas):
     de 60 días. Cierra el pendiente de las "condiciones comerciales del
     pie del PDF". Entra en F12 como ISS-225.
 
+Registrada el 5 oct 2026 (pedido del usuario al probar el sitio):
+
+31. **La tarjeta del demo en el hero de la Home es editable** (ISS-226).
+    Antes mostraba un ejemplo fijo que parecía un formulario y llevaba a
+    `/herramientas`, donde recién se pedía la cuenta: dos pasos donde
+    bastaba uno. Ahora el visitante escribe sus tres datos ahí mismo.
+    Con sesión, «Ver mi boceto con IA» lo lleva al demo con los campos
+    llenos y el boceto se genera solo; sin sesión, lo lleva directo a
+    `/registro`, y al iniciar sesión un CLIENTE cae en el demo en vez de
+    en `/mi-cuenta`. El boceto no se genera dentro de la Home: tarda
+    hasta 30 segundos y la Home es la página que más pesa en Lighthouse.
+    Lo escrito se guarda **solo en el navegador del visitante**
+    (`localStorage`, 24 horas) porque el enlace de verificación del
+    correo suele abrir otra pestaña y `sessionStorage` no cruza
+    pestañas (opción elegida por el usuario frente a no guardar nada).
+    Se borra al generar el boceto, y la tarjeta lo dice. No llega al
+    servidor hasta que se genera, así que la política de datos no
+    cambia: el demo ya figura entre las herramientas.
+
 ## Aprobación
 
 **Aprobado explícitamente por el usuario el 27 jul 2026** ("si

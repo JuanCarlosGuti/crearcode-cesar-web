@@ -40,12 +40,22 @@ marcados con `[...]` cuando el dato aún no existe.
 > No te contamos lo que la tecnología puede hacer por ti: te lo
 > mostramos aquí mismo, en dos minutos y sin compromiso.
 
-**Tarjeta del demo en el hero (enlaza a /herramientas#demo-diseno):**
+**Tarjeta del demo en el hero (editable desde ISS-226, decisión 31 de
+docs/10):**
 > **Demo de diseño con IA** — badge "Gratis · para cuentas"
-> Ejemplo precargado: Sector *Restaurante* · Qué hace *Domicilios en
-> Valledupar* · Qué necesita *Recibir pedidos sin saturar el WhatsApp*
-> CTA: **Ver mi boceto con IA**
-> Nota: "Genera una imagen de referencia, no un producto final."
+> Tres campos, con los ejemplos de antes como texto de ayuda: Sector
+> (*Ej. restaurante*) · Qué hace (*Ej. domicilios en Valledupar*) · Qué
+> necesita (*Ej. recibir pedidos sin saturar el WhatsApp*)
+> CTA: **Ver mi boceto con IA** — con sesión lleva al demo y el boceto
+> se genera solo; sin sesión, a crear la cuenta
+> Notas: "Lo que escribes queda solo en tu navegador hasta que generes
+> tu boceto." · "Genera una imagen de referencia, no un producto final."
+
+**Aviso en /registro cuando se llega desde esa tarjeta:**
+> Crea tu cuenta y te mostramos el boceto de tu negocio con lo que ya
+> escribiste. ¿Ya tienes cuenta? **Inicia sesión**
+> Tras registrarse: "Cuando inicies sesión te llevamos directo a tu
+> boceto."
 
 **Sección de herramientas (4 tarjetas cortas + CTA a /herramientas):**
 > **Pruébalo con tu propio negocio, ahora mismo** — "Herramientas

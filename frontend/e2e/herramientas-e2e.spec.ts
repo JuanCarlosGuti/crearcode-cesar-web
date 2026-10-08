@@ -111,6 +111,65 @@ test('un cliente registrado genera su boceto con imagen y funcionalidades (F10d)
   await expect(page.locator('.demo-variacion')).toBeVisible();
 });
 
+test('lo escrito en la tarjeta de la Home sobrevive al registro y se vuelve boceto al entrar (ISS-226)', async ({
+  page,
+  request,
+}) => {
+  test.setTimeout(90_000);
+  const correo = `boceto-home-e2e-${Date.now()}@correo-de-prueba.com`;
+  const contrasena = 'contrasena-boceto-e2e';
+
+  // 1. En la Home, ya hidratada, el visitante escribe su negocio y pide el boceto.
+  await page.goto('/');
+  await expect(page.locator('header a[href="/registro"]')).toBeVisible();
+  await page.fill('#hero-sector', 'Restaurante');
+  await page.fill('#hero-queHace', 'Vendemos almuerzos y domicilios');
+  await page.fill('#hero-queNecesita', 'Recibir pedidos sin saturar el WhatsApp');
+  await page.getByRole('button', { name: 'Ver mi boceto con IA' }).click();
+
+  // 2. Sin cuenta, llega a crearla, con el aviso de que verá su boceto.
+  await page.waitForURL('**/registro');
+  await expect(page.locator('.pagina-registro__aviso-boceto')).toBeVisible();
+  await page.fill('#correo', correo);
+  await page.fill('#contrasena', contrasena);
+  await page.fill('#confirmacion', contrasena);
+  await page.check('#aceptaPolitica');
+  await page.click('button[type="submit"]');
+  await expect(page.getByText('Cuando inicies sesión te llevamos directo a tu boceto.')).toBeVisible();
+
+  // 3. El enlace del correo se abre en OTRA pestaña, como pasa de verdad.
+  let rutaDeVerificacion = '';
+  for (let intento = 0; intento < 20 && !rutaDeVerificacion; intento++) {
+    const busqueda = await request.get(`${MAILPIT_URL}/api/v1/search?query=to:"${correo}"`);
+    if (busqueda.ok()) {
+      const { messages } = (await busqueda.json()) as { messages: { ID: string }[] };
+      if (messages.length > 0) {
+        const mensaje = await request.get(`${MAILPIT_URL}/api/v1/message/${messages[0].ID}`);
+        const { Text } = (await mensaje.json()) as { Text: string };
+        rutaDeVerificacion = Text.match(/\/verificar-correo\?token=[A-Za-z0-9_-]+/)?.[0] ?? '';
+      }
+    }
+    if (!rutaDeVerificacion) {
+      await new Promise((listo) => setTimeout(listo, 500));
+    }
+  }
+  const otraPestana = await page.context().newPage();
+  await otraPestana.emulateMedia({ reducedMotion: 'reduce' });
+  await otraPestana.goto(rutaDeVerificacion);
+  await otraPestana.locator('.pagina-cuenta__exito a[href="/ingreso"]').click();
+
+  // 4. Inicia sesión y cae en el demo, con su boceto generándose solo.
+  await otraPestana.fill('#correo', correo);
+  await otraPestana.fill('#contrasena', contrasena);
+  await otraPestana.click('button[type="submit"]');
+  await otraPestana.waitForURL('**/herramientas#demo-diseno');
+  await expect(otraPestana.getByText('App de pedidos para tu restaurante')).toBeVisible({ timeout: 20000 });
+  await expect(otraPestana.locator('.demo-funcionalidad')).toHaveCount(5);
+
+  // 5. Ya se usó: no queda nada guardado en el navegador.
+  expect(await otraPestana.evaluate(() => localStorage.getItem('crearcode-boceto-pendiente'))).toBeNull();
+});
+
 test('un visitante responde el quiz y recibe su radiografia en pantalla (F10c)', async ({ page }) => {
   await page.goto('/herramientas');
 

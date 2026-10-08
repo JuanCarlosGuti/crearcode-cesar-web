@@ -20,6 +20,11 @@ export const CUENTA = {
     errorYaRegistradaO: 'o',
     enlaceRecuperar: 'recuperar tu contraseña',
     errorYaRegistradaCierre: '?',
+    // Cuando llega desde la tarjeta del demo de la Home (ISS-226).
+    avisoBoceto: 'Crea tu cuenta y te mostramos el boceto de tu negocio con lo que ya escribiste.',
+    avisoBocetoIngreso: '¿Ya tienes cuenta?',
+    enlaceIngresoBoceto: 'Inicia sesión',
+    exitoBoceto: 'Cuando inicies sesión te llevamos directo a tu boceto.',
   },
   ingreso: {
     titulo: 'Inicia sesión',

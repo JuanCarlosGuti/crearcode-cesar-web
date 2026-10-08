@@ -4,6 +4,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { provideRouter } from '@angular/router';
 
 import { DEMO_DISENO } from '../../../contenido/demo-diseno';
+import { BocetoPendienteService, CLAVE_BOCETO_PENDIENTE } from '../../nucleo/boceto-pendiente';
 import { DemoDiseno } from './demo-diseno';
 import { AVISO_IA } from '../../../contenido/legales';
 
@@ -57,6 +58,7 @@ describe('DemoDiseno (F10d, HU-42)', () => {
   afterEach(() => {
     httpMock.verify();
     sessionStorage.clear();
+    localStorage.removeItem(CLAVE_BOCETO_PENDIENTE);
   });
 
   it('sin sesion muestra el estado bloqueado con CTAs a registro e ingreso', async () => {
@@ -161,6 +163,49 @@ describe('DemoDiseno (F10d, HU-42)', () => {
 
     const aviso = el.querySelector('.demo-aviso') as HTMLElement;
     expect(aviso?.querySelector('a[href^="https://wa.me/"]')).not.toBeNull();
+  });
+
+  // ---- Lo que el visitante escribió en la tarjeta de la Home (ISS-226) ----
+
+  it('con sesion y un boceto pendiente de la Home, llena los campos y lo genera solo', async () => {
+    iniciarSesionFake();
+    TestBed.inject(BocetoPendienteService).guardar({
+      sector: 'Restaurante',
+      queHace: 'Domicilios en Valledupar',
+      queNecesita: 'Recibir pedidos sin saturar el WhatsApp',
+    });
+    const { fixture, el } = await crear();
+
+    const solicitud = httpMock.expectOne('/api/asistente/demo-diseno');
+    expect(solicitud.request.body).toEqual({
+      sector: 'Restaurante',
+      queHace: 'Domicilios en Valledupar',
+      queNecesita: 'Recibir pedidos sin saturar el WhatsApp',
+    });
+    expect(TestBed.inject(BocetoPendienteService).hay()).toBe(false);
+    solicitud.flush(BOCETO);
+    await fixture.whenStable();
+
+    expect(el.textContent).toContain(BOCETO.titulo);
+  });
+
+  it('con un boceto pendiente incompleto llena lo que hay y espera a que el visitante termine', async () => {
+    iniciarSesionFake();
+    TestBed.inject(BocetoPendienteService).guardar({ sector: 'Ferretería', queHace: '', queNecesita: '' });
+    const { el } = await crear();
+
+    expect(el.querySelector<HTMLInputElement>('#demo-sector')!.value).toBe('Ferretería');
+    expect(el.querySelector<HTMLButtonElement>('.demo-generar')!.disabled).toBe(true);
+    httpMock.expectNone('/api/asistente/demo-diseno');
+    expect(TestBed.inject(BocetoPendienteService).hay()).toBe(false);
+  });
+
+  it('sin sesion deja el boceto pendiente quieto para cuando inicie sesion', async () => {
+    TestBed.inject(BocetoPendienteService).guardar({ sector: 'Clínica', queHace: 'Citas', queNecesita: 'Recordatorios' });
+    await crear();
+
+    httpMock.expectNone('/api/asistente/demo-diseno');
+    expect(TestBed.inject(BocetoPendienteService).hay()).toBe(true);
   });
 
   it('avisa que el texto se procesa con un proveedor de IA externo y no admite datos de clientes (auditoria §11)', async () => {

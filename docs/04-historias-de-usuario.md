@@ -950,6 +950,10 @@ llegar a ser mi empresa**.
   imagen (nunca HTML ejecutable) y con límites diarios propios.
 - Dado que me gusta el boceto, entonces el CTA "hazlo realidad" me
   lleva al contacto con el contexto prellenado.
+- Dado que escribo mis datos en la tarjeta del demo de la Home, cuando
+  pido mi boceto sin tener cuenta, entonces llego a crear la cuenta y,
+  al iniciar sesión, al demo con lo que había escrito y el boceto
+  generándose, sin volver a escribirlo (ISS-226).
 
 **Prioridad**: Must (F10d).
 
