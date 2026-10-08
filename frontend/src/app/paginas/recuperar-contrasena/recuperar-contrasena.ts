@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormField, required, pattern, schema, form } from '@angular/forms/signals';
 
+import { ConservarLoEscrito } from '../../componentes/conservar-lo-escrito/conservar-lo-escrito';
 import { AuthApi } from '../../api/auth-api';
 import { CUENTA, MENSAJE_ERROR_CORREO_CUENTA } from '../../../contenido/cuenta';
 import { METADATOS_RECUPERAR } from '../../../contenido/metadatos-paginas';
@@ -24,7 +25,7 @@ const ESQUEMA_RECUPERACION = schema<DatosRecuperacion>((campo) => {
   selector: 'app-pagina-recuperar-contrasena',
   templateUrl: './recuperar-contrasena.html',
   styleUrl: './recuperar-contrasena.scss',
-  imports: [FormField],
+  imports: [FormField, ConservarLoEscrito],
 })
 export class RecuperarContrasenaPage {
   private readonly authApi = inject(AuthApi);

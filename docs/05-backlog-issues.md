@@ -839,7 +839,8 @@ para resolverse aparte):
   7-8 workers contra el servidor de desarrollo, el e2e de contacto
   falla a veces con «Nombre» y «Correo» vacíos. Es el formulario que
   trae los leads, así que pesa más que el del ingreso. Con 2 workers,
-  como en CI, no aparece.
+  como en CI, no aparece. **Se corrige en ISS-228** (8 oct 2026), tras
+  confirmarlo en producción con un celular lento simulado.
 
 ### F12d — Panel del equipo
 
@@ -892,8 +893,9 @@ abren fase: cada uno es un issue con sus pruebas y va por PR.
 
 | ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
 |---|---|---|---|---|---|---|
-| ISS-227 | Cada página nueva empieza arriba y «atrás» recupera donde iba (`scrollPositionRestoration: 'enabled'`). El router conservaba el scroll de la página anterior: desde el footer se llegaba al fondo de la página siguiente, y el aviso de `/registro` de ISS-226 quedaba fuera de la pantalla en el celular | — | Las anclas (`/herramientas#…`) siguen funcionando | S | — | E2E (`navegacion-e2e.spec.ts`: footer → página nueva arriba → atrás recupera; tarjeta → aviso a la vista) |
-| ISS-226 | Tarjeta del demo en el hero editable (decisión 31 de [[10-vision-v2]]): tres campos en vez del ejemplo fijo. Con sesión lleva al demo con los campos llenos y el boceto se genera solo; sin sesión lleva a `/registro` con un aviso, y el ingreso de un CLIENTE con boceto pendiente cae en el demo. Lo escrito vive en `localStorage` 24 h y se borra al generar | HU-42 | axe sin violaciones y Lighthouse de la Home sin bajar; 375 y 1280 px sin desborde | M | — | Unit (`BocetoPendienteService`: vigencia, consumo único, datos corruptos, almacenamiento bloqueado, SSR), Component (hero, demo, registro, ingreso), E2E (visitante → registro → ingreso → boceto) |
+| ISS-227 ✅ | Cada página nueva empieza arriba y «atrás» recupera donde iba (`scrollPositionRestoration: 'enabled'`). El router conservaba el scroll de la página anterior: desde el footer se llegaba al fondo de la página siguiente, y el aviso de `/registro` de ISS-226 quedaba fuera de la pantalla en el celular | — | Las anclas (`/herramientas#…`) siguen funcionando | S | — | E2E (`navegacion-e2e.spec.ts`: footer → página nueva arriba → atrás recupera; tarjeta → aviso a la vista) |
+| ISS-226 ✅ | Tarjeta del demo en el hero editable (decisión 31 de [[10-vision-v2]]): tres campos en vez del ejemplo fijo. Con sesión lleva al demo con los campos llenos y el boceto se genera solo; sin sesión lleva a `/registro` con un aviso, y el ingreso de un CLIENTE con boceto pendiente cae en el demo. Lo escrito vive en `localStorage` 24 h y se borra al generar | HU-42 | axe sin violaciones y Lighthouse de la Home sin bajar; 375 y 1280 px sin desborde | M | — | Unit (`BocetoPendienteService`: vigencia, consumo único, datos corruptos, almacenamiento bloqueado, SSR), Component (hero, demo, registro, ingreso), E2E (visitante → registro → ingreso → boceto) |
+| ISS-228 | Lo escrito antes de que la página hidrate no se pierde. En un celular lento (CPU ×6), todo lo que se escribe durante el primer segundo y medio se borraba en contacto, ingreso y la tarjeta de la Home (27 campos perdidos en 24 pruebas contra producción): al hidratar, `[formField]` escribe en el campo el valor del modelo, que todavía está vacío. La directiva `appConservarLoEscrito` anota lo escrito antes de ese momento y, terminada la hidratación, lo devuelve al campo con un evento `input`, así el modelo lo recibe y el campo no queda «tocado». Va en los formularios de las páginas prerenderizadas. Medido con la imagen de producción y el mismo celular lento: 0 de 40 campos perdidos, contra 27 de 40 en producción antes del arreglo. De paso, la suite e2e volvió a ser estable con 8 workers | — | e2e con celular lento: lo escrito al instante sobrevive y llega al envío; sin la directiva, falla | M | — | Unit (directiva: devuelve texto, áreas, listas y casillas al campo y al modelo; sin directiva se pierde; sin nada escrito no toca nada), E2E (`hidratacion-e2e.spec.ts`) |
 
 ## Resumen de cobertura
 

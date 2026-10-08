@@ -12,7 +12,7 @@
       </p>
     }
 
-    <form (submit)="enviar($event)" novalidate>
+    <form appConservarLoEscrito (submit)="enviar($event)" novalidate>
       <div class="campo">
         <label for="correo">{{ textos.labelCorreo }}</label>
         <input

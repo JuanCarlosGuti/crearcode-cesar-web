@@ -3,6 +3,7 @@ import { Component, afterNextRender, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormField, required, pattern, schema, form, validate } from '@angular/forms/signals';
 
+import { ConservarLoEscrito } from '../../componentes/conservar-lo-escrito/conservar-lo-escrito';
 import { AuthApi } from '../../api/auth-api';
 import {
   BENEFICIOS_CUENTA,
@@ -55,7 +56,7 @@ const ESQUEMA_REGISTRO = schema<DatosRegistro>((campo) => {
   selector: 'app-pagina-registro',
   templateUrl: './registro.html',
   styleUrl: './registro.scss',
-  imports: [FormField, RouterLink],
+  imports: [FormField, RouterLink, ConservarLoEscrito],
 })
 export class RegistroPage {
   private readonly authApi = inject(AuthApi);
