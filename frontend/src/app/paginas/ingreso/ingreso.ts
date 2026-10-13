@@ -3,6 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormField, required, schema, form } from '@angular/forms/signals';
 
+import { ConservarLoEscrito } from '../../componentes/conservar-lo-escrito/conservar-lo-escrito';
 import { AuthApi } from '../../api/auth-api';
 import { BocetoPendienteService } from '../../nucleo/boceto-pendiente';
 import { RolDeSesion, SesionService } from '../../nucleo/sesion';
@@ -28,7 +29,7 @@ const ESQUEMA_INGRESO = schema<DatosIngreso>((campo) => {
   selector: 'app-pagina-ingreso',
   templateUrl: './ingreso.html',
   styleUrl: './ingreso.scss',
-  imports: [FormField, RouterLink],
+  imports: [FormField, RouterLink, ConservarLoEscrito],
 })
 export class IngresoPage {
   private readonly authApi = inject(AuthApi);

@@ -290,12 +290,13 @@ proyecto vía `npx`/scripts de `package.json`.
    real sigue en 20/10 min y el e2e de contacto falla en la tercera
    corrida sin decir por qué.
 
-   **Correrla con `--workers=2`**, como CI. Con los 7-8 que Playwright
-   elige solo en esta máquina, la suite tropieza con la carrera de
-   hidratación de los formularios (lo escrito antes de hidratar se
-   borra, hallazgo abierto en docs/05) y `contacto` falla al azar. Los
-   cupos diarios del asistente y del diagnóstico viven en memoria: si
-   se agotan de tanto repetir la suite, se reinicia el backend.
+   Hasta el 8 oct 2026 había que correrla con `--workers=2`: con los 7-8
+   que Playwright elige en esta máquina, `contacto` fallaba al azar
+   porque lo escrito antes de hidratar se borraba. Era un bug real de
+   producción, no de la prueba, y lo corrigió ISS-228; desde entonces
+   corre estable con los workers por defecto. Los cupos diarios del
+   asistente y del diagnóstico viven en memoria: si se agotan de tanto
+   repetir la suite, se reinicia el backend.
 
    **Probar el build de producción localmente**: `npm run
    servir:estatico` (puerto 4300) construye la imagen del sitio y la
@@ -409,6 +410,15 @@ a extremo contra el backend real: el POST persiste la solicitud y
 queda visible vía `GET /api/solicitudes` admin. Cubierto además por un
 e2e mínimo con Playwright (`frontend/e2e/contacto-e2e.spec.ts`,
 `npm run e2e`), con su propio job en CI.
+
+**Lo escrito antes de hidratar no se pierde** (ISS-228, 8 oct 2026). En
+un celular lento, todo lo que se escribía durante el primer segundo y
+medio se borraba al hidratar —27 de 40 campos en una prueba contra
+producción—, porque `[formField]` escribe en el campo el valor del
+modelo, que aún está vacío. La directiva `appConservarLoEscrito` lo
+anota antes y lo devuelve después con un evento `input`. Va en todo
+formulario de página prerenderizada (convención en docs/07), y
+`hidratacion-e2e.spec.ts` lo prueba reteniendo `main.js`.
 
 ## Panel admin (tras la fase F5)
 

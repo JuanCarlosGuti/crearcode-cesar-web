@@ -34,7 +34,7 @@
         <span class="hero__demo-titulo">{{ home.demo.titulo }}</span>
         <span class="hero__demo-badge">{{ home.demo.badge }}</span>
       </div>
-      <form class="hero__demo-formulario" (submit)="$event.preventDefault(); verMiBoceto()">
+      <form appConservarLoEscrito class="hero__demo-formulario" (submit)="$event.preventDefault(); verMiBoceto()">
         @for (campo of home.demo.campos; track campo.id) {
           <div class="hero__demo-campo">
             <label [for]="'hero-' + campo.id">{{ campo.etiqueta }}</label>
