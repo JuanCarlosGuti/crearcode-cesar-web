@@ -10,8 +10,9 @@ marcados con `[...]` cuando el dato aún no existe.
 
 ## Home
 
-**Headline:**
-> Tecnología que trabaja para tu negocio, no al revés.
+**Headline** (decisión 32 de docs/10, 13 oct 2026; «tu negocio.» va
+resaltado en verde):
+> Tecnología que trabaja para tu negocio.
 
 **Subheadline:**
 > Desarrollamos software a la medida, ponemos la inteligencia artificial
@@ -787,7 +788,8 @@ del texto de cada sub-fase se redacta al arrancarla siguiendo este tono.
 
 - **Hero**: "No te contamos lo que la tecnología puede hacer por ti:
   te lo mostramos aquí mismo, en dos minutos y sin compromiso."
-  (El titular del prototipo acorta el eslogan — decisión PENDIENTE.)
+  (El titular del prototipo acorta el eslogan; así quedó en la
+  decisión 32 de docs/10.)
 - **Centro (intro)**: "Prueba la tecnología antes de contratarla.
   Todo funciona sin registrarte. Los usos diarios se reinician cada
   día a medianoche; con cuenta gratis tienes cinco veces más."

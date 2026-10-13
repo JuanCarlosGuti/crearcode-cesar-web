@@ -333,8 +333,8 @@ Registradas el 10 ago 2026 (al aprobar el prototipo del rediseño):
     que muestra son copy configurable, la fuente de verdad son las
     variables `ASISTENTE_*`/`DEMO_*`. El hero del prototipo acorta el
     eslogan ("Tecnología que trabaja para tu negocio", sin "no al
-    revés") — la revisión del eslogan sigue PENDIENTE como decisión
-    aparte del usuario.
+    revés") — la revisión del eslogan quedó resuelta así en la
+    decisión 32 (13 oct 2026).
 14. **Niveles de prueba obligatorios** (pedido del usuario): cada
     issue de F10 cubre sus niveles aplicables — Unit, Component,
     Integration, API y End-to-End — según el mapa de
@@ -480,6 +480,14 @@ Registrada el 5 oct 2026 (pedido del usuario al probar el sitio):
     Se borra al generar el boceto, y la tarjeta lo dice. No llega al
     servidor hasta que se genera, así que la política de datos no
     cambia: el demo ya figura entre las herramientas.
+
+Registrada el 13 oct 2026:
+
+32. **El eslogan queda en «Tecnología que trabaja para tu negocio.»**
+    (decisión del usuario, ISS-229). Se quita «no al revés», como ya lo
+    traía el prototipo aprobado (decisión 13), y se cierra la revisión
+    del eslogan que estaba pendiente desde el 29 jul 2026. El resaltado
+    en verde del titular pasa a «tu negocio.».
 
 ## Aprobación
 

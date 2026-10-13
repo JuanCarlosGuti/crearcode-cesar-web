@@ -41,11 +41,11 @@ export class HomePage {
   protected readonly sugerencias = ASISTENTE.sugerencias;
   protected readonly bocetoEscrito = signal<SolicitudDeDemo>({ sector: '', queHace: '', queNecesita: '' });
 
-  // El titular se parte en la ultima coma para resaltar el remate
-  // ("no al reves.") en el color de acento. El texto completo del <h1>
-  // no cambia: se concatena igual, sin espacios extra.
-  protected readonly titularInicio = HOME.headline.slice(0, HOME.headline.lastIndexOf(',') + 2);
-  protected readonly titularResaltado = HOME.headline.slice(HOME.headline.lastIndexOf(',') + 2);
+  // El final del titular ("tu negocio.") va en el color de acento. Lo
+  // dice el contenido: antes se partia en la ultima coma, y el eslogan
+  // corto ya no tiene coma (ISS-229). El texto del <h1> no cambia.
+  protected readonly titularResaltado = HOME.headlineResaltado;
+  protected readonly titularInicio = HOME.headline.slice(0, HOME.headline.length - HOME.headlineResaltado.length);
 
   constructor() {
     establecerMetadatosDePagina(() => ({ ...METADATOS_HOME, ruta: '/' }));

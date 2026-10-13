@@ -1,10 +1,12 @@
 /**
  * Contenido de la Home rediseñada (F10e, ISS-133 — prototipo aprobado,
- * decisiones 10-15 de docs/10). El headline sigue siendo el eslogan
- * vigente: su revisión es una decisión PENDIENTE del usuario.
+ * decisiones 10-15 de docs/10). El headline es el eslogan corto que
+ * decidió el usuario (decisión 32, ISS-229); `headlineResaltado` es el
+ * final que va en verde y tiene que coincidir con el final del headline.
  */
 export const HOME = {
-  headline: 'Tecnología que trabaja para tu negocio, no al revés.',
+  headline: 'Tecnología que trabaja para tu negocio.',
+  headlineResaltado: 'tu negocio.',
   subheadline:
     'Desarrollamos software a la medida, ponemos la inteligencia artificial a trabajar por tu pyme y hacemos que cobrar y modernizar tu negocio sea simple. Sin jerga. Sin que la tecnología te quede grande.',
   gancho:
