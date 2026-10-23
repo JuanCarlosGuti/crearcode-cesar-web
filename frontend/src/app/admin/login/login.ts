@@ -1,8 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, input, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormField, required, schema, form } from '@angular/forms/signals';
 
 import { AuthApi } from '../../api/auth-api';
+import { rutaDeVuelta } from '../../nucleo/ruta-de-vuelta';
 import { SesionService } from '../../nucleo/sesion';
 
 interface DatosLogin {
@@ -26,6 +27,9 @@ export class LoginPage {
   private readonly sesion = inject(SesionService);
   private readonly router = inject(Router);
 
+  /** `?volver=`: la página del panel que pidió ingresar (ISS-241). */
+  readonly volver = input<string>();
+
   private readonly datos = signal<DatosLogin>({ correo: '', contrasena: '' });
   protected readonly formulario = form(this.datos, ESQUEMA_LOGIN);
 
@@ -46,7 +50,7 @@ export class LoginPage {
       next: (sesion) => {
         this.sesion.iniciarSesion(sesion);
         this.enviando.set(false);
-        this.router.navigateByUrl('/admin');
+        this.router.navigateByUrl(rutaDeVuelta(this.volver(), 'ADMIN') ?? '/admin');
       },
       error: () => {
         this.enviando.set(false);

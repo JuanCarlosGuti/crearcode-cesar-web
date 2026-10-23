@@ -9,6 +9,7 @@ import { DemoDiseno } from '../../componentes/demo-diseno/demo-diseno';
 import { DiagnosticoDigital } from '../../componentes/diagnostico-digital/diagnostico-digital';
 import { SimuladorChatbot } from '../../componentes/simulador-chatbot/simulador-chatbot';
 import { establecerMetadatosDePagina } from '../../nucleo/metadatos-pagina';
+import { sesionTrasHidratar } from '../../nucleo/sesion-tras-hidratar';
 
 /**
  * Centro de herramientas VIVO (F10a, HU-43, decisión 11 de docs/10):
@@ -23,6 +24,8 @@ import { establecerMetadatosDePagina } from '../../nucleo/metadatos-pagina';
 })
 export class HerramientasPage {
   protected readonly datos = HERRAMIENTAS;
+  // Con cuenta, la banda que invita a crearla sobra (ISS-242).
+  protected readonly conSesion = sesionTrasHidratar();
 
   constructor() {
     establecerMetadatosDePagina(() => ({ ...METADATOS_HERRAMIENTAS, ruta: '/herramientas' }));

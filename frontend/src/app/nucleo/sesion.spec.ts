@@ -29,6 +29,8 @@ function tokenQueVenceEn(milisegundosDesdeAhora: number): string {
 describe('SesionService', () => {
   afterEach(() => {
     sessionStorage.clear();
+    localStorage.clear();
+    vi.restoreAllMocks();
   });
 
   /**
@@ -65,7 +67,7 @@ describe('SesionService', () => {
     // token ya vencido lo cerraria de inmediato y no probaria esto.
     const sesion = TestBed.inject(SesionService);
     sesion.iniciarSesion({ ...SESION_CLIENTE, token: tokenQueVenceEn(60_000) });
-    sessionStorage.setItem(
+    localStorage.setItem(
       'crearcode-sesion',
       JSON.stringify({ ...SESION_CLIENTE, token: tokenQueVenceEn(-60_000) }),
     );
@@ -147,6 +149,8 @@ describe('SesionService', () => {
     expect(sessionStorage.getItem('crearcode-sesion')).toBeNull();
   });
 
+  // Las sesiones de cliente de antes de ISS-240 viven en sessionStorage:
+  // se siguen leyendo para que nadie quede afuera el dia del despliegue.
   it('recupera una sesion ya guardada en sessionStorage al crearse (ej. tras recargar la pagina)', () => {
     sessionStorage.setItem('crearcode-sesion', JSON.stringify(SESION_CLIENTE));
 
@@ -174,5 +178,130 @@ describe('SesionService', () => {
       sesion.iniciarSesion(SESION_ADMIN);
       expect(sesion.obtenerToken()).toBe('token-admin');
     }).not.toThrow();
+  });
+
+  /**
+   * La sesion del cliente era de cada pestana: «Ver demo», el enlace de
+   * un correo o «abrir en pestana nueva» la perdian, y el sitio le
+   * volvia a pedir crear cuenta a quien ya la tenia (ISS-240, ADR-08
+   * enmendado el 23 oct 2026). La del admin sigue siendo de su pestana.
+   */
+  describe('entre pestanas (ISS-240)', () => {
+    function sesionDelClienteEnOtraPestana(token = tokenQueVenceEn(60_000)): string {
+      const datos = JSON.stringify({ ...SESION_CLIENTE, token });
+      localStorage.setItem('crearcode-sesion', datos);
+      return datos;
+    }
+
+    function avisarCambioDeOtraPestana(nuevoValor: string | null): void {
+      window.dispatchEvent(new StorageEvent('storage', { key: 'crearcode-sesion', newValue: nuevoValor }));
+    }
+
+    it('la sesion del cliente queda en localStorage, que comparten todas las pestanas', () => {
+      const sesion = TestBed.inject(SesionService);
+
+      sesion.iniciarSesion(SESION_CLIENTE);
+
+      expect(JSON.parse(localStorage.getItem('crearcode-sesion')!)).toEqual(SESION_CLIENTE);
+      expect(sessionStorage.getItem('crearcode-sesion')).toBeNull();
+    });
+
+    it('una pestana nueva encuentra abierta la sesion del cliente', () => {
+      sesionDelClienteEnOtraPestana();
+
+      const sesion = TestBed.inject(SesionService);
+
+      expect(sesion.esCliente()).toBe(true);
+    });
+
+    it('la sesion del admin sigue siendo solo de su pestana', () => {
+      const sesion = TestBed.inject(SesionService);
+
+      sesion.iniciarSesion(SESION_ADMIN);
+
+      expect(JSON.parse(sessionStorage.getItem('crearcode-sesion')!)).toEqual(SESION_ADMIN);
+      expect(localStorage.getItem('crearcode-sesion')).toBeNull();
+    });
+
+    it('cerrar sesion en otra pestana la cierra tambien en esta', () => {
+      const sesion = TestBed.inject(SesionService);
+      sesion.iniciarSesion(SESION_CLIENTE);
+
+      localStorage.removeItem('crearcode-sesion');
+      avisarCambioDeOtraPestana(null);
+
+      expect(sesion.estaAutenticado()).toBe(false);
+    });
+
+    it('ingresar en otra pestana abre la sesion tambien en esta', () => {
+      const sesion = TestBed.inject(SesionService);
+
+      avisarCambioDeOtraPestana(sesionDelClienteEnOtraPestana());
+
+      expect(sesion.esCliente()).toBe(true);
+      expect(sesion.correo()).toBe(SESION_CLIENTE.correo);
+    });
+
+    it('lo que pase con el cliente en otra pestana no toca al admin de esta', () => {
+      const sesion = TestBed.inject(SesionService);
+      sesion.iniciarSesion(SESION_ADMIN);
+
+      avisarCambioDeOtraPestana(sesionDelClienteEnOtraPestana());
+
+      expect(sesion.esAdmin()).toBe(true);
+    });
+
+    it('cerrar la sesion del admin no saca al cliente de las otras pestanas', () => {
+      const datosDelCliente = sesionDelClienteEnOtraPestana();
+      const sesion = TestBed.inject(SesionService);
+      sesion.iniciarSesion(SESION_ADMIN);
+
+      sesion.cerrarSesion();
+
+      expect(sessionStorage.getItem('crearcode-sesion')).toBeNull();
+      expect(localStorage.getItem('crearcode-sesion')).toBe(datosDelCliente);
+    });
+
+    it('cerrar la sesion del cliente la borra de todas las pestanas', () => {
+      const sesion = TestBed.inject(SesionService);
+      sesion.iniciarSesion(SESION_CLIENTE);
+
+      sesion.cerrarSesion();
+
+      expect(localStorage.getItem('crearcode-sesion')).toBeNull();
+    });
+
+    it('una sesion que llega vencida desde otra pestana no se abre', () => {
+      const sesion = TestBed.inject(SesionService);
+
+      avisarCambioDeOtraPestana(sesionDelClienteEnOtraPestana(tokenQueVenceEn(-1000)));
+
+      expect(sesion.estaAutenticado()).toBe(false);
+    });
+
+    it('la sesion que llega de otra pestana tambien se cierra sola al vencer', () => {
+      vi.useFakeTimers();
+      try {
+        const sesion = TestBed.inject(SesionService);
+        avisarCambioDeOtraPestana(sesionDelClienteEnOtraPestana(tokenQueVenceEn(60_000)));
+        expect(sesion.estaAutenticado()).toBe(true);
+
+        vi.advanceTimersByTime(61_000);
+
+        expect(sesion.estaAutenticado()).toBe(false);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it('si el navegador bloquea el almacenamiento, la sesion sigue en memoria sin romper', () => {
+      vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+        throw new Error('bloqueado');
+      });
+      const sesion = TestBed.inject(SesionService);
+
+      expect(() => sesion.iniciarSesion(SESION_CLIENTE)).not.toThrow();
+      expect(sesion.esCliente()).toBe(true);
+    });
   });
 });

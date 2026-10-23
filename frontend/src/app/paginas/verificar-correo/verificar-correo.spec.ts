@@ -22,6 +22,7 @@ describe('VerificarCorreoPage', () => {
 
   afterEach(() => {
     sessionStorage.clear();
+    localStorage.clear();
   });
 
   it('con token en la URL lo verifica y muestra el exito con enlace a ingreso', async () => {

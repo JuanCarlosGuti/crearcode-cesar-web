@@ -9,6 +9,7 @@ import { METADATOS_HOME } from '../../../contenido/metadatos-paginas';
 import { SERVICIOS } from '../../../contenido/servicios';
 import { AsistenteUiService } from '../../nucleo/asistente-ui';
 import { BocetoPendienteService, CLAVE_BOCETO_PENDIENTE } from '../../nucleo/boceto-pendiente';
+import { SesionService } from '../../nucleo/sesion';
 import { HomePage } from './home';
 
 function escribir(el: HTMLElement, selector: string, valor: string) {
@@ -25,6 +26,7 @@ describe('HomePage', () => {
   afterEach(() => {
     vi.restoreAllMocks();
     sessionStorage.clear();
+    localStorage.clear();
     localStorage.removeItem(CLAVE_BOCETO_PENDIENTE);
   });
 
@@ -224,5 +226,43 @@ describe('HomePage', () => {
     expect(cierre?.textContent).toContain(HOME.cierre.titulo);
     expect(cierre?.querySelector('a[href="/contacto"]')).toBeTruthy();
     expect(cierre?.querySelector('a[href^="https://wa.me/"]')).toBeTruthy();
+  });
+
+  // A quien ya tiene cuenta no se le invita a crearla (ISS-242).
+  describe('con sesion', () => {
+    async function crearConSesion() {
+      TestBed.inject(SesionService).iniciarSesion({
+        token: 'token-cliente',
+        rol: 'CLIENTE',
+        correo: 'cliente@correo-de-prueba.com',
+      });
+      const fixture = TestBed.createComponent(HomePage);
+      await fixture.whenStable();
+      return fixture.nativeElement as HTMLElement;
+    }
+
+    it('no muestra la seccion que invita a crear cuenta', async () => {
+      const el = await crearConSesion();
+
+      expect(el.querySelector('.seccion-cuenta')).toBeNull();
+      expect(el.querySelector('a[href="/registro"]')).toBeNull();
+    });
+
+    it('el resto de la Home sigue igual', async () => {
+      const el = await crearConSesion();
+
+      expect(el.querySelector('.hero')).not.toBeNull();
+      expect(el.querySelector('.seccion-asistente')).not.toBeNull();
+      expect(el.querySelector('.seccion-destacados')).not.toBeNull();
+    });
+  });
+
+  it('sin sesion muestra la seccion de la cuenta con su invitacion', async () => {
+    const fixture = TestBed.createComponent(HomePage);
+    await fixture.whenStable();
+    const el = fixture.nativeElement as HTMLElement;
+
+    expect(el.querySelector('.seccion-cuenta')).not.toBeNull();
+    expect(el.querySelector('a[href="/registro"]')).not.toBeNull();
   });
 });

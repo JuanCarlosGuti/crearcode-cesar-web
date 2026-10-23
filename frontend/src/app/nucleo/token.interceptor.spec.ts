@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { Router, provideRouter } from '@angular/router';
+import { Router, UrlTree, provideRouter } from '@angular/router';
 
 import { SesionService } from './sesion';
 import { tokenInterceptor } from './token.interceptor';
@@ -29,6 +29,7 @@ describe('tokenInterceptor', () => {
   afterEach(() => {
     httpMock.verify();
     sessionStorage.clear();
+    localStorage.clear();
   });
 
   it('no adjunta Authorization si no hay sesion', () => {
@@ -79,12 +80,15 @@ describe('tokenInterceptor', () => {
     httpMock.expectOne('/api/solicitudes').flush('No autenticado', { status: 401, statusText: 'Unauthorized' });
 
     expect(sesion.estaAutenticado()).toBe(false);
-    expect(navigateSpy).toHaveBeenCalledWith('/admin/login');
+    const destino = navigateSpy.mock.calls[0][0] as UrlTree;
+    expect(router.serializeUrl(destino).split('?')[0]).toBe('/admin/login');
+    // Al volver a ingresar, regresa a donde estaba (ISS-241).
+    expect(destino.queryParamMap.get('volver')).toBe('/admin/solicitudes/123');
   });
 
   it('un 401 estando en /mi-cuenta limpia la sesion y navega a /ingreso', () => {
     iniciarSesionCliente();
-    vi.spyOn(router, 'url', 'get').mockReturnValue('/mi-cuenta');
+    vi.spyOn(router, 'url', 'get').mockReturnValue('/mi-cuenta/proyectos/7');
     const navigateSpy = vi.spyOn(router, 'navigateByUrl');
 
     http.get('/api/solicitudes').subscribe({ error: () => {} });
@@ -92,7 +96,9 @@ describe('tokenInterceptor', () => {
     httpMock.expectOne('/api/solicitudes').flush('No autenticado', { status: 401, statusText: 'Unauthorized' });
 
     expect(sesion.estaAutenticado()).toBe(false);
-    expect(navigateSpy).toHaveBeenCalledWith('/ingreso');
+    const destino = navigateSpy.mock.calls[0][0] as UrlTree;
+    expect(router.serializeUrl(destino).split('?')[0]).toBe('/ingreso');
+    expect(destino.queryParamMap.get('volver')).toBe('/mi-cuenta/proyectos/7');
   });
 
   it('un 401 estando en una pagina publica solo limpia la sesion, sin navegar', () => {

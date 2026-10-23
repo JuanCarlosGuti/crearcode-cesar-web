@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 import { DEMO_DISENO } from '../../../contenido/demo-diseno';
 import { BocetoDeDemo, DemoApi } from '../../api/demo-api';
 import { BocetoPendienteService } from '../../nucleo/boceto-pendiente';
+import { PARAMETRO_VOLVER } from '../../nucleo/ruta-de-vuelta';
 import { SesionService } from '../../nucleo/sesion';
 import { mensajeWhatsappParaRuta } from '../../layout/mensaje-whatsapp-por-ruta';
 import { Analitica } from '../../nucleo/analitica';
@@ -42,6 +43,8 @@ export class DemoDiseno {
 
   protected readonly textos = DEMO_DISENO;
   protected readonly mensajeWhatsapp = mensajeWhatsappParaRuta('/herramientas');
+  // Quien ya tiene cuenta ingresa y vuelve aquí, no a /mi-cuenta (ISS-241).
+  protected readonly volverAlDemo = { [PARAMETRO_VOLVER]: '/herramientas#demo-diseno' };
 
   protected readonly hidratado = signal(false);
   protected readonly sector = signal('');

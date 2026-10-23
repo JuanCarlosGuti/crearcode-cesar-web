@@ -39,6 +39,7 @@ describe('ChatAsistente', () => {
 
   afterEach(() => {
     sessionStorage.clear();
+    localStorage.clear();
   });
 
   it('la burbuja abre el panel y el boton de cerrar lo cierra', async () => {

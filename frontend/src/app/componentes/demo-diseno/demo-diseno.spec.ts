@@ -72,6 +72,7 @@ describe('DemoDiseno (F10d, HU-42)', () => {
 
   beforeEach(() => {
     sessionStorage.clear();
+    localStorage.clear();
     TestBed.configureTestingModule({
       providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
     });
@@ -81,6 +82,7 @@ describe('DemoDiseno (F10d, HU-42)', () => {
   afterEach(() => {
     httpMock.verify();
     sessionStorage.clear();
+    localStorage.clear();
     localStorage.removeItem(CLAVE_BOCETO_PENDIENTE);
   });
 
@@ -89,8 +91,17 @@ describe('DemoDiseno (F10d, HU-42)', () => {
 
     expect(el.textContent).toContain(DEMO_DISENO.bloqueado.titulo);
     expect(el.querySelector('a[href="/registro"]')).toBeTruthy();
-    expect(el.querySelector('a[href="/ingreso"]')).toBeTruthy();
+    expect(el.querySelector('a[href^="/ingreso"]')).toBeTruthy();
     expect(el.querySelector('#demo-sector')).toBeNull();
+  });
+
+  // Quien ya tiene cuenta ingresa y vuelve al demo, no a /mi-cuenta (ISS-241).
+  it('el enlace para ingresar trae de vuelta al demo', async () => {
+    const { el } = await crear();
+
+    const enlace = el.querySelector<HTMLAnchorElement>('a[href^="/ingreso"]')!;
+    const volver = new URL(enlace.getAttribute('href')!, 'http://sitio').searchParams.get('volver');
+    expect(volver).toBe('/herramientas#demo-diseno');
   });
 
   it('con sesion muestra el formulario y el boton se habilita al llenar los 3 campos', async () => {

@@ -14,6 +14,7 @@ describe('adminGuard', () => {
 
   afterEach(() => {
     sessionStorage.clear();
+    localStorage.clear();
   });
 
   it('permite el acceso con una sesion de admin', () => {
@@ -30,6 +31,18 @@ describe('adminGuard', () => {
     expect(resultado).not.toBe(true);
     const router = TestBed.inject(Router);
     expect(router.serializeUrl(resultado as UrlTree)).toBe('/admin/login');
+  });
+
+  // El correo de la respuesta de un cliente lleva al proyecto en el
+  // panel: tras ingresar se vuelve ahi (ISS-241).
+  it('al mandar a /admin/login le dice a donde volver', () => {
+    const resultado = TestBed.runInInjectionContext(() =>
+      adminGuard({} as never, { url: '/admin/proyectos/3' } as never),
+    );
+
+    const destino = resultado as UrlTree;
+    expect(destino.root.children['primary'].segments.map((s) => s.path)).toEqual(['admin', 'login']);
+    expect(destino.queryParamMap.get('volver')).toBe('/admin/proyectos/3');
   });
 
   it('redirige a /admin/login si la sesion es de cliente (no basta estar autenticado)', () => {

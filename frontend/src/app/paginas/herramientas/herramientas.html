@@ -52,14 +52,16 @@
   </div>
 </section>
 
-<section class="seccion">
-  <div class="contenedor">
-    <div class="herramientas-cuenta" appAparecerAlVer>
-      <div>
-        <h2>{{ datos.cuenta.titulo }}</h2>
-        <p>{{ datos.cuenta.texto }}</p>
+@if (!conSesion()) {
+  <section class="seccion">
+    <div class="contenedor">
+      <div class="herramientas-cuenta" appAparecerAlVer>
+        <div>
+          <h2>{{ datos.cuenta.titulo }}</h2>
+          <p>{{ datos.cuenta.texto }}</p>
+        </div>
+        <a routerLink="/registro" class="boton boton-primario">{{ datos.cuenta.cta }}</a>
       </div>
-      <a routerLink="/registro" class="boton boton-primario">{{ datos.cuenta.cta }}</a>
     </div>
-  </div>
-</section>
+  </section>
+}

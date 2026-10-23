@@ -269,6 +269,22 @@ consciente para no sobreconstruir con un solo usuario real hoy.
 > revoca los JWT ya emitidos (hasta 8 h de vida restante). Detalle del
 > modelo en [[03-modelo-de-dominio]] Parte 2.
 
+> **Enmienda del 23 oct 2026 (ISS-240, decisión 36 de
+> [[10-vision-v2]])**: la sesión del **cliente** pasa de
+> `sessionStorage` a `localStorage`. Con la de cada pestaña, abrir el
+> enlace de un correo, «Ver demo» o cualquier cosa en una pestaña nueva
+> lo dejaba sin sesión, y el sitio le pedía crear la cuenta que ya
+> tenía. Ahora la comparten todas las pestañas, se mantienen al día
+> entre ellas con el evento `storage` y sobrevive a cerrar el
+> navegador mientras el token siga vigente. La del **admin** sigue en
+> `sessionStorage`: ve los datos de todos los leads, y ahí pesa más la
+> cautela. Frente a un script inyectado da igual uno u otro: los dos se
+> leen desde JavaScript, y la defensa sigue siendo la CSP y no pintar
+> nunca HTML que venga de fuera. Lo que cambia es la persistencia: en un
+> computador compartido, una sesión sin cerrar queda abierta para el
+> siguiente hasta que vence el token. Las sesiones de cliente que
+> estaban en `sessionStorage` el día del cambio se siguen leyendo.
+
 ### ADR-09 — Proxy servidor-a-servidor en el frontend en vez de CORS
 
 **Decisión**: el servidor SSR del frontend (`frontend/src/server.ts`)

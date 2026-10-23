@@ -546,6 +546,26 @@ Registradas el 23 oct 2026:
     libremente por el modelo tampoco: sale bien a veces y deforme otras.
     La tarjeta dice que es una propuesta de referencia y recuerda
     verificar que el nombre no esté registrado por otra empresa.
+36. **El sitio reconoce la cuenta del cliente en todas partes**
+    (ISS-240 a ISS-242, aprobada por el usuario el 23 oct 2026). Al
+    probar el portal con la cuenta de demostración, «Ver demo» abrió el
+    sitio en otra pestaña y ahí el demo de diseño le pidió crear cuenta;
+    ya dentro, la página seguía invitándolo a registrarse. Tres cambios:
+    - **La sesión del cliente es una sola en todo el navegador**
+      (`localStorage`): la ven todas las pestañas, sobrevive a cerrar
+      el navegador mientras el token siga vigente (8 horas) y salir en
+      una pestaña cierra las demás. Le pasaba lo mismo a quien abría el
+      enlace de un correo. **La del admin sigue siendo de su pestaña**:
+      desde ahí se ven los datos de todos los leads. El costo aceptado:
+      en un computador compartido, quien no cierre sesión la deja
+      abierta para el siguiente durante esas horas, como en casi
+      cualquier sitio con cuenta. Enmienda ADR-08.
+    - **Ingresar devuelve a donde se iba**: el enlace de un correo, el
+      «Ya tengo cuenta» del demo o cualquier página que pida sesión
+      llevan la ruta de regreso, y al ingresar se vuelve ahí en vez de
+      caer en `/mi-cuenta`. Solo se aceptan rutas del propio sitio.
+    - **Con sesión, el sitio deja de invitar a crear cuenta**: las
+      llamadas «Crea tu cuenta gratis» se ocultan cuando ya hay una.
 
 ## Aprobación
 

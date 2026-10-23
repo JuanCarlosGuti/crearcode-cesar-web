@@ -4,6 +4,7 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 
 import { HERRAMIENTAS } from '../../../contenido/herramientas';
+import { SesionService } from '../../nucleo/sesion';
 import { HerramientasPage } from './herramientas';
 
 describe('HerramientasPage (centro de herramientas vivo, HU-43)', () => {
@@ -11,6 +12,11 @@ describe('HerramientasPage (centro de herramientas vivo, HU-43)', () => {
     TestBed.configureTestingModule({
       providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
     });
+  });
+
+  afterEach(() => {
+    sessionStorage.clear();
+    localStorage.clear();
   });
 
   async function crear() {
@@ -58,5 +64,19 @@ describe('HerramientasPage (centro de herramientas vivo, HU-43)', () => {
     const el = await crear();
     expect(el.textContent).toContain(HERRAMIENTAS.cuenta.titulo);
     expect(el.querySelector('a[href="/registro"]')).toBeTruthy();
+  });
+
+  // A quien ya tiene cuenta no se le invita a crearla (ISS-242).
+  it('con sesion ya no invita a crear cuenta', async () => {
+    TestBed.inject(SesionService).iniciarSesion({
+      token: 'token-cliente',
+      rol: 'CLIENTE',
+      correo: 'cliente@correo-de-prueba.com',
+    });
+
+    const el = await crear();
+
+    expect(el.textContent).not.toContain(HERRAMIENTAS.cuenta.titulo);
+    expect(el.querySelector('a[href="/registro"]')).toBeNull();
   });
 });

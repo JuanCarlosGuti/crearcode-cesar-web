@@ -3,6 +3,8 @@ import { Injectable, OnDestroy, PLATFORM_ID, computed, inject, signal } from '@a
 
 const CLAVE_STORAGE = 'crearcode-sesion';
 
+type Almacen = 'localStorage' | 'sessionStorage';
+
 export type RolDeSesion = 'ADMIN' | 'CLIENTE';
 
 export interface DatosDeSesion {
@@ -38,10 +40,17 @@ function vencimientoDelToken(token: string): number | null {
 }
 
 /**
- * Sesión en sessionStorage: se pierde al cerrar la pestaña, sin
- * revocación en el servidor antes de que expire el JWT (trade-off
- * consciente de v1, ver ADR-08). Desde F8 guarda también rol y correo
- * para distinguir el panel admin de la cuenta de cliente.
+ * Sesión sin revocación en el servidor antes de que expire el JWT
+ * (trade-off consciente de v1, ver ADR-08). Desde F8 guarda también rol
+ * y correo para distinguir el panel admin de la cuenta de cliente.
+ *
+ * <p>
+ * La del cliente vive en localStorage y la comparten todas las pestañas
+ * (ISS-240): cuando era de cada pestaña, «Ver demo», el enlace de un
+ * correo o «abrir en pestaña nueva» la perdían, y el sitio le volvía a
+ * pedir crear cuenta a quien ya la tenía. Ingresar o salir en una
+ * pestaña se refleja en las demás. La del admin sigue en sessionStorage,
+ * solo en su pestaña: desde ahí se ven los datos de todos los leads.
  *
  * <p>
  * La sesión se cierra sola al vencer el token: al restaurarla, al
@@ -65,10 +74,16 @@ export class SesionService implements OnDestroy {
 
   constructor() {
     this.programarCierre();
+    if (this.esNavegador) {
+      window.addEventListener('storage', this.alCambiarEnOtraPestana);
+    }
   }
 
   ngOnDestroy(): void {
     this.cancelarCierre();
+    if (this.esNavegador) {
+      window.removeEventListener('storage', this.alCambiarEnOtraPestana);
+    }
   }
 
   obtenerToken(): string | null {
@@ -87,18 +102,40 @@ export class SesionService implements OnDestroy {
     const sesion: DatosDeSesion = { token: datos.token, rol: datos.rol, correo: datos.correo };
     this.datos.set(sesion);
     if (this.esNavegador) {
-      sessionStorage.setItem(CLAVE_STORAGE, JSON.stringify(sesion));
+      // Lo de esta pestaña manda sobre lo compartido: un cliente que
+      // ingresa donde había un admin no debe quedar tapado por él.
+      this.borrarDe('sessionStorage');
+      this.guardarEn(sesion.rol === 'CLIENTE' ? 'localStorage' : 'sessionStorage', sesion);
     }
     this.programarCierre();
   }
 
+  /**
+   * Cierra la sesión de esta pestaña. La del cliente se borra de todas;
+   * la del admin, solo de la suya, y no saca al cliente que esté abierto
+   * en otra.
+   */
   cerrarSesion(): void {
+    const eraAdmin = this.datos()?.rol === 'ADMIN';
     this.cancelarCierre();
     this.datos.set(null);
     if (this.esNavegador) {
-      sessionStorage.removeItem(CLAVE_STORAGE);
+      this.borrarDe('sessionStorage');
+      if (!eraAdmin) {
+        this.borrarDe('localStorage');
+      }
     }
   }
+
+  /** Otra pestaña ingresó o salió: esta la sigue. */
+  private readonly alCambiarEnOtraPestana = (evento: StorageEvent): void => {
+    // Sin clave es que se vació todo el almacenamiento.
+    if (evento.key !== null && evento.key !== CLAVE_STORAGE) {
+      return;
+    }
+    this.datos.set(this.leerSesionAlmacenada());
+    this.programarCierre();
+  };
 
   private estaVencida(sesion: DatosDeSesion): boolean {
     const vence = vencimientoDelToken(sesion.token);
@@ -139,11 +176,25 @@ export class SesionService implements OnDestroy {
     }
   }
 
+  /**
+   * La de esta pestaña primero: ahí vive la del admin, y también la de
+   * un cliente que ingresó antes de ISS-240, que así no queda afuera el
+   * día del despliegue.
+   */
   private leerSesionAlmacenada(): DatosDeSesion | null {
     if (!this.esNavegador) {
       return null;
     }
-    const almacenado = sessionStorage.getItem(CLAVE_STORAGE);
+    return this.leerDe('sessionStorage') ?? this.leerDe('localStorage');
+  }
+
+  private leerDe(almacen: Almacen): DatosDeSesion | null {
+    let almacenado: string | null;
+    try {
+      almacenado = window[almacen].getItem(CLAVE_STORAGE);
+    } catch {
+      return null;
+    }
     if (almacenado === null) {
       return null;
     }
@@ -153,12 +204,31 @@ export class SesionService implements OnDestroy {
         return null;
       }
       if (this.estaVencida(sesion)) {
-        sessionStorage.removeItem(CLAVE_STORAGE);
+        this.borrarDe(almacen);
         return null;
       }
       return sesion;
     } catch {
       return null;
+    }
+  }
+
+  // Con el almacenamiento bloqueado (navegación privada estricta,
+  // cookies desactivadas) la sesión queda solo en memoria y dura lo que
+  // dure la página: mejor eso que un ingreso que falla sin explicación.
+  private guardarEn(almacen: Almacen, sesion: DatosDeSesion): void {
+    try {
+      window[almacen].setItem(CLAVE_STORAGE, JSON.stringify(sesion));
+    } catch {
+      // Queda en memoria.
+    }
+  }
+
+  private borrarDe(almacen: Almacen): void {
+    try {
+      window[almacen].removeItem(CLAVE_STORAGE);
+    } catch {
+      // Nada que borrar si no se puede leer.
     }
   }
 }
