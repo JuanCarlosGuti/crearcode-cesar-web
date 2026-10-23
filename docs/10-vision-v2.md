@@ -499,17 +499,25 @@ Registradas el 23 oct 2026:
     estructura del boceto (pantallas armadas con piezas de un catálogo
     cerrado y los textos del negocio) por salida estructurada, y un
     componente de Angular la pinta en un marco de celular con la marca
-    del sitio. Modelo: **Sonnet 5.5** con effort bajo, configurable con
-    `CLAUDE_MODELO`; antes de publicar se compara con Opus 5.5 sobre
-    los mismos cinco negocios y el usuario elige viendo las capturas.
+    del sitio. Modelo: **Opus 5.5** con effort bajo, configurable con
+    `CLAUDE_MODELO`. Se comparó con Sonnet 5.5 sobre cinco negocios con
+    la clave real (23 oct 2026): Opus salió más específico («Sancocho de
+    gallina», «Varilla corrugada 1/2"») a unos US$0,034 por boceto y 11 a
+    15 s; Sonnet, a unos US$0,016 y 9 a 11 s. El usuario eligió Opus
+    porque los créditos sobran; el peor caso con el tope de 100 bocetos
+    al día son unos US$100 al mes.
     Si Claude falla o se acaban los créditos (no hay tarjeta, así que
     las llamadas fallan en vez de cobrar), Groq genera el mismo JSON.
     La clave es **`CLAUDE_API_KEY`**, propia del proyecto: no
     `ANTHROPIC_API_KEY`, que en la máquina del usuario guarda la de otro
     proyecto y mezclaría el consumo. Cada llamada deja en el log el
     modelo, los tokens y el costo estimado, sin datos del visitante.
-    **Pendiente**: si el demo conserva también la imagen de Cloudflare
-    y Pollinations; se decide viendo las dos lado a lado.
+    **La imagen de Cloudflare y Pollinations sale del demo** (decisión
+    del usuario el mismo día): era genérica —un escritorio o un collage
+    de platos, con marca de agua—, sumaba hasta 20 s de espera y falló
+    en 6 de 10 intentos. El visitante ve su boceto y, si le gusta, pasa
+    a la solicitud. Su código sigue unas semanas detrás de
+    `DEMO_INCLUIR_IMAGEN`, apagada.
 34. **Política v2.2: los proveedores de IA, sin nombre** (texto
     aprobado por el usuario). La norma no exige nombrar a los
     encargados (art. 2.2.2.25.3.1 del Decreto 1074 de 2015, contenido

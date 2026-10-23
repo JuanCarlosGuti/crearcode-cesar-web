@@ -78,9 +78,9 @@ export const CONSENTIMIENTO_REGISTRO =
  * 5. Plazo de 15 dias habiles para reportar incidentes a la SIC:
  *    CONFIRMADO en la norma (SIC, concepto 21-17773), tambien para
  *    empresas fuera del RNBD. Procedimiento en docs/11 §2.3.
- * 6. Pollinations: se mantiene como respaldo del demo. Ya no recibe el
- *    texto del cliente —solo el titulo que genero el modelo— desde la
- *    correccion P1-8c de la auditoria.
+ * 6. Pollinations y Cloudflare (imagen del demo): APAGADOS desde el 23
+ *    oct 2026 (decision 33). Cuando estaban encendidos solo recibian el
+ *    titulo que genero el modelo, nunca el texto del cliente (P1-8c).
  * 7. v2.2 (23 oct 2026, decision 34 de docs/10): los proveedores de IA
  *    van en generico, a pedido del dueno; la norma no exige nombrarlos
  *    y quien recibe que esta en docs/11 §1.7. Con Claude (decision 33),

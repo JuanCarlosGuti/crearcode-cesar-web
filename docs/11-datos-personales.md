@@ -30,7 +30,7 @@ visitante a un modelo de un tercero:
 | Asistente | La conversación (máx. 20 turnos de 1000 caracteres) | Groq (EE. UU.) | 800 global / 50 con cuenta / 10 anónimo |
 | Simulador de chatbot | Nombre y rubro del negocio + la conversación | Groq (EE. UU.) | 400 / 50 / 10 |
 | Diagnóstico digital | Seis pares pregunta-respuesta del cuestionario | Groq (EE. UU.) | 200 / 10 / 2 |
-| Demo de diseño | Sector, qué hace y qué necesita (texto); al modelo de **imágenes**, si se conserva, solo el título que generó el modelo de texto | Claude (Anthropic, EE. UU.) con Groq de respaldo; imágenes: Cloudflare Workers AI con Pollinations de respaldo | 100 / 3, solo cuentas registradas |
+| Demo de diseño | Sector, qué hace y qué necesita (texto) | Claude (Anthropic, EE. UU.) con Groq de respaldo. La imagen de Cloudflare/Pollinations está apagada desde el 23 oct 2026 | 100 / 3, solo cuentas registradas |
 
 ### 1.2 El riesgo real
 
@@ -111,8 +111,8 @@ pregunta de la SIC, y se sabe aquí:
 |---|---|---|---|
 | Groq, Inc. | EE. UU. | El texto del asistente, del simulador y del diagnóstico; el del demo solo si Claude falla | Generar la respuesta o el boceto de respaldo |
 | Anthropic, PBC | EE. UU. | Sector, qué hace y qué necesita, tal como los escribió el visitante del demo | Generar el boceto |
-| Cloudflare, Inc. (Workers AI) | EE. UU. | Solo el título de la solución, mientras el demo conserve la imagen | Generar la imagen de referencia |
-| Pollinations | Servicio abierto | Lo mismo que Cloudflare, cuando Cloudflare falla | Respaldo de la imagen |
+| Cloudflare, Inc. (Workers AI) | EE. UU. | Nada desde el 23 oct 2026: la imagen del demo está apagada. Antes, solo el título de la solución | Imagen de referencia (apagada) |
+| Pollinations | Servicio abierto | Nada desde el 23 oct 2026, por lo mismo | Respaldo de la imagen (apagada) |
 
 Fuentes verificadas el 23 oct 2026: Decreto 1074 de 2015, arts.
 2.2.2.25.3.1 (contenido mínimo de la política) y 2.2.2.25.5.1-2

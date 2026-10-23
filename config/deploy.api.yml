@@ -111,8 +111,11 @@ env:
     # Sonnet sobre cinco negocios el 23 oct 2026.
     DEMO_PROVEEDOR_BOCETOS: claude
     CLAUDE_MODELO: claude-opus-5-5
-    # La imagen de referencia: Cloudflare Workers AI con respaldo a
-    # Pollinations, mientras el dueno decide si se conserva.
+    # La imagen de referencia junto al boceto quedo apagada por decision
+    # del dueno (23 oct 2026): era generica, hacia esperar y fallaba. Su
+    # codigo sigue unas semanas; al borrarlo salen tambien estas dos
+    # lineas y los secretos de Cloudflare.
+    DEMO_INCLUIR_IMAGEN: "false"
     DEMO_PROVEEDOR_IMAGENES: cloudflare
     # Techo anti-abuso global del asistente. Se puede bajar cuando
     # ISS-136 este verificado en produccion y el limite vuelva a ser por

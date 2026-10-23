@@ -89,7 +89,7 @@ test('el demo de diseno muestra el estado bloqueado a un visitante anonimo (HU-4
   await expect(demo.locator('#demo-sector')).toHaveCount(0);
 });
 
-test('un cliente registrado genera su boceto: pantallas dibujadas, funcionalidades e imagen (F10d, ISS-234)', async ({
+test('un cliente registrado genera su boceto: pantallas dibujadas y funcionalidades (F10d, ISS-234)', async ({
   page,
   request,
 }) => {
@@ -115,9 +115,8 @@ test('un cliente registrado genera su boceto: pantallas dibujadas, funcionalidad
   // Las pantallas del boceto tienen colores propios: axe revisa su contraste.
   const axe = await new AxeBuilder({ page }).include('app-demo-diseno').analyze();
   expect(axe.violations, JSON.stringify(axe.violations, null, 2)).toEqual([]);
-  const imagen = page.locator('.demo-imagen img');
-  await expect(imagen).toBeVisible();
-  expect(await imagen.getAttribute('src')).toMatch(/^data:image\/(png|jpeg);base64,/);
+  // La imagen de referencia quedó apagada (decisión 33): solo el boceto.
+  await expect(page.locator('.demo-imagen')).toHaveCount(0);
   await expect(page.locator('.demo-variacion')).toBeVisible();
 });
 

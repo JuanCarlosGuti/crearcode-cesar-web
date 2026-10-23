@@ -134,8 +134,9 @@ class DemoDisenoControllerIT {
 		assertThat(respuesta.getBody().pantallas().getFirst().piezas().getFirst().tipo()).isEqualTo("ENCABEZADO");
 		assertThat(respuesta.getBody().pantallas().get(1).piezas().getFirst().elementos().getFirst().detalle())
 				.isEqualTo("En camino");
-		assertThat(respuesta.getBody().imagenBase64()).isNotBlank();
-		assertThat(respuesta.getBody().tipoMime()).isEqualTo("image/jpeg");
+		// La imagen de referencia quedó apagada (decisión 33): solo el boceto.
+		assertThat(respuesta.getBody().imagenBase64()).isNull();
+		assertThat(respuesta.getBody().tipoMime()).isNull();
 	}
 
 	@Test
