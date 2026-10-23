@@ -106,7 +106,13 @@ env:
     # caidas cuatro dias: con respaldo, el segundo modelo responde.
     GROQ_MODELO: openai/gpt-oss-120b
     GROQ_MODELO_RESPALDO: openai/gpt-oss-20b
-    # Demo de diseno: Cloudflare Workers AI con respaldo a Pollinations.
+    # Demo de diseno: el boceto lo arma Claude, con Groq de respaldo
+    # (decision 33). Opus 5.5, elegido por el dueno tras comparar con
+    # Sonnet sobre cinco negocios el 23 oct 2026.
+    DEMO_PROVEEDOR_BOCETOS: claude
+    CLAUDE_MODELO: claude-opus-5-5
+    # La imagen de referencia: Cloudflare Workers AI con respaldo a
+    # Pollinations, mientras el dueno decide si se conserva.
     DEMO_PROVEEDOR_IMAGENES: cloudflare
     # Techo anti-abuso global del asistente. Se puede bajar cuando
     # ISS-136 este verificado en produccion y el limite vuelva a ser por
@@ -126,5 +132,6 @@ env:
     - DEMO_CONTRASENA
     - MAIL_PASSWORD
     - GROQ_API_KEY
+    - CLAUDE_API_KEY
     - CLOUDFLARE_ACCOUNT_ID
     - CLOUDFLARE_API_TOKEN
