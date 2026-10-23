@@ -78,9 +78,13 @@ export const CONSENTIMIENTO_REGISTRO =
  * 5. Plazo de 15 dias habiles para reportar incidentes a la SIC:
  *    CONFIRMADO en la norma (SIC, concepto 21-17773), tambien para
  *    empresas fuera del RNBD. Procedimiento en docs/11 §2.3.
- * 6. Pollinations: se mantiene como respaldo del demo y se declara. Ya
- *    no recibe el texto del cliente —solo el titulo que genero el
- *    modelo— desde la correccion P1-8c de la auditoria.
+ * 6. Pollinations: se mantiene como respaldo del demo. Ya no recibe el
+ *    texto del cliente —solo el titulo que genero el modelo— desde la
+ *    correccion P1-8c de la auditoria.
+ * 7. v2.2 (23 oct 2026, decision 34 de docs/10): los proveedores de IA
+ *    van en generico, a pedido del dueno; la norma no exige nombrarlos
+ *    y quien recibe que esta en docs/11 §1.7. Con Claude (decision 33),
+ *    el demo SI manda el texto del visitante, y la seccion 6 lo dice.
  *
  * Analitica: las menciones a Google Analytics y Microsoft Clarity
  * describen algo construido pero APAGADO mientras contenido/analitica.ts
@@ -95,8 +99,8 @@ export const POLITICA_DE_DATOS = {
   titulo: 'Política de tratamiento de datos personales',
   metaDescripcion:
     'Política de tratamiento de datos personales de Crear Code Cesar S.A.S., conforme a la Ley 1581 de 2012 y la Circular 002 de 2024 de la SIC.',
-  version: 'v2.1',
-  vigenteDesde: '30 de septiembre de 2026',
+  version: 'v2.2',
+  vigenteDesde: '23 de octubre de 2026',
   secciones: [
     {
       titulo: '1. Quiénes somos',
@@ -151,7 +155,7 @@ export const POLITICA_DE_DATOS = {
     {
       titulo: '6. Inteligencia artificial',
       parrafos: [
-        'Qué hacemos: el asistente, el simulador de chatbot y el diagnóstico envían tu texto a un modelo de lenguaje de un proveedor externo para generar la respuesta. El demo de diseño envía a un modelo de imágenes la descripción de la solución, no el texto que tú escribiste.',
+        'Qué hacemos: el asistente, el simulador de chatbot, el diagnóstico y el demo de diseño envían tu texto a un modelo de lenguaje de un proveedor externo para generar la respuesta o el boceto.',
         'Qué no hacemos: no usamos tus conversaciones para entrenar modelos propios. Lo que cada proveedor haga con el texto que recibe se rige por sus propias condiciones de uso. Por eso te pedimos no escribir en estas herramientas datos sensibles (salud, información financiera, documentos de identidad) ni datos de otras personas. Tampoco tomamos decisiones que te afecten de forma legal o significativa solo con un proceso automatizado: toda cotización final y toda decisión comercial la revisa una persona.',
         'Resultados orientativos: las respuestas de la IA, los rangos del cotizador y los bocetos son referencias. Pueden contener errores y no son una oferta.',
         'Evaluación y minimización: aplicamos límites de longitud y de uso, enviamos al proveedor solo el texto necesario, y revisamos el riesgo de estas herramientas al menos una vez al año, siguiendo la Circular 002 de 2024 de la SIC.',
@@ -162,9 +166,8 @@ export const POLITICA_DE_DATOS = {
       parrafos: [
         'Solo con los proveedores que necesitamos para operar, bajo sus condiciones de confidencialidad y seguridad. Actúan como encargados del tratamiento:',
         'Netcup GmbH (Alemania): el servidor donde viven el sitio y la base de datos.',
-        'Groq, Inc. (Estados Unidos): procesa el texto del asistente, el simulador y el diagnóstico.',
-        'Cloudflare, Inc. (Estados Unidos): DNS del dominio y generación de imágenes del demo de diseño.',
-        'Pollinations (servicio abierto): genera las imágenes del demo cuando el proveedor principal falla. Recibe únicamente el título que generó el modelo, nunca el texto que tú escribiste.',
+        'Proveedores de modelos de inteligencia artificial (Estados Unidos): procesan el texto que escribes en el asistente, el simulador, el diagnóstico y el demo de diseño, solo para generar la respuesta o el boceto.',
+        'Cloudflare, Inc. (Estados Unidos): DNS del dominio.',
         'Resend, Inc. (Estados Unidos): envío de correos (verificación de cuenta, recuperación de contraseña y cotizaciones).',
         'Google LLC (Estados Unidos): solo si aceptas las cookies de medición, Google Analytics. Las tipografías del sitio se sirven desde nuestro propio servidor, así que navegar por aquí no le comunica nada a Google.',
         'Microsoft Corporation (Estados Unidos): Microsoft Clarity, solo si aceptas las cookies de medición.',

@@ -49,8 +49,8 @@ describe('LegalPage', () => {
     const { el } = await pintar(POLITICA_DE_DATOS, '/legales/politica-de-datos');
 
     const pie = el.querySelector('.pagina-legal__vigencia');
-    expect(pie?.textContent).toContain('v2.1');
-    expect(pie?.textContent).toContain('30 de septiembre de 2026');
+    expect(pie?.textContent).toContain('v2.2');
+    expect(pie?.textContent).toContain('23 de octubre de 2026');
   });
 
   /**
@@ -91,16 +91,31 @@ describe('LegalPage', () => {
 
   /**
    * Lo que el visitante escribe en las herramientas sale del pais hacia
-   * proveedores de IA. La politica tiene que nombrarlos: sin nombre no
-   * hay forma de que nadie ejerza ningun derecho sobre ese dato.
+   * proveedores de IA, y la politica lo dice. Desde la v2.2 (decision 34
+   * de docs/10) los de IA van en generico: la norma no exige nombrar
+   * encargados, los derechos se ejercen ante el responsable y quien
+   * recibe que esta en el registro interno de docs/11 §1.7. Los demas
+   * encargados siguen con nombre.
    */
-  it('la politica nombra a los encargados del tratamiento y la transferencia internacional', async () => {
+  it('la politica describe a los encargados y la transferencia internacional', async () => {
     const { el } = await pintar(POLITICA_DE_DATOS, '/legales/politica-de-datos');
     const texto = el.textContent ?? '';
 
-    ['Groq', 'Cloudflare', 'Pollinations', 'Resend', 'Netcup', 'Google'].forEach((encargado) =>
-      expect(texto).toContain(encargado),
-    );
+    ['Resend', 'Netcup', 'Google', 'Cloudflare'].forEach((encargado) => expect(texto).toContain(encargado));
+    expect(texto).toContain('Proveedores de modelos de inteligencia artificial');
     expect(texto).toContain('Estados Unidos');
+  });
+
+  /**
+   * Con Claude, lo que el visitante escribe en el demo si sale del sitio
+   * (decision 33). La v2.1 decia lo contrario, y una politica que dice
+   * algo falso no puede volver.
+   */
+  it('dice que el demo de diseno manda el texto del visitante a un modelo de lenguaje', async () => {
+    const { el } = await pintar(POLITICA_DE_DATOS, '/legales/politica-de-datos');
+    const texto = el.textContent ?? '';
+
+    expect(texto).toContain('el diagnóstico y el demo de diseño envían tu texto a un modelo de lenguaje');
+    expect(texto).not.toContain('no el texto que tú escribiste');
   });
 });
