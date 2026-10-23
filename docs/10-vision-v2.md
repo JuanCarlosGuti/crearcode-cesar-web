@@ -489,6 +489,41 @@ Registrada el 13 oct 2026:
     del eslogan que estaba pendiente desde el 29 jul 2026. El resaltado
     en verde del titular pasa a «tu negocio.».
 
+Registradas el 23 oct 2026:
+
+33. **Los bocetos del demo de diseño los genera Claude** (ISS-230 a
+    ISS-236, ADR-16). El usuario tiene US$200 al mes de créditos de la
+    API de Anthropic que no se acumulan, y el boceto de hoy lo dibuja
+    un modelo de imágenes que solo recibe un título y pinta un tablero
+    genérico con letras ilegibles. Claude no dibuja: devuelve la
+    estructura del boceto (pantallas armadas con piezas de un catálogo
+    cerrado y los textos del negocio) por salida estructurada, y un
+    componente de Angular la pinta en un marco de celular con la marca
+    del sitio. Modelo: **Sonnet 5.5** con effort bajo, configurable con
+    `CLAUDE_MODELO`; antes de publicar se compara con Opus 5.5 sobre
+    los mismos cinco negocios y el usuario elige viendo las capturas.
+    Si Claude falla o se acaban los créditos (no hay tarjeta, así que
+    las llamadas fallan en vez de cobrar), Groq genera el mismo JSON.
+    La clave es **`CLAUDE_API_KEY`**, propia del proyecto: no
+    `ANTHROPIC_API_KEY`, que en la máquina del usuario guarda la de otro
+    proyecto y mezclaría el consumo. Cada llamada deja en el log el
+    modelo, los tokens y el costo estimado, sin datos del visitante.
+    **Pendiente**: si el demo conserva también la imagen de Cloudflare
+    y Pollinations; se decide viendo las dos lado a lado.
+34. **Política v2.2: los proveedores de IA, sin nombre** (texto
+    aprobado por el usuario). La norma no exige nombrar a los
+    encargados (art. 2.2.2.25.3.1 del Decreto 1074 de 2015, contenido
+    mínimo de la política), y la transmisión a Estados Unidos ya está
+    autorizada en la sección 8. Como la lista de la sección 7 se
+    presenta completa, Groq, Cloudflare (imágenes) y Pollinations se
+    reemplazan por una línea genérica de «proveedores de modelos de
+    inteligencia artificial», en vez de agregar a Anthropic: el usuario
+    prefiere no nombrar proveedores que no controla, y así cambiar de
+    proveedor no obliga a cambiar la política. La sección 6 corrige la
+    frase que diría algo falso: con Claude, lo que escribe el visitante
+    sí sale del sitio. Quién recibe qué queda en el registro interno de
+    docs/11 §1.7. Se publica junto con el cambio que la hace necesaria.
+
 ## Aprobación
 
 **Aprobado explícitamente por el usuario el 27 jul 2026** ("si

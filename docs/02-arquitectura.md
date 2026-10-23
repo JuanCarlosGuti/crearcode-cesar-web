@@ -607,6 +607,40 @@ al aprobarse, y las cotizaciones salen con IVA.
 criterio que los totales de F11). El portal no emite documentos
 (decisión 25): lo que muestra es un estado de cuenta informativo.
 
+### ADR-16 — El boceto es un dato, no un dibujo (decisión 33, 23 oct 2026)
+
+**Contexto**: el demo de diseño pasa a generarse con Claude, que no
+produce imágenes. Podía pedírsele SVG o HTML del boceto, o la
+estructura del boceto para que la dibuje el sitio.
+
+**Decisión**: Claude devuelve **JSON con un esquema cerrado** (salida
+estructurada de la API): título, cinco funcionalidades y de dos a tres
+pantallas, cada una con sus piezas tomadas de un catálogo fijo
+(encabezado, banner, buscador, categorías, tarjetas, lista, formulario,
+botón, indicadores, chat, horarios y navegación) y los textos del
+negocio. El dominio lo valida otra vez (`BocetoDeSolucion`: largos,
+cantidades y ninguna cifra de dinero) y un componente de Angular lo
+pinta dentro de un marco de celular con los tokens del sitio.
+
+**Por qué no SVG ni HTML del modelo**:
+- **Seguridad**: la regla del demo desde F10d es que nada generado por
+  IA se pinta como HTML. Con datos, Angular solo interpola texto en
+  piezas propias.
+- **Calidad pareja**: el dibujo siempre sale con la marca y alineado.
+  El modelo decide lo que hace bien, qué pantallas y qué contenido, y
+  no lo que hace a veces mal, que es la geometría.
+- **Costo y tiempo**: unos 1.500 tokens de JSON contra 5.000 a 8.000
+  de un SVG de tres pantallas.
+- **Accesibilidad**: el boceto es texto real, legible por lectores de
+  pantalla.
+
+**Consecuencias**: el boceto queda limitado al catálogo de piezas.
+Ampliarlo es agregar un tipo al esquema, al dominio y al componente, con
+sus pruebas. El puerto `GeneradorDeBocetos` tiene dos montajes elegidos
+en un solo lugar, como las imágenes: Claude primario y Groq de respaldo
+con el mismo esquema, de modo que el visitante nunca ve un error por
+falta de créditos.
+
 ## 6. Seguridad (resumen, detalle en épica E3)
 
 - Panel admin protegido con Spring Security vía JWT (ver ADR-08):

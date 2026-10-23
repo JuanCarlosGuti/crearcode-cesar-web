@@ -30,7 +30,7 @@ visitante a un modelo de un tercero:
 | Asistente | La conversación (máx. 20 turnos de 1000 caracteres) | Groq (EE. UU.) | 800 global / 50 con cuenta / 10 anónimo |
 | Simulador de chatbot | Nombre y rubro del negocio + la conversación | Groq (EE. UU.) | 400 / 50 / 10 |
 | Diagnóstico digital | Seis pares pregunta-respuesta del cuestionario | Groq (EE. UU.) | 200 / 10 / 2 |
-| Demo de diseño | Sector, qué hace y qué necesita (texto); al modelo de **imágenes** solo el título que generó el modelo de texto | Groq + Cloudflare Workers AI, con Pollinations de respaldo | 100 / 3, solo cuentas registradas |
+| Demo de diseño | Sector, qué hace y qué necesita (texto); al modelo de **imágenes**, si se conserva, solo el título que generó el modelo de texto | Claude (Anthropic, EE. UU.) con Groq de respaldo; imágenes: Cloudflare Workers AI con Pollinations de respaldo | 100 / 3, solo cuentas registradas |
 
 ### 1.2 El riesgo real
 
@@ -55,6 +55,8 @@ Los cuatro criterios que exige la Circular 002 de 2024:
   para obtener la respuesta; no se añade ningún dato que él no haya
   puesto. Al proveedor de imágenes, desde septiembre de 2026, ni
   siquiera se le manda su texto: solo el título que generó el modelo.
+  Desde el 23 oct 2026 el boceto lo arma Claude con lo que escribió
+  el visitante: es el mismo dato que antes recibía Groq, no uno nuevo.
 - **Razonable.** El beneficio (una orientación gratuita e inmediata) es
   proporcionado al dato tratado (una descripción de un negocio).
 - **Proporcional.** Hay tope de longitud por mensaje (1000 caracteres),
@@ -89,11 +91,32 @@ Los cuatro criterios que exige la Circular 002 de 2024:
 ### 1.6 Qué revisar cada año
 
 1. ¿Cambió algún proveedor, o alguno empezó a entrenar con los datos
-   de API?
+   de API? Actualizar la tabla de §1.7.
 2. ¿Se añadió una herramienta que mande datos a un tercero?
 3. ¿Sigue visible el aviso en las cuatro?
 4. ¿Hubo algún incidente o reclamo relacionado con las herramientas?
 5. ¿Sirvieron los cupos, o hubo abuso?
+
+### 1.7 Proveedores de IA (registro interno)
+
+Desde la política v2.2 (decisión 34 de [[10-vision-v2]]) la política
+pública los nombra en genérico, como «proveedores de modelos de
+inteligencia artificial». La norma no exige nombrarlos: el contenido
+mínimo de la política está en el art. 2.2.2.25.3.1 del Decreto 1074 de
+2015, y la transmisión a Estados Unidos la autoriza la sección 8. Pero
+quién recibe qué tiene que saberse para responder un reclamo o una
+pregunta de la SIC, y se sabe aquí:
+
+| Proveedor | País | Qué recibe | Para qué |
+|---|---|---|---|
+| Groq, Inc. | EE. UU. | El texto del asistente, del simulador y del diagnóstico; el del demo solo si Claude falla | Generar la respuesta o el boceto de respaldo |
+| Anthropic, PBC | EE. UU. | Sector, qué hace y qué necesita, tal como los escribió el visitante del demo | Generar el boceto |
+| Cloudflare, Inc. (Workers AI) | EE. UU. | Solo el título de la solución, mientras el demo conserve la imagen | Generar la imagen de referencia |
+| Pollinations | Servicio abierto | Lo mismo que Cloudflare, cuando Cloudflare falla | Respaldo de la imagen |
+
+Fuentes verificadas el 23 oct 2026: Decreto 1074 de 2015, arts.
+2.2.2.25.3.1 (contenido mínimo de la política) y 2.2.2.25.5.1-2
+(transmisión internacional a un encargado y su contrato).
 
 ---
 
