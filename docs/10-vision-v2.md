@@ -561,6 +561,13 @@ arrastraba la Etapa 2) se compró y migró el 10 ago 2026 (ADR-11).
 F12 (portal de proyectos del cliente) se terminó y fue **aprobada por el
 usuario el 1 oct 2026**, con sus cuatro entregables en producción.
 
+Después de F12, pulido pedido por el usuario al probar el sitio
+(decisiones 31 a 35, ISS-226 a ISS-239, todo en producción al 23 oct
+2026): la tarjeta del demo de la Home editable; cada página nueva
+empieza arriba; lo escrito antes de hidratar no se pierde; el eslogan
+corto; el boceto del demo con Claude Opus 5.5, y con identidad de marca,
+dibujos y los colores del negocio; y la política v2.2.
+
 F11 cerró con el alcance reenfocado de la decisión 18 — cotizaciones
 sí, documentos de cobro no —, confirmado después por el certificado de
 existencia y representación legal que aportó el usuario: CREAR CODE

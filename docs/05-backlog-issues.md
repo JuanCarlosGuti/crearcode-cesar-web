@@ -907,13 +907,18 @@ después.
 
 | ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
 |---|---|---|---|---|---|---|
-| ISS-230 | Dominio del boceto: `BocetoDeSolucion` (título, 5 funcionalidades, 2-3 pantallas de 3-8 piezas de un catálogo cerrado de 12 tipos, textos cortos, ninguna cifra de dinero) y puerto `GeneradorDeBocetos` | HU-42 | Sin Spring ni JPA; ArchUnit en verde | M | — | Unit (invariantes y límites, texto con dinero rechazado) |
-| ISS-231 | Adaptador Claude con el SDK oficial (`anthropic-java` 2.75, la última 2.x: la 3.0 estrena una versión de API sin documentar qué cambia): salida estructurada con el esquema del boceto, effort bajo, caché del prompt de sistema, tiempo de espera, `CLAUDE_API_KEY` explícita (nunca `ANTHROPIC_API_KEY`) y log por llamada de modelo, tokens y costo estimado, sin datos del visitante | HU-42 | Las pruebas no llaman a la API real | M | ISS-230 | Integration (contra un servidor HTTP falso: forma de la petición, lectura de la respuesta, errores, rechazo, `max_tokens`) |
-| ISS-232 | Respaldo con Groq (mismo esquema, `response_format` JSON) y `GeneradorDeBocetosConRespaldo`, elegidos en un solo punto de configuración (`DEMO_PROVEEDOR_BOCETOS`) | HU-42 | Sin créditos o con Claude caído, el visitante recibe el boceto de Groq | S | ISS-231 | Integration + Unit (respaldo) |
-| ISS-233 | Caso de uso y API: el demo devuelve título, funcionalidades y pantallas; la imagen de Cloudflare/Pollinations pasa a ser opcional (`DEMO_INCLUIR_IMAGEN`) mientras se decide si se conserva | HU-42 | Mismo cupo de antes (3 por cuenta, 100 en el sitio); un fallo no consume cupo | M | ISS-232 | Integration (API) |
-| ISS-234 | Frontend: componente que pinta el boceto en un marco de celular con los tokens del sitio, una pantalla por pieza del catálogo, y el demo lo muestra (con la imagen, si viene) | HU-42 | axe sin violaciones; 375 y 1280 px sin desborde | M | ISS-233 | Component + E2E |
-| ISS-235 | Política v2.2 (decisión 34), registro interno de proveedores en docs/11 §1.7, el stub de e2e responde también como la API de Claude, y CI arranca con él | — | Ninguna prueba gasta créditos | S | ISS-234 | E2E |
-| ISS-236 | Comparación con las capturas lado a lado: Sonnet 5.5 contra Opus 5.5, y boceto de Claude contra imagen, sobre cinco negocios. El usuario elige; luego clave en producción (secreto `CLAUDE_API_KEY`), despliegue y verificación con el costo real medido | HU-42 | Decisión del usuario registrada; boceto real en producción | M | ISS-235 | Checklist manual |
+| ISS-230 ✅ | Dominio del boceto: `BocetoDeSolucion` (título, 5 funcionalidades, 2-3 pantallas de 3-8 piezas de un catálogo cerrado de 12 tipos, textos cortos, ninguna cifra de dinero) y puerto `GeneradorDeBocetos` | HU-42 | Sin Spring ni JPA; ArchUnit en verde | M | — | Unit (invariantes y límites, texto con dinero rechazado) |
+| ISS-231 ✅ | Adaptador Claude con el SDK oficial (`anthropic-java` 2.75, la última 2.x: la 3.0 estrena una versión de API sin documentar qué cambia): salida estructurada con el esquema del boceto, effort bajo, caché del prompt de sistema, tiempo de espera, `CLAUDE_API_KEY` explícita (nunca `ANTHROPIC_API_KEY`) y log por llamada de modelo, tokens y costo estimado, sin datos del visitante | HU-42 | Las pruebas no llaman a la API real | M | ISS-230 | Integration (contra un servidor HTTP falso: forma de la petición, lectura de la respuesta, errores, rechazo, `max_tokens`) |
+| ISS-232 ✅ | Respaldo con Groq (mismo esquema, `response_format` JSON) y `GeneradorDeBocetosConRespaldo`, elegidos en un solo punto de configuración (`DEMO_PROVEEDOR_BOCETOS`) | HU-42 | Sin créditos o con Claude caído, el visitante recibe el boceto de Groq | S | ISS-231 | Integration + Unit (respaldo) |
+| ISS-233 ✅ | Caso de uso y API: el demo devuelve título, funcionalidades y pantallas; la imagen de Cloudflare/Pollinations pasa a ser opcional (`DEMO_INCLUIR_IMAGEN`) mientras se decide si se conserva | HU-42 | Mismo cupo de antes (3 por cuenta, 100 en el sitio); un fallo no consume cupo | M | ISS-232 | Integration (API) |
+| ISS-234 ✅ | Frontend: componente que pinta el boceto en un marco de celular con los tokens del sitio, una pantalla por pieza del catálogo, y el demo lo muestra (con la imagen, si viene) | HU-42 | axe sin violaciones; 375 y 1280 px sin desborde | M | ISS-233 | Component + E2E |
+| ISS-235 ✅ | Política v2.2 (decisión 34), registro interno de proveedores en docs/11 §1.7, el stub de e2e responde también como la API de Claude, y CI arranca con él | — | Ninguna prueba gasta créditos | S | ISS-234 | E2E |
+| ISS-236 ✅ | Comparación con las capturas lado a lado: Sonnet 5.5 contra Opus 5.5, y boceto de Claude contra imagen, sobre cinco negocios. El usuario elige; luego clave en producción (secreto `CLAUDE_API_KEY`), despliegue y verificación con el costo real medido | HU-42 | Decisión del usuario registrada; boceto real en producción | M | ISS-235 | Checklist manual |
+
+**ISS-230 a ISS-236 en producción el 23 oct 2026** (PR #9): el boceto
+de una barbería, pedido por el usuario desde su cuenta, respondió Claude
+Opus 5.5 sin pasar al respaldo, en 15,7 s y por unos US$0,045. Política
+v2.2 publicada y Lighthouse 99-100/100/100/100.
 
 ## Identidad de marca en el boceto (oct 2026) — ISS-237 a ISS-239
 
@@ -921,9 +926,18 @@ Decisión 35 de [[10-vision-v2]]. Una rama y un PR.
 
 | ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
 |---|---|---|---|---|---|---|
-| ISS-237 | Dominio, esquema y lector: `IdentidadDeMarca` (nombre, eslogan, paleta entre 8, logo con forma entre 5, símbolo y estilo de letra entre 3) y un ícono opcional por elemento. Un emoji solo pasa si es un emoji de verdad, así que no puede colarse texto. El lector, tolerante: un ícono inválido se descarta y un valor fuera de catálogo toma el de por defecto | HU-42 | Sin Spring ni JPA; ArchUnit en verde | M | — | Unit (identidad, emojis, lector) + Integration (adaptadores con el esquema nuevo) |
-| ISS-238 | El sitio dibuja la identidad: tarjeta «Tu identidad de marca» con logo, nombre, eslogan, colores y letra; los celulares con la paleta del negocio, barra con el logo y el nombre, y un emoji grande en cada producto, categoría, fila y sección del menú | HU-42 | Las 8 paletas, con prueba de contraste AA; axe sin violaciones; 375 y 1280 px sin desborde | M | ISS-237 | Component + E2E |
-| ISS-239 | Prueba con Claude real sobre tres negocios antes de publicar, despliegue y verificación en producción | HU-42 | El usuario lo ve en producción | S | ISS-238 | Checklist manual |
+| ISS-237 ✅ | Dominio, esquema y lector: `IdentidadDeMarca` (nombre, eslogan, paleta entre 8, logo con forma entre 5, símbolo y estilo de letra entre 3) y un ícono opcional por elemento. Un emoji solo pasa si es un emoji de verdad, así que no puede colarse texto. El lector, tolerante: un ícono inválido se descarta y un valor fuera de catálogo toma el de por defecto | HU-42 | Sin Spring ni JPA; ArchUnit en verde | M | — | Unit (identidad, emojis, lector) + Integration (adaptadores con el esquema nuevo) |
+| ISS-238 ✅ | El sitio dibuja la identidad: tarjeta «Tu identidad de marca» con logo, nombre, eslogan, colores y letra; los celulares con la paleta del negocio, barra con el logo y el nombre, y un emoji grande en cada producto, categoría, fila y sección del menú | HU-42 | Las 8 paletas, con prueba de contraste AA; axe sin violaciones; 375 y 1280 px sin desborde | M | ISS-237 | Component + E2E |
+| ISS-239 ✅ | Prueba con Claude real sobre tres negocios antes de publicar, despliegue y verificación en producción | HU-42 | El usuario lo ve en producción | S | ISS-238 | Checklist manual |
+
+**ISS-237 a ISS-239 en producción el 23 oct 2026** (PR #10). Antes de
+publicar, Claude Opus real armó tres negocios: «Barbería El Filo»
+(nocturna, 💈), «Sazón del Valle» (cálida, 🍲) y «Sonrisa Clara» (salud,
+🦷), entre US$0,035 y 0,056 y de 14 a 19 s cada uno. Esa prueba atrapó
+un celular de 1.468 px por un detalle largo en una lista, que quedó
+corregido con su regresión en el e2e. En producción: Lighthouse
+100/100/100/100 en Home, servicio, `/herramientas` y Contacto, sin
+errores en los logs.
 
 ## Resumen de cobertura
 

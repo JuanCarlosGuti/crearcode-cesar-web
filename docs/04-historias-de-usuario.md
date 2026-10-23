@@ -942,12 +942,19 @@ boceto visual de mi futura app o web** para **imaginar lo que puede
 llegar a ser mi empresa**.
 
 - Dado que describo sector, qué hace y qué necesita, entonces recibo
-  una imagen generada por IA del boceto + una lista de funcionalidades
-  sugeridas, con opción de pedir UNA variación.
+  una propuesta de identidad de marca —nombre, eslogan, logo, colores
+  y letra— y el boceto de 2 o 3 pantallas de mi app, dibujadas en
+  celulares con esos colores y un dibujo por producto, más una lista de
+  funcionalidades sugeridas, con opción de pedir UNA variación
+  (decisiones 33 y 35; hasta el 23 oct 2026 era una imagen genérica).
 - Dado que soy anónimo, cuando abro la herramienta, entonces veo el
   estado bloqueado que me invita a crear cuenta gratis (HU-34).
-- Dado que la imagen la genera IA, entonces se muestra SOLO como
-  imagen (nunca HTML ejecutable) y con límites diarios propios.
+- Dado que el boceto lo arma una IA, entonces el sitio lo dibuja a
+  partir de datos elegidos de listas cerradas —nada de lo que trae se
+  pinta como HTML (ADR-16)— y tiene límites diarios propios.
+- Dado que la identidad es una propuesta, entonces la tarjeta lo dice y
+  me recuerda verificar que el nombre no esté registrado por otra
+  empresa.
 - Dado que me gusta el boceto, entonces el CTA "hazlo realidad" me
   lleva al contacto con el contexto prellenado.
 - Dado que escribo mis datos en la tarjeta del demo de la Home, cuando

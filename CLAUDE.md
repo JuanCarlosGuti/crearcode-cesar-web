@@ -51,6 +51,14 @@ Comercio que el usuario aportó lo confirma.
 el pulido previo a las pruebas del MVP, con los pendientes listados
 abajo.
 
+**Pulido tras F12 (5 a 23 oct 2026, ISS-226 a ISS-239, todo en
+producción)**: la tarjeta del demo de la Home es editable y sobrevive al
+registro (ISS-226); cada página nueva empieza arriba (ISS-227); lo
+escrito antes de hidratar ya no se borra en un celular lento (ISS-228);
+el eslogan corto (ISS-229); y el boceto del demo lo arma **Claude Opus
+5.5**, con identidad de marca, dibujos y los colores del negocio
+(ISS-230 a ISS-239). Detalle en §Bocetos con Claude.
+
 La v1 está PUBLICADA en producción desde el 27 jul
 2026, y desde el 19 ago 2026 corre en **servidor propio** (VPS de
 Netcup en Virginia, desplegado con Kamal 2 desde GitHub Actions), no en
@@ -1001,6 +1009,18 @@ Las **copias de seguridad de PostgreSQL** están activas desde el 30 sep
 probada desde ella. La política **no** los menciona, por decisión del
 usuario: la ley pide tenerlos, no publicarlos. Punto para el abogado: lo
 que se borra sigue en los respaldos hasta 30 días.
+
+**Del boceto con Claude (oct 2026)**:
+
+- **Borrar el código de la imagen del demo** (Cloudflare Workers AI y
+  Pollinations, apagada desde el 23 oct 2026 con `DEMO_INCLUIR_IMAGEN`)
+  unas semanas después, si nadie la extraña. Con eso salen
+  `DEMO_PROVEEDOR_IMAGENES`, los secretos `CLOUDFLARE_*` del despliegue
+  y se **revoca el token de Cloudflare**.
+- **Mirar el consumo de créditos de Claude cada mes** en la Consola de
+  Anthropic: los US$200 se comparten con el traductor del usuario y no
+  se acumulan. Cada boceto con Opus cuesta entre US$0,035 y 0,056, y el
+  log del backend deja una línea `Boceto con Claude: …` por llamada.
 
 **Antes de salir al mercado — apagar la demostración del portal (F12)**:
 el 30 sep 2026 el usuario pidió el proyecto de demostración también en

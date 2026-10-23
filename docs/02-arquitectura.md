@@ -641,6 +641,12 @@ en un solo lugar, como las imágenes: Claude primario y Groq de respaldo
 con el mismo esquema, de modo que el visitante nunca ve un error por
 falta de créditos.
 
+**Ampliado por la decisión 35 (23 oct 2026)**: el mismo criterio vale
+para la identidad de marca. La IA elige paleta, forma del logo y letra
+de listas cerradas, y los colores y las fuentes los define el sitio,
+con prueba de contraste AA. El único campo libre que no es texto, el
+emoji del logo y de cada elemento, solo pasa si es un emoji de verdad.
+
 ## 6. Seguridad (resumen, detalle en épica E3)
 
 - Panel admin protegido con Spring Security vía JWT (ver ADR-08):

@@ -816,6 +816,14 @@ del texto de cada sub-fase se redacta al arrancarla siguiendo este tono.
   - Error: "El asistente está descansando. No perdiste ningún uso:
     puedes intentarlo otra vez en un minuto." / Límite: "Usaste tus
     M bocetos de hoy. Se reinician mañana a la medianoche."
+- **Demo de diseño — el resultado desde oct 2026** (decisiones 33 y
+  35): arriba "Tu identidad de marca", con el logo, el nombre y el
+  eslogan sobre los colores de la marca, más "Colores" y "Letra", y la
+  nota "Propuesta de referencia: el logo definitivo se diseña contigo.
+  Antes de usar el nombre, verifica que no esté registrado por otra
+  empresa." Debajo, los celulares con "Desliza a los lados para ver
+  todas las pantallas." La imagen de referencia ("Así podría verse
+  terminada") quedó apagada el 23 oct 2026.
 - **Diagnóstico (radiografía)**: "Tu negocio opera bien, pero depende
   demasiado de que alguien esté pendiente. Hay tres cosas que pueden
   funcionar solas." + 3 oportunidades con título y beneficio concreto.
