@@ -972,9 +972,9 @@ dominio.
   **implementadas el 1 oct 2026** (ISS-225): cobro por entregables,
   cambio de alcance como entregable nuevo y garantía de 60 días, bajo
   «Condiciones» en el PDF. Texto en docs/08.
-- **Revisar el eslogan del hero** ("Tecnología que trabaja para tu
-  negocio, no al revés.") — pendiente desde el 29 jul 2026. Sigue
-  siendo el titular del rediseño, ahora con "no al revés" resaltado.
+- ~~**Revisar el eslogan del hero**~~: **resuelto el 13 oct 2026**
+  (decisión 32 de docs/10). Queda «Tecnología que trabaja para tu
+  negocio.», sin «no al revés», con «tu negocio.» resaltado.
 - **Una foto real del fundador** para `/sobre-nosotros`: es lo único
   inventado que queda en esa página, y hoy simplemente no hay imagen.
   Cuadrada o 4:5, mínimo 800×800 px. Una horizontal de la misma sesión

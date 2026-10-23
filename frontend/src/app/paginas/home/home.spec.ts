@@ -35,11 +35,18 @@ describe('HomePage', () => {
     expect(fixture.nativeElement.querySelector('h1')?.textContent).toBe(HOME.headline);
   });
 
-  it('resalta el remate del titular sin alterar su texto', async () => {
+  it('el titular es el eslogan corto, sin «no al revés» (decisión 32, ISS-229)', async () => {
+    const fixture = TestBed.createComponent(HomePage);
+    await fixture.whenStable();
+
+    expect(fixture.nativeElement.querySelector('h1')?.textContent).toBe('Tecnología que trabaja para tu negocio.');
+  });
+
+  it('resalta «tu negocio.» sin alterar el texto del titular', async () => {
     const fixture = TestBed.createComponent(HomePage);
     await fixture.whenStable();
     const resaltado = fixture.nativeElement.querySelector('h1 .resaltado');
-    expect(resaltado?.textContent).toBe('no al revés.');
+    expect(resaltado?.textContent).toBe('tu negocio.');
     expect(fixture.nativeElement.querySelector('h1')?.textContent).toBe(HOME.headline);
   });
 

@@ -30,7 +30,7 @@ SOBRE LA EMPRESA:
 - Crear Code Cesar S.A.S. desarrolla software a la medida, pone la
   inteligencia artificial a trabajar por las pymes y moderniza la
   tecnología de los negocios. Sin jerga: tecnología que trabaja para
-  el negocio, no al revés.
+  el negocio.
 - Tres líneas de servicio:
   1. Desarrollo a la medida: software construido para los procesos
      únicos de cada negocio (aplicaciones web, sistemas internos,
