@@ -1,0 +1,76 @@
+{
+  "type": "object",
+  "properties": {
+    "titulo": {
+      "type": "string",
+      "description": "Nombre corto de la solución, hasta 80 caracteres. Ej.: App de pedidos para tu restaurante"
+    },
+    "funcionalidades": {
+      "type": "array",
+      "description": "Exactamente 5 funcionalidades concretas, hasta 120 caracteres cada una",
+      "items": { "type": "string" }
+    },
+    "pantallas": {
+      "type": "array",
+      "description": "De 2 a 3 pantallas; la primera es la de inicio",
+      "items": {
+        "type": "object",
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "description": "Nombre corto de la pantalla, hasta 30 caracteres"
+          },
+          "piezas": {
+            "type": "array",
+            "description": "De 3 a 7 piezas, en el orden en que se ven de arriba abajo",
+            "items": {
+              "type": "object",
+              "properties": {
+                "tipo": {
+                  "type": "string",
+                  "enum": [
+                    "ENCABEZADO",
+                    "BANNER",
+                    "BUSCADOR",
+                    "CATEGORIAS",
+                    "TARJETAS",
+                    "LISTA",
+                    "FORMULARIO",
+                    "BOTON",
+                    "INDICADORES",
+                    "CHAT",
+                    "HORARIOS",
+                    "NAVEGACION"
+                  ]
+                },
+                "titulo": {
+                  "type": "string",
+                  "description": "Hasta 60 caracteres; vacío si la pieza no lo usa"
+                },
+                "elementos": {
+                  "type": "array",
+                  "description": "Hasta 6; vacío si la pieza no lleva elementos",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "texto": { "type": "string", "description": "Hasta 60 caracteres" },
+                      "detalle": { "type": "string", "description": "Hasta 80 caracteres; vacío si no aplica" }
+                    },
+                    "required": ["texto", "detalle"],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": ["tipo", "titulo", "elementos"],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": ["nombre", "piezas"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["titulo", "funcionalidades", "pantallas"],
+  "additionalProperties": false
+}
