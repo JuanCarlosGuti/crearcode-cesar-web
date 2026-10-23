@@ -594,6 +594,19 @@ lo que trae la IA se pinta como HTML.
   detalle largo en una lista estiraba un celular a 1.468 px; el e2e
   ahora exige que ninguno pase de 720.
 
+## Pulido de diseño (23 oct 2026, ISS-243 a ISS-246)
+
+Antes de una auditoría de diseño se recorrió el sitio entero a 375 y
+1280 px, con chequeos automáticos y las capturas revisadas a ojo. Lo
+que apareció lo pasaba axe por alto: `/herramientas` usaba una clase
+`.seccion` que no existía (título pegado al encabezado), casillas de
+13 px, la de Registro sola en una línea, botones que pasaban por debajo
+de los flotantes en el celular, ejemplos de campo cortados y la tabla
+del panel empujando la página. Las reglas quedaron en docs/07 §Detalles
+que se miden, y **`e2e/diseno-e2e.spec.ts` las mide en cada PR**:
+controles de 24 px como mínimo, títulos que respiran, ejemplos que
+caben, nada bajo los flotantes y nada que empuje la página.
+
 ## Proveedor de imágenes del demo (ISS-127, ISS-137)
 
 > Desde el 23 oct 2026 la imagen está apagada en el demo: ver §Bocetos

@@ -46,7 +46,8 @@ docs/10):**
 > **Demo de diseño con IA** — badge "Gratis · para cuentas"
 > Tres campos, con los ejemplos de antes como texto de ayuda: Sector
 > (*Ej. restaurante*) · Qué hace (*Ej. domicilios en Valledupar*) · Qué
-> necesita (*Ej. recibir pedidos sin saturar el WhatsApp*)
+> necesita (*Ej. recibir pedidos en línea* — el anterior, «sin saturar
+> el WhatsApp», se cortaba en el celular; ISS-244)
 > CTA: **Ver mi boceto con IA** — con sesión lleva al demo y el boceto
 > se genera solo; sin sesión, a crear la cuenta
 > Notas: "Lo que escribes queda solo en tu navegador hasta que generes

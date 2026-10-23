@@ -166,6 +166,15 @@ desbordaba horizontalmente al probar zoom de texto 200% (breakpoint de
 Accesibilidad final: 100 en las 3 páginas públicas auditadas
 ([[05-backlog-issues]] ISS-077).
 
+**Guardias de diseño (ISS-243 a ISS-246, 23 oct 2026)**:
+`frontend/e2e/diseno-e2e.spec.ts` mide, a 375 y 1280 px, lo que axe no
+ve: controles de menos de 24 px en todo el sitio público y el panel,
+títulos pegados al encabezado, ejemplos de campo que se cortan, botones
+que pasan por debajo de los flotantes, casillas separadas de su texto,
+botones pegados y tablas que empujan la página. Cada prueba falló antes
+del arreglo que la acompaña. Reglas en [[07-guia-de-estilo]] §Detalles
+que se miden.
+
 ## 6. Qué NO se prueba exhaustivamente en v1 (a propósito)
 
 - Variantes visuales de responsive en todos los breakpoints posibles:

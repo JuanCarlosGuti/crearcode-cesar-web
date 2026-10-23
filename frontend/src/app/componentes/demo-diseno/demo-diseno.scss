@@ -42,6 +42,8 @@
 }
 
 .demo-enlace {
+  display: inline-block;
+  padding-block: 0.3rem;
   font-size: 0.9rem;
   color: var(--color-texto-secundario);
   text-underline-offset: 3px;

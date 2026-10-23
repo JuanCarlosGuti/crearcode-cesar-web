@@ -25,6 +25,13 @@
   margin-bottom: var(--espacio-3);
 }
 
+// El select del navegador mide 19 px: 24 como mínimo para tocarlo (ISS-246).
+.filtro select {
+  min-height: 2.25rem;
+  padding-inline: 0.5rem;
+  font: inherit;
+}
+
 .tabla-envoltorio {
   overflow-x: auto;
 }

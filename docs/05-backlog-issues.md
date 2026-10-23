@@ -953,6 +953,23 @@ invitando a registrarse. Una rama y un PR, un commit por issue.
 | ISS-241 | Ingresar devuelve a donde se iba: los guards y el interceptor mandan a `/ingreso` (o `/admin/login`) con `?volver=`, el «Ya tengo cuenta» del demo lleva al demo, y el ingreso vuelve ahí. Solo rutas del propio sitio (nada que empiece por `//` o traiga esquema), y cada rol solo a lo suyo: el cliente no vuelve a `/admin` ni el admin fuera de él | HU-33 | Un enlace armado para mandar a otro sitio después de ingresar cae en el destino por defecto | M | ISS-240 | Unit (validación de la ruta), Component (ingreso, login del admin, guards, interceptor, demo), E2E (página protegida → ingreso → de vuelta) |
 | ISS-242 | Con sesión, el sitio deja de invitar a crear cuenta: la franja «Con cuenta gratis…» de `/herramientas` y la sección de la cuenta de la Home se ocultan tras hidratar. El prerender no cambia: lo que lee Google y lo que ve un visitante sigue igual | HU-33 | axe sin violaciones; Lighthouse de Home y `/herramientas` sin bajar | S | ISS-240 | Component (Home y herramientas, con y sin sesión), E2E |
 
+## Pulido de diseño antes de la auditoría (oct 2026) — ISS-243 a ISS-246
+
+El usuario avisó el 23 oct 2026 que viene una auditoría de diseño. Se
+recorrió el sitio entero, público, portal del cliente y panel, a 375 y
+1280 px: chequeos automáticos de cada página y capturas completas
+revisadas a ojo. Lo que apareció quedó como regla en
+[[07-guia-de-estilo]] §Detalles que se miden y como guardia en
+`diseno-e2e.spec.ts`. Cada prueba falló antes de su arreglo. Una rama y
+un PR.
+
+| ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
+|---|---|---|---|---|---|---|
+| ISS-243 | Espaciado: `/herramientas` usaba una clase `.seccion` que no existía, así que el título quedaba pegado al encabezado y cada herramienta tocaba el borde de su franja; el título de Sobre nosotros quedaba encima del primer bloque; en Mi cuenta, los botones de las secciones quedaban pegados al pasar a dos líneas | — | Títulos a 32 px o más del encabezado en todas las páginas, a 375 y 1280 px | S | — | E2E (`diseno-e2e`: título bajo el encabezado, botones de Mi cuenta) |
+| ISS-244 | Controles y formularios: casillas de 24 px con el color de la marca en todo el sitio (medían 13 y 18); la de Registro, al lado de su texto (quedaba sola en una línea); enlaces sueltos de 24 px de alto («Ya tengo cuenta» del demo, LinkedIn); ejemplos de campo que caben en el celular (el de la tarjeta de la Home y el del simulador se cortaban) | — | Ningún control del sitio público de menos de 24 px | S | — | E2E (controles a 375 y 1280, ejemplos que caben, casilla con su texto) |
+| ISS-245 | Botones flotantes: en el celular tapaban el borde de «Agenda tu consulta gratuita» del hero y de los botones de enviar de Registro, Ingreso y Recuperar. Los botones de `.cta-doble` y los de enviar van a su ancho natural, que además empareja los dos botones del hero, de los servicios y del pie | — | Ningún botón del hero ni de enviar pasa por debajo de los flotantes | S | — | E2E (hero y formularios contra los flotantes) |
+| ISS-246 | Panel admin en el celular: la tabla de solicitudes empujaba la página 251 px hacia el lado (ahora se desplaza en su caja, como las de cotizaciones y proyectos), y el filtro de estado y los desplegables del detalle de proyecto medían menos de 24 px | — | Sin desborde ni controles chicos en el listado, cotizaciones y proyectos | S | — | E2E (panel a 375) |
+
 ## Resumen de cobertura
 
 Todas las HU de [[04-historias-de-usuario]] (29 de la Etapa 2, HU-30 a

@@ -24,7 +24,7 @@ export const HOME = {
       {
         id: 'queNecesita',
         etiqueta: 'Qué necesita',
-        ejemplo: 'Ej. recibir pedidos sin saturar el WhatsApp',
+        ejemplo: 'Ej. recibir pedidos en línea',
         maximo: 300,
       },
     ],

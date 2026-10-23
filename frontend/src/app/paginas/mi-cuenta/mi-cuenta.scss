@@ -24,6 +24,14 @@ button {
   font-size: 0.9rem;
 }
 
+// Al pasar a dos líneas en el celular quedaban pegados (ISS-243).
+.pagina-cuenta__secciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-2);
+  margin-block: var(--espacio-3);
+}
+
 .pagina-cuenta__eliminar-acciones {
   display: flex;
   flex-wrap: wrap;

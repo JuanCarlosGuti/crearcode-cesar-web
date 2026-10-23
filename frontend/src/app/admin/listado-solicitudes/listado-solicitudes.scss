@@ -39,6 +39,12 @@
   color: var(--color-texto-secundario);
 }
 
+// En el celular la tabla se desplaza dentro de su caja en vez de
+// empujar la página hacia el lado, como las de cotizaciones (ISS-246).
+.tabla-envoltorio {
+  overflow-x: auto;
+}
+
 .pagina-listado__tabla {
   width: 100%;
   border-collapse: collapse;

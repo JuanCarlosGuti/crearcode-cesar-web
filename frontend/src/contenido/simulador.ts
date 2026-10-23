@@ -16,7 +16,9 @@ export const SIMULADOR = {
   mensajeInicial:
     '¡Hola! Escribe arriba el nombre y el rubro de tu negocio y pregúntame lo que preguntaría un cliente.',
   avisoNegocioIncompleto: 'Escribe el nombre y el rubro de tu negocio para empezar.',
-  placeholderMensaje: 'Escribe un mensaje como si fueras tu cliente…',
+  // La etiqueta dice el papel; el ejemplo, corto, cabe en el celular (ISS-244).
+  etiquetaMensaje: 'Escribe un mensaje como si fueras tu cliente',
+  placeholderMensaje: 'Tu mensaje…',
   botonEnviar: 'Enviar',
   escribiendo: 'El chatbot está escribiendo…',
   limiteAnonimo:
