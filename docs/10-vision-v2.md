@@ -531,6 +531,21 @@ Registradas el 23 oct 2026:
     frase que diría algo falso: con Claude, lo que escribe el visitante
     sí sale del sitio. Quién recibe qué queda en el registro interno de
     docs/11 §1.7. Se publica junto con el cambio que la hace necesaria.
+35. **El boceto lleva identidad de marca, dibujos y colores propios**
+    (ISS-237 a ISS-239, pedido del usuario al probarlo en producción el
+    23 oct 2026: «no hay fotos, son los mismos tonos de la página»).
+    Claude **elige** de listas cerradas y el sitio dibuja, como en
+    ADR-16: el nombre de la marca y un eslogan; un logo armado con una
+    de cinco formas, la inicial o un emoji y los colores de la paleta;
+    una de ocho paletas según el negocio, todas con contraste AA en los
+    pares de texto que se usan; un estilo de letra entre tres, con
+    fuentes que el sitio ya carga o del sistema; y un emoji por
+    producto, categoría, fila y sección del menú. Nada de fotos: las de
+    IA son las que acabamos de quitar, y las de un banco traen licencias
+    y mandarían la descripción del negocio a un tercero. Un logo dibujado
+    libremente por el modelo tampoco: sale bien a veces y deforme otras.
+    La tarjeta dice que es una propuesta de referencia y recuerda
+    verificar que el nombre no esté registrado por otra empresa.
 
 ## Aprobación
 
