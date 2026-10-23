@@ -24,6 +24,12 @@ export const DEMO_DISENO = {
     nota: 'Tarda unos 30 segundos. No guardamos lo que escribes.',
   },
   generando: 'Dibujando tu boceto…',
+  identidad: {
+    titulo: 'Tu identidad de marca',
+    colores: 'Colores',
+    letra: 'Letra',
+    nota: 'Propuesta de referencia: el logo definitivo se diseña contigo. Antes de usar el nombre, verifica que no esté registrado por otra empresa.',
+  },
   boceto: {
     etiqueta: 'Boceto de tu solución, pantalla por pantalla',
     deslizar: 'Desliza a los lados para ver todas las pantallas.',

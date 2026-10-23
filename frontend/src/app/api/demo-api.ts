@@ -25,6 +25,37 @@ export type TipoDePieza =
 export interface ElementoDePieza {
   texto: string;
   detalle: string;
+  /** Un emoji que dibuja el elemento, o vacío (decisión 35). */
+  icono: string;
+}
+
+/** Decisión 35: la IA elige de estas listas cerradas y el sitio dibuja. */
+export type PaletaDeBoceto =
+  | 'FRESCA'
+  | 'CALIDA'
+  | 'NOCTURNA'
+  | 'SALUD'
+  | 'ELEGANTE'
+  | 'INDUSTRIAL'
+  | 'NATURAL'
+  | 'OCEANO';
+
+export type FormaDeLogo = 'CIRCULO' | 'CUADRADO' | 'ESCUDO' | 'HEXAGONO' | 'SELLO';
+
+export type EstiloDeLetra = 'MODERNA' | 'CLASICA' | 'SENCILLA';
+
+export interface LogoDeMarca {
+  forma: FormaDeLogo;
+  /** Un emoji, o vacío para usar la inicial del nombre. */
+  simbolo: string;
+  letra: EstiloDeLetra;
+}
+
+export interface IdentidadDeMarca {
+  nombre: string;
+  eslogan: string;
+  paleta: PaletaDeBoceto;
+  logo: LogoDeMarca;
 }
 
 export interface PiezaDeBoceto {
@@ -44,6 +75,7 @@ export interface PantallaDeBoceto {
  * falló.
  */
 export interface BocetoDeDemo {
+  identidad: IdentidadDeMarca;
   titulo: string;
   funcionalidades: string[];
   pantallas: PantallaDeBoceto[];

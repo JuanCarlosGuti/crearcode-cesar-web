@@ -1,24 +1,32 @@
 import { TestBed } from '@angular/core/testing';
 
-import { PantallaDeBoceto } from '../../api/demo-api';
+import { IdentidadDeMarca, PantallaDeBoceto } from '../../api/demo-api';
 import { BocetoDePantallas } from './boceto-de-pantallas';
+import { PALETAS } from './paletas';
 
-const pieza = (tipo: string, titulo: string, elementos: [string, string?][] = []) => ({
+const pieza = (tipo: string, titulo: string, elementos: [string, string?, string?][] = []) => ({
   tipo: tipo as PantallaDeBoceto['piezas'][number]['tipo'],
   titulo,
-  elementos: elementos.map(([texto, detalle = '']) => ({ texto, detalle })),
+  elementos: elementos.map(([texto, detalle = '', icono = '']) => ({ texto, detalle, icono })),
 });
+
+const IDENTIDAD: IdentidadDeMarca = {
+  nombre: 'Sabor Valduparense',
+  eslogan: 'Comida casera hasta tu puerta',
+  paleta: 'CALIDA',
+  logo: { forma: 'CIRCULO', simbolo: '🍲', letra: 'SENCILLA' },
+};
 
 const PANTALLAS: PantallaDeBoceto[] = [
   {
     nombre: 'Inicio',
     piezas: [
-      pieza('ENCABEZADO', 'Sabor Valduparense'),
+      pieza('ENCABEZADO', 'Menú de hoy'),
       pieza('BUSCADOR', 'Busca un plato'),
       pieza('BANNER', 'Menú del día listo', [['Ver menú']]),
-      pieza('CATEGORIAS', '', [['Almuerzos'], ['Desayunos']]),
-      pieza('TARJETAS', '', [['Almuerzo ejecutivo', 'Sopa, seco y jugo']]),
-      pieza('NAVEGACION', '', [['Inicio'], ['Pedidos'], ['Mi cuenta']]),
+      pieza('CATEGORIAS', '', [['Almuerzos', '', '🍛'], ['Desayunos', '', '🍳']]),
+      pieza('TARJETAS', '', [['Almuerzo ejecutivo', 'Sopa, seco y jugo', '🍗']]),
+      pieza('NAVEGACION', '', [['Inicio', '', '🏠'], ['Pedidos', '', '🧾'], ['Mi cuenta', '', '👤']]),
     ],
   },
   {
@@ -32,8 +40,8 @@ const PANTALLAS: PantallaDeBoceto[] = [
   {
     nombre: 'Cocina',
     piezas: [
-      pieza('INDICADORES', '', [['Pedidos de hoy', '18']]),
-      pieza('LISTA', 'Pedidos', [['Ana · almuerzo', 'En camino']]),
+      pieza('INDICADORES', '', [['Pedidos de hoy', '18', '📦']]),
+      pieza('LISTA', 'Pedidos', [['Ana · almuerzo', 'En camino', '🛵'], ['Luis · desayuno', 'En cocina']]),
       pieza('CHAT', '', [
         ['Hola, ¿ya salió mi pedido?', 'cliente'],
         ['Sí, va en camino.', 'negocio'],
@@ -42,19 +50,19 @@ const PANTALLAS: PantallaDeBoceto[] = [
   },
 ];
 
-async function dibujar(pantallas: PantallaDeBoceto[] = PANTALLAS) {
+async function dibujar(pantallas: PantallaDeBoceto[] = PANTALLAS, identidad: IdentidadDeMarca = IDENTIDAD) {
   const fixture = TestBed.createComponent(BocetoDePantallas);
   fixture.componentRef.setInput('pantallas', pantallas);
+  fixture.componentRef.setInput('identidad', identidad);
   await fixture.whenStable();
   return fixture.nativeElement as HTMLElement;
 }
 
-describe('BocetoDePantallas (ISS-234, ADR-16)', () => {
+describe('BocetoDePantallas (ISS-234, ADR-16; identidad desde ISS-238)', () => {
   it('dibuja cada pantalla en un celular con su nombre', async () => {
     const el = await dibujar();
 
-    const celulares = el.querySelectorAll('figure.celular');
-    expect(celulares).toHaveLength(3);
+    expect(el.querySelectorAll('figure.celular')).toHaveLength(3);
     expect(Array.from(el.querySelectorAll('figcaption')).map((nombre) => nombre.textContent?.trim())).toEqual([
       'Inicio',
       'Pedido',
@@ -82,21 +90,48 @@ describe('BocetoDePantallas (ISS-234, ADR-16)', () => {
       expect(el.querySelector(`.pieza--${tipo}`), tipo).not.toBeNull();
     }
     const texto = el.textContent ?? '';
-    for (const visible of [
-      'Sabor Valduparense',
-      'Busca un plato',
-      'Ver menú',
-      'Almuerzos',
-      'Sopa, seco y jugo',
-      'Mi cuenta',
-      'Ej. Calle 16 # 9-20',
-      '12:00 m.',
-      'Confirmar pedido',
-      '18',
-      'En camino',
-    ]) {
+    for (const visible of ['Menú de hoy', 'Busca un plato', 'Ver menú', 'Almuerzos', 'Sopa, seco y jugo', 'Mi cuenta',
+      'Ej. Calle 16 # 9-20', '12:00 m.', 'Confirmar pedido', '18', 'En camino']) {
       expect(texto).toContain(visible);
     }
+  });
+
+  it('los celulares toman los colores de la paleta de la marca', async () => {
+    const el = await dibujar();
+
+    const tira = el.querySelector<HTMLElement>('.boceto')!;
+    expect(tira.style.getPropertyValue('--b-acento')).toBe(PALETAS.CALIDA.acento);
+    expect(tira.style.getPropertyValue('--b-pantalla')).toBe(PALETAS.CALIDA.pantalla);
+  });
+
+  it('cada celular lleva arriba el logo y el nombre de la marca', async () => {
+    const el = await dibujar();
+
+    const barras = el.querySelectorAll('.celular__marca');
+    expect(barras).toHaveLength(3);
+    expect(barras[0].textContent).toContain('Sabor Valduparense');
+    expect(barras[0].querySelector('app-logo-de-marca .logo')?.textContent?.trim()).toBe('🍲');
+  });
+
+  it('los productos, categorías, filas, indicadores y secciones llevan su dibujo', async () => {
+    const el = await dibujar();
+
+    expect(el.querySelector('.tarjeta__foto')?.textContent?.trim()).toBe('🍗');
+    expect(el.querySelector('.pieza--categorias li')?.textContent).toContain('🍛');
+    expect(el.querySelector('.pieza--navegacion li')?.textContent).toContain('🏠');
+    expect(el.querySelector('.pieza--indicadores li')?.textContent).toContain('📦');
+    const filas = el.querySelectorAll('.fila__inicial');
+    // Con dibujo, el dibujo; sin él, la inicial.
+    expect(filas[0].textContent?.trim()).toBe('🛵');
+    expect(filas[1].textContent?.trim()).toBe('L');
+  });
+
+  it('los dibujos son decorativos: el texto de cada elemento ya está escrito', async () => {
+    const el = await dibujar();
+
+    const dibujos = el.querySelectorAll('.dibujo');
+    expect(dibujos.length).toBeGreaterThan(0);
+    dibujos.forEach((dibujo) => expect(dibujo.getAttribute('aria-hidden')).toBe('true'));
   });
 
   it('en el chat, cada mensaje va del lado de quien lo dice', async () => {

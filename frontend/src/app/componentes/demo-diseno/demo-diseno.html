@@ -68,7 +68,12 @@
             <h4>{{ resultado.titulo }}</h4>
             <p class="demo-aclaracion">{{ textos.resultado.aclaracion }}</p>
           </div>
-          <app-boceto-de-pantallas class="demo-boceto" [pantallas]="resultado.pantallas" />
+          <app-identidad-de-marca class="demo-identidad" [identidad]="resultado.identidad" />
+          <app-boceto-de-pantallas
+            class="demo-boceto"
+            [pantallas]="resultado.pantallas"
+            [identidad]="resultado.identidad"
+          />
           <div class="demo-detalle">
             <p class="demo-subtitulo">{{ textos.resultado.subtituloFuncionalidades }}</p>
             <ul class="demo-funcionalidades">

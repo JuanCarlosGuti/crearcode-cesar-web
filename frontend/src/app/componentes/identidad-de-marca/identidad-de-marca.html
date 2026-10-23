@@ -1,0 +1,39 @@
+<section class="identidad" [attr.aria-label]="textos.titulo">
+  <p class="identidad__titulo">{{ textos.titulo }}</p>
+  <div
+    class="identidad__marca"
+    [style.background-color]="paleta().pantalla"
+    [style.color]="paleta().tinta"
+  >
+    <app-logo-de-marca
+      [nombre]="identidad().nombre"
+      [logo]="identidad().logo"
+      [paleta]="identidad().paleta"
+      tamano="grande"
+    />
+    <div class="identidad__textos">
+      <p class="identidad__nombre" [style.font-family]="letra().familia">{{ identidad().nombre }}</p>
+      @if (identidad().eslogan) {
+        <p class="identidad__eslogan" [style.color]="paleta().suave">{{ identidad().eslogan }}</p>
+      }
+    </div>
+  </div>
+  <dl class="identidad__detalles">
+    <div>
+      <dt>{{ textos.colores }}</dt>
+      <dd>
+        <span class="identidad__muestras" aria-hidden="true">
+          <span [style.background-color]="paleta().acento"></span>
+          <span [style.background-color]="paleta().banner"></span>
+          <span [style.background-color]="paleta().tinte"></span>
+        </span>
+        {{ paleta().nombre }}
+      </dd>
+    </div>
+    <div>
+      <dt>{{ textos.letra }}</dt>
+      <dd [style.font-family]="letra().familia">{{ letra().nombre }}</dd>
+    </div>
+  </dl>
+  <p class="identidad__nota">{{ textos.nota }}</p>
+</section>

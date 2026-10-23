@@ -112,6 +112,17 @@ test('un cliente registrado genera su boceto: pantallas dibujadas y funcionalida
   // El boceto del stub tiene tres pantallas que usan casi todo el catálogo.
   await expect(page.locator('app-boceto-de-pantallas figure.celular')).toHaveCount(3);
   await expect(page.locator('app-boceto-de-pantallas')).toContainText('Confirmar pedido');
+  // La identidad de marca y los dibujos (decisión 35).
+  await expect(page.locator('app-identidad-de-marca')).toContainText('Sabor Valduparense');
+  await expect(page.locator('app-identidad-de-marca')).toContainText('Cálida: naranja y terracota');
+  await expect(page.locator('.tarjeta__foto').first()).toHaveText('🍲');
+  // Ningún celular se estira: un detalle largo en una lista le quitaba
+  // todo el ancho al texto, que se partía letra por letra (1.468 px).
+  for (const altura of await page.locator('.celular__marco').evaluateAll((marcos) =>
+    marcos.map((marco) => marco.getBoundingClientRect().height),
+  )) {
+    expect(altura).toBeLessThan(720);
+  }
   // Las pantallas del boceto tienen colores propios: axe revisa su contraste.
   const axe = await new AxeBuilder({ page }).include('app-demo-diseno').analyze();
   expect(axe.violations, JSON.stringify(axe.violations, null, 2)).toEqual([]);

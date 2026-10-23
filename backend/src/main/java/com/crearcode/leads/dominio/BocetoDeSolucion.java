@@ -7,14 +7,15 @@ import java.util.List;
  * (decisión 33, ADR-16): un título, las funcionalidades sugeridas y de
  * dos a tres pantallas armadas con piezas de un catálogo cerrado. No es
  * un dibujo: el sitio lo dibuja, y nada de lo que trae se pinta como
- * HTML.
+ * HTML. Desde la decisión 35 lleva también la identidad de marca.
  *
  * <p>
  * La salida estructurada de la API garantiza la forma del JSON, pero no
  * los largos ni las cantidades (no admite esas restricciones en el
  * esquema): por eso las reglas viven aquí.
  */
-public record BocetoDeSolucion(String titulo, List<String> funcionalidades, List<PantallaDeBoceto> pantallas) {
+public record BocetoDeSolucion(IdentidadDeMarca identidad, String titulo, List<String> funcionalidades,
+		List<PantallaDeBoceto> pantallas) {
 
 	public static final int MAXIMO_TITULO = 80;
 	public static final int MAXIMO_FUNCIONALIDAD = 120;
@@ -24,6 +25,9 @@ public record BocetoDeSolucion(String titulo, List<String> funcionalidades, List
 	public static final int MAXIMO_PANTALLAS = 3;
 
 	public BocetoDeSolucion {
+		if (identidad == null) {
+			throw new BocetoInvalidoException("El boceto necesita su identidad de marca");
+		}
 		titulo = TextoDeBoceto.obligatorio(titulo, MAXIMO_TITULO, "El título del boceto");
 		funcionalidades = (funcionalidades == null ? List.<String>of() : funcionalidades).stream()
 				.map(funcionalidad -> TextoDeBoceto.obligatorio(funcionalidad, MAXIMO_FUNCIONALIDAD,

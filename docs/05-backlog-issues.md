@@ -915,6 +915,16 @@ después.
 | ISS-235 | Política v2.2 (decisión 34), registro interno de proveedores en docs/11 §1.7, el stub de e2e responde también como la API de Claude, y CI arranca con él | — | Ninguna prueba gasta créditos | S | ISS-234 | E2E |
 | ISS-236 | Comparación con las capturas lado a lado: Sonnet 5.5 contra Opus 5.5, y boceto de Claude contra imagen, sobre cinco negocios. El usuario elige; luego clave en producción (secreto `CLAUDE_API_KEY`), despliegue y verificación con el costo real medido | HU-42 | Decisión del usuario registrada; boceto real en producción | M | ISS-235 | Checklist manual |
 
+## Identidad de marca en el boceto (oct 2026) — ISS-237 a ISS-239
+
+Decisión 35 de [[10-vision-v2]]. Una rama y un PR.
+
+| ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
+|---|---|---|---|---|---|---|
+| ISS-237 | Dominio, esquema y lector: `IdentidadDeMarca` (nombre, eslogan, paleta entre 8, logo con forma entre 5, símbolo y estilo de letra entre 3) y un ícono opcional por elemento. Un emoji solo pasa si es un emoji de verdad, así que no puede colarse texto. El lector, tolerante: un ícono inválido se descarta y un valor fuera de catálogo toma el de por defecto | HU-42 | Sin Spring ni JPA; ArchUnit en verde | M | — | Unit (identidad, emojis, lector) + Integration (adaptadores con el esquema nuevo) |
+| ISS-238 | El sitio dibuja la identidad: tarjeta «Tu identidad de marca» con logo, nombre, eslogan, colores y letra; los celulares con la paleta del negocio, barra con el logo y el nombre, y un emoji grande en cada producto, categoría, fila y sección del menú | HU-42 | Las 8 paletas, con prueba de contraste AA; axe sin violaciones; 375 y 1280 px sin desborde | M | ISS-237 | Component + E2E |
+| ISS-239 | Prueba con Claude real sobre tres negocios antes de publicar, despliegue y verificación en producción | HU-42 | El usuario lo ve en producción | S | ISS-238 | Checklist manual |
+
 ## Resumen de cobertura
 
 Todas las HU de [[04-historias-de-usuario]] (29 de la Etapa 2, HU-30 a

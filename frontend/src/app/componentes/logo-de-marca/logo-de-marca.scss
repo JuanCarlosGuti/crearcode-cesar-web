@@ -1,0 +1,51 @@
+:host {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.logo {
+  display: inline-grid;
+  place-items: center;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.logo--pequeno {
+  width: 1.6rem;
+  height: 1.6rem;
+  font-size: 0.85rem;
+}
+
+.logo--grande {
+  width: 4.5rem;
+  height: 4.5rem;
+  font-size: 2.1rem;
+}
+
+.logo--circulo {
+  border-radius: 50%;
+}
+
+.logo--cuadrado {
+  border-radius: 22%;
+}
+
+.logo--escudo {
+  clip-path: polygon(0 0, 100% 0, 100% 62%, 50% 100%, 0 62%);
+}
+
+.logo--hexagono {
+  clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+}
+
+// Un sello: círculo con un anillo punteado por dentro.
+.logo--sello {
+  border-radius: 50%;
+  outline: 2px dashed currentcolor;
+  outline-offset: -0.3rem;
+}
+
+.logo--pequeno.logo--sello {
+  outline-width: 1px;
+  outline-offset: -0.15rem;
+}

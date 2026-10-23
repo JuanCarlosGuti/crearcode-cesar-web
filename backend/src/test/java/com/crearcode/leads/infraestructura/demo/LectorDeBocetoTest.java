@@ -8,6 +8,9 @@ import org.junit.jupiter.api.Test;
 import com.crearcode.leads.dominio.AsistenteNoDisponibleException;
 import com.crearcode.leads.dominio.BocetoDeSolucion;
 import com.crearcode.leads.dominio.ElementoDePieza;
+import com.crearcode.leads.dominio.EstiloDeLetra;
+import com.crearcode.leads.dominio.FormaDeLogo;
+import com.crearcode.leads.dominio.PaletaDeBoceto;
 import com.crearcode.leads.dominio.PiezaDeBoceto;
 import com.crearcode.leads.dominio.TipoDePieza;
 
@@ -30,6 +33,54 @@ class LectorDeBocetoTest {
 				.containsExactly(TipoDePieza.ENCABEZADO, TipoDePieza.CATEGORIAS, TipoDePieza.BOTON);
 		assertThat(boceto.pantallas().get(1).piezas().getFirst().elementos().getFirst().detalle())
 				.isEqualTo("En camino");
+	}
+
+	@Test
+	void leeLaIdentidadDeMarcaYLosDibujos() {
+		BocetoDeSolucion boceto = LectorDeBoceto.leer(BocetoDePrueba.JSON);
+
+		assertThat(boceto.identidad().nombre()).isEqualTo("Sabor Valduparense");
+		assertThat(boceto.identidad().eslogan()).isEqualTo("Comida casera hasta tu puerta");
+		assertThat(boceto.identidad().paleta()).isEqualTo(PaletaDeBoceto.CALIDA);
+		assertThat(boceto.identidad().logo().forma()).isEqualTo(FormaDeLogo.CIRCULO);
+		assertThat(boceto.identidad().logo().simbolo()).isEqualTo("🍲");
+		assertThat(boceto.identidad().logo().letra()).isEqualTo(EstiloDeLetra.SENCILLA);
+		assertThat(boceto.pantallas().getFirst().piezas().get(1).elementos()).extracting(ElementoDePieza::icono)
+				.containsExactly("🍛", "🍳");
+	}
+
+	/**
+	 * Un dibujo que no es un emoji se descarta en vez de perder el boceto:
+	 * el elemento queda sin dibujo y el logo usa la inicial.
+	 */
+	@Test
+	void unIconoOUnSimboloQueNoEsEmojiSeDescartaSinPerderElBoceto() {
+		String conTexto = BocetoDePrueba.JSON.replace("\"🍛\"", "\"almuerzo\"").replace("\"🍲\"", "\"S\"");
+
+		BocetoDeSolucion boceto = LectorDeBoceto.leer(conTexto);
+
+		assertThat(boceto.pantallas().getFirst().piezas().get(1).elementos().getFirst().icono()).isEmpty();
+		assertThat(boceto.identidad().logo().simbolo()).isEmpty();
+	}
+
+	@Test
+	void unValorFueraDeLasListasCerradasTomaElDePorDefecto() {
+		String fueraDeLista = BocetoDePrueba.JSON.replace("\"CALIDA\"", "\"ARCOIRIS\"")
+				.replace("\"CIRCULO\"", "\"TRIANGULO\"").replace("\"SENCILLA\"", "\"GOTICA\"");
+
+		BocetoDeSolucion boceto = LectorDeBoceto.leer(fueraDeLista);
+
+		assertThat(boceto.identidad().paleta()).isEqualTo(PaletaDeBoceto.FRESCA);
+		assertThat(boceto.identidad().logo().forma()).isEqualTo(FormaDeLogo.CIRCULO);
+		assertThat(boceto.identidad().logo().letra()).isEqualTo(EstiloDeLetra.MODERNA);
+	}
+
+	@Test
+	void sinIdentidadEsFallaDelProveedor() {
+		String sinIdentidad = BocetoDePrueba.JSON.substring(0, BocetoDePrueba.JSON.indexOf("\"identidad\""))
+				+ BocetoDePrueba.JSON.substring(BocetoDePrueba.JSON.indexOf("\"titulo\": \"App"));
+
+		assertThatThrownBy(() -> LectorDeBoceto.leer(sinIdentidad)).isInstanceOf(AsistenteNoDisponibleException.class);
 	}
 
 	@Test
@@ -70,12 +121,14 @@ class LectorDeBocetoTest {
 
 	@Test
 	void loQueSobraDeUnaListaSeDescartaSinPerderElBoceto() {
+		String categoria = "{\"texto\": \"%s\", \"detalle\": \"\", \"icono\": \"\"}";
+		String siete = String.join(", ", java.util.stream.Stream.of("A", "B", "C", "D", "E", "F", "G")
+				.map(categoria::formatted).toList());
 		String sieteCategorias = BocetoDePrueba.JSON.replace(
-				"{\"texto\": \"Almuerzos\", \"detalle\": \"\"}, {\"texto\": \"Desayunos\", \"detalle\": \"\"}",
-				"{\"texto\": \"A\", \"detalle\": \"\"}, {\"texto\": \"B\", \"detalle\": \"\"}, "
-						+ "{\"texto\": \"C\", \"detalle\": \"\"}, {\"texto\": \"D\", \"detalle\": \"\"}, "
-						+ "{\"texto\": \"E\", \"detalle\": \"\"}, {\"texto\": \"F\", \"detalle\": \"\"}, "
-						+ "{\"texto\": \"G\", \"detalle\": \"\"}");
+				"{\"texto\": \"Almuerzos\", \"detalle\": \"\", \"icono\": \"🍛\"}, "
+						+ "{\"texto\": \"Desayunos\", \"detalle\": \"\", \"icono\": \"🍳\"}",
+				siete);
+		assertThat(sieteCategorias).contains("\"G\"");
 
 		BocetoDeSolucion boceto = LectorDeBoceto.leer(sieteCategorias);
 

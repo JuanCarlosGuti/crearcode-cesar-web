@@ -1,6 +1,73 @@
 {
   "type": "object",
   "properties": {
+    "identidad": {
+      "type": "object",
+      "description": "La identidad de marca que propones para el negocio",
+      "properties": {
+        "nombre": {
+          "type": "string",
+          "description": "Nombre de la marca, hasta 40 caracteres"
+        },
+        "eslogan": {
+          "type": "string",
+          "description": "Frase corta, hasta 60 caracteres"
+        },
+        "paleta": {
+          "type": "string",
+          "enum": [
+            "FRESCA",
+            "CALIDA",
+            "NOCTURNA",
+            "SALUD",
+            "ELEGANTE",
+            "INDUSTRIAL",
+            "NATURAL",
+            "OCEANO"
+          ]
+        },
+        "logo": {
+          "type": "object",
+          "properties": {
+            "forma": {
+              "type": "string",
+              "enum": [
+                "CIRCULO",
+                "CUADRADO",
+                "ESCUDO",
+                "HEXAGONO",
+                "SELLO"
+              ]
+            },
+            "simbolo": {
+              "type": "string",
+              "description": "Un solo emoji que represente el negocio, o vacío para usar la inicial"
+            },
+            "letra": {
+              "type": "string",
+              "enum": [
+                "MODERNA",
+                "CLASICA",
+                "SENCILLA"
+              ]
+            }
+          },
+          "required": [
+            "forma",
+            "simbolo",
+            "letra"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "nombre",
+        "eslogan",
+        "paleta",
+        "logo"
+      ],
+      "additionalProperties": false
+    },
     "titulo": {
       "type": "string",
       "description": "Nombre corto de la solución, hasta 80 caracteres. Ej.: App de pedidos para tu restaurante"
@@ -8,7 +75,9 @@
     "funcionalidades": {
       "type": "array",
       "description": "Exactamente 5 funcionalidades concretas, hasta 120 caracteres cada una",
-      "items": { "type": "string" }
+      "items": {
+        "type": "string"
+      }
     },
     "pantallas": {
       "type": "array",
@@ -53,24 +122,50 @@
                   "items": {
                     "type": "object",
                     "properties": {
-                      "texto": { "type": "string", "description": "Hasta 60 caracteres" },
-                      "detalle": { "type": "string", "description": "Hasta 80 caracteres; vacío si no aplica" }
+                      "texto": {
+                        "type": "string",
+                        "description": "Hasta 60 caracteres"
+                      },
+                      "detalle": {
+                        "type": "string",
+                        "description": "Hasta 80 caracteres; vacío si no aplica"
+                      },
+                      "icono": {
+                        "type": "string",
+                        "description": "Un solo emoji que dibuje el elemento, o vacío"
+                      }
                     },
-                    "required": ["texto", "detalle"],
+                    "required": [
+                      "texto",
+                      "detalle",
+                      "icono"
+                    ],
                     "additionalProperties": false
                   }
                 }
               },
-              "required": ["tipo", "titulo", "elementos"],
+              "required": [
+                "tipo",
+                "titulo",
+                "elementos"
+              ],
               "additionalProperties": false
             }
           }
         },
-        "required": ["nombre", "piezas"],
+        "required": [
+          "nombre",
+          "piezas"
+        ],
         "additionalProperties": false
       }
     }
   },
-  "required": ["titulo", "funcionalidades", "pantallas"],
+  "required": [
+    "identidad",
+    "titulo",
+    "funcionalidades",
+    "pantallas"
+  ],
   "additionalProperties": false
 }
