@@ -66,6 +66,15 @@ describe('HerramientasPage (centro de herramientas vivo, HU-43)', () => {
     expect(el.querySelector('a[href="/registro"]')).toBeTruthy();
   });
 
+  // La intro decia «Todo funciona sin registrarte» y el demo de diseño
+  // pide cuenta (hipotesis H-04 de la auditoria de diseño).
+  it('la intro no promete que todo es sin registro si alguna herramienta pide cuenta', () => {
+    const algunaPideCuenta = HERRAMIENTAS.tarjetas.some((t) => !/sin registro/i.test(t.nota));
+
+    expect(algunaPideCuenta).toBe(true);
+    expect(HERRAMIENTAS.intro).not.toMatch(/(?<!casi )todo funciona sin registr/i);
+  });
+
   // A quien ya tiene cuenta no se le invita a crearla (ISS-242).
   it('con sesion ya no invita a crear cuenta', async () => {
     TestBed.inject(SesionService).iniciarSesion({

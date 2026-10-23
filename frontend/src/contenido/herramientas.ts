@@ -15,7 +15,7 @@ export interface TarjetaDeHerramienta {
 export const HERRAMIENTAS = {
   titulo: 'Herramientas para tu negocio',
   intro:
-    'Prueba la tecnología antes de contratarla. Todo funciona sin registrarte y es gratis; con cuenta tienes más usos cada día.',
+    'Prueba la tecnología antes de contratarla, gratis. Casi todo funciona sin registrarte: solo el demo de diseño pide una cuenta, y con ella tienes más usos cada día.',
   etiquetaMuyPronto: 'Muy pronto',
   tarjetas: [
     {

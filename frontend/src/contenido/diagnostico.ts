@@ -14,7 +14,7 @@ export const DIAGNOSTICO = {
     'Seis preguntas sobre cómo opera tu negocio y te mostramos una radiografía con tres oportunidades de automatización.',
   preguntas: [
     {
-      pregunta: '¿Cómo reciben hoy los pedidos o solicitudes de sus clientes?',
+      pregunta: '¿Cómo recibes hoy los pedidos o solicitudes de tus clientes?',
       opciones: ['WhatsApp y llamadas', 'Un formulario o sitio web', 'En persona, en el mostrador'],
     },
     {

@@ -1,4 +1,4 @@
-import { Component, afterNextRender, computed, inject, signal } from '@angular/core';
+import { Component, ElementRef, afterNextRender, computed, inject, signal, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter, map } from 'rxjs';
@@ -15,11 +15,13 @@ import { mensajeWhatsappParaRuta } from '../mensaje-whatsapp-por-ruta';
   imports: [RouterLink, RouterLinkActive, WhatsappCta],
   templateUrl: './header.html',
   styleUrl: './header.scss',
+  host: { '(document:keydown.escape)': 'cerrarMenuConEscape()' },
 })
 export class Header {
   protected readonly servicios = SERVICIOS;
   protected readonly nombreEmpresa = EMPRESA.razonSocial;
   protected readonly menuAbierto = signal(false);
+  private readonly botonDelMenu = viewChild<ElementRef<HTMLButtonElement>>('botonDelMenu');
 
   private readonly router = inject(Router);
   private readonly urlActual = toSignal(
@@ -54,5 +56,19 @@ export class Header {
 
   cerrarMenu(): void {
     this.menuAbierto.set(false);
+  }
+
+  /**
+   * Esc cierra el menú del celular y devuelve el foco al botón que lo
+   * abrió, para que el teclado no quede perdido en un menú que ya no se
+   * ve (TC-NAV-03 de la auditoría de diseño). Con el menú cerrado no
+   * toca nada: Esc puede ser de otro componente.
+   */
+  protected cerrarMenuConEscape(): void {
+    if (!this.menuAbierto()) {
+      return;
+    }
+    this.cerrarMenu();
+    this.botonDelMenu()?.nativeElement.focus();
   }
 }
