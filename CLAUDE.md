@@ -547,6 +547,17 @@ lo que trae la IA se pinta como HTML.
 - **Política v2.2**: los proveedores de IA van en genérico (la norma no
   exige nombrarlos) y el registro interno de quién recibe qué está en
   docs/11 §1.7.
+- **Identidad de marca y dibujos** (decisión 35, ISS-237 a ISS-239): la
+  IA elige de listas cerradas —nombre, eslogan, una de 8 paletas, un
+  logo con una de 5 formas, un símbolo y una de 3 letras— y un emoji por
+  producto, categoría, fila y sección. El símbolo y los íconos solo
+  pasan si son emojis de verdad (`EmojiDeBoceto`), y el lector descarta
+  lo decorativo que no sirva en vez de perder el boceto. Las paletas
+  viven en `paletas.ts` y `paletas.spec.ts` exige contraste AA en los 7
+  pares de texto. La tarjeta dice que es una propuesta y recuerda
+  verificar el nombre. Lo que atrapó la prueba con Claude real: un
+  detalle largo en una lista estiraba un celular a 1.468 px; el e2e
+  ahora exige que ninguno pase de 720.
 
 ## Proveedor de imágenes del demo (ISS-127, ISS-137)
 
