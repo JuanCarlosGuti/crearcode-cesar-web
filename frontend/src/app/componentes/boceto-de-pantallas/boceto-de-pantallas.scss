@@ -1,0 +1,352 @@
+// El boceto (ISS-234): pantallas claras dentro de un marco de celular,
+// para que se lean como una app sobre el fondo oscuro del sitio. El
+// verde de la marca va en lo que se elige o se toca, siempre con texto
+// oscuro encima (contraste AA).
+
+$pantalla: #f4f7f6;
+$tinta: #12201f;
+$tinta-suave: #4f605e;
+$borde: #d9e2e0;
+$acento: var(--color-acento, #3ddc97);
+$sobre-acento: #071115;
+
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.boceto {
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: var(--espacio-1) 0 var(--espacio-2);
+  border-radius: var(--radio-borde-grande);
+}
+
+.boceto:focus-visible {
+  outline: 2px solid var(--color-ia);
+  outline-offset: 2px;
+}
+
+.boceto__pantallas {
+  display: flex;
+  gap: var(--espacio-2);
+  width: max-content;
+  margin: 0 auto;
+  padding: 0 var(--espacio-1);
+  list-style: none;
+}
+
+.boceto__pantalla {
+  flex: 0 0 auto;
+  scroll-snap-align: center;
+}
+
+.boceto__deslizar {
+  margin: 0;
+  font-size: 0.8rem;
+  text-align: center;
+  color: var(--color-texto-secundario);
+}
+
+.celular {
+  margin: 0;
+  width: 15.5rem;
+}
+
+.celular__marco {
+  display: flex;
+  flex-direction: column;
+  min-height: 30rem;
+  border: 6px solid #1c2b30;
+  border-radius: 1.8rem;
+  background-color: $pantalla;
+  color: $tinta;
+  overflow: hidden;
+  box-shadow: var(--sombra-ia);
+}
+
+.celular__estado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.4rem 0.9rem 0.2rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+
+.celular__senal {
+  width: 1.4rem;
+  height: 0.55rem;
+  border-radius: 0.15rem;
+  background: linear-gradient(90deg, $tinta 70%, $borde 70%);
+}
+
+.celular__contenido {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.5rem 0.75rem 0.75rem;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.celular__nombre {
+  margin-top: 0.5rem;
+  text-align: center;
+  font-family: var(--fuente-mono);
+  font-size: 0.8rem;
+  color: var(--color-texto-secundario);
+}
+
+// El color global de los párrafos del sitio es para fondo oscuro: dentro
+// de la pantalla clara del celular, cada texto toma la tinta de su pieza
+// (axe lo atrapó: gris claro sobre blanco, 2,02:1).
+.pieza {
+  margin: 0;
+  color: inherit;
+}
+
+.pieza ul,
+ul.pieza {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pieza__titulo {
+  margin: 0 0 0.35rem;
+  color: $tinta;
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.pieza--encabezado {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.pieza--buscador {
+  padding: 0.45rem 0.65rem;
+  border: 1px solid $borde;
+  border-radius: 999px;
+  background-color: #fff;
+  color: $tinta-suave;
+}
+
+.pieza--banner {
+  padding: 0.7rem;
+  border-radius: 0.8rem;
+  background-color: #0f2027;
+  color: #f4f7f6;
+}
+
+.pieza--banner__texto {
+  margin: 0 0 0.45rem;
+  color: inherit;
+  font-weight: 700;
+}
+
+.pieza--banner__accion {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background-color: $acento;
+  color: $sobre-acento;
+  font-weight: 700;
+  font-size: 0.72rem;
+}
+
+.pieza--categorias {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.pieza--categorias li {
+  padding: 0.2rem 0.6rem;
+  border: 1px solid $borde;
+  border-radius: 999px;
+  background-color: #fff;
+  font-size: 0.72rem;
+}
+
+.pieza--categorias li.activa,
+.pieza--horarios li.elegido {
+  border-color: transparent;
+  background-color: $acento;
+  color: $sobre-acento;
+  font-weight: 700;
+}
+
+.pieza--tarjetas ul {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.tarjeta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.4rem;
+  border: 1px solid $borde;
+  border-radius: 0.6rem;
+  background-color: #fff;
+}
+
+.tarjeta__foto {
+  height: 3rem;
+  margin-bottom: 0.2rem;
+  border-radius: 0.4rem;
+  background: linear-gradient(135deg, #cfe9df, #e3ecea);
+}
+
+.tarjeta__nombre {
+  font-weight: 700;
+}
+
+.tarjeta__detalle,
+.fila__detalle,
+.indicador__nombre,
+.campo-boceto__etiqueta {
+  color: $tinta-suave;
+  font-size: 0.7rem;
+}
+
+.pieza--lista ul {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.fila {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.45rem;
+  border-radius: 0.5rem;
+  background-color: #fff;
+}
+
+.fila__inicial {
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background-color: #dcefe8;
+  font-weight: 700;
+  font-size: 0.7rem;
+}
+
+.fila__detalle {
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+  background-color: #eef3f2;
+}
+
+.pieza--formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.campo-boceto {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.campo-boceto__caja {
+  padding: 0.4rem 0.55rem;
+  border: 1px solid $borde;
+  border-radius: 0.45rem;
+  background-color: #fff;
+  color: $tinta-suave;
+}
+
+.pieza--boton {
+  padding: 0.55rem;
+  border-radius: 0.6rem;
+  background-color: $acento;
+  color: $sobre-acento;
+  text-align: center;
+  font-weight: 700;
+}
+
+.pieza--indicadores {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.pieza--indicadores li {
+  display: flex;
+  flex-direction: column;
+  padding: 0.45rem;
+  border-radius: 0.6rem;
+  background-color: #fff;
+  border: 1px solid $borde;
+}
+
+.indicador__valor {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.pieza--chat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.burbuja {
+  max-width: 85%;
+  padding: 0.35rem 0.55rem;
+  border-radius: 0.7rem;
+}
+
+.burbuja--cliente {
+  align-self: flex-start;
+  background-color: #e5ebea;
+  border-bottom-left-radius: 0.2rem;
+}
+
+.burbuja--negocio {
+  align-self: flex-end;
+  background-color: #d3f5e6;
+  border-bottom-right-radius: 0.2rem;
+}
+
+.pieza--horarios ul {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.3rem;
+}
+
+.pieza--horarios li {
+  padding: 0.3rem 0.2rem;
+  border: 1px solid $borde;
+  border-radius: 0.45rem;
+  background-color: #fff;
+  text-align: center;
+  font-size: 0.7rem;
+}
+
+.pieza--navegacion {
+  display: flex;
+  justify-content: space-around;
+  margin-top: auto;
+  padding-top: 0.5rem;
+  border-top: 1px solid $borde;
+  font-size: 0.7rem;
+  color: $tinta-suave;
+}
+
+.pieza--navegacion li.activa {
+  color: $tinta;
+  font-weight: 700;
+}

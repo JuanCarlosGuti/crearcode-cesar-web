@@ -511,7 +511,48 @@ de error 4.27:1 y badge "Muy pronto" 4.19:1), ambos corregidos
 oscureciendo el texto. Lighthouse tras el rediseño: Performance 97-98,
 resto 100 — se mantiene lo ganado en F6.
 
+## Bocetos con Claude (decisiones 33 y 34, ISS-230 a ISS-236)
+
+Desde el 23 oct 2026 el boceto del demo de diseño lo arma **Claude Opus
+5.5** con los créditos mensuales de la API del dueño (US$200 que no se
+acumulan). Claude no dibuja: devuelve la **estructura del boceto en
+JSON** por salida estructurada —2 o 3 pantallas con piezas de un
+catálogo cerrado de 12 tipos y los textos del negocio— y el componente
+`BocetoDePantallas` la pinta en celulares con la marca (ADR-16). Nada de
+lo que trae la IA se pinta como HTML.
+
+- **Clave propia `CLAUDE_API_KEY`**, nunca `ANTHROPIC_API_KEY`: en la
+  máquina del dueño esa variable es la del traductor, y leerla mezclaría
+  el consumo. Vive como variable de usuario de Windows y como secreto
+  del repositorio; una prueba exige que entre por las tres puertas.
+- **SDK oficial fijado en 2.75.0.** La 3.0 (21 oct 2026) estrena la
+  versión de API 2026-10-21 sin documentar qué cambia —manda la clave
+  como `Authorization: Bearer`—; subir es un cambio aparte.
+- **Groq de respaldo** con el mismo esquema en modo estricto: sin
+  créditos, el visitante igual recibe su boceto. `DEMO_PROVEEDOR_BOCETOS`
+  decide en un solo lugar y su default es Groq, para que ni en local ni
+  en CI nada gaste créditos. El e2e recorre el camino de Claude contra
+  `stub-groq.mjs`, que también responde como `/v1/messages`.
+- **El esquema no admite largos ni cantidades** (400 si se ponen): las
+  reglas viven en `BocetoDeSolucion`, y `LectorDeBoceto` ajusta lo que
+  solo se pasa de largo —corta en palabra completa con «…»— en vez de
+  perder el boceto. Lo atrapó la comparación: Opus escribió un mensaje
+  de chat de 70 caracteres y se perdía todo. El dinero sigue rechazado.
+- **Cada llamada deja en el log** modelo, tokens, caché y costo estimado
+  (`Boceto con Claude: …`), sin datos del visitante. Medido: unos
+  US$0,034 por boceto con Opus, 11 a 15 s.
+- **La imagen de referencia está apagada** (`DEMO_INCLUIR_IMAGEN=false`):
+  era genérica, hacía esperar y fallaba. Su código sigue unas semanas;
+  al borrarlo se revoca el token de Cloudflare.
+- **Política v2.2**: los proveedores de IA van en genérico (la norma no
+  exige nombrarlos) y el registro interno de quién recibe qué está en
+  docs/11 §1.7.
+
 ## Proveedor de imágenes del demo (ISS-127, ISS-137)
+
+> Desde el 23 oct 2026 la imagen está apagada en el demo: ver §Bocetos
+> con Claude. Lo que sigue describe el código que queda unas semanas.
+
 
 El puerto `GeneradorDeImagenes` tiene tres montajes, elegidos en un
 único punto (`ConfiguracionDeGeneradorDeImagenes`) con la variable

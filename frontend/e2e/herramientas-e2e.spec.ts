@@ -1,3 +1,4 @@
+import AxeBuilder from '@axe-core/playwright';
 import { APIRequestContext, expect, test } from '@playwright/test';
 
 /**
@@ -88,7 +89,10 @@ test('el demo de diseno muestra el estado bloqueado a un visitante anonimo (HU-4
   await expect(demo.locator('#demo-sector')).toHaveCount(0);
 });
 
-test('un cliente registrado genera su boceto con imagen y funcionalidades (F10d)', async ({ page, request }) => {
+test('un cliente registrado genera su boceto: pantallas dibujadas y funcionalidades (F10d, ISS-234)', async ({
+  page,
+  request,
+}) => {
   const sesion = await sesionDeClienteNueva(request);
   await page.addInitScript(
     (datos) => sessionStorage.setItem('crearcode-sesion', JSON.stringify(datos)),
@@ -105,9 +109,14 @@ test('un cliente registrado genera su boceto con imagen y funcionalidades (F10d)
 
   await expect(page.getByText('App de pedidos para tu restaurante')).toBeVisible({ timeout: 20000 });
   await expect(page.locator('.demo-funcionalidad')).toHaveCount(5);
-  const imagen = page.locator('.demo-imagen img');
-  await expect(imagen).toBeVisible();
-  expect(await imagen.getAttribute('src')).toMatch(/^data:image\/(png|jpeg);base64,/);
+  // El boceto del stub tiene tres pantallas que usan casi todo el catálogo.
+  await expect(page.locator('app-boceto-de-pantallas figure.celular')).toHaveCount(3);
+  await expect(page.locator('app-boceto-de-pantallas')).toContainText('Confirmar pedido');
+  // Las pantallas del boceto tienen colores propios: axe revisa su contraste.
+  const axe = await new AxeBuilder({ page }).include('app-demo-diseno').analyze();
+  expect(axe.violations, JSON.stringify(axe.violations, null, 2)).toEqual([]);
+  // La imagen de referencia quedó apagada (decisión 33): solo el boceto.
+  await expect(page.locator('.demo-imagen')).toHaveCount(0);
   await expect(page.locator('.demo-variacion')).toBeVisible();
 });
 

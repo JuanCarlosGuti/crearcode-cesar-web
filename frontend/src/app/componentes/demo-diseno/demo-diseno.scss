@@ -132,8 +132,23 @@
   gap: var(--espacio-3);
 }
 
+// El boceto manda (ISS-234): cabecera y pantallas a todo el ancho;
+// debajo, las funcionalidades y, si viene, la imagen de referencia.
+.demo-cabecera,
+.demo-boceto {
+  flex: 1 1 100%;
+  min-width: 0;
+}
+
+.demo-cabecera h4 {
+  margin: 0 0 0.35rem;
+  font-size: 1.15rem;
+}
+
 .demo-imagen {
   flex: 1 1 16rem;
+  margin: 0;
+  min-width: 0;
   border: 1px solid color-mix(in srgb, var(--color-primario) 12%, var(--color-superficie));
   border-radius: var(--radio-borde-grande);
   overflow: hidden;
@@ -147,14 +162,15 @@
   height: auto;
 }
 
+.demo-imagen figcaption {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8rem;
+  color: var(--color-texto-secundario);
+}
+
 .demo-detalle {
   flex: 1 1 16rem;
   min-width: 0;
-}
-
-.demo-detalle h4 {
-  margin: 0 0 0.35rem;
-  font-size: 1.15rem;
 }
 
 .demo-aclaracion {

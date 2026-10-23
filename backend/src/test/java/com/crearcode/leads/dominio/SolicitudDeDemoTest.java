@@ -37,18 +37,4 @@ class SolicitudDeDemoTest {
 				.isInstanceOf(SolicitudDeDemoInvalidaException.class);
 	}
 
-	@Test
-	void unBocetoValidoRequiereTituloYEntre3Y6Funcionalidades() {
-		ImagenGenerada imagen = new ImagenGenerada("YmFzZTY0", "image/png");
-		BocetoDeDemo boceto = new BocetoDeDemo("App de pedidos", java.util.List.of("a", "b", "c"), imagen);
-
-		assertThat(boceto.titulo()).isEqualTo("App de pedidos");
-		assertThat(boceto.funcionalidades()).hasSize(3);
-
-		assertThatThrownBy(() -> new BocetoDeDemo(" ", java.util.List.of("a", "b", "c"), imagen))
-				.isInstanceOf(SolicitudDeDemoInvalidaException.class);
-		assertThatThrownBy(() -> new BocetoDeDemo("App", java.util.List.of("a", "b"), imagen))
-				.isInstanceOf(SolicitudDeDemoInvalidaException.class);
-	}
-
 }

@@ -489,6 +489,49 @@ Registrada el 13 oct 2026:
     del eslogan que estaba pendiente desde el 29 jul 2026. El resaltado
     en verde del titular pasa a «tu negocio.».
 
+Registradas el 23 oct 2026:
+
+33. **Los bocetos del demo de diseño los genera Claude** (ISS-230 a
+    ISS-236, ADR-16). El usuario tiene US$200 al mes de créditos de la
+    API de Anthropic que no se acumulan, y el boceto de hoy lo dibuja
+    un modelo de imágenes que solo recibe un título y pinta un tablero
+    genérico con letras ilegibles. Claude no dibuja: devuelve la
+    estructura del boceto (pantallas armadas con piezas de un catálogo
+    cerrado y los textos del negocio) por salida estructurada, y un
+    componente de Angular la pinta en un marco de celular con la marca
+    del sitio. Modelo: **Opus 5.5** con effort bajo, configurable con
+    `CLAUDE_MODELO`. Se comparó con Sonnet 5.5 sobre cinco negocios con
+    la clave real (23 oct 2026): Opus salió más específico («Sancocho de
+    gallina», «Varilla corrugada 1/2"») a unos US$0,034 por boceto y 11 a
+    15 s; Sonnet, a unos US$0,016 y 9 a 11 s. El usuario eligió Opus
+    porque los créditos sobran; el peor caso con el tope de 100 bocetos
+    al día son unos US$100 al mes.
+    Si Claude falla o se acaban los créditos (no hay tarjeta, así que
+    las llamadas fallan en vez de cobrar), Groq genera el mismo JSON.
+    La clave es **`CLAUDE_API_KEY`**, propia del proyecto: no
+    `ANTHROPIC_API_KEY`, que en la máquina del usuario guarda la de otro
+    proyecto y mezclaría el consumo. Cada llamada deja en el log el
+    modelo, los tokens y el costo estimado, sin datos del visitante.
+    **La imagen de Cloudflare y Pollinations sale del demo** (decisión
+    del usuario el mismo día): era genérica —un escritorio o un collage
+    de platos, con marca de agua—, sumaba hasta 20 s de espera y falló
+    en 6 de 10 intentos. El visitante ve su boceto y, si le gusta, pasa
+    a la solicitud. Su código sigue unas semanas detrás de
+    `DEMO_INCLUIR_IMAGEN`, apagada.
+34. **Política v2.2: los proveedores de IA, sin nombre** (texto
+    aprobado por el usuario). La norma no exige nombrar a los
+    encargados (art. 2.2.2.25.3.1 del Decreto 1074 de 2015, contenido
+    mínimo de la política), y la transmisión a Estados Unidos ya está
+    autorizada en la sección 8. Como la lista de la sección 7 se
+    presenta completa, Groq, Cloudflare (imágenes) y Pollinations se
+    reemplazan por una línea genérica de «proveedores de modelos de
+    inteligencia artificial», en vez de agregar a Anthropic: el usuario
+    prefiere no nombrar proveedores que no controla, y así cambiar de
+    proveedor no obliga a cambiar la política. La sección 6 corrige la
+    frase que diría algo falso: con Claude, lo que escribe el visitante
+    sí sale del sitio. Quién recibe qué queda en el registro interno de
+    docs/11 §1.7. Se publica junto con el cambio que la hace necesaria.
+
 ## Aprobación
 
 **Aprobado explícitamente por el usuario el 27 jul 2026** ("si

@@ -145,6 +145,15 @@
 			<artifactId>openpdf</artifactId>
 			<version>2.2.2</version>
 		</dependency>
+		<!-- SDK oficial de la API de Claude: bocetos del demo de diseno (decision 33 de docs/10).
+		     Fijado en la ultima 2.x a proposito: la 3.0 (21 oct 2026) estrena la version de API
+		     2026-10-21 sin documentar que cambia, y la 2.x es la que esta verificada. Subir a la 3
+		     es un cambio aparte, con sus pruebas. -->
+		<dependency>
+			<groupId>com.anthropic</groupId>
+			<artifactId>anthropic-java</artifactId>
+			<version>2.75.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>

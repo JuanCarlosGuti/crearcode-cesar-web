@@ -50,7 +50,7 @@ docs/10):**
 > CTA: **Ver mi boceto con IA** — con sesión lleva al demo y el boceto
 > se genera solo; sin sesión, a crear la cuenta
 > Notas: "Lo que escribes queda solo en tu navegador hasta que generes
-> tu boceto." · "Genera una imagen de referencia, no un producto final."
+> tu boceto." · "Genera un boceto de referencia, no un producto final."
 
 **Aviso en /registro cuando se llega desde esa tarjeta:**
 > Crea tu cuenta y te mostramos el boceto de tu negocio con lo que ya

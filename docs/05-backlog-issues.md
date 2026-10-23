@@ -898,6 +898,23 @@ abren fase: cada uno es un issue con sus pruebas y va por PR.
 | ISS-228 ✅ | Lo escrito antes de que la página hidrate no se pierde. En un celular lento (CPU ×6), todo lo que se escribe durante el primer segundo y medio se borraba en contacto, ingreso y la tarjeta de la Home (27 campos perdidos en 24 pruebas contra producción): al hidratar, `[formField]` escribe en el campo el valor del modelo, que todavía está vacío. La directiva `appConservarLoEscrito` anota lo escrito antes de ese momento y, terminada la hidratación, lo devuelve al campo con un evento `input`, así el modelo lo recibe y el campo no queda «tocado». Va en los formularios de las páginas prerenderizadas. Medido con la imagen de producción y el mismo celular lento: 0 de 40 campos perdidos, contra 27 de 40 en producción antes del arreglo. De paso, la suite e2e volvió a ser estable con 8 workers. En producción tras desplegar (13 oct 2026): 0 de 40 y Lighthouse 99-100/100/100/100 | — | e2e con celular lento: lo escrito al instante sobrevive y llega al envío; sin la directiva, falla | M | — | Unit (directiva: devuelve texto, áreas, listas y casillas al campo y al modelo; sin directiva se pierde; sin nada escrito no toca nada), E2E (`hidratacion-e2e.spec.ts`) |
 | ISS-229 | El eslogan pasa a «Tecnología que trabaja para tu negocio.» (decisión 32 de [[10-vision-v2]]): sin «no al revés», con «tu negocio.» resaltado. El resaltado ya no sale de partir el titular en la última coma, que sin coma lo habría roto: el contenido dice qué parte se resalta. También en el contexto del asistente | — | El `<h1>` conserva el texto completo; Lighthouse y axe sin cambios | S | — | Component (`home.spec`: titular y resaltado) |
 
+## Bocetos con Claude (oct 2026) — ISS-230 a ISS-236
+
+Decisiones 33 y 34 de [[10-vision-v2]], ADR-16 de [[02-arquitectura]].
+Van en una rama y un PR; la política v2.2 entra en el mismo despliegue
+que pone a Claude a recibir el texto del visitante, nunca antes ni
+después.
+
+| ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
+|---|---|---|---|---|---|---|
+| ISS-230 | Dominio del boceto: `BocetoDeSolucion` (título, 5 funcionalidades, 2-3 pantallas de 3-8 piezas de un catálogo cerrado de 12 tipos, textos cortos, ninguna cifra de dinero) y puerto `GeneradorDeBocetos` | HU-42 | Sin Spring ni JPA; ArchUnit en verde | M | — | Unit (invariantes y límites, texto con dinero rechazado) |
+| ISS-231 | Adaptador Claude con el SDK oficial (`anthropic-java` 2.75, la última 2.x: la 3.0 estrena una versión de API sin documentar qué cambia): salida estructurada con el esquema del boceto, effort bajo, caché del prompt de sistema, tiempo de espera, `CLAUDE_API_KEY` explícita (nunca `ANTHROPIC_API_KEY`) y log por llamada de modelo, tokens y costo estimado, sin datos del visitante | HU-42 | Las pruebas no llaman a la API real | M | ISS-230 | Integration (contra un servidor HTTP falso: forma de la petición, lectura de la respuesta, errores, rechazo, `max_tokens`) |
+| ISS-232 | Respaldo con Groq (mismo esquema, `response_format` JSON) y `GeneradorDeBocetosConRespaldo`, elegidos en un solo punto de configuración (`DEMO_PROVEEDOR_BOCETOS`) | HU-42 | Sin créditos o con Claude caído, el visitante recibe el boceto de Groq | S | ISS-231 | Integration + Unit (respaldo) |
+| ISS-233 | Caso de uso y API: el demo devuelve título, funcionalidades y pantallas; la imagen de Cloudflare/Pollinations pasa a ser opcional (`DEMO_INCLUIR_IMAGEN`) mientras se decide si se conserva | HU-42 | Mismo cupo de antes (3 por cuenta, 100 en el sitio); un fallo no consume cupo | M | ISS-232 | Integration (API) |
+| ISS-234 | Frontend: componente que pinta el boceto en un marco de celular con los tokens del sitio, una pantalla por pieza del catálogo, y el demo lo muestra (con la imagen, si viene) | HU-42 | axe sin violaciones; 375 y 1280 px sin desborde | M | ISS-233 | Component + E2E |
+| ISS-235 | Política v2.2 (decisión 34), registro interno de proveedores en docs/11 §1.7, el stub de e2e responde también como la API de Claude, y CI arranca con él | — | Ninguna prueba gasta créditos | S | ISS-234 | E2E |
+| ISS-236 | Comparación con las capturas lado a lado: Sonnet 5.5 contra Opus 5.5, y boceto de Claude contra imagen, sobre cinco negocios. El usuario elige; luego clave en producción (secreto `CLAUDE_API_KEY`), despliegue y verificación con el costo real medido | HU-42 | Decisión del usuario registrada; boceto real en producción | M | ISS-235 | Checklist manual |
+
 ## Resumen de cobertura
 
 Todas las HU de [[04-historias-de-usuario]] (29 de la Etapa 2, HU-30 a

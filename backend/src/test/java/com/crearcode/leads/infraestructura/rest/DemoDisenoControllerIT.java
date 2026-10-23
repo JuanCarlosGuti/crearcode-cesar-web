@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.AfterAll;
@@ -27,26 +28,23 @@ import com.crearcode.leads.dominio.Correo;
 import com.crearcode.leads.dominio.GeneradorDeToken;
 import com.crearcode.leads.dominio.Usuario;
 import com.crearcode.leads.dominio.UsuarioRepositorio;
+import com.crearcode.leads.infraestructura.demo.BocetoDePrueba;
 import com.sun.net.httpserver.HttpServer;
+
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * API test del demo de diseño (F10d, ISS-128): SOLO registrados, con
- * doble stub — Groq (texto con formato) y Pollinations (bytes de
- * imagen) — sin red externa ni cuota.
+ * API test del demo de diseño (F10d, ISS-128; boceto con pantallas desde
+ * ISS-233): SOLO registrados, con doble stub —Groq, que en pruebas arma
+ * el boceto (DEMO_PROVEEDOR_BOCETOS no es claude), y Pollinations con
+ * los bytes de la imagen— sin red externa ni cuota.
  */
 @Import(TestcontainersConfiguration.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestRestTemplate
 class DemoDisenoControllerIT {
-
-	private static final String PROPUESTA_FORMATEADA = "TITULO: App de pedidos para tu restaurante\\n"
-			+ "FUNCIONALIDAD: Menú digital con disponibilidad\\n"
-			+ "FUNCIONALIDAD: Pedidos ordenados a la cocina\\n"
-			+ "FUNCIONALIDAD: Pago con link o contraentrega\\n"
-			+ "FUNCIONALIDAD: Seguimiento del domicilio\\n"
-			+ "FUNCIONALIDAD: Reporte diario de ventas";
 
 	private static HttpServer stub;
 
@@ -54,8 +52,9 @@ class DemoDisenoControllerIT {
 	static void levantarStubs() throws IOException {
 		stub = HttpServer.create(new InetSocketAddress(0), 0);
 		stub.createContext("/openai/v1/chat/completions", intercambio -> {
-			String json = "{\"choices\":[{\"message\":{\"role\":\"assistant\",\"content\":\""
-					+ PROPUESTA_FORMATEADA + "\"}}]}";
+			String json = JsonMapper.shared().writeValueAsString(Map.of("choices", List.of(Map.of(
+					"message", Map.of("role", "assistant", "content", BocetoDePrueba.JSON),
+					"finish_reason", "stop"))));
 			byte[] cuerpo = json.getBytes(StandardCharsets.UTF_8);
 			intercambio.getResponseHeaders().add("Content-Type", "application/json");
 			intercambio.sendResponseHeaders(200, cuerpo.length);
@@ -130,8 +129,14 @@ class DemoDisenoControllerIT {
 		assertThat(respuesta.getBody()).isNotNull();
 		assertThat(respuesta.getBody().titulo()).isEqualTo("App de pedidos para tu restaurante");
 		assertThat(respuesta.getBody().funcionalidades()).hasSize(5);
-		assertThat(respuesta.getBody().imagenBase64()).isNotBlank();
-		assertThat(respuesta.getBody().tipoMime()).isEqualTo("image/jpeg");
+		assertThat(respuesta.getBody().pantallas()).hasSize(2);
+		assertThat(respuesta.getBody().pantallas().getFirst().nombre()).isEqualTo("Inicio");
+		assertThat(respuesta.getBody().pantallas().getFirst().piezas().getFirst().tipo()).isEqualTo("ENCABEZADO");
+		assertThat(respuesta.getBody().pantallas().get(1).piezas().getFirst().elementos().getFirst().detalle())
+				.isEqualTo("En camino");
+		// La imagen de referencia quedó apagada (decisión 33): solo el boceto.
+		assertThat(respuesta.getBody().imagenBase64()).isNull();
+		assertThat(respuesta.getBody().tipoMime()).isNull();
 	}
 
 	@Test
