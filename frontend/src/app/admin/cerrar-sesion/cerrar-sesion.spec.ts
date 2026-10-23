@@ -11,6 +11,7 @@ describe('CerrarSesionButton', () => {
 
   afterEach(() => {
     sessionStorage.clear();
+    localStorage.clear();
   });
 
   it('al hacer click limpia la sesion y navega a /admin/login', async () => {

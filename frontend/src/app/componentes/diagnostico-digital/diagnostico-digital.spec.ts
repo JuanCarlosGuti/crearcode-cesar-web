@@ -44,6 +44,7 @@ describe('DiagnosticoDigital (F10c, HU-41)', () => {
   afterEach(() => {
     httpMock.verify();
     sessionStorage.clear();
+    localStorage.clear();
   });
 
   it('arranca en la primera pregunta con su progreso', async () => {

@@ -36,6 +36,7 @@ describe('IngresoPage', () => {
 
   afterEach(() => {
     sessionStorage.clear();
+    localStorage.clear();
     localStorage.removeItem(CLAVE_BOCETO_PENDIENTE);
   });
 

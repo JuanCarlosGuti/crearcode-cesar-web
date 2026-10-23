@@ -436,9 +436,10 @@ explícitamente por el usuario pensando en crecimiento multi-empleado
 con roles). `/admin/login` (pública), `/admin` (listado + filtro por
 estado) y `/admin/solicitudes/:id` (detalle + cambio de estado con
 confirmación, solo transiciones válidas) protegidas por `adminGuard`.
-`SesionService` guarda el token en `sessionStorage` (se pierde al
-cerrar la pestaña; sin revocación antes de esa expiración — trade-off
-consciente de v1, ver ADR-08). El panel no lleva el header/footer del
+`SesionService` guarda el token del admin en `sessionStorage` (se
+pierde al cerrar la pestaña; sin revocación antes de esa expiración —
+trade-off consciente de v1, ver ADR-08). El del cliente, en
+`localStorage` desde ISS-240 (ver §Cuentas de cliente). El panel no lleva el header/footer del
 sitio público (es una sección interna distinta, no contenido) y queda
 fuera de SSR/prerender (`admin/**` con `RenderMode.Client`). Verificado
 extremo a extremo en navegador real: login correcto/incorrecto, listado
@@ -463,13 +464,26 @@ Frontend: páginas `/registro`, `/ingreso` (redirige por rol),
 `/recuperar-contrasena`, `/verificar-correo` y
 `/restablecer-contrasena` (consumen `?token=`, RenderMode.Client) y
 `/mi-cuenta` (clienteGuard, mínima: correo + cerrar sesión).
-`SesionService` guarda `{token, rol, correo}` (clave `crearcode-sesion`,
-sessionStorage); `adminGuard` exige rol ADMIN; el interceptor excluye
+`SesionService` guarda `{token, rol, correo}` (clave `crearcode-sesion`);
+`adminGuard` exige rol ADMIN; el interceptor excluye
 todo `/api/auth/*` y decide el destino del 401 según la página actual.
 El header muestra Ingresar/Mi cuenta solo tras hidratar
 (`afterNextRender`) para no romper la hidratación del prerender. En
 sitemap solo entra `/registro`; robots.txt excluye `/mi-cuenta` y las
-páginas de token. E2e `cuentas-e2e.spec.ts`: flujo completo con el
+páginas de token.
+
+**La sesión del cliente es una sola en todo el navegador** (ISS-240,
+23 oct 2026, decisión 36 de docs/10): vive en `localStorage`, la ven
+todas las pestañas y salir en una cierra las demás (evento `storage`).
+Antes era de cada pestaña, y «Ver demo» o el enlace de un correo
+dejaban al cliente sin sesión: el demo de diseño le pedía crear la
+cuenta que ya tenía. **La del admin sigue en `sessionStorage`**, solo en
+su pestaña, y cerrarla no saca al cliente de otra. Para no perder a
+nadie el día del cambio, una sesión de cliente en `sessionStorage` se
+sigue leyendo. `sesion-e2e.spec.ts` lo prueba con dos pestañas de
+verdad, y falla con el código anterior.
+
+E2e `cuentas-e2e.spec.ts`: flujo completo con el
 enlace real del correo leído de la API REST de Mailpit + axe (que
 encontró y permitió corregir un contraste AA insuficiente en los
 banners de error, también en el login del admin).

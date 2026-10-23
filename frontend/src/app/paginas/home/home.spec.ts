@@ -25,6 +25,7 @@ describe('HomePage', () => {
   afterEach(() => {
     vi.restoreAllMocks();
     sessionStorage.clear();
+    localStorage.clear();
     localStorage.removeItem(CLAVE_BOCETO_PENDIENTE);
   });
 

@@ -14,6 +14,7 @@ describe('clienteGuard', () => {
 
   afterEach(() => {
     sessionStorage.clear();
+    localStorage.clear();
   });
 
   it('permite el acceso con una sesion de cliente', () => {

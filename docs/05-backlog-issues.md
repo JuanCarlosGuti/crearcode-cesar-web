@@ -939,6 +939,20 @@ corregido con su regresión en el e2e. En producción: Lighthouse
 100/100/100/100 en Home, servicio, `/herramientas` y Contacto, sin
 errores en los logs.
 
+## El sitio reconoce la cuenta (oct 2026) — ISS-240 a ISS-242
+
+Decisión 36 de [[10-vision-v2]], enmienda de ADR-08 en
+[[02-arquitectura]]. Nació de una prueba del usuario con la cuenta de
+demostración: «Ver demo» abrió el sitio en otra pestaña y el demo de
+diseño le pidió crear cuenta; ya dentro, `/herramientas` lo seguía
+invitando a registrarse. Una rama y un PR, un commit por issue.
+
+| ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
+|---|---|---|---|---|---|---|
+| ISS-240 | La sesión del cliente pasa a `localStorage`: la comparten todas las pestañas, ingresar o salir en una se refleja en las demás sin recargar (evento `storage`), y una que llega vencida no se abre. La del admin sigue en `sessionStorage`, y cerrarla no saca al cliente de otra pestaña. Las sesiones de cliente guardadas en `sessionStorage` antes del cambio se siguen leyendo. Con el almacenamiento bloqueado, la sesión queda en memoria en vez de romper el ingreso | HU-33 | El e2e falla con el código anterior y pasa con el nuevo | M | — | Unit (`sesion.spec`: dónde vive cada rol, pestaña nueva, salir y entrar desde otra, admin intacto, vencida, cierre programado, almacenamiento bloqueado), E2E (`sesion-e2e.spec.ts`: dos pestañas) |
+| ISS-241 | Ingresar devuelve a donde se iba: los guards y el interceptor mandan a `/ingreso` (o `/admin/login`) con `?volver=`, el «Ya tengo cuenta» del demo lleva al demo, y el ingreso vuelve ahí. Solo rutas del propio sitio (nada que empiece por `//` o traiga esquema), y cada rol solo a lo suyo: el cliente no vuelve a `/admin` ni el admin fuera de él | HU-33 | Un enlace armado para mandar a otro sitio después de ingresar cae en el destino por defecto | M | ISS-240 | Unit (validación de la ruta), Component (ingreso, login del admin, guards, interceptor, demo), E2E (página protegida → ingreso → de vuelta) |
+| ISS-242 | Con sesión, el sitio deja de invitar a crear cuenta: la franja «Con cuenta gratis…» de `/herramientas` y la sección de la cuenta de la Home se ocultan tras hidratar. El prerender no cambia: lo que lee Google y lo que ve un visitante sigue igual | HU-33 | axe sin violaciones; Lighthouse de Home y `/herramientas` sin bajar | S | ISS-240 | Component (Home y herramientas, con y sin sesión), E2E |
+
 ## Resumen de cobertura
 
 Todas las HU de [[04-historias-de-usuario]] (29 de la Etapa 2, HU-30 a

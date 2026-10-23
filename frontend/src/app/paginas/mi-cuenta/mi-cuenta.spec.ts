@@ -17,6 +17,7 @@ describe('MiCuentaPage', () => {
 
   afterEach(() => {
     sessionStorage.clear();
+    localStorage.clear();
   });
 
   it('muestra el correo de la sesion iniciada y el enlace de recuperacion', async () => {

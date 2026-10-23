@@ -19,6 +19,7 @@ describe('ConversacionService', () => {
   afterEach(() => {
     httpMock.verify();
     sessionStorage.clear();
+    localStorage.clear();
   });
 
   it('enviar agrega la pregunta y luego la respuesta del asistente', () => {

@@ -22,6 +22,7 @@ describe('Header', () => {
 
   afterEach(() => {
     sessionStorage.clear();
+    localStorage.clear();
   });
 
   it('muestra el nombre de la empresa', async () => {

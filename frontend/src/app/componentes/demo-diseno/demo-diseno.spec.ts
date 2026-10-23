@@ -72,6 +72,7 @@ describe('DemoDiseno (F10d, HU-42)', () => {
 
   beforeEach(() => {
     sessionStorage.clear();
+    localStorage.clear();
     TestBed.configureTestingModule({
       providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
     });
@@ -81,6 +82,7 @@ describe('DemoDiseno (F10d, HU-42)', () => {
   afterEach(() => {
     httpMock.verify();
     sessionStorage.clear();
+    localStorage.clear();
     localStorage.removeItem(CLAVE_BOCETO_PENDIENTE);
   });
 

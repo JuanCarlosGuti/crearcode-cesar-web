@@ -29,6 +29,7 @@ describe('tokenInterceptor', () => {
   afterEach(() => {
     httpMock.verify();
     sessionStorage.clear();
+    localStorage.clear();
   });
 
   it('no adjunta Authorization si no hay sesion', () => {

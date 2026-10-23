@@ -23,6 +23,7 @@ describe('LoginPage', () => {
 
   afterEach(() => {
     sessionStorage.clear();
+    localStorage.clear();
   });
 
   it('muestra los campos correo y contrasena con su label asociado', async () => {

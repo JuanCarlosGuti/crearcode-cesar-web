@@ -45,6 +45,7 @@ describe('SimuladorChatbot (F10b, HU-40)', () => {
   afterEach(() => {
     httpMock.verify();
     sessionStorage.clear();
+    localStorage.clear();
   });
 
   it('muestra el formulario del negocio, el saludo inicial y las notas de honestidad', async () => {

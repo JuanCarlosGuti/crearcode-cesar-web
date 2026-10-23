@@ -750,10 +750,23 @@ cuenta** para **confirmar mi identidad y acceder a lo que es mío**.
 - Dado que cierro sesión, cuando vuelvo a "Mi cuenta", entonces se me
   pide ingresar de nuevo.
 
+Registradas el 23 oct 2026 (decisión 36 de [[10-vision-v2]]):
+
+- Dado que ingresé, cuando abro el sitio en otra pestaña (el enlace de
+  un correo, «Ver demo»), entonces mi cuenta sigue abierta.
+- Dado que tengo el sitio abierto en dos pestañas, cuando cierro sesión
+  en una, entonces la otra también queda sin sesión.
+- Dado que una página me pidió ingresar, cuando ingreso, entonces
+  vuelvo a esa página y no a "Mi cuenta".
+- Dado que ya tengo sesión, cuando recorro el sitio, entonces no se me
+  invita a crear una cuenta.
+
 **Reglas de negocio**: mismo endpoint de login y mismo JWT de ADR-08
 (el token ya lleva el claim `rol`); un token de rol CLIENTE recibe 403
-en los endpoints del panel admin; la sesión vive en `sessionStorage`
-(se pierde al cerrar la pestaña, trade-off de ADR-08).
+en los endpoints del panel admin. La sesión del cliente vive en
+`localStorage` desde ISS-240 (decisión 36 de [[10-vision-v2]]): la
+comparten todas las pestañas del navegador y dura lo que dure el token;
+la del admin sigue en `sessionStorage`, solo en su pestaña (ADR-08).
 **Notas de UX**: "Mi cuenta" mínima en F8 (correo + cerrar sesión);
 sin cambio de contraseña autenticado — se cubre con la recuperación
 (HU-32). El header del sitio muestra "Ingresar" o "Mi cuenta" según
