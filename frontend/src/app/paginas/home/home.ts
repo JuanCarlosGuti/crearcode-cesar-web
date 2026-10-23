@@ -14,6 +14,7 @@ import { SolicitudDeDemo } from '../../api/demo-api';
 import { AsistenteUiService } from '../../nucleo/asistente-ui';
 import { BocetoPendienteService } from '../../nucleo/boceto-pendiente';
 import { SesionService } from '../../nucleo/sesion';
+import { sesionTrasHidratar } from '../../nucleo/sesion-tras-hidratar';
 import { establecerMetadatosDePagina } from '../../nucleo/metadatos-pagina';
 
 /**
@@ -40,6 +41,8 @@ export class HomePage {
   protected readonly tablaCuenta = TABLA_CUENTA;
   protected readonly sugerencias = ASISTENTE.sugerencias;
   protected readonly bocetoEscrito = signal<SolicitudDeDemo>({ sector: '', queHace: '', queNecesita: '' });
+  // Con cuenta, la sección que invita a crearla sobra (ISS-242).
+  protected readonly conSesion = sesionTrasHidratar();
 
   // El final del titular ("tu negocio.") va en el color de acento. Lo
   // dice el contenido: antes se partia en la ultima coma, y el eslogan

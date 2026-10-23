@@ -93,3 +93,25 @@ test('«Ya tengo cuenta» en el demo de diseño vuelve al demo listo para usar',
   await expect(page).toHaveURL(/\/herramientas#demo-diseno$/);
   await expect(page.locator('#demo-sector')).toBeVisible();
 });
+
+// ISS-242: a quien ya tiene cuenta no se le invita a crearla.
+test('con la cuenta abierta, el sitio deja de invitar a crear una', async ({ page, request }) => {
+  const { correo, contrasena } = await clienteVerificado(request);
+  const invitacionDeHerramientas = page.getByRole('heading', { name: 'Con cuenta gratis tienes más usos y acceso anticipado' });
+
+  // Sin sesión, la invitación está: es lo que ve un visitante.
+  await page.goto('/herramientas');
+  await expect(invitacionDeHerramientas).toBeVisible();
+
+  await page.goto('/ingreso');
+  await ingresar(page, correo, contrasena);
+  await expect(page).toHaveURL(/\/mi-cuenta$/);
+
+  await page.goto('/herramientas');
+  await expect(enlaceDeCuenta(page)).toBeVisible();
+  await expect(invitacionDeHerramientas).toHaveCount(0);
+
+  await page.goto('/');
+  await expect(enlaceDeCuenta(page)).toBeVisible();
+  await expect(page.locator('.seccion-cuenta')).toHaveCount(0);
+});

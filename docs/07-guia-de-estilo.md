@@ -69,6 +69,15 @@ cambios no relacionados.
   todavía está vacío. En un celular lento eso es el primer segundo y
   medio. No hace falta en lo que solo se pinta tras hidratar (el demo de
   diseño, el panel admin, las rutas `RenderMode.Client`).
+- **Lo que cambia con la sesión se decide después de hidratar**, con
+  `sesionTrasHidratar()` (`nucleo/`) o un `afterNextRender` propio,
+  como el header. En el prerender nunca hay sesión: si el navegador
+  pintara otra cosa antes de hidratar, la hidratación se rompería. Así
+  se ocultan a quien ya tiene cuenta las invitaciones a crearla
+  (ISS-242), y lo que lee Google sigue siendo lo que ve un visitante.
+- **La sesión se lee de `SesionService`, nunca del almacenamiento**: la
+  del cliente vive en `localStorage` y la del admin en `sessionStorage`
+  (ISS-240), y esa regla vive en un solo lugar.
 
 ## Parte 2 — Guía visual
 

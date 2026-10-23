@@ -490,6 +490,12 @@ de vuelta al demo. `rutaDeVuelta` (`nucleo/`) solo acepta rutas del
 propio sitio —nada con `//`, barra invertida o espacios— y cada rol a lo
 suyo: el cliente no vuelve a `/admin` ni el admin sale de él.
 
+**Con sesión, el sitio deja de invitar a crear cuenta** (ISS-242): la
+franja «Con cuenta gratis…» de `/herramientas` y la sección de la cuenta
+de la Home se ocultan con `sesionTrasHidratar()`, que espera a hidratar
+como el header. El prerender no cambia: lo que lee Google sigue siendo
+lo que ve un visitante.
+
 E2e `cuentas-e2e.spec.ts`: flujo completo con el
 enlace real del correo leído de la API REST de Mailpit + axe (que
 encontró y permitió corregir un contraste AA insuficiente en los
