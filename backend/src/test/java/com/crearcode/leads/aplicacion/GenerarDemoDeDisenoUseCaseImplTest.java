@@ -16,10 +16,15 @@ import com.crearcode.leads.dominio.BocetoDeDemo;
 import com.crearcode.leads.dominio.BocetoDeSolucion;
 import com.crearcode.leads.dominio.DemoSoloParaRegistradosException;
 import com.crearcode.leads.dominio.ElementoDePieza;
+import com.crearcode.leads.dominio.EstiloDeLetra;
+import com.crearcode.leads.dominio.FormaDeLogo;
 import com.crearcode.leads.dominio.GeneradorDeBocetos;
 import com.crearcode.leads.dominio.GeneradorDeImagenes;
 import com.crearcode.leads.dominio.IdentidadDelVisitante;
+import com.crearcode.leads.dominio.IdentidadDeMarca;
 import com.crearcode.leads.dominio.ImagenGenerada;
+import com.crearcode.leads.dominio.LogoDeMarca;
+import com.crearcode.leads.dominio.PaletaDeBoceto;
 import com.crearcode.leads.dominio.PantallaDeBoceto;
 import com.crearcode.leads.dominio.PiezaDeBoceto;
 import com.crearcode.leads.dominio.SolicitudDeDemo;
@@ -35,7 +40,10 @@ class GenerarDemoDeDisenoUseCaseImplTest {
 
 	private static final Clock RELOJ = Clock.fixed(Instant.parse("2026-10-23T10:00:00Z"), ZoneOffset.UTC);
 
-	private static final BocetoDeSolucion BOCETO = new BocetoDeSolucion("App de pedidos para tu restaurante",
+	private static final BocetoDeSolucion BOCETO = new BocetoDeSolucion(
+			new IdentidadDeMarca("Sabor Valduparense", "Comida casera", PaletaDeBoceto.CALIDA,
+					new LogoDeMarca(FormaDeLogo.CIRCULO, "🍲", EstiloDeLetra.SENCILLA)),
+			"App de pedidos para tu restaurante",
 			List.of("Menú del día", "Pedidos por WhatsApp", "Estado del domicilio", "Historial de clientes",
 					"Aviso de pedido listo"),
 			List.of(pantalla("Inicio"), pantalla("Pedidos")));

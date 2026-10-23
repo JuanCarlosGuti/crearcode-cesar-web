@@ -129,11 +129,16 @@ class DemoDisenoControllerIT {
 		assertThat(respuesta.getBody()).isNotNull();
 		assertThat(respuesta.getBody().titulo()).isEqualTo("App de pedidos para tu restaurante");
 		assertThat(respuesta.getBody().funcionalidades()).hasSize(5);
+		assertThat(respuesta.getBody().identidad().nombre()).isEqualTo("Sabor Valduparense");
+		assertThat(respuesta.getBody().identidad().paleta()).isEqualTo("CALIDA");
+		assertThat(respuesta.getBody().identidad().logo().simbolo()).isEqualTo("🍲");
 		assertThat(respuesta.getBody().pantallas()).hasSize(2);
 		assertThat(respuesta.getBody().pantallas().getFirst().nombre()).isEqualTo("Inicio");
 		assertThat(respuesta.getBody().pantallas().getFirst().piezas().getFirst().tipo()).isEqualTo("ENCABEZADO");
 		assertThat(respuesta.getBody().pantallas().get(1).piezas().getFirst().elementos().getFirst().detalle())
 				.isEqualTo("En camino");
+		assertThat(respuesta.getBody().pantallas().getFirst().piezas().get(1).elementos().getFirst().icono())
+				.isEqualTo("🍛");
 		// La imagen de referencia quedó apagada (decisión 33): solo el boceto.
 		assertThat(respuesta.getBody().imagenBase64()).isNull();
 		assertThat(respuesta.getBody().tipoMime()).isNull();

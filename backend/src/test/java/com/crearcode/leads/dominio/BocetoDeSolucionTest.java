@@ -30,12 +30,15 @@ class BocetoDeSolucionTest {
 		return new PantallaDeBoceto(nombre, List.of(encabezado("Pedidos de hoy"), lista("Ana · almuerzo", "Luis · desayuno")));
 	}
 
+	private static final IdentidadDeMarca IDENTIDAD = new IdentidadDeMarca("Sabor Valduparense", "Comida casera",
+			PaletaDeBoceto.CALIDA, new LogoDeMarca(FormaDeLogo.CIRCULO, "🍲", EstiloDeLetra.SENCILLA));
+
 	private static final List<String> CINCO = List.of("Menú del día", "Pedidos por WhatsApp", "Estado del domicilio",
 			"Historial de clientes", "Avisos de pedido listo");
 
 	@Test
 	void unBocetoValidoConservaSusPantallasYNormalizaLosTextos() {
-		BocetoDeSolucion boceto = new BocetoDeSolucion("  App de pedidos para tu restaurante  ", CINCO,
+		BocetoDeSolucion boceto = new BocetoDeSolucion(IDENTIDAD, "  App de pedidos para tu restaurante  ", CINCO,
 				List.of(pantalla(" Inicio "), pantalla("Pedidos")));
 
 		assertThat(boceto.titulo()).isEqualTo("App de pedidos para tu restaurante");
@@ -44,10 +47,16 @@ class BocetoDeSolucionTest {
 	}
 
 	@Test
-	void exigeDeDosATresPantallas() {
-		assertThatThrownBy(() -> new BocetoDeSolucion("App", CINCO, List.of(pantalla("Inicio"))))
+	void elBocetoNecesitaSuIdentidadDeMarca() {
+		assertThatThrownBy(() -> new BocetoDeSolucion(null, "App", CINCO, List.of(pantalla("A"), pantalla("B"))))
 				.isInstanceOf(BocetoInvalidoException.class);
-		assertThatThrownBy(() -> new BocetoDeSolucion("App", CINCO,
+	}
+
+	@Test
+	void exigeDeDosATresPantallas() {
+		assertThatThrownBy(() -> new BocetoDeSolucion(IDENTIDAD, "App", CINCO, List.of(pantalla("Inicio"))))
+				.isInstanceOf(BocetoInvalidoException.class);
+		assertThatThrownBy(() -> new BocetoDeSolucion(IDENTIDAD, "App", CINCO,
 				List.of(pantalla("A"), pantalla("B"), pantalla("C"), pantalla("D"))))
 				.isInstanceOf(BocetoInvalidoException.class);
 	}
@@ -55,11 +64,11 @@ class BocetoDeSolucionTest {
 	@Test
 	void exigeDeTresASeisFuncionalidadesNoVacias() {
 		List<PantallaDeBoceto> dos = List.of(pantalla("A"), pantalla("B"));
-		assertThatThrownBy(() -> new BocetoDeSolucion("App", List.of("a", "b"), dos))
+		assertThatThrownBy(() -> new BocetoDeSolucion(IDENTIDAD, "App", List.of("a", "b"), dos))
 				.isInstanceOf(BocetoInvalidoException.class);
-		assertThatThrownBy(() -> new BocetoDeSolucion("App", List.of("a", "b", "c", "d", "e", "f", "g"), dos))
+		assertThatThrownBy(() -> new BocetoDeSolucion(IDENTIDAD, "App", List.of("a", "b", "c", "d", "e", "f", "g"), dos))
 				.isInstanceOf(BocetoInvalidoException.class);
-		assertThatThrownBy(() -> new BocetoDeSolucion("App", List.of("a", " ", "c"), dos))
+		assertThatThrownBy(() -> new BocetoDeSolucion(IDENTIDAD, "App", List.of("a", " ", "c"), dos))
 				.isInstanceOf(BocetoInvalidoException.class);
 	}
 
@@ -107,7 +116,7 @@ class BocetoDeSolucionTest {
 		assertThatThrownBy(() -> new ElementoDePieza("Almuerzo", "$ 15.000"))
 				.isInstanceOf(BocetoInvalidoException.class);
 		assertThatThrownBy(() -> encabezado("Total: 20.000 COP")).isInstanceOf(BocetoInvalidoException.class);
-		assertThatThrownBy(() -> new BocetoDeSolucion("App", List.of("Cobros en USD", "b", "c"),
+		assertThatThrownBy(() -> new BocetoDeSolucion(IDENTIDAD, "App", List.of("Cobros en USD", "b", "c"),
 				List.of(pantalla("A"), pantalla("B")))).isInstanceOf(BocetoInvalidoException.class);
 		// "Peso" de una carga no es dinero.
 		assertThat(new ElementoDePieza("Paquete", "Peso: 5 kg").detalle()).isEqualTo("Peso: 5 kg");
