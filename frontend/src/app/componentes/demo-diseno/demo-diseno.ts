@@ -8,6 +8,7 @@ import { BocetoPendienteService } from '../../nucleo/boceto-pendiente';
 import { SesionService } from '../../nucleo/sesion';
 import { mensajeWhatsappParaRuta } from '../../layout/mensaje-whatsapp-por-ruta';
 import { Analitica } from '../../nucleo/analitica';
+import { BocetoDePantallas } from '../boceto-de-pantallas/boceto-de-pantallas';
 import { WhatsappCta } from '../whatsapp-cta/whatsapp-cta';
 import { AVISO_IA } from '../../../contenido/legales';
 
@@ -28,7 +29,7 @@ type ErrorDeDemo = 'limite' | 'limite-global' | 'no-disponible' | null;
   selector: 'app-demo-diseno',
   templateUrl: './demo-diseno.html',
   styleUrl: './demo-diseno.scss',
-  imports: [RouterLink, WhatsappCta],
+  imports: [RouterLink, WhatsappCta, BocetoDePantallas],
 })
 export class DemoDiseno {
   // Aviso de privacidad de la IA (auditoria 28 sep 2026, §11).
@@ -60,7 +61,10 @@ export class DemoDiseno {
   );
   protected readonly imagenSrc = computed(() => {
     const resultado = this.boceto();
-    return resultado ? `data:${resultado.tipoMime};base64,${resultado.imagenBase64}` : '';
+    // La imagen es opcional desde ISS-233: sin ella, solo el boceto.
+    return resultado?.imagenBase64 && resultado.tipoMime
+      ? `data:${resultado.tipoMime};base64,${resultado.imagenBase64}`
+      : '';
   });
 
   constructor() {

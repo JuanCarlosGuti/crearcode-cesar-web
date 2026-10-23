@@ -63,13 +63,13 @@
 
     @if (boceto(); as resultado) {
       @if (!generando()) {
-        <div class="demo-resultado" aria-live="polite">
-          <div class="demo-imagen">
-            <img [src]="imagenSrc()" [alt]="textos.resultado.altImagen" />
-          </div>
-          <div class="demo-detalle">
+        <div class="demo-resultado">
+          <div class="demo-cabecera" aria-live="polite">
             <h4>{{ resultado.titulo }}</h4>
             <p class="demo-aclaracion">{{ textos.resultado.aclaracion }}</p>
+          </div>
+          <app-boceto-de-pantallas class="demo-boceto" [pantallas]="resultado.pantallas" />
+          <div class="demo-detalle">
             <p class="demo-subtitulo">{{ textos.resultado.subtituloFuncionalidades }}</p>
             <ul class="demo-funcionalidades">
               @for (funcionalidad of resultado.funcionalidades; track funcionalidad) {
@@ -89,6 +89,12 @@
               </button>
             </div>
           </div>
+          @if (imagenSrc()) {
+            <figure class="demo-imagen">
+              <img [src]="imagenSrc()" [alt]="textos.resultado.altImagen" />
+              <figcaption>{{ textos.resultado.subtituloImagen }}</figcaption>
+            </figure>
+          }
         </div>
       }
     }

@@ -30,7 +30,7 @@ export const HOME = {
     ],
     cta: 'Ver mi boceto con IA',
     notaPrivacidad: 'Lo que escribes queda solo en tu navegador hasta que generes tu boceto.',
-    nota: 'Genera una imagen de referencia, no un producto final.',
+    nota: 'Genera un boceto de referencia, no un producto final.',
   },
   herramientas: {
     titulo: 'Pruébalo con tu propio negocio, ahora mismo',

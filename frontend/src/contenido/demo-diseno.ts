@@ -24,6 +24,10 @@ export const DEMO_DISENO = {
     nota: 'Tarda unos 30 segundos. No guardamos lo que escribes.',
   },
   generando: 'Dibujando tu boceto…',
+  boceto: {
+    etiqueta: 'Boceto de tu solución, pantalla por pantalla',
+    deslizar: 'Desliza a los lados para ver todas las pantallas.',
+  },
   resultado: {
     aclaracion:
       'Basado en lo que nos contaste. Es una referencia visual: el diseño final se define contigo.',
@@ -31,7 +35,8 @@ export const DEMO_DISENO = {
     ctaHazloRealidad: 'Hazlo realidad',
     ctaWhatsapp: 'WhatsApp',
     ctaVariacion: 'Pedir otra variación',
-    altImagen: 'Boceto generado por IA de la solución propuesta para tu negocio',
+    altImagen: 'Imagen de referencia generada por IA de la solución propuesta para tu negocio',
+    subtituloImagen: 'Así podría verse terminada: imagen de referencia generada con IA.',
   },
   limite:
     'Usaste tus bocetos de hoy. Se reinician mañana a la medianoche — los límites existen para que la herramienta siga siendo gratis.',

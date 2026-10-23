@@ -146,6 +146,11 @@ jobs:
           GROQ_API_URL: http://localhost:9099/openai/v1
           # El mismo stub sirve las imagenes del demo de diseno (F10d)
           POLLINATIONS_URL: http://localhost:9099
+          # ...y responde como la API de Claude: el demo recorre el camino
+          # real (SDK, salida estructurada, lector) sin gastar creditos.
+          DEMO_PROVEEDOR_BOCETOS: claude
+          CLAUDE_API_URL: http://localhost:9099
+          CLAUDE_API_KEY: stub
           ASISTENTE_LIMITE_ANONIMO: "3"
           # La suite entera corre desde una sola IP, asi que los limites
           # por IP la estrangulan: con los defaults de produccion (login

@@ -1,0 +1,139 @@
+<div class="boceto" tabindex="0" role="region" [attr.aria-label]="textos.etiqueta">
+  <ol class="boceto__pantallas">
+    @for (pantalla of pantallas(); track $index) {
+      <li class="boceto__pantalla">
+        <figure class="celular">
+          <div class="celular__marco">
+            <div class="celular__estado" aria-hidden="true">
+              <span>9:41</span>
+              <span class="celular__senal"></span>
+            </div>
+            <div class="celular__contenido">
+              @for (pieza of pantalla.piezas; track $index) {
+                @switch (pieza.tipo) {
+                  @case ('ENCABEZADO') {
+                    <p class="pieza pieza--encabezado">{{ pieza.titulo }}</p>
+                  }
+                  @case ('BUSCADOR') {
+                    <p class="pieza pieza--buscador"><span aria-hidden="true">⌕</span> {{ pieza.titulo }}</p>
+                  }
+                  @case ('BANNER') {
+                    <div class="pieza pieza--banner">
+                      <p class="pieza--banner__texto">{{ pieza.titulo }}</p>
+                      @if (pieza.elementos.length > 0) {
+                        <span class="pieza--banner__accion">{{ pieza.elementos[0].texto }}</span>
+                      }
+                    </div>
+                  }
+                  @case ('CATEGORIAS') {
+                    <ul class="pieza pieza--categorias">
+                      @for (elemento of pieza.elementos; track $index) {
+                        <li [class.activa]="$first">{{ elemento.texto }}</li>
+                      }
+                    </ul>
+                  }
+                  @case ('TARJETAS') {
+                    <div class="pieza pieza--tarjetas">
+                      @if (pieza.titulo) {
+                        <p class="pieza__titulo">{{ pieza.titulo }}</p>
+                      }
+                      <ul>
+                        @for (elemento of pieza.elementos; track $index) {
+                          <li class="tarjeta">
+                            <span class="tarjeta__foto" aria-hidden="true"></span>
+                            <span class="tarjeta__nombre">{{ elemento.texto }}</span>
+                            @if (elemento.detalle) {
+                              <span class="tarjeta__detalle">{{ elemento.detalle }}</span>
+                            }
+                          </li>
+                        }
+                      </ul>
+                    </div>
+                  }
+                  @case ('LISTA') {
+                    <div class="pieza pieza--lista">
+                      @if (pieza.titulo) {
+                        <p class="pieza__titulo">{{ pieza.titulo }}</p>
+                      }
+                      <ul>
+                        @for (elemento of pieza.elementos; track $index) {
+                          <li class="fila">
+                            <span class="fila__inicial" aria-hidden="true">{{ inicial(elemento.texto) }}</span>
+                            <span class="fila__texto">{{ elemento.texto }}</span>
+                            @if (elemento.detalle) {
+                              <span class="fila__detalle">{{ elemento.detalle }}</span>
+                            }
+                          </li>
+                        }
+                      </ul>
+                    </div>
+                  }
+                  @case ('FORMULARIO') {
+                    <div class="pieza pieza--formulario">
+                      @if (pieza.titulo) {
+                        <p class="pieza__titulo">{{ pieza.titulo }}</p>
+                      }
+                      @for (elemento of pieza.elementos; track $index) {
+                        <div class="campo-boceto">
+                          <span class="campo-boceto__etiqueta">{{ elemento.texto }}</span>
+                          <span class="campo-boceto__caja">{{ elemento.detalle }}</span>
+                        </div>
+                      }
+                    </div>
+                  }
+                  @case ('BOTON') {
+                    <p class="pieza pieza--boton">{{ pieza.titulo }}</p>
+                  }
+                  @case ('INDICADORES') {
+                    <ul class="pieza pieza--indicadores">
+                      @for (elemento of pieza.elementos; track $index) {
+                        <li>
+                          <span class="indicador__valor">{{ elemento.detalle }}</span>
+                          <span class="indicador__nombre">{{ elemento.texto }}</span>
+                        </li>
+                      }
+                    </ul>
+                  }
+                  @case ('CHAT') {
+                    <ul class="pieza pieza--chat">
+                      @for (elemento of pieza.elementos; track $index) {
+                        <li
+                          class="burbuja"
+                          [class.burbuja--negocio]="elemento.detalle === 'negocio'"
+                          [class.burbuja--cliente]="elemento.detalle !== 'negocio'"
+                        >
+                          {{ elemento.texto }}
+                        </li>
+                      }
+                    </ul>
+                  }
+                  @case ('HORARIOS') {
+                    <div class="pieza pieza--horarios">
+                      @if (pieza.titulo) {
+                        <p class="pieza__titulo">{{ pieza.titulo }}</p>
+                      }
+                      <ul>
+                        @for (elemento of pieza.elementos; track $index) {
+                          <li [class.elegido]="$index === 1">{{ elemento.texto }}</li>
+                        }
+                      </ul>
+                    </div>
+                  }
+                  @case ('NAVEGACION') {
+                    <ul class="pieza pieza--navegacion">
+                      @for (elemento of pieza.elementos; track $index) {
+                        <li [class.activa]="$first">{{ elemento.texto }}</li>
+                      }
+                    </ul>
+                  }
+                }
+              }
+            </div>
+          </div>
+          <figcaption class="celular__nombre">{{ pantalla.nombre }}</figcaption>
+        </figure>
+      </li>
+    }
+  </ol>
+</div>
+<p class="boceto__deslizar">{{ textos.deslizar }}</p>

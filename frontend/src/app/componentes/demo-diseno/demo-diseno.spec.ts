@@ -5,12 +5,29 @@ import { provideRouter } from '@angular/router';
 
 import { DEMO_DISENO } from '../../../contenido/demo-diseno';
 import { BocetoPendienteService, CLAVE_BOCETO_PENDIENTE } from '../../nucleo/boceto-pendiente';
+import { BocetoDeDemo } from '../../api/demo-api';
 import { DemoDiseno } from './demo-diseno';
 import { AVISO_IA } from '../../../contenido/legales';
 
-const BOCETO = {
+const BOCETO: BocetoDeDemo = {
   titulo: 'App de pedidos para tu restaurante',
   funcionalidades: ['Menú digital', 'Pedidos a cocina', 'Pago con link', 'Seguimiento', 'Reporte diario'],
+  pantallas: [
+    {
+      nombre: 'Inicio',
+      piezas: [
+        { tipo: 'ENCABEZADO', titulo: 'Sabor Valduparense', elementos: [] },
+        { tipo: 'BOTON', titulo: 'Pedir a domicilio', elementos: [] },
+      ],
+    },
+    {
+      nombre: 'Pedidos',
+      piezas: [
+        { tipo: 'ENCABEZADO', titulo: 'Pedidos de hoy', elementos: [] },
+        { tipo: 'LISTA', titulo: '', elementos: [{ texto: 'Ana · almuerzo', detalle: 'En camino' }] },
+      ],
+    },
+  ],
   imagenBase64: 'aW1hZ2VuLWZha2U=',
   tipoMime: 'image/png',
 };
@@ -86,7 +103,7 @@ describe('DemoDiseno (F10d, HU-42)', () => {
     expect(boton.disabled).toBe(false);
   });
 
-  it('genera el boceto: peticion correcta, estado generando y resultado con imagen segura', async () => {
+  it('genera el boceto: peticion correcta, estado generando y las pantallas dibujadas (ISS-234)', async () => {
     iniciarSesionFake();
     const { fixture, el } = await crear();
     await llenarYGenerar(fixture);
@@ -104,10 +121,23 @@ describe('DemoDiseno (F10d, HU-42)', () => {
 
     expect(el.textContent).toContain(BOCETO.titulo);
     expect(el.querySelectorAll('.demo-funcionalidad')).toHaveLength(5);
+    expect(el.querySelectorAll('app-boceto-de-pantallas figure.celular')).toHaveLength(2);
+    expect(el.textContent).toContain('Pedir a domicilio');
     const imagen = el.querySelector<HTMLImageElement>('.demo-imagen img')!;
     expect(imagen.getAttribute('src')).toBe('data:image/png;base64,aW1hZ2VuLWZha2U=');
     expect(imagen.getAttribute('alt')).toBe(DEMO_DISENO.resultado.altImagen);
     expect(el.querySelector('a[href="/contacto"]')).toBeTruthy();
+  });
+
+  it('sin imagen de referencia muestra solo el boceto (ISS-233)', async () => {
+    iniciarSesionFake();
+    const { fixture, el } = await crear();
+    await llenarYGenerar(fixture);
+    httpMock.expectOne('/api/asistente/demo-diseno').flush({ ...BOCETO, imagenBase64: null, tipoMime: null });
+    await fixture.whenStable();
+
+    expect(el.querySelectorAll('app-boceto-de-pantallas figure.celular')).toHaveLength(2);
+    expect(el.querySelector('.demo-imagen')).toBeNull();
   });
 
   it('la variacion se puede pedir UNA sola vez (HU-42)', async () => {
