@@ -3,6 +3,7 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 
+import { PARAMETRO_VOLVER } from './ruta-de-vuelta';
 import { SesionService } from './sesion';
 
 const PREFIJO_AUTH = '/api/auth/';
@@ -28,11 +29,13 @@ export const tokenInterceptor: HttpInterceptorFn = (req, next) => {
         // El destino depende de la pagina en la que esta parada la
         // persona (router.url), no de la URL del request fallido: un
         // 401 en una pagina publica solo limpia la sesion vencida.
+        // Al volver a ingresar, regresa a esa misma pagina (ISS-241).
         const paginaActual = router.url;
+        const volver = { queryParams: { [PARAMETRO_VOLVER]: paginaActual } };
         if (paginaActual.startsWith('/admin')) {
-          router.navigateByUrl('/admin/login');
+          router.navigateByUrl(router.createUrlTree(['/admin/login'], volver));
         } else if (paginaActual.startsWith('/mi-cuenta')) {
-          router.navigateByUrl('/ingreso');
+          router.navigateByUrl(router.createUrlTree(['/ingreso'], volver));
         }
       }
       return throwError(() => error);

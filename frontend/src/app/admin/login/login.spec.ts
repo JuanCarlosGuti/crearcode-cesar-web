@@ -78,6 +78,40 @@ describe('LoginPage', () => {
     expect(navigateSpy).toHaveBeenCalledWith('/admin');
   });
 
+  // ISS-241: el correo de la respuesta de un cliente, abierto sin sesion.
+  async function ingresarCon(volver: string) {
+    const fixture = TestBed.createComponent(LoginPage);
+    fixture.componentRef.setInput('volver', volver);
+    await fixture.whenStable();
+    const navigateSpy = vi.spyOn(TestBed.inject(Router), 'navigateByUrl');
+    const el = fixture.nativeElement as HTMLElement;
+    escribir(el.querySelector('#correo') as HTMLInputElement, 'admin@crearcode-cesar.local');
+    escribir(el.querySelector('#contrasena') as HTMLInputElement, 'clave-correcta');
+    await fixture.whenStable();
+    (el.querySelector('form') as HTMLFormElement).requestSubmit();
+    await fixture.whenStable();
+    httpMock.expectOne('/api/auth/login').flush({
+      token: 'token-de-prueba',
+      expiraEn: '2026-07-17T18:00:00Z',
+      rol: 'ADMIN',
+      correo: 'admin@crearcode-cesar.local',
+    });
+    await fixture.whenStable();
+    return navigateSpy;
+  }
+
+  it('vuelve a la pagina del panel que le pidio ingresar', async () => {
+    const navigateSpy = await ingresarCon('/admin/proyectos/3');
+
+    expect(navigateSpy).toHaveBeenCalledWith('/admin/proyectos/3');
+  });
+
+  it('una ruta de vuelta fuera del panel se ignora', async () => {
+    const navigateSpy = await ingresarCon('https://otro-sitio.com/admin');
+
+    expect(navigateSpy).toHaveBeenCalledWith('/admin');
+  });
+
   it('con credenciales incorrectas muestra el mensaje generico y no navega', async () => {
     const fixture = TestBed.createComponent(LoginPage);
     await fixture.whenStable();

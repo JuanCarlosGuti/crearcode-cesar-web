@@ -69,3 +69,27 @@ test('la cuenta abierta en una pestaña también lo está en otra, y salir de un
   await expect(enlaceDeIngreso(otraPestana)).toBeVisible();
   await expect(otraPestana.locator('#demo-sector')).toHaveCount(0);
 });
+
+// ISS-241: ingresar devuelve a donde se iba.
+test('una página que pide sesión devuelve a ella después de ingresar', async ({ page, request }) => {
+  const { correo, contrasena } = await clienteVerificado(request);
+
+  // Como el enlace de un correo abierto sin sesión.
+  await page.goto('/mi-cuenta/cotizaciones');
+  await expect(page).toHaveURL(/\/ingreso\?volver=/);
+
+  await ingresar(page, correo, contrasena);
+
+  await expect(page).toHaveURL(/\/mi-cuenta\/cotizaciones$/);
+});
+
+test('«Ya tengo cuenta» en el demo de diseño vuelve al demo listo para usar', async ({ page, request }) => {
+  const { correo, contrasena } = await clienteVerificado(request);
+  await page.goto('/herramientas#demo-diseno');
+
+  await page.getByRole('link', { name: 'Ya tengo cuenta, iniciar sesión' }).click();
+  await ingresar(page, correo, contrasena);
+
+  await expect(page).toHaveURL(/\/herramientas#demo-diseno$/);
+  await expect(page.locator('#demo-sector')).toBeVisible();
+});

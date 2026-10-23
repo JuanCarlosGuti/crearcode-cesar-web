@@ -483,6 +483,13 @@ nadie el día del cambio, una sesión de cliente en `sessionStorage` se
 sigue leyendo. `sesion-e2e.spec.ts` lo prueba con dos pestañas de
 verdad, y falla con el código anterior.
 
+**Ingresar devuelve a donde se iba** (ISS-241): los guards y el
+interceptor mandan a `/ingreso` o `/admin/login` con `?volver=`, que las
+dos páginas reciben como input, y el «Ya tengo cuenta» del demo lleva
+de vuelta al demo. `rutaDeVuelta` (`nucleo/`) solo acepta rutas del
+propio sitio —nada con `//`, barra invertida o espacios— y cada rol a lo
+suyo: el cliente no vuelve a `/admin` ni el admin sale de él.
+
 E2e `cuentas-e2e.spec.ts`: flujo completo con el
 enlace real del correo leído de la API REST de Mailpit + axe (que
 encontró y permitió corregir un contraste AA insuficiente en los

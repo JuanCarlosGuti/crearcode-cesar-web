@@ -11,7 +11,7 @@
       <p>{{ textos.bloqueado.texto }}</p>
       <div class="demo-bloqueado__ctas">
         <a routerLink="/registro" class="boton boton-primario">{{ textos.bloqueado.ctaRegistro }}</a>
-        <a routerLink="/ingreso" class="demo-enlace">{{ textos.bloqueado.ctaIngreso }}</a>
+        <a routerLink="/ingreso" [queryParams]="volverAlDemo" class="demo-enlace">{{ textos.bloqueado.ctaIngreso }}</a>
       </div>
     </div>
   } @else {

@@ -1,11 +1,12 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, input, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormField, required, schema, form } from '@angular/forms/signals';
 
 import { ConservarLoEscrito } from '../../componentes/conservar-lo-escrito/conservar-lo-escrito';
 import { AuthApi } from '../../api/auth-api';
 import { BocetoPendienteService } from '../../nucleo/boceto-pendiente';
+import { rutaDeVuelta } from '../../nucleo/ruta-de-vuelta';
 import { RolDeSesion, SesionService } from '../../nucleo/sesion';
 import {
   CUENTA,
@@ -36,6 +37,9 @@ export class IngresoPage {
   private readonly sesion = inject(SesionService);
   private readonly router = inject(Router);
   private readonly bocetoPendiente = inject(BocetoPendienteService);
+
+  /** `?volver=`: la página que pidió ingresar (ISS-241). */
+  readonly volver = input<string>();
 
   protected readonly textos = CUENTA.ingreso;
   protected readonly enviando = signal(false);
@@ -82,11 +86,16 @@ export class IngresoPage {
   }
 
   /**
-   * Un cliente que dejó escrito su boceto en la Home y se fue a crear
-   * la cuenta vuelve a él, no a /mi-cuenta (ISS-226). El ingreso solo
-   * pregunta: lo consume el demo al generarlo.
+   * Primero, la página que pidió ingresar, si es del sitio y del rol
+   * (ISS-241). Después, un cliente que dejó escrito su boceto en la Home
+   * y se fue a crear la cuenta vuelve a él, no a /mi-cuenta (ISS-226).
+   * El ingreso solo pregunta: el boceto lo consume el demo al generarlo.
    */
   private destinoTrasIngresar(rol: RolDeSesion): string {
+    const volver = rutaDeVuelta(this.volver(), rol);
+    if (volver !== null) {
+      return volver;
+    }
     if (rol === 'ADMIN') {
       return '/admin';
     }

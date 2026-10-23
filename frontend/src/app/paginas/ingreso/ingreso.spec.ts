@@ -12,8 +12,11 @@ function escribir(elemento: HTMLInputElement, valor: string): void {
   elemento.dispatchEvent(new Event('input'));
 }
 
-async function crearPaginaConCredenciales(correo: string, contrasena: string) {
+async function crearPaginaConCredenciales(correo: string, contrasena: string, volver?: string) {
   const fixture = TestBed.createComponent(IngresoPage);
+  if (volver !== undefined) {
+    fixture.componentRef.setInput('volver', volver);
+  }
   await fixture.whenStable();
   const el = fixture.nativeElement as HTMLElement;
   escribir(el.querySelector('#correo') as HTMLInputElement, correo);
@@ -119,6 +122,71 @@ describe('IngresoPage', () => {
     await fixture.whenStable();
 
     expect(navigateSpy).toHaveBeenCalledWith('/admin');
+  });
+
+  /** Responde el login con la sesion del rol pedido. */
+  async function responderLogin(fixture: { whenStable(): Promise<unknown> }, rol: 'CLIENTE' | 'ADMIN') {
+    httpMock.expectOne('/api/auth/login').flush({
+      token: `token-${rol}`,
+      expiraEn: '2026-07-29T18:00:00Z',
+      rol,
+      correo: rol === 'ADMIN' ? 'admin@crearcode-cesar.local' : 'cliente@correo-de-prueba.com',
+    });
+    await fixture.whenStable();
+  }
+
+  // ISS-241: el enlace de un correo o una pagina que pidio sesion.
+  it('un cliente vuelve a la pagina que le pidio ingresar', async () => {
+    const navigateSpy = vi.spyOn(TestBed.inject(Router), 'navigateByUrl');
+    const { fixture } = await crearPaginaConCredenciales(
+      'cliente@correo-de-prueba.com',
+      'contrasena-larga',
+      '/mi-cuenta/proyectos/7',
+    );
+
+    await responderLogin(fixture, 'CLIENTE');
+
+    expect(navigateSpy).toHaveBeenCalledWith('/mi-cuenta/proyectos/7');
+  });
+
+  it('volver a donde se iba pesa mas que el boceto pendiente', async () => {
+    TestBed.inject(BocetoPendienteService).guardar({ sector: 'Restaurante', queHace: 'Domicilios', queNecesita: 'Pedidos' });
+    const navigateSpy = vi.spyOn(TestBed.inject(Router), 'navigateByUrl');
+    const { fixture } = await crearPaginaConCredenciales(
+      'cliente@correo-de-prueba.com',
+      'contrasena-larga',
+      '/mi-cuenta/cotizaciones',
+    );
+
+    await responderLogin(fixture, 'CLIENTE');
+
+    expect(navigateSpy).toHaveBeenCalledWith('/mi-cuenta/cotizaciones');
+  });
+
+  it('una ruta de vuelta hacia otro sitio se ignora', async () => {
+    const navigateSpy = vi.spyOn(TestBed.inject(Router), 'navigateByUrl');
+    const { fixture } = await crearPaginaConCredenciales(
+      'cliente@correo-de-prueba.com',
+      'contrasena-larga',
+      '//otro-sitio.com/ingreso',
+    );
+
+    await responderLogin(fixture, 'CLIENTE');
+
+    expect(navigateSpy).toHaveBeenCalledWith('/mi-cuenta');
+  });
+
+  it('un admin que entra por aqui vuelve a su pagina del panel', async () => {
+    const navigateSpy = vi.spyOn(TestBed.inject(Router), 'navigateByUrl');
+    const { fixture } = await crearPaginaConCredenciales(
+      'admin@crearcode-cesar.local',
+      'clave-correcta',
+      '/admin/proyectos/3',
+    );
+
+    await responderLogin(fixture, 'ADMIN');
+
+    expect(navigateSpy).toHaveBeenCalledWith('/admin/proyectos/3');
   });
 
   it('un 401 muestra el mensaje generico sin navegar', async () => {
