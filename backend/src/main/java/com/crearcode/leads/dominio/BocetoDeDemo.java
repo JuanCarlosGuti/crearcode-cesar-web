@@ -1,29 +1,21 @@
 package com.crearcode.leads.dominio;
 
-import java.util.List;
+import java.util.Optional;
 
 /**
- * El resultado del demo de diseño (F10d, HU-42): título de la
- * solución, funcionalidades sugeridas y la imagen del boceto — que se
- * muestra SOLO como imagen, nunca HTML ejecutable.
+ * El resultado del demo de diseño (HU-42): el boceto de la solución
+ * —título, funcionalidades y pantallas, que el sitio dibuja (ADR-16)— y,
+ * si está encendida, una imagen de referencia que se muestra SOLO como
+ * imagen, nunca HTML. Desde ISS-233 la imagen es complementaria: si su
+ * proveedor falla, el boceto sale igual y sin ella.
  */
-public record BocetoDeDemo(String titulo, List<String> funcionalidades, ImagenGenerada imagen) {
-
-	public static final int MINIMO_FUNCIONALIDADES = 3;
-	public static final int MAXIMO_FUNCIONALIDADES = 6;
+public record BocetoDeDemo(BocetoDeSolucion solucion, Optional<ImagenGenerada> imagen) {
 
 	public BocetoDeDemo {
-		titulo = titulo == null ? "" : titulo.trim();
-		funcionalidades = List.copyOf(funcionalidades);
-		if (titulo.isEmpty()) {
-			throw new SolicitudDeDemoInvalidaException("El boceto requiere un título");
+		if (solucion == null) {
+			throw new IllegalArgumentException("El demo necesita su boceto");
 		}
-		if (funcionalidades.size() < MINIMO_FUNCIONALIDADES
-				|| funcionalidades.size() > MAXIMO_FUNCIONALIDADES) {
-			throw new SolicitudDeDemoInvalidaException(
-					"El boceto requiere entre %d y %d funcionalidades"
-							.formatted(MINIMO_FUNCIONALIDADES, MAXIMO_FUNCIONALIDADES));
-		}
+		imagen = imagen == null ? Optional.empty() : imagen;
 	}
 
 }

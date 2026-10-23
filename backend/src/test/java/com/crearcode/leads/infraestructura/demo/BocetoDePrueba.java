@@ -1,9 +1,9 @@
 package com.crearcode.leads.infraestructura.demo;
 
 /** Un boceto válido en el JSON del esquema, para las pruebas de los adaptadores. */
-final class BocetoDePrueba {
+public final class BocetoDePrueba {
 
-	static final String JSON = """
+	public static final String JSON = """
 			{
 			  "titulo": "App de pedidos para tu restaurante",
 			  "funcionalidades": ["Menú del día", "Pedidos por WhatsApp", "Estado del domicilio",

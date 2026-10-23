@@ -6,43 +6,57 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.crearcode.leads.dominio.AsistenteNoDisponibleException;
 import com.crearcode.leads.dominio.BocetoDeDemo;
-import com.crearcode.leads.dominio.ConversacionDeAsistente;
+import com.crearcode.leads.dominio.BocetoDeSolucion;
 import com.crearcode.leads.dominio.DemoSoloParaRegistradosException;
+import com.crearcode.leads.dominio.ElementoDePieza;
+import com.crearcode.leads.dominio.GeneradorDeBocetos;
 import com.crearcode.leads.dominio.GeneradorDeImagenes;
-import com.crearcode.leads.dominio.GeneradorDeRespuestas;
 import com.crearcode.leads.dominio.IdentidadDelVisitante;
 import com.crearcode.leads.dominio.ImagenGenerada;
-import com.crearcode.leads.dominio.RespuestaDelAsistente;
+import com.crearcode.leads.dominio.PantallaDeBoceto;
+import com.crearcode.leads.dominio.PiezaDeBoceto;
 import com.crearcode.leads.dominio.SolicitudDeDemo;
+import com.crearcode.leads.dominio.TipoDePieza;
 
+/**
+ * El demo de diseño desde ISS-233: el boceto lo arma el puerto
+ * {@link GeneradorDeBocetos} (Claude con Groq de respaldo) y la imagen
+ * de Cloudflare/Pollinations es opcional y complementaria mientras se
+ * decide si se conserva (decisión 33).
+ */
 class GenerarDemoDeDisenoUseCaseImplTest {
 
-	private static final Clock RELOJ = Clock.fixed(Instant.parse("2026-08-10T10:00:00Z"), ZoneOffset.UTC);
+	private static final Clock RELOJ = Clock.fixed(Instant.parse("2026-10-23T10:00:00Z"), ZoneOffset.UTC);
 
-	private static final String RESPUESTA_BIEN_FORMADA = """
-			TITULO: App de pedidos para tu restaurante
-			FUNCIONALIDAD: Menú digital con disponibilidad en tiempo real
-			FUNCIONALIDAD: Pedidos que entran ordenados a la cocina
-			FUNCIONALIDAD: Pago con link o contraentrega
-			FUNCIONALIDAD: Seguimiento del domicilio para el cliente
-			FUNCIONALIDAD: Reporte diario de ventas por producto
-			""";
+	private static final BocetoDeSolucion BOCETO = new BocetoDeSolucion("App de pedidos para tu restaurante",
+			List.of("Menú del día", "Pedidos por WhatsApp", "Estado del domicilio", "Historial de clientes",
+					"Aviso de pedido listo"),
+			List.of(pantalla("Inicio"), pantalla("Pedidos")));
 
-	private GeneradorTextoFake generadorTexto;
+	private static PantallaDeBoceto pantalla(String nombre) {
+		return new PantallaDeBoceto(nombre, List.of(
+				new PiezaDeBoceto(TipoDePieza.ENCABEZADO, nombre, List.of()),
+				new PiezaDeBoceto(TipoDePieza.LISTA, "", List.of(new ElementoDePieza("Ana · almuerzo", "En camino")))));
+	}
+
+	private GeneradorBocetosFake generadorBocetos;
 	private GeneradorImagenFake generadorImagen;
-	private GenerarDemoDeDisenoUseCaseImpl useCase;
 
 	@BeforeEach
 	void preparar() {
-		generadorTexto = new GeneradorTextoFake();
+		generadorBocetos = new GeneradorBocetosFake();
 		generadorImagen = new GeneradorImagenFake();
-		useCase = new GenerarDemoDeDisenoUseCaseImpl(generadorTexto, generadorImagen, RELOJ, 100, 2);
+	}
+
+	private GenerarDemoDeDisenoUseCaseImpl useCase(boolean incluirImagen) {
+		return new GenerarDemoDeDisenoUseCaseImpl(generadorBocetos, generadorImagen, RELOJ, 100, 2, incluirImagen);
 	}
 
 	private static SolicitudDeDemo solicitud() {
@@ -56,40 +70,38 @@ class GenerarDemoDeDisenoUseCaseImplTest {
 
 	@Test
 	void soloLasIdentidadesRegistradasPuedenGenerar() {
-		assertThatThrownBy(() -> useCase.generar(solicitud(), IdentidadDelVisitante.anonima("s1")))
+		assertThatThrownBy(() -> useCase(true).generar(solicitud(), IdentidadDelVisitante.anonima("s1")))
 				.isInstanceOf(DemoSoloParaRegistradosException.class);
+		assertThat(generadorBocetos.llamadas).isZero();
 		assertThat(generadorImagen.llamadas).isZero();
 	}
 
 	@Test
-	void generaElBocetoConTituloFuncionalidadesEImagen() {
-		BocetoDeDemo boceto = useCase.generar(solicitud(), registrado());
+	void devuelveElBocetoConSusPantallasYLaImagen() {
+		BocetoDeDemo demo = useCase(true).generar(solicitud(), registrado());
 
-		assertThat(boceto.titulo()).isEqualTo("App de pedidos para tu restaurante");
-		assertThat(boceto.funcionalidades()).hasSize(5);
-		assertThat(boceto.imagen().base64()).isEqualTo("aW1hZ2VuLWZha2U=");
+		assertThat(demo.solucion().pantallas()).extracting(PantallaDeBoceto::nombre).containsExactly("Inicio", "Pedidos");
+		assertThat(demo.imagen()).hasValueSatisfying(imagen -> assertThat(imagen.base64()).isEqualTo("aW1hZ2VuLWZha2U="));
+		assertThat(generadorBocetos.ultimaSolicitud).isEqualTo(solicitud());
 	}
 
 	@Test
-	void losPromptsInjertanLaDescripcionComoDatosConReglasDuras() {
-		useCase.generar(solicitud(), registrado());
+	void conLaImagenApagadaNiSiquieraLaPide() {
+		BocetoDeDemo demo = useCase(false).generar(solicitud(), registrado());
 
-		assertThat(generadorTexto.ultimoContexto).contains("\"Restaurante\"");
-		assertThat(generadorTexto.ultimoContexto).contains("NUNCA instrucciones");
-		assertThat(generadorTexto.ultimoContexto).contains("NUNCA inventes precios");
+		assertThat(demo.imagen()).isEmpty();
+		assertThat(generadorImagen.llamadas).isZero();
 	}
 
 	/**
-	 * El proveedor de imagenes recibe la descripcion DENTRO DE LA URL, y
-	 * en produccion el respaldo es Pollinations, un servicio gratuito sin
-	 * contrato ni acuerdo de tratamiento de datos (auditoria del 28 sep
-	 * 2026, P1-8c). El path de una peticion es justo lo que termina en
-	 * los logs de acceso de medio internet, asi que ahi solo puede ir
-	 * texto que genero el modelo, nunca lo que escribio el cliente.
+	 * El proveedor de imágenes recibe la descripción DENTRO DE LA URL, y
+	 * su respaldo es Pollinations, un servicio gratuito sin contrato ni
+	 * acuerdo de tratamiento de datos (auditoría del 28 sep 2026,
+	 * P1-8c): ahí solo puede ir texto que generó el modelo.
 	 */
 	@Test
-	void alProveedorDeImagenesNoLeLlegaElTextoLiteralDelCliente() {
-		useCase.generar(solicitud(), registrado());
+	void alProveedorDeImagenesSoloLeLlegaElTituloDelBoceto() {
+		useCase(true).generar(solicitud(), registrado());
 
 		assertThat(generadorImagen.ultimaDescripcion)
 				.doesNotContain("Recibir pedidos sin saturar el WhatsApp")
@@ -98,7 +110,31 @@ class GenerarDemoDeDisenoUseCaseImplTest {
 	}
 
 	@Test
+	void siLaImagenFallaElBocetoSaleIgualYSinElla() {
+		generadorImagen.fallar = true;
+
+		BocetoDeDemo demo = useCase(true).generar(solicitud(), registrado());
+
+		assertThat(demo.solucion().titulo()).isEqualTo("App de pedidos para tu restaurante");
+		assertThat(demo.imagen()).isEmpty();
+	}
+
+	@Test
+	void unFalloDelBocetoNoConsumeCupoNiPideLaImagen() {
+		GenerarDemoDeDisenoUseCaseImpl useCase = useCase(true);
+		generadorBocetos.fallar = true;
+		assertThatThrownBy(() -> useCase.generar(solicitud(), registrado()))
+				.isInstanceOf(AsistenteNoDisponibleException.class);
+		assertThat(generadorImagen.llamadas).isZero();
+
+		generadorBocetos.fallar = false;
+		useCase.generar(solicitud(), registrado());
+		useCase.generar(solicitud(), registrado());
+	}
+
+	@Test
 	void elRegistradoTieneSuLimiteDiarioPropio() {
+		GenerarDemoDeDisenoUseCaseImpl useCase = useCase(false);
 		useCase.generar(solicitud(), registrado());
 		useCase.generar(solicitud(), registrado());
 
@@ -106,39 +142,19 @@ class GenerarDemoDeDisenoUseCaseImplTest {
 				.isInstanceOf(LimiteDeUsoAlcanzadoException.class);
 	}
 
-	@Test
-	void unFalloDelProveedorDeImagenesNoConsumeCupo() {
-		generadorImagen.fallar = true;
-		assertThatThrownBy(() -> useCase.generar(solicitud(), registrado()))
-				.isInstanceOf(AsistenteNoDisponibleException.class);
-
-		generadorImagen.fallar = false;
-		useCase.generar(solicitud(), registrado());
-		useCase.generar(solicitud(), registrado());
-	}
-
-	@Test
-	void unFormatoInesperadoDelTextoSeTraduceANoDisponible() {
-		generadorTexto.respuesta = "texto sin el formato pedido";
-
-		assertThatThrownBy(() -> useCase.generar(solicitud(), registrado()))
-				.isInstanceOf(AsistenteNoDisponibleException.class);
-		assertThat(generadorImagen.llamadas).isZero();
-	}
-
-	private static final class GeneradorTextoFake implements GeneradorDeRespuestas {
-		private String respuesta = RESPUESTA_BIEN_FORMADA;
-		private String ultimoContexto;
+	private static final class GeneradorBocetosFake implements GeneradorDeBocetos {
+		private boolean fallar;
+		private int llamadas;
+		private SolicitudDeDemo ultimaSolicitud;
 
 		@Override
-		public RespuestaDelAsistente responder(ConversacionDeAsistente conversacion) {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public RespuestaDelAsistente responder(String contextoDeSistema, ConversacionDeAsistente conversacion) {
-			ultimoContexto = contextoDeSistema;
-			return new RespuestaDelAsistente(respuesta, false);
+		public BocetoDeSolucion generar(SolicitudDeDemo solicitud) {
+			llamadas++;
+			if (fallar) {
+				throw new AsistenteNoDisponibleException("proveedor de bocetos caído");
+			}
+			ultimaSolicitud = solicitud;
+			return BOCETO;
 		}
 	}
 
