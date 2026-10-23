@@ -72,7 +72,8 @@ const BOCETO = JSON.stringify({
         pieza('ENCABEZADO', 'Pedidos de hoy'),
         pieza('INDICADORES', '', [['Pedidos de hoy', '18', '📦'], ['En camino', '4', '🛵']]),
         pieza('LISTA', '', [
-          ['Ana · almuerzo ejecutivo', 'En camino', '🛵'],
+          // Un detalle largo, como los que escribe Claude: no puede dejar al texto sin espacio.
+          ['Ana · almuerzo ejecutivo', 'Hoy 12:30 p. m. · En camino a la Calle 16', '🛵'],
           ['Luis · bandeja', 'En cocina', '🔥'],
           ['Marta · desayuno', 'Entregado', '✅'],
         ]),

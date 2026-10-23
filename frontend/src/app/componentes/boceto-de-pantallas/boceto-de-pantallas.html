@@ -74,10 +74,12 @@
                             <span class="fila__inicial dibujo" aria-hidden="true">{{
                               elemento.icono || inicial(elemento.texto)
                             }}</span>
-                            <span class="fila__texto">{{ elemento.texto }}</span>
-                            @if (elemento.detalle) {
-                              <span class="fila__detalle">{{ elemento.detalle }}</span>
-                            }
+                            <span class="fila__cuerpo">
+                              <span class="fila__texto">{{ elemento.texto }}</span>
+                              @if (elemento.detalle) {
+                                <span class="fila__detalle">{{ elemento.detalle }}</span>
+                              }
+                            </span>
                           </li>
                         }
                       </ul>

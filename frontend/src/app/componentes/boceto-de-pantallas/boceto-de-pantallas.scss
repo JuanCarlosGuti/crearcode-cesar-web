@@ -111,6 +111,9 @@ $borde: color-mix(in srgb, var(--b-tinta, #12201f) 14%, transparent);
   padding: 0.6rem 0.75rem 0.75rem;
   font-size: 0.78rem;
   line-height: 1.35;
+  // Separación silábica en español («Blanquea-miento») antes que una
+  // letra suelta en la línea siguiente; anywhere queda de último recurso.
+  hyphens: auto;
   overflow-wrap: anywhere;
 }
 
@@ -251,9 +254,12 @@ ul.pieza {
   gap: 0.3rem;
 }
 
+// El detalle va debajo del texto y no al lado: al lado, uno largo
+// («Sábado 14 · 10:00 a. m. · Confirmado») se quedaba con todo el ancho y
+// el texto se partía letra por letra (un celular de 1.468 px).
 .fila {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
   gap: 0.45rem;
   padding: 0.35rem 0.45rem;
@@ -270,6 +276,14 @@ ul.pieza {
   background-color: $tinte;
   font-weight: 700;
   font-size: 0.8rem;
+}
+
+.fila__cuerpo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  min-width: 0;
 }
 
 .fila__detalle {

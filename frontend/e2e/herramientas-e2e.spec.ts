@@ -116,6 +116,13 @@ test('un cliente registrado genera su boceto: pantallas dibujadas y funcionalida
   await expect(page.locator('app-identidad-de-marca')).toContainText('Sabor Valduparense');
   await expect(page.locator('app-identidad-de-marca')).toContainText('Cálida: naranja y terracota');
   await expect(page.locator('.tarjeta__foto').first()).toHaveText('🍲');
+  // Ningún celular se estira: un detalle largo en una lista le quitaba
+  // todo el ancho al texto, que se partía letra por letra (1.468 px).
+  for (const altura of await page.locator('.celular__marco').evaluateAll((marcos) =>
+    marcos.map((marco) => marco.getBoundingClientRect().height),
+  )) {
+    expect(altura).toBeLessThan(720);
+  }
   // Las pantallas del boceto tienen colores propios: axe revisa su contraste.
   const axe = await new AxeBuilder({ page }).include('app-demo-diseno').analyze();
   expect(axe.violations, JSON.stringify(axe.violations, null, 2)).toEqual([]);
