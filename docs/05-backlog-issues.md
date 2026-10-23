@@ -949,9 +949,20 @@ invitando a registrarse. Una rama y un PR, un commit por issue.
 
 | ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
 |---|---|---|---|---|---|---|
-| ISS-240 | La sesión del cliente pasa a `localStorage`: la comparten todas las pestañas, ingresar o salir en una se refleja en las demás sin recargar (evento `storage`), y una que llega vencida no se abre. La del admin sigue en `sessionStorage`, y cerrarla no saca al cliente de otra pestaña. Las sesiones de cliente guardadas en `sessionStorage` antes del cambio se siguen leyendo. Con el almacenamiento bloqueado, la sesión queda en memoria en vez de romper el ingreso | HU-33 | El e2e falla con el código anterior y pasa con el nuevo | M | — | Unit (`sesion.spec`: dónde vive cada rol, pestaña nueva, salir y entrar desde otra, admin intacto, vencida, cierre programado, almacenamiento bloqueado), E2E (`sesion-e2e.spec.ts`: dos pestañas) |
-| ISS-241 | Ingresar devuelve a donde se iba: los guards y el interceptor mandan a `/ingreso` (o `/admin/login`) con `?volver=`, el «Ya tengo cuenta» del demo lleva al demo, y el ingreso vuelve ahí. Solo rutas del propio sitio (nada que empiece por `//` o traiga esquema), y cada rol solo a lo suyo: el cliente no vuelve a `/admin` ni el admin fuera de él | HU-33 | Un enlace armado para mandar a otro sitio después de ingresar cae en el destino por defecto | M | ISS-240 | Unit (validación de la ruta), Component (ingreso, login del admin, guards, interceptor, demo), E2E (página protegida → ingreso → de vuelta) |
-| ISS-242 | Con sesión, el sitio deja de invitar a crear cuenta: la franja «Con cuenta gratis…» de `/herramientas` y la sección de la cuenta de la Home se ocultan tras hidratar. El prerender no cambia: lo que lee Google y lo que ve un visitante sigue igual | HU-33 | axe sin violaciones; Lighthouse de Home y `/herramientas` sin bajar | S | ISS-240 | Component (Home y herramientas, con y sin sesión), E2E |
+| ISS-240 ✅ | La sesión del cliente pasa a `localStorage`: la comparten todas las pestañas, ingresar o salir en una se refleja en las demás sin recargar (evento `storage`), y una que llega vencida no se abre. La del admin sigue en `sessionStorage`, y cerrarla no saca al cliente de otra pestaña. Las sesiones de cliente guardadas en `sessionStorage` antes del cambio se siguen leyendo. Con el almacenamiento bloqueado, la sesión queda en memoria en vez de romper el ingreso | HU-33 | El e2e falla con el código anterior y pasa con el nuevo | M | — | Unit (`sesion.spec`: dónde vive cada rol, pestaña nueva, salir y entrar desde otra, admin intacto, vencida, cierre programado, almacenamiento bloqueado), E2E (`sesion-e2e.spec.ts`: dos pestañas) |
+| ISS-241 ✅ | Ingresar devuelve a donde se iba: los guards y el interceptor mandan a `/ingreso` (o `/admin/login`) con `?volver=`, el «Ya tengo cuenta» del demo lleva al demo, y el ingreso vuelve ahí. Solo rutas del propio sitio (nada que empiece por `//` o traiga esquema), y cada rol solo a lo suyo: el cliente no vuelve a `/admin` ni el admin fuera de él | HU-33 | Un enlace armado para mandar a otro sitio después de ingresar cae en el destino por defecto | M | ISS-240 | Unit (validación de la ruta), Component (ingreso, login del admin, guards, interceptor, demo), E2E (página protegida → ingreso → de vuelta) |
+| ISS-242 ✅ | Con sesión, el sitio deja de invitar a crear cuenta: la franja «Con cuenta gratis…» de `/herramientas` y la sección de la cuenta de la Home se ocultan tras hidratar. El prerender no cambia: lo que lee Google y lo que ve un visitante sigue igual | HU-33 | axe sin violaciones; Lighthouse de Home y `/herramientas` sin bajar | S | ISS-240 | Component (Home y herramientas, con y sin sesión), E2E |
+
+**ISS-240 a ISS-242 en producción el 23 oct 2026** (PR #11). Antes de
+fusionar: 427 specs, lint limpio y 53 e2e con axe en local, y las cuatro
+suites en verde en CI. En producción, con un navegador sin sesión: el
+«Ya tengo cuenta» del demo lleva `?volver=` hacia el demo,
+`/mi-cuenta/cotizaciones` manda a `/ingreso?volver=/mi-cuenta/cotizaciones`,
+la franja de invitación sigue a la vista de un visitante, sin errores de
+consola, y Lighthouse 100/100/100/100 en Home, servicio, `/herramientas`
+y Contacto. Lo que pide una cuenta —dos pestañas, salir en una— lo
+prueban los e2e; en producción queda para que el usuario lo vea con la
+cuenta de demostración.
 
 ## Pulido de diseño antes de la auditoría (oct 2026) — ISS-243 a ISS-246
 
