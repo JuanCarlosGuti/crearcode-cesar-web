@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 
 import com.crearcode.leads.dominio.AsistenteNoDisponibleException;
 import com.crearcode.leads.dominio.BocetoDeSolucion;
+import com.crearcode.leads.dominio.ElementoDePieza;
+import com.crearcode.leads.dominio.PiezaDeBoceto;
 import com.crearcode.leads.dominio.TipoDePieza;
 
 /**
@@ -44,6 +46,40 @@ class LectorDeBocetoTest {
 				.isInstanceOf(AsistenteNoDisponibleException.class);
 		assertThatThrownBy(() -> LectorDeBoceto.leer("No puedo ayudarte con eso."))
 				.isInstanceOf(AsistenteNoDisponibleException.class);
+	}
+
+	/**
+	 * En la comparación del 23 oct 2026, Opus escribió un mensaje de chat
+	 * de más de 60 caracteres y se perdió el boceto entero. Lo que se pasa
+	 * de largo se ajusta aquí, antes del dominio, cortando en una palabra
+	 * completa.
+	 */
+	@Test
+	void unTextoQueSePasaDeLargoSeCortaEnUnaPalabraCompletaYElBocetoSeSalva() {
+		String mensajeLargo = "Hola, ¿me confirmas si el pedido de cemento llega antes del mediodía a la obra?";
+		String conMensajeLargo = BocetoDePrueba.JSON.replace("\"Ana · almuerzo ejecutivo\"", "\"" + mensajeLargo + "\"");
+
+		BocetoDeSolucion boceto = LectorDeBoceto.leer(conMensajeLargo);
+
+		String ajustado = boceto.pantallas().get(1).piezas().getFirst().elementos().getFirst().texto();
+		assertThat(ajustado).hasSizeLessThanOrEqualTo(ElementoDePieza.MAXIMO_TEXTO).endsWith("…");
+		assertThat(mensajeLargo).startsWith(ajustado.substring(0, ajustado.length() - 1));
+		assertThat(ajustado.substring(0, ajustado.length() - 1)).doesNotEndWith(" ");
+		assertThat(mensajeLargo.charAt(ajustado.length() - 1)).isEqualTo(' ');
+	}
+
+	@Test
+	void loQueSobraDeUnaListaSeDescartaSinPerderElBoceto() {
+		String sieteCategorias = BocetoDePrueba.JSON.replace(
+				"{\"texto\": \"Almuerzos\", \"detalle\": \"\"}, {\"texto\": \"Desayunos\", \"detalle\": \"\"}",
+				"{\"texto\": \"A\", \"detalle\": \"\"}, {\"texto\": \"B\", \"detalle\": \"\"}, "
+						+ "{\"texto\": \"C\", \"detalle\": \"\"}, {\"texto\": \"D\", \"detalle\": \"\"}, "
+						+ "{\"texto\": \"E\", \"detalle\": \"\"}, {\"texto\": \"F\", \"detalle\": \"\"}, "
+						+ "{\"texto\": \"G\", \"detalle\": \"\"}");
+
+		BocetoDeSolucion boceto = LectorDeBoceto.leer(sieteCategorias);
+
+		assertThat(boceto.pantallas().getFirst().piezas().get(1).elementos()).hasSize(PiezaDeBoceto.MAXIMO_ELEMENTOS);
 	}
 
 	@Test

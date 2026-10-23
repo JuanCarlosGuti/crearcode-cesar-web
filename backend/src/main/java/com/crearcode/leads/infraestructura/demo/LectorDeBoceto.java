@@ -22,6 +22,14 @@ import tools.jackson.databind.json.JsonMapper;
  * garantiza en un enum— y porque cualquier cosa ilegible o fuera de las
  * reglas es una falla del proveedor: pasa al respaldo y el visitante
  * nunca la ve como un error suyo.
+ *
+ * <p>
+ * Lo que solo se pasa de largo se ajusta aquí en vez de perder el boceto
+ * entero (comparación del 23 oct 2026: Opus escribió un mensaje de chat
+ * de más de 60 caracteres y se perdió todo). Un texto largo se corta en
+ * una palabra completa con «…» y lo que sobra de una lista se descarta.
+ * Lo que rompe una regla de fondo —una cifra de dinero, un tipo fuera
+ * del catálogo, algo que falta— sigue siendo falla del proveedor.
  */
 final class LectorDeBoceto {
 
@@ -33,8 +41,8 @@ final class LectorDeBoceto {
 	static BocetoDeSolucion leer(String texto) {
 		try {
 			JsonNode raiz = JSON.readTree(texto);
-			return new BocetoDeSolucion(cadena(raiz, "titulo"), cadenas(arreglo(raiz, "funcionalidades")),
-					pantallas(arreglo(raiz, "pantallas")));
+			return new BocetoDeSolucion(ajustado(cadena(raiz, "titulo"), BocetoDeSolucion.MAXIMO_TITULO),
+					cadenas(arreglo(raiz, "funcionalidades")), pantallas(arreglo(raiz, "pantallas")));
 		} catch (JacksonException | BocetoInvalidoException | IllegalArgumentException excepcion) {
 			throw new AsistenteNoDisponibleException("El proveedor devolvió un boceto que no se puede usar", excepcion);
 		}
@@ -43,11 +51,18 @@ final class LectorDeBoceto {
 	private static List<PantallaDeBoceto> pantallas(JsonNode arreglo) {
 		List<PantallaDeBoceto> pantallas = new ArrayList<>();
 		for (JsonNode pantalla : arreglo) {
+			if (pantallas.size() == BocetoDeSolucion.MAXIMO_PANTALLAS) {
+				break;
+			}
 			List<PiezaDeBoceto> piezas = new ArrayList<>();
 			for (JsonNode pieza : arreglo(pantalla, "piezas")) {
+				if (piezas.size() == PantallaDeBoceto.MAXIMO_PIEZAS) {
+					break;
+				}
 				piezas.add(pieza(pieza));
 			}
-			pantallas.add(new PantallaDeBoceto(cadena(pantalla, "nombre"), piezas));
+			pantallas.add(new PantallaDeBoceto(ajustado(cadena(pantalla, "nombre"), PantallaDeBoceto.MAXIMO_NOMBRE),
+					piezas));
 		}
 		return pantallas;
 	}
@@ -58,9 +73,13 @@ final class LectorDeBoceto {
 				.orElseThrow(() -> new IllegalArgumentException("Tipo de pieza fuera del catálogo: " + nombreDelTipo));
 		List<ElementoDePieza> elementos = new ArrayList<>();
 		for (JsonNode elemento : arreglo(pieza, "elementos")) {
-			elementos.add(new ElementoDePieza(cadena(elemento, "texto"), cadena(elemento, "detalle")));
+			if (elementos.size() == PiezaDeBoceto.MAXIMO_ELEMENTOS) {
+				break;
+			}
+			elementos.add(new ElementoDePieza(ajustado(cadena(elemento, "texto"), ElementoDePieza.MAXIMO_TEXTO),
+					ajustado(cadena(elemento, "detalle"), ElementoDePieza.MAXIMO_DETALLE)));
 		}
-		return new PiezaDeBoceto(tipo, cadena(pieza, "titulo"), elementos);
+		return new PiezaDeBoceto(tipo, ajustado(cadena(pieza, "titulo"), PiezaDeBoceto.MAXIMO_TITULO), elementos);
 	}
 
 	private static List<String> cadenas(JsonNode arreglo) {
@@ -69,9 +88,22 @@ final class LectorDeBoceto {
 			if (!valor.isString()) {
 				throw new IllegalArgumentException("Se esperaba un texto");
 			}
-			cadenas.add(valor.stringValue());
+			if (cadenas.size() < BocetoDeSolucion.MAXIMO_FUNCIONALIDADES) {
+				cadenas.add(ajustado(valor.stringValue(), BocetoDeSolucion.MAXIMO_FUNCIONALIDAD));
+			}
 		}
 		return cadenas;
+	}
+
+	/** Corta en la última palabra completa que cabe, con «…» al final. */
+	static String ajustado(String texto, int maximo) {
+		String limpio = texto.strip();
+		if (limpio.length() <= maximo) {
+			return limpio;
+		}
+		int corte = limpio.lastIndexOf(' ', maximo - 1);
+		String base = corte > 0 ? limpio.substring(0, corte) : limpio.substring(0, maximo - 1);
+		return base.stripTrailing() + "…";
 	}
 
 	private static String cadena(JsonNode nodo, String campo) {
