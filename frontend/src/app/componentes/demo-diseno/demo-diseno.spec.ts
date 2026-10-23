@@ -10,6 +10,12 @@ import { DemoDiseno } from './demo-diseno';
 import { AVISO_IA } from '../../../contenido/legales';
 
 const BOCETO: BocetoDeDemo = {
+  identidad: {
+    nombre: 'Sabor Valduparense',
+    eslogan: 'Comida casera hasta tu puerta',
+    paleta: 'CALIDA',
+    logo: { forma: 'CIRCULO', simbolo: '🍲', letra: 'SENCILLA' },
+  },
   titulo: 'App de pedidos para tu restaurante',
   funcionalidades: ['Menú digital', 'Pedidos a cocina', 'Pago con link', 'Seguimiento', 'Reporte diario'],
   pantallas: [
@@ -24,7 +30,7 @@ const BOCETO: BocetoDeDemo = {
       nombre: 'Pedidos',
       piezas: [
         { tipo: 'ENCABEZADO', titulo: 'Pedidos de hoy', elementos: [] },
-        { tipo: 'LISTA', titulo: '', elementos: [{ texto: 'Ana · almuerzo', detalle: 'En camino' }] },
+        { tipo: 'LISTA', titulo: '', elementos: [{ texto: 'Ana · almuerzo', detalle: 'En camino', icono: '🛵' }] },
       ],
     },
   ],
@@ -123,6 +129,8 @@ describe('DemoDiseno (F10d, HU-42)', () => {
     expect(el.querySelectorAll('.demo-funcionalidad')).toHaveLength(5);
     expect(el.querySelectorAll('app-boceto-de-pantallas figure.celular')).toHaveLength(2);
     expect(el.textContent).toContain('Pedir a domicilio');
+    // La identidad de marca va antes de los celulares (decisión 35).
+    expect(el.querySelector('app-identidad-de-marca')?.textContent).toContain('Sabor Valduparense');
     const imagen = el.querySelector<HTMLImageElement>('.demo-imagen img')!;
     expect(imagen.getAttribute('src')).toBe('data:image/png;base64,aW1hZ2VuLWZha2U=');
     expect(imagen.getAttribute('alt')).toBe(DEMO_DISENO.resultado.altImagen);

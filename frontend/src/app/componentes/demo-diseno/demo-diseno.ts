@@ -9,6 +9,7 @@ import { SesionService } from '../../nucleo/sesion';
 import { mensajeWhatsappParaRuta } from '../../layout/mensaje-whatsapp-por-ruta';
 import { Analitica } from '../../nucleo/analitica';
 import { BocetoDePantallas } from '../boceto-de-pantallas/boceto-de-pantallas';
+import { IdentidadDeMarca } from '../identidad-de-marca/identidad-de-marca';
 import { WhatsappCta } from '../whatsapp-cta/whatsapp-cta';
 import { AVISO_IA } from '../../../contenido/legales';
 
@@ -29,7 +30,7 @@ type ErrorDeDemo = 'limite' | 'limite-global' | 'no-disponible' | null;
   selector: 'app-demo-diseno',
   templateUrl: './demo-diseno.html',
   styleUrl: './demo-diseno.scss',
-  imports: [RouterLink, WhatsappCta, BocetoDePantallas],
+  imports: [RouterLink, WhatsappCta, BocetoDePantallas, IdentidadDeMarca],
 })
 export class DemoDiseno {
   // Aviso de privacidad de la IA (auditoria 28 sep 2026, §11).

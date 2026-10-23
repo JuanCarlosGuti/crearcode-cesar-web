@@ -19,12 +19,18 @@ const PNG_1PX = Buffer.from(
 const pieza = (tipo, titulo, elementos = []) => ({
   tipo,
   titulo,
-  elementos: elementos.map(([texto, detalle = '']) => ({ texto, detalle })),
+  elementos: elementos.map(([texto, detalle = '', icono = '']) => ({ texto, detalle, icono })),
 });
 
 // Un boceto que usa casi todo el catálogo de piezas (ADR-16), para que
 // el e2e y axe recorran cómo se dibuja cada una.
 const BOCETO = JSON.stringify({
+  identidad: {
+    nombre: 'Sabor Valduparense',
+    eslogan: 'Comida casera hasta tu puerta',
+    paleta: 'CALIDA',
+    logo: { forma: 'CIRCULO', simbolo: '🍲', letra: 'SENCILLA' },
+  },
   titulo: 'App de pedidos para tu restaurante',
   funcionalidades: [
     'Menú del día con lo que hay disponible',
@@ -40,12 +46,12 @@ const BOCETO = JSON.stringify({
         pieza('ENCABEZADO', 'Sabor Valduparense'),
         pieza('BUSCADOR', 'Busca un plato'),
         pieza('BANNER', 'Menú del día listo desde las 11:30 a. m.', [['Ver menú']]),
-        pieza('CATEGORIAS', '', [['Almuerzos'], ['Desayunos'], ['Bebidas'], ['Postres']]),
+        pieza('CATEGORIAS', '', [['Almuerzos', '', '🍛'], ['Desayunos', '', '🍳'], ['Bebidas', '', '🥤'], ['Postres', '', '🍰']]),
         pieza('TARJETAS', '', [
-          ['Almuerzo ejecutivo', 'Sopa, seco y jugo natural'],
-          ['Bandeja valduparense', 'Arroz, carne, plátano y ensalada'],
+          ['Almuerzo ejecutivo', 'Sopa, seco y jugo natural', '🍲'],
+          ['Bandeja valduparense', 'Arroz, carne, plátano y ensalada', '🍖'],
         ]),
-        pieza('NAVEGACION', '', [['Inicio'], ['Pedidos'], ['Mi cuenta']]),
+        pieza('NAVEGACION', '', [['Inicio', '', '🏠'], ['Pedidos', '', '🧾'], ['Mi cuenta', '', '👤']]),
       ],
     },
     {
@@ -64,11 +70,11 @@ const BOCETO = JSON.stringify({
       nombre: 'Cocina',
       piezas: [
         pieza('ENCABEZADO', 'Pedidos de hoy'),
-        pieza('INDICADORES', '', [['Pedidos de hoy', '18'], ['En camino', '4']]),
+        pieza('INDICADORES', '', [['Pedidos de hoy', '18', '📦'], ['En camino', '4', '🛵']]),
         pieza('LISTA', '', [
-          ['Ana · almuerzo ejecutivo', 'En camino'],
-          ['Luis · bandeja', 'En cocina'],
-          ['Marta · desayuno', 'Entregado'],
+          ['Ana · almuerzo ejecutivo', 'En camino', '🛵'],
+          ['Luis · bandeja', 'En cocina', '🔥'],
+          ['Marta · desayuno', 'Entregado', '✅'],
         ]),
         pieza('CHAT', '', [
           ['Hola, ¿ya salió mi pedido?', 'cliente'],

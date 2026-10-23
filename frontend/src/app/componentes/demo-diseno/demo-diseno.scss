@@ -135,6 +135,7 @@
 // El boceto manda (ISS-234): cabecera y pantallas a todo el ancho;
 // debajo, las funcionalidades y, si viene, la imagen de referencia.
 .demo-cabecera,
+.demo-identidad,
 .demo-boceto {
   flex: 1 1 100%;
   min-width: 0;

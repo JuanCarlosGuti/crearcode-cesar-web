@@ -1,14 +1,20 @@
-// El boceto (ISS-234): pantallas claras dentro de un marco de celular,
-// para que se lean como una app sobre el fondo oscuro del sitio. El
-// verde de la marca va en lo que se elige o se toca, siempre con texto
-// oscuro encima (contraste AA).
+// El boceto (ISS-234): pantallas dentro de un marco de celular. Desde la
+// decisión 35 cada boceto toma los colores de su marca por variables
+// (--b-*, ver paletas.ts), y paletas.spec.ts prueba contraste AA en cada
+// par de texto. Los valores por defecto son los de la paleta FRESCA.
 
-$pantalla: #f4f7f6;
-$tinta: #12201f;
-$tinta-suave: #4f605e;
-$borde: #d9e2e0;
-$acento: var(--color-acento, #3ddc97);
-$sobre-acento: #071115;
+$pantalla: var(--b-pantalla, #f4f7f6);
+$superficie: var(--b-superficie, #ffffff);
+$tinta: var(--b-tinta, #12201f);
+$suave: var(--b-suave, #4f605e);
+$tinte: var(--b-tinte, #dcefe8);
+$acento: var(--b-acento, #3ddc97);
+$sobre-acento: var(--b-sobre-acento, #071115);
+$banner: var(--b-banner, #0f2027);
+$banner-texto: var(--b-banner-texto, #f4f7f6);
+// Bordes y separadores, derivados de la tinta para que sirvan igual en
+// las paletas claras y en la nocturna.
+$borde: color-mix(in srgb, var(--b-tinta, #12201f) 14%, transparent);
 
 :host {
   display: block;
@@ -81,12 +87,28 @@ $sobre-acento: #071115;
   background: linear-gradient(90deg, $tinta 70%, $borde 70%);
 }
 
+// La barra de la marca: logo y nombre, como en una app de verdad.
+.celular__marca {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.35rem 0.75rem 0.5rem;
+  border-bottom: 1px solid $borde;
+}
+
+.celular__nombre-marca {
+  min-width: 0;
+  font-weight: 700;
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+
 .celular__contenido {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
-  padding: 0.5rem 0.75rem 0.75rem;
+  padding: 0.6rem 0.75rem 0.75rem;
   font-size: 0.78rem;
   line-height: 1.35;
   overflow-wrap: anywhere;
@@ -101,8 +123,8 @@ $sobre-acento: #071115;
 }
 
 // El color global de los párrafos del sitio es para fondo oscuro: dentro
-// de la pantalla clara del celular, cada texto toma la tinta de su pieza
-// (axe lo atrapó: gris claro sobre blanco, 2,02:1).
+// del celular, cada texto toma la tinta de su pieza (axe lo atrapó: gris
+// claro sobre blanco, 2,02:1).
 .pieza {
   margin: 0;
   color: inherit;
@@ -131,15 +153,15 @@ ul.pieza {
   padding: 0.45rem 0.65rem;
   border: 1px solid $borde;
   border-radius: 999px;
-  background-color: #fff;
-  color: $tinta-suave;
+  background-color: $superficie;
+  color: $suave;
 }
 
 .pieza--banner {
   padding: 0.7rem;
   border-radius: 0.8rem;
-  background-color: #0f2027;
-  color: #f4f7f6;
+  background-color: $banner;
+  color: $banner-texto;
 }
 
 .pieza--banner__texto {
@@ -165,10 +187,13 @@ ul.pieza {
 }
 
 .pieza--categorias li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
   padding: 0.2rem 0.6rem;
   border: 1px solid $borde;
   border-radius: 999px;
-  background-color: #fff;
+  background-color: $superficie;
   font-size: 0.72rem;
 }
 
@@ -193,14 +218,19 @@ ul.pieza {
   padding: 0.4rem;
   border: 1px solid $borde;
   border-radius: 0.6rem;
-  background-color: #fff;
+  background-color: $superficie;
 }
 
+// El dibujo del producto: su emoji grande sobre el color de la marca.
 .tarjeta__foto {
-  height: 3rem;
+  display: grid;
+  place-items: center;
+  height: 3.4rem;
   margin-bottom: 0.2rem;
   border-radius: 0.4rem;
-  background: linear-gradient(135deg, #cfe9df, #e3ecea);
+  background-color: $tinte;
+  font-size: 1.9rem;
+  line-height: 1;
 }
 
 .tarjeta__nombre {
@@ -211,7 +241,7 @@ ul.pieza {
 .fila__detalle,
 .indicador__nombre,
 .campo-boceto__etiqueta {
-  color: $tinta-suave;
+  color: $suave;
   font-size: 0.7rem;
 }
 
@@ -228,24 +258,24 @@ ul.pieza {
   gap: 0.45rem;
   padding: 0.35rem 0.45rem;
   border-radius: 0.5rem;
-  background-color: #fff;
+  background-color: $superficie;
 }
 
 .fila__inicial {
   display: grid;
   place-items: center;
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 1.6rem;
+  height: 1.6rem;
   border-radius: 50%;
-  background-color: #dcefe8;
+  background-color: $tinte;
   font-weight: 700;
-  font-size: 0.7rem;
+  font-size: 0.8rem;
 }
 
 .fila__detalle {
   padding: 0.1rem 0.4rem;
   border-radius: 999px;
-  background-color: #eef3f2;
+  background-color: $pantalla;
 }
 
 .pieza--formulario {
@@ -264,8 +294,8 @@ ul.pieza {
   padding: 0.4rem 0.55rem;
   border: 1px solid $borde;
   border-radius: 0.45rem;
-  background-color: #fff;
-  color: $tinta-suave;
+  background-color: $superficie;
+  color: $suave;
 }
 
 .pieza--boton {
@@ -288,8 +318,13 @@ ul.pieza {
   flex-direction: column;
   padding: 0.45rem;
   border-radius: 0.6rem;
-  background-color: #fff;
+  background-color: $superficie;
   border: 1px solid $borde;
+}
+
+.indicador__dibujo {
+  font-size: 1.1rem;
+  line-height: 1;
 }
 
 .indicador__valor {
@@ -311,13 +346,14 @@ ul.pieza {
 
 .burbuja--cliente {
   align-self: flex-start;
-  background-color: #e5ebea;
+  background-color: $superficie;
+  border: 1px solid $borde;
   border-bottom-left-radius: 0.2rem;
 }
 
 .burbuja--negocio {
   align-self: flex-end;
-  background-color: #d3f5e6;
+  background-color: $tinte;
   border-bottom-right-radius: 0.2rem;
 }
 
@@ -331,7 +367,7 @@ ul.pieza {
   padding: 0.3rem 0.2rem;
   border: 1px solid $borde;
   border-radius: 0.45rem;
-  background-color: #fff;
+  background-color: $superficie;
   text-align: center;
   font-size: 0.7rem;
 }
@@ -343,7 +379,19 @@ ul.pieza {
   padding-top: 0.5rem;
   border-top: 1px solid $borde;
   font-size: 0.7rem;
-  color: $tinta-suave;
+  color: $suave;
+}
+
+.pieza--navegacion li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.pieza--navegacion .dibujo {
+  font-size: 1rem;
+  line-height: 1;
 }
 
 .pieza--navegacion li.activa {
