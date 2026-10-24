@@ -51,13 +51,18 @@ Comercio que el usuario aportó lo confirma.
 el pulido previo a las pruebas del MVP, con los pendientes listados
 abajo.
 
-**Pulido tras F12 (5 a 23 oct 2026, ISS-226 a ISS-239, todo en
+**Pulido tras F12 (5 a 23 oct 2026, ISS-226 a ISS-242, todo en
 producción)**: la tarjeta del demo de la Home es editable y sobrevive al
 registro (ISS-226); cada página nueva empieza arriba (ISS-227); lo
 escrito antes de hidratar ya no se borra en un celular lento (ISS-228);
 el eslogan corto (ISS-229); y el boceto del demo lo arma **Claude Opus
 5.5**, con identidad de marca, dibujos y los colores del negocio
-(ISS-230 a ISS-239). Detalle en §Bocetos con Claude.
+(ISS-230 a ISS-239). Detalle en §Bocetos con Claude. Y el 23 oct, el
+sitio reconoce la cuenta del cliente en todas partes (ISS-240 a
+ISS-242): una sola sesión en todas las pestañas, ingresar devuelve a
+donde se iba y, con sesión, ya no se invita a crear cuenta. Detalle en
+§Cuentas de cliente. Antes de la auditoría de diseño, un pulido medido
+(ISS-243 a ISS-246, ver §Pulido de diseño).
 
 La v1 está PUBLICADA en producción desde el 27 jul
 2026, y desde el 19 ago 2026 corre en **servidor propio** (VPS de
@@ -593,6 +598,19 @@ lo que trae la IA se pinta como HTML.
   verificar el nombre. Lo que atrapó la prueba con Claude real: un
   detalle largo en una lista estiraba un celular a 1.468 px; el e2e
   ahora exige que ninguno pase de 720.
+
+## Pulido de diseño (23 oct 2026, ISS-243 a ISS-246)
+
+Antes de una auditoría de diseño se recorrió el sitio entero a 375 y
+1280 px, con chequeos automáticos y las capturas revisadas a ojo. Lo
+que apareció lo pasaba axe por alto: `/herramientas` usaba una clase
+`.seccion` que no existía (título pegado al encabezado), casillas de
+13 px, la de Registro sola en una línea, botones que pasaban por debajo
+de los flotantes en el celular, ejemplos de campo cortados y la tabla
+del panel empujando la página. Las reglas quedaron en docs/07 §Detalles
+que se miden, y **`e2e/diseno-e2e.spec.ts` las mide en cada PR**:
+controles de 24 px como mínimo, títulos que respiran, ejemplos que
+caben, nada bajo los flotantes y nada que empuje la página.
 
 ## Proveedor de imágenes del demo (ISS-127, ISS-137)
 

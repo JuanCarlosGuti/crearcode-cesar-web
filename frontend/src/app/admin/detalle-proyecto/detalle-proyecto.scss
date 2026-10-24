@@ -136,6 +136,8 @@ h3 {
 }
 
 .entrega__mas summary {
+  // 24 px para tocarlo (WCAG 2.2, 2.5.8; ISS-246).
+  padding-block: 0.3rem;
   cursor: pointer;
   color: var(--color-acento);
   font-size: 0.9rem;

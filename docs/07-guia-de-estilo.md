@@ -355,6 +355,33 @@ real de accesibilidad, anotada para resolver aparte.
 
 Falta: e2e completos con backend y revisión manual del usuario.
 
+### Detalles que se miden (23 oct 2026, ISS-243 a ISS-246)
+
+Antes de una auditoría de diseño se recorrió el sitio entero a 375 y
+1280 px. Lo que apareció no lo veía axe, porque no es accesibilidad
+estricta, y ninguna prueba lo medía. Quedan como reglas, y
+`frontend/e2e/diseno-e2e.spec.ts` las mide en cada PR:
+
+- **Nada que se toque mide menos de 24 px** (WCAG 2.2 AA, 2.5.8). Las
+  casillas son de 24 px en todo el sitio, con el color de acento al
+  marcarlas, desde `styles.scss`. Un enlace suelto, fuera de una frase,
+  lleva `display: inline-block` y algo de relleno vertical; el que va
+  dentro de un párrafo está exento.
+- **La esquina de abajo a la derecha es de los botones flotantes** (el
+  asistente y, en el celular, WhatsApp). En el celular un botón no se
+  estira a todo el ancho: los de `.cta-doble` y el de enviar de los
+  formularios van a su ancho natural. Estirados pasaban por debajo de
+  los flotantes, que les tapaban el borde, y además se veían dispares
+  junto al de WhatsApp, que no se estiraba.
+- **El título de cada página respira**: al menos 32 px bajo el
+  encabezado. `/herramientas` usaba una clase `.seccion` que no existía
+  en ninguna hoja de estilos, y el título quedaba pegado.
+- **El ejemplo de un campo cabe entero en el celular**. Si no cabe,
+  se acorta el ejemplo; lo que explica el campo va en la etiqueta.
+- **Una casilla va al lado de su texto**, nunca sola en una línea.
+- **Una tabla ancha se desplaza dentro de su caja** (`.tabla-envoltorio`
+  con `overflow-x: auto`), nunca empuja la página hacia el lado.
+
 ### Imágenes (convención para cuando existan imágenes de contenido)
 
 Al cierre de la fase F6 el sitio no tiene ninguna imagen de contenido

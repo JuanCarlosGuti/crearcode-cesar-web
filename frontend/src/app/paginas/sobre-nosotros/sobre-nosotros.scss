@@ -3,6 +3,17 @@
   max-width: 48rem;
 }
 
+// El título de la página y el primer bloque quedaban pegados (ISS-243).
+.pagina-sobre-nosotros h1 {
+  margin-bottom: var(--espacio-4);
+}
+
+// Un enlace suelto, fuera de una frase: 24 px para tocarlo (ISS-244).
+.pagina-sobre-nosotros__enlace {
+  display: inline-block;
+  padding-block: 0.3rem;
+}
+
 .pagina-sobre-nosotros__bloque {
   margin-bottom: var(--espacio-5);
 }

@@ -86,6 +86,40 @@ describe('Header', () => {
     expect(boton.getAttribute('aria-expanded')).toBe('true');
   });
 
+  // Lo pide la auditoria de diseño (TC-NAV-03): el menu abierto se
+  // cierra con Esc y el foco vuelve al boton que lo abrio.
+  it('el menu movil se cierra con Esc y devuelve el foco a su boton', async () => {
+    const fixture = TestBed.createComponent(Header);
+    fixture.autoDetectChanges();
+    await fixture.whenStable();
+    document.body.appendChild(fixture.nativeElement);
+    const boton = fixture.nativeElement.querySelector('.cabecera__boton-menu') as HTMLButtonElement;
+    boton.click();
+    await fixture.whenStable();
+    expect(boton.getAttribute('aria-expanded')).toBe('true');
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    await fixture.whenStable();
+
+    expect(boton.getAttribute('aria-expanded')).toBe('false');
+    expect(document.activeElement).toBe(boton);
+    fixture.nativeElement.remove();
+  });
+
+  it('Esc con el menu cerrado no toca el foco', async () => {
+    const fixture = TestBed.createComponent(Header);
+    await fixture.whenStable();
+    const otro = document.createElement('button');
+    document.body.appendChild(otro);
+    otro.focus();
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    await fixture.whenStable();
+
+    expect(document.activeElement).toBe(otro);
+    otro.remove();
+  });
+
   it('con sesion de cliente el CTA de cuenta es Mi cuenta y no duplica el enlace en el nav', async () => {
     TestBed.inject(SesionService).iniciarSesion({
       token: 'token-cliente',

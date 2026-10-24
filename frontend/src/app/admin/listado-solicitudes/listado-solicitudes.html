@@ -30,27 +30,29 @@
       }
     </p>
   } @else {
-    <table class="pagina-listado__tabla">
-      <thead>
-        <tr>
-          <th scope="col">Nombre</th>
-          <th scope="col">Servicio de interés</th>
-          <th scope="col">Estado</th>
-          <th scope="col">Fecha</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (solicitud of solicitudes(); track solicitud.id) {
+    <div class="tabla-envoltorio">
+      <table class="pagina-listado__tabla">
+        <thead>
           <tr>
-            <td><a [routerLink]="['/admin/solicitudes', solicitud.id]">{{ solicitud.nombre }}</a></td>
-            <td>{{ solicitud.servicioDeInteres }}</td>
-            <td>
-              <span class="badge" [class]="'badge-' + solicitud.estado.toLowerCase()">{{ solicitud.estado }}</span>
-            </td>
-            <td><time [attr.datetime]="solicitud.fechaCreacion">{{ formatearFecha(solicitud.fechaCreacion) }}</time></td>
+            <th scope="col">Nombre</th>
+            <th scope="col">Servicio de interés</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Fecha</th>
           </tr>
-        }
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          @for (solicitud of solicitudes(); track solicitud.id) {
+            <tr>
+              <td><a [routerLink]="['/admin/solicitudes', solicitud.id]">{{ solicitud.nombre }}</a></td>
+              <td>{{ solicitud.servicioDeInteres }}</td>
+              <td>
+                <span class="badge" [class]="'badge-' + solicitud.estado.toLowerCase()">{{ solicitud.estado }}</span>
+              </td>
+              <td><time [attr.datetime]="solicitud.fechaCreacion">{{ formatearFecha(solicitud.fechaCreacion) }}</time></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
   }
 </section>

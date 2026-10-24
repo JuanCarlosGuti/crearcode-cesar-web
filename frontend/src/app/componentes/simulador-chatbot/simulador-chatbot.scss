@@ -153,6 +153,12 @@
   min-width: 0;
 }
 
+.simulador-formulario .boton {
+  // En el celular el botón se llevaba un tercio del ancho y el campo no
+  // alcanzaba a mostrar ni el ejemplo (ISS-244).
+  padding-inline: var(--espacio-2);
+}
+
 .simulador-formulario input:focus-visible {
   outline: 3px solid var(--color-acento);
   outline-offset: 1px;

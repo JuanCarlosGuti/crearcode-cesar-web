@@ -949,9 +949,38 @@ invitando a registrarse. Una rama y un PR, un commit por issue.
 
 | ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
 |---|---|---|---|---|---|---|
-| ISS-240 | La sesión del cliente pasa a `localStorage`: la comparten todas las pestañas, ingresar o salir en una se refleja en las demás sin recargar (evento `storage`), y una que llega vencida no se abre. La del admin sigue en `sessionStorage`, y cerrarla no saca al cliente de otra pestaña. Las sesiones de cliente guardadas en `sessionStorage` antes del cambio se siguen leyendo. Con el almacenamiento bloqueado, la sesión queda en memoria en vez de romper el ingreso | HU-33 | El e2e falla con el código anterior y pasa con el nuevo | M | — | Unit (`sesion.spec`: dónde vive cada rol, pestaña nueva, salir y entrar desde otra, admin intacto, vencida, cierre programado, almacenamiento bloqueado), E2E (`sesion-e2e.spec.ts`: dos pestañas) |
-| ISS-241 | Ingresar devuelve a donde se iba: los guards y el interceptor mandan a `/ingreso` (o `/admin/login`) con `?volver=`, el «Ya tengo cuenta» del demo lleva al demo, y el ingreso vuelve ahí. Solo rutas del propio sitio (nada que empiece por `//` o traiga esquema), y cada rol solo a lo suyo: el cliente no vuelve a `/admin` ni el admin fuera de él | HU-33 | Un enlace armado para mandar a otro sitio después de ingresar cae en el destino por defecto | M | ISS-240 | Unit (validación de la ruta), Component (ingreso, login del admin, guards, interceptor, demo), E2E (página protegida → ingreso → de vuelta) |
-| ISS-242 | Con sesión, el sitio deja de invitar a crear cuenta: la franja «Con cuenta gratis…» de `/herramientas` y la sección de la cuenta de la Home se ocultan tras hidratar. El prerender no cambia: lo que lee Google y lo que ve un visitante sigue igual | HU-33 | axe sin violaciones; Lighthouse de Home y `/herramientas` sin bajar | S | ISS-240 | Component (Home y herramientas, con y sin sesión), E2E |
+| ISS-240 ✅ | La sesión del cliente pasa a `localStorage`: la comparten todas las pestañas, ingresar o salir en una se refleja en las demás sin recargar (evento `storage`), y una que llega vencida no se abre. La del admin sigue en `sessionStorage`, y cerrarla no saca al cliente de otra pestaña. Las sesiones de cliente guardadas en `sessionStorage` antes del cambio se siguen leyendo. Con el almacenamiento bloqueado, la sesión queda en memoria en vez de romper el ingreso | HU-33 | El e2e falla con el código anterior y pasa con el nuevo | M | — | Unit (`sesion.spec`: dónde vive cada rol, pestaña nueva, salir y entrar desde otra, admin intacto, vencida, cierre programado, almacenamiento bloqueado), E2E (`sesion-e2e.spec.ts`: dos pestañas) |
+| ISS-241 ✅ | Ingresar devuelve a donde se iba: los guards y el interceptor mandan a `/ingreso` (o `/admin/login`) con `?volver=`, el «Ya tengo cuenta» del demo lleva al demo, y el ingreso vuelve ahí. Solo rutas del propio sitio (nada que empiece por `//` o traiga esquema), y cada rol solo a lo suyo: el cliente no vuelve a `/admin` ni el admin fuera de él | HU-33 | Un enlace armado para mandar a otro sitio después de ingresar cae en el destino por defecto | M | ISS-240 | Unit (validación de la ruta), Component (ingreso, login del admin, guards, interceptor, demo), E2E (página protegida → ingreso → de vuelta) |
+| ISS-242 ✅ | Con sesión, el sitio deja de invitar a crear cuenta: la franja «Con cuenta gratis…» de `/herramientas` y la sección de la cuenta de la Home se ocultan tras hidratar. El prerender no cambia: lo que lee Google y lo que ve un visitante sigue igual | HU-33 | axe sin violaciones; Lighthouse de Home y `/herramientas` sin bajar | S | ISS-240 | Component (Home y herramientas, con y sin sesión), E2E |
+
+**ISS-240 a ISS-242 en producción el 23 oct 2026** (PR #11). Antes de
+fusionar: 427 specs, lint limpio y 53 e2e con axe en local, y las cuatro
+suites en verde en CI. En producción, con un navegador sin sesión: el
+«Ya tengo cuenta» del demo lleva `?volver=` hacia el demo,
+`/mi-cuenta/cotizaciones` manda a `/ingreso?volver=/mi-cuenta/cotizaciones`,
+la franja de invitación sigue a la vista de un visitante, sin errores de
+consola, y Lighthouse 100/100/100/100 en Home, servicio, `/herramientas`
+y Contacto. Lo que pide una cuenta —dos pestañas, salir en una— lo
+prueban los e2e; en producción queda para que el usuario lo vea con la
+cuenta de demostración.
+
+## Pulido de diseño antes de la auditoría (oct 2026) — ISS-243 a ISS-247
+
+El usuario avisó el 23 oct 2026 que viene una auditoría de diseño. Se
+recorrió el sitio entero, público, portal del cliente y panel, a 375 y
+1280 px: chequeos automáticos de cada página y capturas completas
+revisadas a ojo. Lo que apareció quedó como regla en
+[[07-guia-de-estilo]] §Detalles que se miden y como guardia en
+`diseno-e2e.spec.ts`. Cada prueba falló antes de su arreglo. Una rama y
+un PR.
+
+| ID | Descripción | HU | Definición de hecho | Est. | Depende de | Tests |
+|---|---|---|---|---|---|---|
+| ISS-243 | Espaciado: `/herramientas` usaba una clase `.seccion` que no existía, así que el título quedaba pegado al encabezado y cada herramienta tocaba el borde de su franja; el título de Sobre nosotros quedaba encima del primer bloque; en Mi cuenta, los botones de las secciones quedaban pegados al pasar a dos líneas | — | Títulos a 32 px o más del encabezado en todas las páginas, a 375 y 1280 px | S | — | E2E (`diseno-e2e`: título bajo el encabezado, botones de Mi cuenta) |
+| ISS-244 | Controles y formularios: casillas de 24 px con el color de la marca en todo el sitio (medían 13 y 18); la de Registro, al lado de su texto (quedaba sola en una línea); enlaces sueltos de 24 px de alto («Ya tengo cuenta» del demo, LinkedIn); ejemplos de campo que caben en el celular (el de la tarjeta de la Home y el del simulador se cortaban) | — | Ningún control del sitio público de menos de 24 px | S | — | E2E (controles a 375 y 1280, ejemplos que caben, casilla con su texto) |
+| ISS-245 | Botones flotantes: en el celular tapaban el borde de «Agenda tu consulta gratuita» del hero y de los botones de enviar de Registro, Ingreso y Recuperar. Los botones de `.cta-doble` y los de enviar van a su ancho natural, que además empareja los dos botones del hero, de los servicios y del pie | — | Ningún botón del hero ni de enviar pasa por debajo de los flotantes | S | — | E2E (hero y formularios contra los flotantes) |
+| ISS-246 | Panel admin en el celular: la tabla de solicitudes empujaba la página 251 px hacia el lado (ahora se desplaza en su caja, como las de cotizaciones y proyectos), y el filtro de estado y los desplegables del detalle de proyecto medían menos de 24 px | — | Sin desborde ni controles chicos en el listado, cotizaciones y proyectos | S | — | E2E (panel a 375) |
+| ISS-247 | Lo que el manual de la auditoría (docs/12, hipótesis previas y casos de prueba) señalaba y se pudo confirmar en el código: la intro de `/herramientas` prometía «Todo funciona sin registrarte» y el demo de diseño pide cuenta (H-04); el diagnóstico preguntaba «¿Cómo reciben… de sus clientes?» en medio de un sitio que tutea (H-07); el menú del celular no se cerraba con Esc (TC-NAV-03), y ahora se cierra y devuelve el foco a su botón. H-06, H-10, H-13 y H-15 no se confirmaron: el pie no lleva a WhatsApp desde el asistente, el honeypot está oculto y fuera del tabulador, y el WhatsApp y el correo son enlaces | — | Las tres hipótesis confirmadas, corregidas con su prueba | S | — | Unit (`tono.spec`: el contenido de las herramientas y la Home tutea; intro sin promesa absoluta), Component (header: Esc cierra y devuelve el foco; Esc con el menú cerrado no toca el foco) |
 
 ## Resumen de cobertura
 

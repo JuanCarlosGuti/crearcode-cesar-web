@@ -1,3 +1,16 @@
+// Cada herramienta en su franja, con aire arriba y abajo. La clase se
+// usaba sin estar definida: el título quedaba pegado al encabezado y
+// cada herramienta tocaba el borde de su franja (ISS-243).
+.seccion {
+  padding-block: var(--espacio-4);
+}
+
+@media (min-width: 48rem) {
+  .seccion {
+    padding-block: var(--espacio-5);
+  }
+}
+
 .herramientas-intro {
   color: var(--color-texto-secundario);
   font-size: 1.05rem;

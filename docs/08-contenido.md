@@ -46,7 +46,8 @@ docs/10):**
 > **Demo de diseño con IA** — badge "Gratis · para cuentas"
 > Tres campos, con los ejemplos de antes como texto de ayuda: Sector
 > (*Ej. restaurante*) · Qué hace (*Ej. domicilios en Valledupar*) · Qué
-> necesita (*Ej. recibir pedidos sin saturar el WhatsApp*)
+> necesita (*Ej. recibir pedidos en línea* — el anterior, «sin saturar
+> el WhatsApp», se cortaba en el celular; ISS-244)
 > CTA: **Ver mi boceto con IA** — con sesión lleva al demo y el boceto
 > se genera solo; sin sesión, a crear la cuenta
 > Notas: "Lo que escribes queda solo en tu navegador hasta que generes
@@ -790,9 +791,14 @@ del texto de cada sub-fase se redacta al arrancarla siguiendo este tono.
   te lo mostramos aquí mismo, en dos minutos y sin compromiso."
   (El titular del prototipo acorta el eslogan; así quedó en la
   decisión 32 de docs/10.)
-- **Centro (intro)**: "Prueba la tecnología antes de contratarla.
-  Todo funciona sin registrarte. Los usos diarios se reinician cada
-  día a medianoche; con cuenta gratis tienes cinco veces más."
+- **Centro (intro)**: "Prueba la tecnología antes de contratarla,
+  gratis. Casi todo funciona sin registrarte: solo el demo de diseño
+  pide una cuenta, y con ella tienes más usos cada día." (Hasta el 23
+  oct 2026 decía «Todo funciona sin registrarte», y el demo de diseño
+  pide cuenta: lo señaló la hipótesis H-04 de la auditoría de diseño.)
+- **Diagnóstico**: la primera pregunta le habla al visitante de tú,
+  como el resto del sitio: "¿Cómo recibes hoy los pedidos o solicitudes
+  de tus clientes?" (antes «reciben… de sus clientes», hipótesis H-07).
 - **Tabla de cuenta (Home)**: "La cuenta es gratis y opcional. Esto es
   lo que cambia." — filas: bocetos con IA, diagnósticos, mensajes al
   chatbot, herramientas nuevas (acceso anticipado). Los números salen
