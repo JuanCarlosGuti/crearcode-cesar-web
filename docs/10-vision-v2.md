@@ -588,8 +588,8 @@ empieza arriba; lo escrito antes de hidratar no se pierde; el eslogan
 corto; el boceto del demo con Claude Opus 5.5, y con identidad de marca,
 dibujos y los colores del negocio; la política v2.2; y que el sitio
 reconozca la cuenta del cliente en todas partes. Antes de una auditoría
-de diseño se sumó un pulido medido, ISS-243 a ISS-246
-([[05-backlog-issues]]).
+de diseño se sumó un pulido medido, ISS-243 a ISS-247, también en
+producción ([[05-backlog-issues]]).
 
 F11 cerró con el alcance reenfocado de la decisión 18 — cotizaciones
 sí, documentos de cobro no —, confirmado después por el certificado de

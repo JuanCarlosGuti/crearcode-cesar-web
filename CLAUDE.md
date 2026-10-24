@@ -51,7 +51,7 @@ Comercio que el usuario aportó lo confirma.
 el pulido previo a las pruebas del MVP, con los pendientes listados
 abajo.
 
-**Pulido tras F12 (5 a 23 oct 2026, ISS-226 a ISS-242, todo en
+**Pulido tras F12 (5 a 23 oct 2026, ISS-226 a ISS-247, todo en
 producción)**: la tarjeta del demo de la Home es editable y sobrevive al
 registro (ISS-226); cada página nueva empieza arriba (ISS-227); lo
 escrito antes de hidratar ya no se borra en un celular lento (ISS-228);
@@ -62,7 +62,7 @@ sitio reconoce la cuenta del cliente en todas partes (ISS-240 a
 ISS-242): una sola sesión en todas las pestañas, ingresar devuelve a
 donde se iba y, con sesión, ya no se invita a crear cuenta. Detalle en
 §Cuentas de cliente. Antes de la auditoría de diseño, un pulido medido
-(ISS-243 a ISS-246, ver §Pulido de diseño).
+(ISS-243 a ISS-247, ver §Pulido de diseño).
 
 La v1 está PUBLICADA en producción desde el 27 jul
 2026, y desde el 19 ago 2026 corre en **servidor propio** (VPS de
@@ -599,7 +599,7 @@ lo que trae la IA se pinta como HTML.
   detalle largo en una lista estiraba un celular a 1.468 px; el e2e
   ahora exige que ninguno pase de 720.
 
-## Pulido de diseño (23 oct 2026, ISS-243 a ISS-246)
+## Pulido de diseño (23 oct 2026, ISS-243 a ISS-247, en producción)
 
 Antes de una auditoría de diseño se recorrió el sitio entero a 375 y
 1280 px, con chequeos automáticos y las capturas revisadas a ojo. Lo
@@ -610,7 +610,18 @@ de los flotantes en el celular, ejemplos de campo cortados y la tabla
 del panel empujando la página. Las reglas quedaron en docs/07 §Detalles
 que se miden, y **`e2e/diseno-e2e.spec.ts` las mide en cada PR**:
 controles de 24 px como mínimo, títulos que respiran, ejemplos que
-caben, nada bajo los flotantes y nada que empuje la página.
+caben, nada bajo los flotantes y nada que empuje la página. Las que
+solo leen páginas públicas también sirven contra producción:
+`E2E_BASE_URL=https://crearcodecesar.com npx playwright test
+e2e/diseno-e2e.spec.ts --grep-invert "Mi cuenta|panel admin"`.
+
+ISS-247 corrigió lo que el manual de la auditoría (`docs/12`, del
+usuario) señalaba y se confirmó en el código: la intro de
+`/herramientas` prometía «Todo funciona sin registrarte» y el demo pide
+cuenta, el diagnóstico hablaba de «sus clientes» en un sitio que tutea
+(`tono.spec.ts` lo vigila) y el menú del celular no se cerraba con Esc.
+Verificado en producción el 23 oct 2026: las guardias públicas en
+verde contra el dominio y Lighthouse 100/100/100/100.
 
 ## Proveedor de imágenes del demo (ISS-127, ISS-137)
 
